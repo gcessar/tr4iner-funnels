@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Programa Cero · TR4INER</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --paper: #F4EFE6;
+      --paper-deep: #ECE5D7;
+      --card: #FFFDF6;
+      --ink: #16130E;
+      --ink-soft: #46402F;
+      --muted: #7C7461;
+      --rule: rgba(22, 19, 14, 0.14);
+      --rule-strong: rgba(22, 19, 14, 0.32);
+      --mark: #F5C518;
+      --mark-soft: rgba(245, 197, 24, 0.32);
+      --error: #A83A22;
+      --max: 1080px;
+      --gutter: clamp(18px, 4vw, 32px);
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Instrument Sans", -apple-system, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+    body {
+      min-height: 100dvh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Grano de papel, igual que el resto del funnel */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 240px 240px;
+    }
+
+    a, button, select, input, label { touch-action: manipulation; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: calc(30px + env(safe-area-inset-top)) var(--gutter) calc(60px + env(safe-area-inset-bottom));
+      position: relative;
+    }
+
+    /* Hoja de programación: líneas de cuaderno detrás del hero */
+    .hero {
+      position: relative;
+      padding: 14px 0 40px;
+      text-align: center;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -30px -100vw 0;
+      z-index: -2;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 43px,
+        rgba(22, 19, 14, 0.055) 43px,
+        rgba(22, 19, 14, 0.055) 44px
+      );
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+              mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: "";
+      width: clamp(20px, 8vw, 52px);
+      height: 1px;
+      background: var(--rule-strong);
+    }
+
+    h1 {
+      max-width: 820px;
+      margin: 0 auto 18px;
+      font-family: var(--serif);
+      font-size: clamp(34px, 6.4vw, 62px);
+      font-weight: 560;
+      font-variation-settings: "opsz" 100;
+      letter-spacing: -0.03em;
+      line-height: 1.06;
+      text-wrap: balance;
+    }
+    h1 em {
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    /* La firma: plumón amarillo del coach */
+    .mk {
+      position: relative;
+      z-index: 0;
+      white-space: nowrap;
+    }
+    .mk::before {
+      content: "";
+      position: absolute;
+      left: -0.14em;
+      right: -0.1em;
+      top: 50%;
+      bottom: -4%;
+      z-index: -1;
+      background: var(--mark);
+      border-radius: 3px 7px 2px 6px;
+      transform: rotate(-0.7deg) scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s;
+    }
+    .is-in .mk::before, .mk.is-in::before { transform: rotate(-0.7deg) scaleX(1); }
+
+    .dek {
+      max-width: 620px;
+      margin: 0 auto 20px;
+      color: var(--ink-soft);
+      font-size: clamp(16px, 2.1vw, 18.5px);
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+    .dek strong { color: var(--ink); font-weight: 600; }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px 22px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 8px; }
+    .hero-meta svg { width: 13px; height: 13px; flex: none; }
+
+    /* ── Cuerpo: índice de bloques + ficha de registro ── */
+    .body-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+      gap: clamp(24px, 4vw, 48px);
+      align-items: start;
+      margin-top: 8px;
+    }
+
+    .catalog {
+      position: relative;
+    }
+    .catalog-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .catalog-head h2 {
+      font-family: var(--serif);
+      font-size: clamp(21px, 2.6vw, 26px);
+      font-weight: 560;
+      letter-spacing: -0.02em;
+    }
+    .catalog-head .count {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .bloque {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 2px;
+      border-bottom: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+    .bloque.is-in { opacity: 1; transform: none; }
+
+    .bloque-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      padding: 7px 0;
+      text-align: center;
+      background: var(--card);
+    }
+    .bloque-info { min-width: 0; }
+    .bloque-name {
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .bloque-sub {
+      margin-top: 2px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .bloque-thumbs {
+      display: flex;
+      align-items: center;
+    }
+    .bloque-thumbs img {
+      width: 58px;
+      height: 34px;
+      object-fit: cover;
+      border-radius: 5px;
+      border: 2px solid var(--paper);
+      filter: grayscale(0.85) sepia(0.14) contrast(0.94);
+      box-shadow: 0 1px 4px rgba(22, 19, 14, 0.18);
+    }
+    .bloque-thumbs img + img { margin-left: -22px; }
+
+    .catalog-lock {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+    .catalog-lock svg { width: 14px; height: 14px; flex: none; }
+
+    /* Ficha de registro */
+    .ficha {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 14px;
+      padding: clamp(22px, 3.4vw, 34px);
+      box-shadow: 0 1px 2px rgba(22, 19, 14, 0.05), 0 14px 40px -18px rgba(22, 19, 14, 0.22);
+    }
+    .ficha::before {
+      content: "FICHA DE INSCRIPCIÓN · 00";
+      position: absolute;
+      top: -9px;
+      left: 24px;
+      padding: 2px 10px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+    }
+
+    .ficha h2 {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.12;
+      margin-bottom: 6px;
+    }
+    .ficha-dek {
+      color: var(--muted);
+      font-size: 15px;
+      margin-bottom: 22px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field > label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .field > label .opt { color: var(--muted); font-weight: 400; }
+
+    .control {
+      width: 100%;
+      padding: 13px 14px;
+      background: #FFFFFF;
+      border: 1px solid var(--rule-strong);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      appearance: none;
+    }
+    .control::placeholder { color: #A79E8C; }
+    .control:focus {
+      outline: none;
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px var(--mark-soft);
+    }
+    .field.has-error .control { border-color: var(--error); }
+
+    .phone-row { display: flex; gap: 8px; }
+    .phone-row select.control {
+      flex: 0 0 108px;
+      padding-right: 26px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%2316130E' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+      font-variant-numeric: tabular-nums;
+    }
+    .phone-row input { flex: 1; min-width: 0; }
+
+    .err {
+      display: none;
+      margin-top: 6px;
+      color: var(--error);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .field.has-error .err { display: block; }
+
+    /* Selector de sexo: dos fichas */
+    .sexo-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .sexo-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 10px;
+      background: #FFFFFF;
+      border: 1px solid var(--rule-strong);
+      border-radius: 9px;
+      font-size: 15.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+      user-select: none;
+    }
+    .sexo-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sexo-card .tick {
+      width: 16px;
+      height: 16px;
+      flex: none;
+      border: 1.5px solid var(--rule-strong);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+    .sexo-card .tick svg {
+      width: 9px; height: 9px;
+      stroke: var(--ink);
+      opacity: 0;
+      transition: opacity 0.16s ease;
+    }
+    .sexo-card:hover { border-color: var(--ink-soft); }
+    .sexo-card.selected {
+      border-color: var(--ink);
+      background: var(--card);
+      box-shadow: 0 0 0 3px var(--mark-soft);
+    }
+    .sexo-card.selected .tick { border-color: var(--ink); background: var(--mark); }
+    .sexo-card.selected .tick svg { opacity: 1; }
+    .sexo-card:has(input:focus-visible) {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+    }
+    .sexo-hint {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
+    .submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px 20px;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--sans);
+      font-size: 16.5px;
+      font-weight: 600;
+      letter-spacing: 0.005em;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.12s ease;
+    }
+    .submit:hover { background: #2B2519; }
+    .submit:active { transform: scale(0.985); }
+    .submit svg { width: 16px; height: 16px; transition: transform 0.18s ease; }
+    .submit:hover svg { transform: translateX(3px); }
+    .submit[disabled] { opacity: 0.75; cursor: default; }
+    .submit .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(244, 239, 230, 0.35);
+      border-top-color: var(--paper);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .submit.loading .spinner { display: block; }
+    .submit.loading .arrow { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .legal {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .legal a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 20px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    footer .brand { color: var(--ink); font-weight: 600; }
+    footer nav { display: flex; gap: 18px; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+
+    /* Reveal genérico */
+    .rv {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+    .rv.is-in { opacity: 1; transform: none; }
+
+    @media (max-width: 860px) {
+      .body-grid { grid-template-columns: 1fr; }
+      .catalog { order: 2; }
+      .ficha { order: 1; }
+      .hero { padding-bottom: 30px; }
+    }
+
+    @media (max-width: 420px) {
+      .bloque { grid-template-columns: 38px minmax(0, 1fr); }
+      .bloque-thumbs { display: none; }
+      .phone-row select.control { flex-basis: 96px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .rv, .bloque { opacity: 1; transform: none; transition: none; }
+      .mk::before { transform: rotate(-0.7deg) scaleX(1); transition: none; }
+      .submit, .submit svg { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="hero" id="hero">
+      <p class="eyebrow">TR4INER · Programa Cero</p>
+      <h1 class="rv" style="--i:0">
+        Pierde grasa y gana músculo <span class="mk">con un plan</span>, <em>no con el algoritmo.</em>
+      </h1>
+      <p class="dek rv" style="--i:1">
+        El <strong>Programa Cero</strong> es el método de Anthoni Montalván condensado en
+        <strong>5 bloques y 18 sesiones</strong>: qué comer, cómo entrenar y en qué orden hacerlo
+        <strong>según tu fisiología</strong>. Te inscribes gratis y tu coach te guía sesión a sesión.
+      </p>
+      <p class="hero-meta rv" style="--i:2">
+        <span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4.5h12v8H2z"/><path d="M6.8 7l3 1.5-3 1.5z" fill="currentColor" stroke="none"/></svg>
+          18 sesiones
+        </span>
+        <span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3h10M3 8h10M3 13h6"/></svg>
+          5 bloques
+        </span>
+        <span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5.2V8l2 1.4"/></svg>
+          Plaza gratis · empiezas hoy
+        </span>
+      </p>
+    </header>
+
+    <main class="body-grid">
+
+      <section class="catalog" aria-label="Contenido del programa">
+        <div class="catalog-head rv" style="--i:0">
+          <h2>El plan de bloques</h2>
+          <span class="count">Semana 0 · 18 sesiones</span>
+        </div>
+
+        <div class="bloque" style="--i:1">
+          <span class="bloque-num" aria-hidden="true">B1</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Cómo comer</p>
+            <p class="bloque-sub">6 sesiones · dieta, ayuno, carbohidratos</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/fJ3q8QXFb0I/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/sY3z2CGhGLY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/bY6sAaBeGgk/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <div class="bloque" style="--i:2">
+          <span class="bloque-num" aria-hidden="true">B2</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Cómo entrenar</p>
+            <p class="bloque-sub">4 sesiones · según tu edad, tu tiempo y tu caso</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/RtWY67YnsAY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/iv038ZlizMs/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/gKV5At5iPz4/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <div class="bloque" style="--i:3">
+          <span class="bloque-num" aria-hidden="true">B3</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Perder grasa</p>
+            <p class="bloque-sub">4 sesiones · sin rebote y sin pasar hambre</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/SFvwRz-q6lw/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/brR2OZEfepQ/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/QgT3uXfUOm4/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <div class="bloque" style="--i:4">
+          <span class="bloque-num" aria-hidden="true">B4</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Ganar músculo</p>
+            <p class="bloque-sub">3 sesiones · fuerza y recomposición</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/ljgAlXZAQ1A/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/uRUchKIchJw/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/XT227ZlIreM/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <div class="bloque" style="--i:5">
+          <span class="bloque-num" aria-hidden="true">B5</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Hormonas y ciclo</p>
+            <p class="bloque-sub">1 sesión · entrenar según tu ciclo menstrual</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/T66O90E8Bkg/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <p class="catalog-lock rv" style="--i:6">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
+          Se desbloquea al inscribirte · gratis, sin tarjeta
+        </p>
+      </section>
+
+      <section class="ficha rv" id="registro" style="--i:2" aria-label="Formulario de inscripción">
+        <h2>Reserva tu plaza</h2>
+        <p class="ficha-dek">La inscripción es gratis y tu programa se abre al instante.</p>
+
+        <form id="lead-form" novalidate>
+          <!-- Honeypot anti-bots: si se llena, se descarta el envío -->
+          <input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off"
+                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+
+          <div class="field" id="f-nombre">
+            <label for="nombre">Nombre</label>
+            <input class="control" type="text" id="nombre" name="nombre"
+                   placeholder="¿Cómo te llamas?" autocomplete="given-name" />
+            <p class="err" id="err-nombre">Escribe tu nombre</p>
+          </div>
+
+          <div class="field" id="f-whatsapp">
+            <label for="whatsapp">WhatsApp</label>
+            <div class="phone-row">
+              <select class="control" id="prefijo" aria-label="Código de país">
+                <option value="+51" selected>+51 PE</option>
+                <option value="+34">+34 ES</option>
+                <option value="+52">+52 MX</option>
+                <option value="+57">+57 CO</option>
+                <option value="+54">+54 AR</option>
+                <option value="+56">+56 CL</option>
+                <option value="+593">+593 EC</option>
+                <option value="+591">+591 BO</option>
+                <option value="+58">+58 VE</option>
+                <option value="+598">+598 UY</option>
+                <option value="+595">+595 PY</option>
+                <option value="+507">+507 PA</option>
+                <option value="+506">+506 CR</option>
+                <option value="+502">+502 GT</option>
+                <option value="+1">+1 US</option>
+              </select>
+              <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="numeric"
+                     placeholder="Número con WhatsApp" autocomplete="tel-national" />
+            </div>
+            <p class="err" id="err-whatsapp">Ingresa un número válido (solo dígitos)</p>
+          </div>
+
+          <div class="field" id="f-email">
+            <label for="email">Correo</label>
+            <input class="control" type="email" id="email" name="email"
+                   placeholder="El correo que sí revisas" autocomplete="email" />
+            <p class="err" id="err-email">Ingresa un correo válido</p>
+          </div>
+
+          <div class="field" id="f-sexo">
+            <label id="sexo-label">Sexo</label>
+            <div class="sexo-row" role="radiogroup" aria-labelledby="sexo-label">
+              <label class="sexo-card" for="sexo-mujer">
+                <input type="radio" name="sexo" value="Mujer" id="sexo-mujer" />
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1.5 5.5l2.3 2.3L8.5 2.5"/></svg></span>
+                Mujer
+              </label>
+              <label class="sexo-card" for="sexo-hombre">
+                <input type="radio" name="sexo" value="Hombre" id="sexo-hombre" />
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1.5 5.5l2.3 2.3L8.5 2.5"/></svg></span>
+                Hombre
+              </label>
+            </div>
+            <p class="sexo-hint">Tu programa cambia según tu fisiología: no se entrena ni se come igual.</p>
+            <p class="err" id="err-sexo">Selecciona una opción para armar tu programa</p>
+          </div>
+
+          <button class="submit" type="submit" id="submit-btn">
+            <span>Inscribirme al Programa Cero</span>
+            <span class="spinner" aria-hidden="true"></span>
+            <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+          </button>
+
+          <p class="legal">
+            Al inscribirte aceptas la <a href="#">Política de Privacidad</a>.
+            Solo te escribimos para guiarte el programa, nada más.
+          </p>
+        </form>
+      </section>
+
+    </main>
+
+    <footer>
+      <span class="brand">TR4INER</span>
+      <nav aria-label="Legal">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // ── Entradas: se revelan al entrar en el viewport ──
+      function checkReveals() {
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        document.querySelectorAll('.rv:not(.is-in), .bloque:not(.is-in)').forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-in');
+        });
+      }
+      window.addEventListener('scroll', checkReveals, { passive: true });
+      window.addEventListener('resize', checkReveals, { passive: true });
+      document.getElementById('hero').classList.add('is-in');
+      requestAnimationFrame(checkReveals);
+      setTimeout(checkReveals, 250);
+
+      // ── Selector de sexo ──
+      var sexoCards = document.querySelectorAll('.sexo-card');
+      sexoCards.forEach(function (card) {
+        card.querySelector('input').addEventListener('change', function () {
+          sexoCards.forEach(function (c) { c.classList.remove('selected'); });
+          card.classList.add('selected');
+          setFieldError('f-sexo', false);
+        });
+      });
+
+      // ── Validación + envío (mismo patrón que el funnel de casos de estudio) ──
+      var utmData = window.TR4Track ? window.TR4Track.getUTMs() : {};
+      var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
+      if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
+
+      var WEBHOOK = 'https://primary-production-0efa.up.railway.app/webhook/biblioteca';
+
+      if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_view');
+
+      var dominiosFalsos = [
+        'test.com','ejemplo.com','example.com','fake.com','temp.com',
+        'mailinator.com','guerrillamail.com','yopmail.com','trashmail.com',
+        'throwam.com','sharklasers.com','guerrillamailblock.com','grr.la',
+        'spam4.me','tempr.email','dispostable.com','spamgourmet.com'
+      ];
+
+      function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+      function isDomainSuspect(email) {
+        var domain = (email.split('@')[1] || '').toLowerCase();
+        return dominiosFalsos.indexOf(domain) !== -1;
+      }
+      function setFieldError(fieldId, show, msg) {
+        var field = document.getElementById(fieldId);
+        field.classList.toggle('has-error', !!show);
+        if (msg) {
+          var err = field.querySelector('.err');
+          if (err) err.textContent = msg;
+        }
+      }
+      function saveLead(lead) {
+        try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); } catch (e) { /* incógnito */ }
+      }
+
+      document.getElementById('email').addEventListener('blur', function () {
+        var email = this.value.trim();
+        if (!email) return;
+        if (!validateEmail(email)) {
+          setFieldError('f-email', true, 'Ingresa un correo válido');
+        } else if (isDomainSuspect(email)) {
+          setFieldError('f-email', true, 'Usa un correo real: ahí llega el acceso');
+        } else {
+          setFieldError('f-email', false);
+        }
+      });
+
+      document.getElementById('lead-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (document.getElementById('honeypot').value !== '') return;
+
+        var nombre   = document.getElementById('nombre').value.trim();
+        var telefono = document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
+        var prefijo  = document.getElementById('prefijo').value;
+        var email    = document.getElementById('email').value.trim();
+        var sexoEl   = document.querySelector('input[name="sexo"]:checked');
+        var valid    = true;
+
+        setFieldError('f-nombre', !nombre);
+        if (!nombre) valid = false;
+
+        var telOk = /^\d{7,15}$/.test(telefono);
+        setFieldError('f-whatsapp', !telOk);
+        if (!telOk) valid = false;
+
+        var emailBad = !validateEmail(email) || isDomainSuspect(email);
+        setFieldError('f-email', emailBad,
+          !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega el acceso');
+        if (emailBad) valid = false;
+
+        setFieldError('f-sexo', !sexoEl);
+        if (!sexoEl) valid = false;
+
+        if (!valid) {
+          var firstError = document.querySelector('.field.has-error .control, .field.has-error .sexo-row');
+          if (firstError) firstError.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          return;
+        }
+
+        var btn = document.getElementById('submit-btn');
+        btn.classList.add('loading');
+        btn.querySelector('span').textContent = 'Reservando tu plaza…';
+        btn.disabled = true;
+
+        var sexo = sexoEl.value;
+        var payload = {
+          funnel:    'biblioteca',
+          nombre:    nombre,
+          whatsapp:  prefijo + telefono,
+          email:     email,
+          sexo:      sexo,
+          video:     videoId,
+          utm:       utmData,
+          page_url:  window.location.href,
+          timestamp: new Date().toISOString()
+        };
+
+        saveLead({ nombre: nombre, email: email, sexo: sexo });
+        // El whatsapp viaja en props: el CRM lo necesita para que el setter contacte al SQL
+        if (window.TR4Track && TR4Track.track) TR4Track.track('registro', { whatsapp: prefijo + telefono });
+
+        function next() {
+          var p = new URLSearchParams();
+          p.set('nombre', nombre);
+          p.set('email', email);
+          p.set('sexo', sexo);
+          if (videoId) p.set('video', videoId);
+          Object.keys(utmData).forEach(function (key) { p.set(key, utmData[key]); });
+          window.location.href = '/biblioteca/confirma/?' + p.toString();
+        }
+
+        fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(next).catch(next);
+      });
+    })();
+  </script>
+</body>
+</html>

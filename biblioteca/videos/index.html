@@ -1,0 +1,1660 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Tu Programa Cero · TR4INER</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --paper: #F4EFE6;
+      --paper-deep: #ECE5D7;
+      --card: #FFFDF6;
+      --ink: #16130E;
+      --ink-soft: #46402F;
+      --muted: #7C7461;
+      --rule: rgba(22, 19, 14, 0.14);
+      --rule-strong: rgba(22, 19, 14, 0.32);
+      --mark: #F5C518;
+      --mark-soft: rgba(245, 197, 24, 0.32);
+      --max: 1120px;
+      --gutter: clamp(18px, 4vw, 32px);
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Instrument Sans", -apple-system, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      min-height: 100dvh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 240px 240px;
+    }
+
+    a, button { touch-action: manipulation; }
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: calc(20px + env(safe-area-inset-top)) var(--gutter) calc(60px + env(safe-area-inset-bottom));
+    }
+
+    /* ── Barra superior ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 16px;
+      margin-bottom: 40px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .wordmark {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+    }
+    .wordmark span { color: var(--muted); font-weight: 400; }
+
+    /* ── Hero ── */
+    .hero { text-align: center; margin-bottom: 34px; }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: "";
+      width: clamp(18px, 6vw, 44px);
+      height: 1px;
+      background: var(--rule-strong);
+    }
+    h1 {
+      max-width: 720px;
+      margin: 0 auto 14px;
+      font-family: var(--serif);
+      font-size: clamp(32px, 5.8vw, 54px);
+      font-weight: 560;
+      font-variation-settings: "opsz" 100;
+      letter-spacing: -0.03em;
+      line-height: 1.07;
+      text-wrap: balance;
+    }
+    h1 em { font-style: italic; font-weight: 500; }
+
+    .mk { position: relative; z-index: 0; white-space: nowrap; }
+    .mk::before {
+      content: "";
+      position: absolute;
+      left: -0.14em;
+      right: -0.1em;
+      top: 50%;
+      bottom: -4%;
+      z-index: -1;
+      background: var(--mark);
+      border-radius: 3px 7px 2px 6px;
+      transform: rotate(-0.7deg) scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+    }
+    .is-in .mk::before { transform: rotate(-0.7deg) scaleX(1); }
+
+    .dek {
+      max-width: 560px;
+      margin: 0 auto;
+      color: var(--ink-soft);
+      font-size: clamp(15.5px, 2vw, 17.5px);
+      text-wrap: pretty;
+    }
+    .dek strong { color: var(--ink); font-weight: 600; }
+
+    /* ── Avance global ── */
+    .avance {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 380px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .avance-track {
+      flex: 1;
+      height: 4px;
+      background: var(--paper-deep);
+      border: 1px solid var(--rule);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .avance-track i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--mark);
+      border-radius: 99px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .avance-num { color: var(--ink); font-weight: 600; }
+
+    /* ── Chip del plan (test de macros hecho) ── */
+    .plan-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px auto 0;
+      padding: 8px 14px;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 99px;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.16s ease;
+    }
+    .plan-chip:hover { border-color: var(--ink); }
+    .plan-chip strong { color: var(--ink); font-weight: 600; }
+    .plan-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mark); border: 1px solid var(--ink); }
+
+    /* ── Onboarding: diseña tu plan (aparece hasta completar el test) ── */
+    .onboard {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px 24px;
+      margin: 0 0 40px;
+      padding: clamp(22px, 4vw, 30px) clamp(20px, 4vw, 32px);
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(22, 19, 14, 0.05), 0 14px 40px -18px rgba(22, 19, 14, 0.22);
+    }
+    .onboard::before {
+      content: "PASO PREVIO · TUS NÚMEROS";
+      position: absolute;
+      top: -9px;
+      left: 24px;
+      padding: 2px 10px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+    }
+    .onboard h2 {
+      font-family: var(--serif);
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 6px;
+      text-wrap: balance;
+    }
+    .onboard p { color: var(--muted); font-size: 14.5px; max-width: 480px; }
+    .onboard-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      background: var(--mark);
+      color: var(--ink);
+      border-radius: 10px;
+      font-size: 15.5px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.18s ease, transform 0.12s ease;
+    }
+    .onboard-cta:hover { background: #FFD23F; }
+    .onboard-cta:active { transform: scale(0.985); }
+    .onboard-cta svg { width: 15px; height: 15px; transition: transform 0.18s ease; }
+    .onboard-cta:hover svg { transform: translateX(3px); }
+
+    /* ── Tu siguiente sesión (con plan hecho) ── */
+    .next-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(120px, 200px) minmax(0, 1fr);
+      align-items: center;
+      gap: 16px 20px;
+      margin: 0 0 40px;
+      padding: 14px;
+      background: var(--card);
+      border: 1px solid var(--ink);
+      border-radius: 14px;
+      box-shadow: 0 0 0 3px var(--mark-soft), 0 14px 40px -18px rgba(22, 19, 14, 0.25);
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--sans);
+      color: var(--ink);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .next-card:hover { transform: translateY(-2px); }
+    .next-card::before {
+      content: "TU SIGUIENTE SESIÓN";
+      position: absolute;
+      top: -9px;
+      left: 24px;
+      padding: 2px 10px;
+      background: var(--ink);
+      color: var(--mark);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+    }
+    .next-card .thumb { border-radius: 9px; }
+    .next-card .nx-meta {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .next-card .nx-title {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.8vw, 24px);
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      text-wrap: balance;
+    }
+    .next-card .nx-go {
+      margin-top: 8px;
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .next-card .nx-go svg { width: 14px; height: 14px; }
+
+    /* Etiqueta de paso en el header del bloque (orden de la ruta) */
+    .bloque-header .paso {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--ink-soft);
+      background: var(--mark-soft);
+      border-radius: 4px;
+      padding: 3px 8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ── Portón de identidad (link compartido / otro dispositivo) ── */
+    .gate { grid-template-columns: 1fr; }
+    .gate::before { content: "TU EXPEDIENTE"; }
+    .gate .onboard-cta { border: none; cursor: pointer; font-family: var(--sans); }
+    .gate-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; }
+    .gate-row[hidden] { display: none !important; }
+    .gate-ghost {
+      padding: 13px 20px;
+      background: none;
+      border: 1px solid var(--rule-strong);
+      border-radius: 10px;
+      color: var(--ink-soft);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.16s ease, color 0.16s ease;
+    }
+    .gate-ghost:hover { border-color: var(--ink); color: var(--ink); }
+    .gate-input {
+      flex: 1 1 220px;
+      min-width: 0;
+      padding: 13px 14px;
+      background: #FFFFFF;
+      border: 1px solid var(--rule-strong);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+    }
+    .gate-input::placeholder { color: #A79E8C; }
+    .gate-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--mark-soft); }
+    .gate-err { margin-top: 10px; color: #A83A22; font-size: 13px; font-weight: 500; }
+    .gate-err[hidden] { display: none !important; }
+    .gate-note { margin-top: 14px; }
+    .gate-note a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
+
+    /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
+    .onboard[hidden], .next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
+
+    @media (max-width: 640px) {
+      .onboard { grid-template-columns: 1fr; }
+      .next-card { grid-template-columns: 1fr; }
+      .next-card .thumb { max-height: 180px; }
+    }
+
+    /* ── Filtros por bloque ── */
+    .filters-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      margin: 0 calc(var(--gutter) * -1) 36px;
+      padding: 12px var(--gutter);
+      background: color-mix(in srgb, var(--paper) 88%, transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .filters {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+    .filters button {
+      flex: none;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 9px 16px;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 99px;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.12s ease;
+    }
+    .filters button:hover { border-color: var(--ink-soft); }
+    .filters button:active { transform: scale(0.97); }
+    .filters button .n {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .filters button[aria-pressed="true"] {
+      background: var(--mark);
+      border-color: var(--ink);
+    }
+    .filters button[aria-pressed="true"] .n { color: var(--ink-soft); }
+
+    /* ── Bloques ── */
+    .bloque-section { margin-bottom: 52px; }
+    .bloque-header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .bloque-header .num {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--ink);
+      border: 1px solid var(--rule-strong);
+      border-radius: 6px;
+      background: var(--card);
+      padding: 5px 9px;
+      white-space: nowrap;
+    }
+    .bloque-header h2 {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .bloque-header .meta {
+      margin-left: auto;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .bloque-bar {
+      height: 3px;
+      margin: -8px 0 14px;
+      background: var(--paper-deep);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bloque-bar i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--mark);
+      border-radius: 99px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .bloque-desc {
+      max-width: 640px;
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Ficha de sesión ── */
+    .vcard {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 13px;
+      overflow: hidden;
+      padding: 0;
+      font-family: var(--sans);
+      color: var(--ink);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      opacity: 1;
+      transform: none;
+    }
+    .vmain {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      background: none;
+      border: none;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .vdone {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(22, 19, 14, 0.22);
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+    }
+    .vdone svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--ink);
+      opacity: 0.3;
+      transition: opacity 0.18s ease;
+    }
+    .vdone:hover { border-color: var(--ink); }
+    .vdone:hover svg { opacity: 0.65; }
+    .vdone:active { transform: scale(0.92); }
+    .vcard.done .vdone { background: var(--mark); border-color: var(--ink); }
+    .vcard.done .vdone svg { opacity: 1; }
+    .vcard.done .thumb img { filter: saturate(0.55) contrast(0.96); opacity: 0.78; }
+    .vcard.done .vtitle { color: var(--ink-soft); }
+    .vcard.is-in {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .vcard.is-in:hover {
+        transform: translateY(-3px);
+        border-color: var(--ink);
+        box-shadow: 0 18px 40px -18px rgba(22, 19, 14, 0.35);
+        transition-delay: 0s;
+      }
+      .vcard.is-in:hover .play { transform: scale(1.08); background: var(--mark); }
+      .vcard.is-in:hover .play svg { fill: var(--ink); }
+      .vcard.is-in:hover .thumb img { transform: scale(1.03); }
+    }
+
+    .thumb {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: var(--paper-deep);
+    }
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .play {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(22, 19, 14, 0.4);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .play svg { width: 13px; height: 13px; fill: var(--mark); margin-left: 2px; transition: fill 0.2s ease; }
+
+    .vbody { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+    .vmeta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+    .vmeta .badge {
+      padding: 2px 7px;
+      background: var(--mark-soft);
+      border-radius: 4px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+    .vtitle {
+      font-size: 15.5px;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      line-height: 1.35;
+      text-wrap: pretty;
+    }
+
+    /* ── Estado vacío ── */
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty.visible { display: block; }
+    .empty p { font-family: var(--serif); font-size: 22px; color: var(--ink-soft); margin-bottom: 6px; }
+
+    /* ── Reproductor ── */
+    dialog.player {
+      width: min(92vw, 920px);
+      margin: auto;
+      border: none;
+      border-radius: 14px;
+      padding: 0;
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.55);
+    }
+    dialog.player::backdrop {
+      background: rgba(22, 19, 14, 0.72);
+      backdrop-filter: blur(4px);
+    }
+    .player-frame {
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .player-frame iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: none;
+    }
+    .player-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 18px;
+    }
+    .player-meta {
+      min-width: 0;
+      flex: 1;
+    }
+    .player-meta .pm-bloque {
+      color: rgba(244, 239, 230, 0.55);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .player-meta .pm-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-bar a {
+      flex: none;
+      color: var(--mark);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+    .player-bar a:hover { border-bottom-color: var(--mark); }
+    .player-close {
+      flex: none;
+      width: 34px; height: 34px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 1px solid rgba(244, 239, 230, 0.25);
+      border-radius: 50%;
+      color: var(--paper);
+      cursor: pointer;
+      transition: background 0.16s ease, border-color 0.16s ease;
+    }
+    .player-close:hover { background: rgba(244, 239, 230, 0.12); border-color: rgba(244, 239, 230, 0.5); }
+    .player-close svg { width: 13px; height: 13px; }
+
+    /* ── Bisagra: después del programa, la asesoría ── */
+    .bridge {
+      margin-top: 26px;
+      background: var(--ink);
+      color: var(--paper);
+      border-radius: 16px;
+      padding: clamp(32px, 5.5vw, 56px) clamp(22px, 4vw, 48px);
+      text-align: center;
+    }
+    .bridge-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      color: rgba(244, 239, 230, 0.55);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .bridge-eyebrow::before, .bridge-eyebrow::after {
+      content: "";
+      width: clamp(18px, 5vw, 40px);
+      height: 1px;
+      background: rgba(244, 239, 230, 0.25);
+    }
+    .bridge h2 {
+      max-width: 620px;
+      margin: 0 auto 14px;
+      font-family: var(--serif);
+      font-size: clamp(26px, 4.2vw, 42px);
+      font-weight: 560;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      text-wrap: balance;
+    }
+    .bridge h2 em { font-style: italic; font-weight: 500; color: var(--mark); }
+    .bridge p {
+      max-width: 540px;
+      margin: 0 auto;
+      color: rgba(244, 239, 230, 0.75);
+      font-size: 15.5px;
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+    .bridge-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 26px;
+      padding: 15px 28px;
+      background: var(--mark);
+      color: var(--ink);
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.18s ease, transform 0.12s ease;
+    }
+    .bridge-cta:hover { background: #FFD23F; }
+    .bridge-cta:active { transform: scale(0.985); }
+    .bridge-cta svg { width: 16px; height: 16px; transition: transform 0.18s ease; }
+    .bridge-cta:hover svg { transform: translateX(3px); }
+    .bridge-cta:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+    footer {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 20px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    footer .brand { color: var(--ink); font-weight: 600; }
+    footer nav { display: flex; gap: 18px; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+
+    .rv {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+    .rv.is-in { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      .bloque-header { flex-wrap: wrap; gap: 8px 14px; }
+      .bloque-header .meta { margin-left: 0; width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rv, .vcard { opacity: 1; transform: none; transition: none; }
+      .mk::before { transform: rotate(-0.7deg) scaleX(1); transition: none; }
+      .vcard.is-in:hover { transform: none; }
+      .thumb img, .play { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page is-in">
+
+    <div class="topbar">
+      <p class="wordmark">TR4INER <span>· PROGRAMA CERO</span></p>
+    </div>
+
+    <header class="hero">
+      <p class="hero-eyebrow rv" style="--i:0">Paso 3 de 3 · Plaza activada</p>
+      <h1 class="rv" style="--i:1" id="headline">Este es <span class="mk">tu Programa Cero</span><span id="saludo"></span>.</h1>
+      <p class="dek rv" style="--i:2" id="dek">
+        <strong><span id="total-count">18</span> sesiones en <span id="bloque-count">5</span> bloques</strong>,
+        en el orden en que las pondría tu coach. Marca cada sesión al terminarla:
+        el programa avanza contigo.
+      </p>
+      <div class="avance rv" style="--i:3" id="avance" hidden>
+        <span>Tu avance</span>
+        <span class="avance-track"><i id="avance-fill"></i></span>
+        <span class="avance-num" id="avance-num">0/18</span>
+      </div>
+      <a class="plan-chip rv" style="--i:4" id="plan-chip" href="/biblioteca/plan/" hidden>
+        <span class="dot" aria-hidden="true"></span>
+        <span id="plan-chip-text">Tu plan · <strong>0 kcal</strong></span>
+      </a>
+    </header>
+
+    <section class="onboard gate" id="gate" hidden aria-label="Confirma tu plaza">
+      <div>
+        <h2 id="gate-title"></h2>
+        <p id="gate-text"></p>
+        <div class="gate-row" id="gate-confirm" hidden>
+          <button type="button" class="onboard-cta" id="gate-yes"></button>
+          <button type="button" class="gate-ghost" id="gate-no">No soy yo</button>
+        </div>
+        <div class="gate-row" id="gate-email" hidden>
+          <input class="gate-input" id="gate-input" type="email" inputmode="email" autocomplete="email" placeholder="tu@correo.com" aria-label="Tu correo" />
+          <button type="button" class="onboard-cta" id="gate-go">Continuar</button>
+        </div>
+        <p class="gate-err" id="gate-err" hidden>Ingresa un correo válido.</p>
+        <p class="gate-note">¿Aún no tienes plaza? <a id="gate-registro" href="/biblioteca/">Inscríbete gratis</a>.</p>
+      </div>
+    </section>
+
+    <section class="onboard rv" id="onboard" hidden aria-label="Diseña tu plan">
+      <div>
+        <h2 id="onboard-title">El siguiente paso no es una sesión: <em>son tus números.</em></h2>
+        <p>Responde 4 preguntas y tu coach calcula cuánto necesitas comer y en qué orden tomar tus sesiones. Dos minutos.</p>
+      </div>
+      <a class="onboard-cta" id="onboard-cta" href="/biblioteca/plan/">
+        Diseñar mi plan
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+      </a>
+    </section>
+
+    <button type="button" class="next-card rv" id="next-card" hidden>
+      <span class="thumb">
+        <img id="nx-img" src="" alt="" loading="lazy" />
+        <span class="play" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>
+      </span>
+      <span>
+        <span class="nx-meta" id="nx-meta"></span>
+        <span class="nx-title" id="nx-title"></span>
+        <span class="nx-go">Continuar donde ibas <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg></span>
+      </span>
+    </button>
+
+    <div class="filters-wrap rv" style="--i:3">
+      <div class="filters" id="filters" role="group" aria-label="Filtrar por bloque"></div>
+    </div>
+
+    <main id="library" aria-live="polite"></main>
+
+    <div class="empty" id="empty">
+      <p>Nada por aquí.</p>
+      <span>Prueba con otro bloque.</span>
+    </div>
+
+    <section class="bridge rv" aria-label="Siguiente paso: la asesoría">
+      <p class="bridge-eyebrow">Después del bloque 05</p>
+      <h2>El siguiente bloque no es una sesión: <em>es tu plan.</em></h2>
+      <p>
+        Hasta aquí llega lo que un programa general puede hacer por ti. Si quieres el tuyo —
+        tu dieta, tu entrenamiento y un coach que revisa tu semana — eso es la asesoría de Anthoni.
+      </p>
+      <a class="bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
+        Conocer la asesoría
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+      </a>
+    </section>
+
+    <footer>
+      <span class="brand">TR4INER</span>
+      <nav aria-label="Legal">
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+      </nav>
+    </footer>
+  </div>
+
+  <dialog class="player" id="player" aria-label="Reproductor de la sesión">
+    <div class="player-frame" id="player-frame"></div>
+    <div class="player-bar">
+      <div class="player-meta">
+        <p class="pm-bloque" id="player-bloque"></p>
+        <p class="pm-title" id="player-title"></p>
+      </div>
+      <a id="player-yt" href="#" target="_blank" rel="noopener">Ver en YouTube ↗</a>
+      <button class="player-close" id="player-close" type="button" aria-label="Cerrar reproductor">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+  </dialog>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // ── Catálogo ─────────────────────────────────────────────
+      // sexo: 'all' = para ambos · 'mujer' = solo se muestra a mujeres
+      var BLOQUES = [
+        { id: 'comer',    num: '01', name: 'Cómo comer',      desc: 'La base: dieta completa, carbohidratos, ayuno y los hábitos que sabotean tu progreso.' },
+        { id: 'entrenar', num: '02', name: 'Cómo entrenar',   desc: 'Entrenar bien con el tiempo que tienes, según tu edad y tu punto de partida.' },
+        { id: 'grasa',    num: '03', name: 'Perder grasa',    desc: 'Bajar grasa sin rebote, sin pasar hambre y sin vivir castigándote.' },
+        { id: 'musculo',  num: '04', name: 'Ganar músculo',   desc: 'Fuerza, recomposición y los errores que frenan tu masa muscular.' },
+        { id: 'hormonas', num: '05', name: 'Hormonas y ciclo', desc: 'Cómo adaptar el entrenamiento a tu ciclo menstrual, con evidencia.' }
+      ];
+
+      var VIDEOS = [
+        { id: 'fJ3q8QXFb0I', bloque: 'comer',    sexo: 'all',   title: 'Así es más rápido perder grasa (dieta completa)' },
+        { id: 'bY6sAaBeGgk', bloque: 'comer',    sexo: 'all',   title: 'Pierde grasa rápido comiendo más carbohidratos' },
+        { id: 'sY3z2CGhGLY', bloque: 'comer',    sexo: 'all',   title: 'Cómo hacer ayuno para perder mucha grasa' },
+        { id: 'FMi3OprRxEk', bloque: 'comer',    sexo: 'all',   title: 'Deja de comer en las noches ahora mismo' },
+        { id: 'pNP0n7E9bFk', bloque: 'comer',    sexo: 'all',   title: 'Si comes esto antes de entrenar pierdes grasa más rápido' },
+        { id: 'pQKyl2X7bNE', bloque: 'comer',    sexo: 'all',   title: 'Comer así me ayudó a tener abdominales en 3 meses' },
+        { id: 'iv038ZlizMs', bloque: 'entrenar', sexo: 'all',   title: 'La forma más fácil de construir un cuerpo fuerte y definido' },
+        { id: 'gKV5At5iPz4', bloque: 'entrenar', sexo: 'all',   title: 'Cómo entrenar para ganar músculo si eres una persona ocupada' },
+        { id: 'RtWY67YnsAY', bloque: 'entrenar', sexo: 'mujer', title: 'El mejor entrenamiento para mujeres (según la ciencia y tu edad)' },
+        { id: 'dECDDxJTz1M', bloque: 'entrenar', sexo: 'mujer', title: 'Los mejores ejercicios para perder el doble de grasa en mujeres' },
+        { id: 'SFvwRz-q6lw', bloque: 'grasa',    sexo: 'all',   title: 'Cómo perder grasa para siempre y evitar el efecto rebote' },
+        { id: 'QgT3uXfUOm4', bloque: 'grasa',    sexo: 'all',   title: 'Por esto no puedes bajar la panza (la solución)' },
+        { id: 'brR2OZEfepQ', bloque: 'grasa',    sexo: 'all',   title: 'Pierde 10 kg de grasa sin pasar hambre (esto es lo más fácil)' },
+        { id: 'zGzFT5ZkZH4', bloque: 'grasa',    sexo: 'all',   title: 'La nueva estrategia para estar definido a los 40' },
+        { id: 'ljgAlXZAQ1A', bloque: 'musculo',  sexo: 'all',   title: 'Levanta menos peso si quieres ganar músculo' },
+        { id: 'XT227ZlIreM', bloque: 'musculo',  sexo: 'all',   title: 'Haz esto y ganarás músculo más rápido' },
+        { id: 'uRUchKIchJw', bloque: 'musculo',  sexo: 'all',   title: 'Cómo perder grasa y ganar músculo al mismo tiempo (guía paso a paso)' },
+        { id: 'T66O90E8Bkg', bloque: 'hormonas', sexo: 'mujer', title: 'Cómo entrenar según tu ciclo menstrual (según la ciencia)' }
+      ];
+
+      // ── Estado: sexo y bloque activo ─────────────────────────
+      // ClickFunnels carga esta página dentro de un iframe sin query string propia.
+      var params = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
+      var lead = {};
+      try { lead = JSON.parse(window.localStorage.getItem('tr4_lead') || '{}'); } catch (e) { /* incógnito */ }
+
+      var state = {
+        sexo: normalizeSexo(params.get('sexo') || lead.sexo),
+        bloque: 'todos'
+      };
+
+      function normalizeSexo(v) {
+        if (!v) return null;
+        v = v.toLowerCase();
+        if (v === 'mujer' || v === 'm' || v === 'female') return 'Mujer';
+        if (v === 'hombre' || v === 'h' || v === 'male') return 'Hombre';
+        return null;
+      }
+
+      // ── Identidad ────────────────────────────────────────────
+      // La URL puede traer identidad (correo DOI, saltos internos). Si el enlace
+      // se comparte o se abre en otro dispositivo NO la adoptamos a ciegas:
+      // con identidad ajena pedimos confirmación, sin identidad pedimos el correo.
+      // Tras resolver, limpiamos email/nombre de la barra de direcciones para que
+      // compartir el link no regale el expediente de nadie.
+      var urlNombre = params.get('nombre') || params.get('first_name') || '';
+      var urlEmail = String(params.get('email') || '').trim().toLowerCase();
+      var urlSexo = normalizeSexo(params.get('sexo'));
+      var storedEmail = String(lead.email || '').trim().toLowerCase();
+
+      var nombre = '';
+      var email = '';
+      var gateActivo = false;
+
+      function saveLead() {
+        try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); } catch (e) { /* incógnito */ }
+      }
+      function stripIdentityFromUrl() {
+        try {
+          var u = new URL(window.location.href);
+          ['email', 'nombre', 'first_name', 'name'].forEach(function (k) { u.searchParams.delete(k); });
+          window.history.replaceState(null, '', u.toString());
+        } catch (e) { /* iframe de ClickFunnels u origen raro */ }
+      }
+      // Cambiar de persona = expediente nuevo: se borra plan y progreso locales.
+      function clearIdentity() {
+        ['tr4_lead', 'tr4_plan', 'tr4_progreso', 'tr4_activada', 'tr4_last_visit'].forEach(function (k) {
+          try { window.localStorage.removeItem(k); } catch (e) { /* incógnito */ }
+        });
+        lead = {};
+        plan = null;
+        progreso = [];
+      }
+      function primerNombre(n) { return String(n || '').trim().split(' ')[0]; }
+      function maskEmail(e) {
+        var p = String(e).split('@');
+        return p[0].slice(0, 1) + '•••@' + (p[1] || '');
+      }
+
+      // ── Plan del test de macros (si ya lo hizo) ──
+      var plan = null;
+      try { plan = JSON.parse(window.localStorage.getItem('tr4_plan') || 'null'); } catch (e) { /* incógnito */ }
+      if (plan && (!plan.kcal || !plan.ruta)) plan = null;
+
+      // ── Eventos de actividad (lead scoring) ──
+      function track(event, props) {
+        if (window.TR4Track && TR4Track.track) TR4Track.track(event, props);
+      }
+      function flagOnce(key) {
+        try {
+          if (window.localStorage.getItem(key)) return false;
+          window.localStorage.setItem(key, '1');
+          return true;
+        } catch (e) { return false; }
+      }
+      function emitirEventosDeVisita() {
+        if (!lead.email) return;
+        // Primera visita con plaza activada; los retornos puntúan por día calendario.
+        var hoy = new Date().toISOString().slice(0, 10);
+        var lastVisit = null;
+        try { lastVisit = window.localStorage.getItem('tr4_last_visit'); } catch (e) { /* incógnito */ }
+        if (flagOnce('tr4_activada')) {
+          track('plaza_activada');
+        } else if (lastVisit && lastVisit !== hoy) {
+          track('visita_retorno');
+        }
+        try { window.localStorage.setItem('tr4_last_visit', hoy); } catch (e) { /* incógnito */ }
+      }
+
+      function aplicarIdentidad() {
+        nombre = lead.nombre || '';
+        email = lead.email || '';
+        state.sexo = normalizeSexo(lead.sexo) || state.sexo;
+        document.getElementById('saludo').textContent = nombre ? ', ' + primerNombre(nombre) : '';
+        emitirEventosDeVisita();
+        stripIdentityFromUrl();
+      }
+
+      // ── Portón de identidad ──
+      var gateCase = null;
+      function mostrarGate(caso) {
+        gateActivo = true;
+        gateCase = caso;
+        var gate = document.getElementById('gate');
+        var title = document.getElementById('gate-title');
+        var text = document.getElementById('gate-text');
+        var yes = document.getElementById('gate-yes');
+        var no = document.getElementById('gate-no');
+        document.getElementById('gate-confirm').hidden = caso === 'email';
+        document.getElementById('gate-email').hidden = caso !== 'email';
+        document.getElementById('gate-err').hidden = true;
+
+        var urlFirst = primerNombre(urlNombre);
+        if (caso === 'nuevo') {
+          title.textContent = urlFirst
+            ? 'Esta plaza está a nombre de ' + urlFirst + '.'
+            : '¿Esta plaza es tuya?';
+          text.textContent = (urlFirst ? 'Si eres tú, seguimos con tu avance donde lo dejaste. ' : 'Este acceso pertenece a ' + maskEmail(urlEmail) + '. ') +
+            'Si no es tu plaza, abre tu propio expediente: es gratis.';
+          yes.textContent = urlFirst ? 'Sí, soy ' + urlFirst : 'Sí, es mi correo';
+          no.textContent = 'No soy yo';
+        } else if (caso === 'conflicto') {
+          var storedFirst = primerNombre(lead.nombre) || maskEmail(storedEmail);
+          title.textContent = 'Este enlace pertenece a otra plaza.';
+          text.textContent = 'En este dispositivo está abierto el expediente de ' + storedFirst +
+            '. ¿Quieres cambiar a la plaza de ' + (urlFirst || maskEmail(urlEmail)) + '? Cambiar borra el plan y el avance guardados aquí.';
+          yes.textContent = 'Cambiar a ' + (urlFirst || 'esa plaza');
+          no.textContent = 'Seguir como ' + storedFirst;
+        } else {
+          title.textContent = 'Abre tu expediente.';
+          text.textContent = 'Escribe el correo con el que reservaste tu plaza: así tu avance y tu plan te siguen en cualquier dispositivo.';
+        }
+        gate.hidden = false;
+        gate.classList.add('is-in');
+      }
+
+      function resolverGate() {
+        gateActivo = false;
+        document.getElementById('gate').hidden = true;
+        aplicarIdentidad();
+        renderOnboard();
+        renderFilters();
+        renderLibrary();
+        renderNextCard();
+        updateBridge();
+      }
+
+      function resolverIdentidad() {
+        if (urlEmail && storedEmail && urlEmail !== storedEmail) {
+          mostrarGate('conflicto');
+          return false;
+        }
+        if (urlEmail && !storedEmail) {
+          mostrarGate('nuevo');
+          return false;
+        }
+        if (!urlEmail && !storedEmail) {
+          mostrarGate('email');
+          return false;
+        }
+        if (urlNombre) lead.nombre = urlNombre;
+        if (urlSexo) lead.sexo = urlSexo;
+        saveLead();
+        aplicarIdentidad();
+        return true;
+      }
+
+      document.getElementById('gate-yes').addEventListener('click', function () {
+        if (gateCase === 'conflicto') clearIdentity();
+        lead.email = urlEmail;
+        if (urlNombre) lead.nombre = urlNombre;
+        if (urlSexo) lead.sexo = urlSexo;
+        saveLead();
+        resolverGate();
+      });
+      document.getElementById('gate-no').addEventListener('click', function () {
+        if (gateCase === 'conflicto') {
+          // Se queda con su expediente local; la identidad de la URL se descarta.
+          stripIdentityFromUrl();
+          resolverGate();
+          return;
+        }
+        clearIdentity();
+        stripIdentityFromUrl();
+        mostrarGate('email');
+      });
+      document.getElementById('gate-go').addEventListener('click', function () {
+        var v = document.getElementById('gate-input').value.trim().toLowerCase();
+        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        document.getElementById('gate-err').hidden = ok;
+        if (!ok) return;
+        lead.email = v;
+        saveLead();
+        resolverGate();
+      });
+      document.getElementById('gate-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('gate-go').click();
+      });
+
+      // ── Helpers de visibilidad ───────────────────────────────
+      function videoVisible(v) {
+        if (state.sexo === 'Hombre' && v.sexo === 'mujer') return false;
+        return true;
+      }
+      function videosDe(bloqueId) {
+        return VIDEOS.filter(function (v) { return v.bloque === bloqueId && videoVisible(v); });
+      }
+      function totalVisible() {
+        return VIDEOS.filter(videoVisible).length;
+      }
+      // Con plan hecho, los bloques se muestran en el orden de la ruta personalizada.
+      function bloquesOrdenados() {
+        if (!plan || !plan.ruta) return BLOQUES;
+        var orden = plan.ruta;
+        return BLOQUES.slice().sort(function (a, b) {
+          var ia = orden.indexOf(a.id), ib = orden.indexOf(b.id);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+        });
+      }
+
+      // ── Progreso de sesiones (persistente) ──
+      var PROGRESO_KEY = 'tr4_progreso';
+      var progreso = [];
+      try { progreso = JSON.parse(window.localStorage.getItem(PROGRESO_KEY) || '[]'); } catch (e) { /* incógnito */ }
+      if (!Array.isArray(progreso)) progreso = [];
+
+      function isDone(id) { return progreso.indexOf(id) !== -1; }
+      function saveProgreso() {
+        try { window.localStorage.setItem(PROGRESO_KEY, JSON.stringify(progreso)); } catch (e) { /* incógnito */ }
+      }
+      function toggleDone(id) {
+        var i = progreso.indexOf(id);
+        if (i === -1) progreso.push(id); else progreso.splice(i, 1);
+        saveProgreso();
+      }
+      function doneIn(vids) {
+        return vids.filter(function (v) { return isDone(v.id); }).length;
+      }
+
+      // Completar una sesión emite el evento de scoring; si cierra su bloque, también.
+      // El servidor deduplica por id, así que re-marcar no infla el score.
+      function emitirCompletada(v, modo) {
+        track('sesion_completada', { sesion: v.id, bloque: v.bloque, modo: modo });
+        var vids = videosDe(v.bloque);
+        if (vids.length && doneIn(vids) === vids.length) {
+          track('bloque_completado', { bloque: v.bloque });
+        }
+      }
+      // Autocompletado desde el reproductor (≥85% vista de verdad).
+      function completarAuto(v) {
+        if (isDone(v.id)) return;
+        progreso.push(v.id);
+        saveProgreso();
+        emitirCompletada(v, 'auto');
+        renderLibrary();
+        renderNextCard();
+        updateBridge();
+      }
+
+      function updateProgressUI() {
+        BLOQUES.forEach(function (b) {
+          var meta = document.querySelector('[data-meta="' + b.id + '"]');
+          if (!meta) return;
+          var vids = videosDe(b.id);
+          var d = doneIn(vids);
+          meta.textContent = d + '/' + vids.length + ' sesiones';
+          var fill = document.querySelector('[data-bar="' + b.id + '"]');
+          if (fill) fill.style.width = (vids.length ? (d / vids.length) * 100 : 0) + '%';
+        });
+        var visibles = VIDEOS.filter(videoVisible);
+        var d = doneIn(visibles);
+        var avance = document.getElementById('avance');
+        avance.hidden = d === 0;
+        if (!avance.hidden) avance.classList.add('is-in');
+        document.getElementById('avance-num').textContent = d + '/' + visibles.length;
+        document.getElementById('avance-fill').style.width = (visibles.length ? (d / visibles.length) * 100 : 0) + '%';
+      }
+
+      // ── Render de filtros ────────────────────────────────────
+      var filtersEl = document.getElementById('filters');
+
+      function renderFilters() {
+        filtersEl.innerHTML = '';
+        var todos = mkFilterBtn('todos', plan ? 'Tu ruta completa' : 'Todo el programa', totalVisible());
+        filtersEl.appendChild(todos);
+        bloquesOrdenados().forEach(function (b) {
+          var n = videosDe(b.id).length;
+          if (n === 0) return;
+          filtersEl.appendChild(mkFilterBtn(b.id, 'B' + parseInt(b.num, 10) + ' · ' + b.name, n));
+        });
+      }
+
+      function mkFilterBtn(id, label, count) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('aria-pressed', String(state.bloque === id));
+        btn.innerHTML = '<span>' + label + '</span><span class="n">' + count + '</span>';
+        btn.addEventListener('click', function () {
+          state.bloque = id;
+          renderFilters();
+          renderLibrary();
+        });
+        return btn;
+      }
+
+      // ── Render de la biblioteca ──────────────────────────────
+      var libraryEl = document.getElementById('library');
+      var emptyEl = document.getElementById('empty');
+
+      // Reveals: se revelan al entrar en el viewport
+      function checkReveals() {
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        document.querySelectorAll('.rv:not(.is-in), .vcard:not(.is-in)').forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-in');
+        });
+      }
+      window.addEventListener('scroll', checkReveals, { passive: true });
+      window.addEventListener('resize', checkReveals, { passive: true });
+
+      function renderLibrary() {
+        libraryEl.innerHTML = '';
+        var shown = 0;
+
+        var enRuta = bloquesOrdenados();
+        enRuta.forEach(function (b, orden) {
+          if (state.bloque !== 'todos' && state.bloque !== b.id) return;
+          var vids = videosDe(b.id);
+          if (vids.length === 0) return;
+          shown += vids.length;
+
+          var section = document.createElement('section');
+          section.className = 'bloque-section';
+          section.setAttribute('aria-label', 'Bloque ' + b.num + ': ' + b.name);
+
+          var paso = plan
+            ? '<span class="paso">Paso ' + String(orden + 1).padStart(2, '0') + ' de tu ruta</span>'
+            : '';
+          var header = document.createElement('div');
+          header.className = 'bloque-header';
+          header.innerHTML =
+            '<span class="num">BLOQUE ' + b.num + '</span>' +
+            '<h2>' + b.name + '</h2>' + paso +
+            '<span class="meta" data-meta="' + b.id + '"></span>';
+          section.appendChild(header);
+
+          var bar = document.createElement('div');
+          bar.className = 'bloque-bar';
+          bar.innerHTML = '<i data-bar="' + b.id + '"></i>';
+          section.appendChild(bar);
+
+          var desc = document.createElement('p');
+          desc.className = 'bloque-desc';
+          desc.textContent = b.desc;
+          section.appendChild(desc);
+
+          var grid = document.createElement('div');
+          grid.className = 'grid';
+
+          vids.forEach(function (v, i) {
+            grid.appendChild(mkCard(v, b, i));
+          });
+
+          section.appendChild(grid);
+          libraryEl.appendChild(section);
+        });
+
+        emptyEl.classList.toggle('visible', shown === 0);
+        requestAnimationFrame(checkReveals);
+        setTimeout(checkReveals, 250);
+
+        // Actualiza el resumen del hero (con plan hecho, renderOnboard reescribe
+        // el dek y estos spans desaparecen — de ahí los guards)
+        var totalCount = document.getElementById('total-count');
+        if (totalCount) totalCount.textContent = totalVisible();
+        var bloqueCount = document.getElementById('bloque-count');
+        if (bloqueCount) bloqueCount.textContent = BLOQUES.filter(function (b) {
+          return videosDe(b.id).length > 0;
+        }).length;
+
+        updateProgressUI();
+      }
+
+      function mkCard(v, b, index) {
+        var card = document.createElement('article');
+        card.className = 'vcard' + (isDone(v.id) ? ' done' : '');
+        card.style.setProperty('--i', index % 6);
+
+        var badge = (v.sexo === 'mujer' && state.sexo !== 'Hombre')
+          ? '<span class="badge">Para mujeres</span>' : '';
+
+        card.innerHTML =
+          '<button type="button" class="vmain" aria-label="Ver sesión: ' + v.title + '">' +
+            '<span class="thumb">' +
+              '<img src="https://i.ytimg.com/vi/' + v.id + '/maxresdefault.jpg" alt="" loading="lazy" ' +
+                'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\'" />' +
+              '<span class="play" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
+            '</span>' +
+            '<span class="vbody">' +
+              '<span class="vmeta"><span>B' + parseInt(b.num, 10) + ' · Sesión ' + (index + 1) + '</span>' + badge + '</span>' +
+              '<span class="vtitle">' + v.title + '</span>' +
+            '</span>' +
+          '</button>' +
+          '<button type="button" class="vdone" aria-pressed="' + isDone(v.id) + '" aria-label="Marcar la sesión «' + v.title + '» como completada">' +
+            '<svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6.5"/></svg>' +
+          '</button>';
+
+        card.querySelector('.vmain').addEventListener('click', function () { openPlayer(v, b); });
+        card.querySelector('.vdone').addEventListener('click', function () {
+          toggleDone(v.id);
+          var done = isDone(v.id);
+          card.classList.toggle('done', done);
+          this.setAttribute('aria-pressed', String(done));
+          if (done) emitirCompletada(v, 'manual');
+          updateProgressUI();
+          renderNextCard();
+          updateBridge();
+        });
+        return card;
+      }
+
+      // ── Reproductor (IFrame API: mide reproducción real) ────
+      var player = document.getElementById('player');
+      var playerFrame = document.getElementById('player-frame');
+      var ytLoading = false;
+      var ytPlayer = null;
+      var pollTimer = null;
+      var openId = 0;
+
+      // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
+      // caemos al iframe simple de siempre — se ve el video, sin autocompletar.
+      function loadYT(cb) {
+        if (window.YT && window.YT.Player) { cb(true); return; }
+        if (!ytLoading) {
+          ytLoading = true;
+          var tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          document.head.appendChild(tag);
+        }
+        var prev = window.onYouTubeIframeAPIReady;
+        var done = false;
+        function finish(ok) { if (!done) { done = true; cb(ok); } }
+        window.onYouTubeIframeAPIReady = function () {
+          if (prev) prev();
+          finish(true);
+        };
+        setTimeout(function () { finish(!!(window.YT && window.YT.Player)); }, 2500);
+      }
+
+      function stopPoll() {
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+      }
+      function startPoll(v) {
+        stopPoll();
+        pollTimer = setInterval(function () {
+          try {
+            if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+            var d = ytPlayer.getDuration();
+            var t = ytPlayer.getCurrentTime();
+            if (d > 0 && t / d >= 0.85) {
+              completarAuto(v);
+              stopPoll();
+            }
+          } catch (e) { /* player en transición */ }
+        }, 5000);
+      }
+
+      function plainIframe(v) {
+        playerFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + v.id +
+          '?autoplay=1&rel=0" title="' + v.title.replace(/"/g, '&quot;') + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+      }
+
+      function openPlayer(v, b) {
+        var myOpen = ++openId;
+        track('sesion_play', { sesion: v.id, bloque: v.bloque });
+        document.getElementById('player-bloque').textContent = 'BLOQUE ' + b.num + ' · ' + b.name.toUpperCase();
+        document.getElementById('player-title').textContent = v.title;
+        document.getElementById('player-yt').href = 'https://www.youtube.com/watch?v=' + v.id;
+        playerFrame.innerHTML = '<div id="yt-target"></div>';
+        player.showModal();
+        loadYT(function (ok) {
+          if (myOpen !== openId || !player.open) return;
+          if (ok) {
+            ytPlayer = new YT.Player('yt-target', {
+              videoId: v.id,
+              host: 'https://www.youtube-nocookie.com',
+              playerVars: { autoplay: 1, rel: 0 },
+              events: {
+                onStateChange: function (ev) {
+                  if (ev.data === YT.PlayerState.PLAYING) startPoll(v);
+                  if (ev.data === YT.PlayerState.ENDED) { completarAuto(v); stopPoll(); }
+                }
+              }
+            });
+          } else {
+            plainIframe(v);
+          }
+        });
+      }
+      function closePlayer() {
+        player.close();
+      }
+      player.addEventListener('close', function () {
+        stopPoll();
+        if (ytPlayer && typeof ytPlayer.destroy === 'function') {
+          try { ytPlayer.destroy(); } catch (e) { /* ya destruido */ }
+        }
+        ytPlayer = null;
+        playerFrame.innerHTML = '';
+      });
+      document.getElementById('player-close').addEventListener('click', closePlayer);
+      player.addEventListener('click', function (e) {
+        if (e.target === player) closePlayer();
+      });
+
+      // ── URL del wizard del plan, con identidad + atribución ──
+      function planUrl() {
+        var base = new URL('/biblioteca/plan/', window.location.origin);
+        var p = new URLSearchParams();
+        if (lead.nombre) p.set('nombre', lead.nombre);
+        if (lead.email) p.set('email', lead.email);
+        if (state.sexo) p.set('sexo', state.sexo);
+        var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
+        Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
+        base.search = p.toString().replace(/%40/g, '@');
+        return base.toString();
+      }
+
+      // ── Onboarding: sin plan, el primer paso son sus números ──
+      var OBJ_LABEL = { PG: 'perder grasa', MM: 'ganar músculo', MA: 'tu recomposición' };
+      function renderOnboard() {
+        var onboard = document.getElementById('onboard');
+        var chip = document.getElementById('plan-chip');
+        if (gateActivo) {
+          // Con el portón abierto no personalizamos nada: primero la identidad.
+          onboard.hidden = true;
+          chip.hidden = true;
+          return;
+        }
+        if (!plan) {
+          onboard.hidden = false;
+          onboard.classList.add('is-in');
+          document.getElementById('onboard-cta').href = planUrl();
+          chip.hidden = true;
+          return;
+        }
+        onboard.hidden = true;
+        chip.hidden = false;
+        chip.classList.add('is-in');
+        chip.href = planUrl();
+        document.getElementById('plan-chip-text').innerHTML =
+          'Tu plan · <strong>' + plan.kcal.toLocaleString('es') + ' kcal</strong> · P' +
+          plan.proteinas + ' C' + plan.carbohidratos + ' G' + plan.grasas;
+        document.getElementById('dek').innerHTML =
+          '<strong>' + totalVisible() + ' sesiones en ' + bloquesOrdenados().filter(function (b) {
+            return videosDe(b.id).length > 0;
+          }).length + ' bloques</strong>, ordenadas para <strong>' + OBJ_LABEL[plan.objetivo] +
+          '</strong>. Marca cada sesión al terminarla: tu coach ve tu avance.';
+      }
+
+      // ── Tu siguiente sesión (primera pendiente de la ruta) ──
+      var nextCardEl = document.getElementById('next-card');
+      var nextVideo = null;
+      var nextBloque = null;
+      function renderNextCard() {
+        if (!plan) { nextCardEl.hidden = true; return; }
+        nextVideo = null;
+        nextBloque = null;
+        bloquesOrdenados().some(function (b) {
+          return videosDe(b.id).some(function (v) {
+            if (!isDone(v.id)) { nextVideo = v; nextBloque = b; return true; }
+            return false;
+          });
+        });
+        if (!nextVideo) { nextCardEl.hidden = true; return; }
+        nextCardEl.hidden = false;
+        nextCardEl.classList.add('is-in');
+        var img = document.getElementById('nx-img');
+        img.src = 'https://i.ytimg.com/vi/' + nextVideo.id + '/maxresdefault.jpg';
+        img.onerror = function () { this.onerror = null; this.src = 'https://i.ytimg.com/vi/' + nextVideo.id + '/hqdefault.jpg'; };
+        document.getElementById('nx-meta').textContent = 'BLOQUE ' + nextBloque.num + ' · ' + nextBloque.name.toUpperCase();
+        document.getElementById('nx-title').textContent = nextVideo.title;
+      }
+      nextCardEl.addEventListener('click', function () {
+        if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
+      });
+
+      // ── Bisagra a la asesoría: escala con el compromiso del lead ──
+      // A (sin plan): puerta genérica · B (plan hecho): habla con sus números ·
+      // C (plan + trabajo real): prueba social por sexo — este clic lo marca SQL.
+      function estadoBisagra() {
+        if (!plan) return 'A';
+        var ses = doneIn(VIDEOS.filter(videoVisible));
+        var bloqueCompleto = BLOQUES.some(function (b) {
+          var vids = videosDe(b.id);
+          return vids.length > 0 && doneIn(vids) === vids.length;
+        });
+        return (bloqueCompleto || ses >= 3) ? 'C' : 'B';
+      }
+
+      function updateBridge() {
+        var estado = estadoBisagra();
+        var bridge = document.querySelector('.bridge');
+        var eyebrow = bridge.querySelector('.bridge-eyebrow');
+        var h2 = bridge.querySelector('h2');
+        var para = bridge.querySelector('p:not(.bridge-eyebrow)');
+        var cta = document.getElementById('bridge-cta');
+        var testigo = state.sexo === 'Mujer' ? 'Flor' : 'Dashiel';
+
+        if (estado === 'B') {
+          eyebrow.textContent = 'Tu plan ya existe';
+          h2.innerHTML = 'Ya sabes tus <em>' + plan.kcal.toLocaleString('es') + ' kcal</em>. La asesoría es ejecutarlas contigo.';
+          para.textContent = 'El Programa Cero te dio el mapa: tus calorías, tus macros y tu ruta. ' +
+            'En la asesoría, Anthoni convierte esos números en tu dieta y tu semana de entrenamiento, con revisión cada semana.';
+          cta.firstChild.textContent = 'Conocer la asesoría ';
+        } else if (estado === 'C') {
+          eyebrow.textContent = 'Tu plaza en asesoría';
+          h2.innerHTML = 'Hiciste tu parte. <em>Ahora te toca un plan con tu nombre.</em>';
+          para.textContent = testigo + ' empezó exactamente donde estás tú: con sus números claros y las primeras sesiones hechas. ' +
+            'Mira cómo pasó de ahí a su resultado con la asesoría de Anthoni.';
+          cta.firstChild.textContent = 'Ver el caso de ' + testigo + ' ';
+        }
+
+        var base = new URL(
+          state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
+          window.location.origin
+        );
+        var p = new URLSearchParams();
+        if (lead.nombre || nombre) p.set('first_name', lead.nombre || nombre);
+        if (lead.email || email) p.set('email', lead.email || email);
+        if (state.sexo) p.set('sexo', state.sexo);
+        var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
+        Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
+        var q = p.toString().replace(/%40/g, '@');
+        base.search = q;
+        cta.href = base.toString();
+        cta.setAttribute('data-estado', estado);
+      }
+
+      document.getElementById('bridge-cta').addEventListener('click', function () {
+        track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
+      });
+
+      var bridgeVisto = false;
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting && !bridgeVisto) {
+              bridgeVisto = true;
+              track('bisagra_view', { estado: estadoBisagra() });
+              obs.disconnect();
+            }
+          });
+        }, { threshold: 0.4 }).observe(document.querySelector('.bridge'));
+      }
+
+      // ── Arranque ─────────────────────────────────────────────
+      resolverIdentidad();
+      (function fixRegistroLink() {
+        var base = new URL('/biblioteca/', window.location.origin);
+        var p = new URLSearchParams();
+        var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
+        Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
+        base.search = p.toString();
+        document.getElementById('gate-registro').href = base.toString();
+      })();
+      renderOnboard();
+      renderFilters();
+      renderLibrary();
+      renderNextCard();
+      updateBridge();
+      requestAnimationFrame(checkReveals);
+      setTimeout(checkReveals, 250);
+    })();
+  </script>
+</body>
+</html>

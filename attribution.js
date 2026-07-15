@@ -17,7 +17,9 @@
   }
 
   function params() {
-    return new URLSearchParams(window.location.search);
+    // Los embeds ClickFunnels inyectan la query del documento padre porque un
+    // iframe srcdoc no conserva por sí solo esos parámetros.
+    return new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
   }
 
   function safeGetStored(key) {
