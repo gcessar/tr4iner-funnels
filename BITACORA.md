@@ -640,6 +640,12 @@ YouTube ya no permite eliminar por parámetro el título, avatar, logo o enlaces
 - Barra de reproducción original preservada; no se agregaron controles TR4INER alternativos.
 - Autocompletado al 85%, cierre del modal y fallback sin cambios funcionales.
 
+### Deploy
+- Preview `dpl_31JsDDNHtLskRoFEgVhnRASt8pDM` verificado en estado `READY`.
+- Producción `dpl_81RzFb3wqvunr6YMHzuHwyfG2C4e` publicada en `tr4iner-funnels`, estado `READY` y alias `https://tr4iner-funnel-casos-estudio.vercel.app`.
+- Paquete curado de 22 archivos: conserva las 20 piezas canónicas anteriores, agrega las dos láminas WebP y excluye `.md`, generadores y versiones ClickFunnels temporales.
+- `/biblioteca/videos/`, `/biblioteca/plan/` y ambos assets de grasa responden `200` desde el alias público.
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
