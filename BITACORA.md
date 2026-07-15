@@ -601,6 +601,45 @@ Producción publicada el 2026-07-15: `dpl_TzNoZ6XyYfHGos8acsCxuFPjQHVV` (`READY`
 ### Límite
 No se modificó el workflow n8n. La comprobación visual de Biblioteca pudo emitir un `biblioteca_view` anónimo por caché del navegador; no llevaba email ni datos de lead.
 
+## 2026-07-15 — Biblioteca: test obligatorio, grasa visual y desbloqueo guiado
+
+### Qué cambió
+- La pregunta de punto de partida ahora acepta todas las respuestas que correspondan y exige al menos una antes de avanzar.
+- El porcentaje de grasa pasó a ser obligatorio y se elige con un slider exacto de 1% en 1%, con referencias corporales realistas distintas para mujer y hombre. El cálculo usa siempre Katch-McArdle y guarda/envía el porcentaje elegido.
+- Las dos láminas generadas se sirven como WebP de 66/73 KB para no castigar la carga móvil.
+- Sin un plan calculado, `/biblioteca/videos/` oculta sesiones, filtros y bisagra: el lead ve únicamente el paso para diseñar su plan.
+- Al completar el test se muestra el resultado y el CTA `Ver mi ruta`; al entrar por primera vez a la Biblioteca desbloqueada aparece un tour nativo de 3 pasos, descartable y persistido en `localStorage`.
+
+### Por qué
+El test deja de ser una recomendación secundaria y se convierte en el onboarding real del Programa Cero. La selección visual reduce el abandono por desconocer el porcentaje de grasa, y el desbloqueo convierte el cálculo en una acción con recompensa clara.
+
+### Verificación
+- Flujo completo probado en navegador: selección múltiple, slider obligatorio, Katch-McArdle, resultado, desbloqueo y tour.
+- Estado sin plan comprobado: `program-content` oculto y único CTA hacia el test.
+- Responsive validado en 375, 768 y 1280 px sin overflow; grid de sesiones 1/2/3 columnas.
+- Sintaxis JavaScript válida, consola sin errores y `git diff --check` limpio.
+
+### Resultado esperado
+Mayor tasa de finalización del test, mejor calidad del dato de grasa corporal y más leads que empiezan su primera sesión con una ruta entendida.
+
+### Resultado medido (completar después)
+- % de leads que mueven el slider y completan el test.
+- % de leads que cierran el tour e inician la primera sesión.
+
+## 2026-07-15 — Biblioteca: interfaz de YouTube reducida sin cambiar la reproducción
+
+### Qué cambió
+- El reproductor conserva la barra nativa y el comportamiento anterior.
+- La carga por IFrame API agrega `playsinline=1`, `rel=0` e `iv_load_policy=3`: evita anotaciones, mantiene la reproducción dentro de móvil y limita las recomendaciones finales al mismo canal.
+- El iframe de respaldo usa los mismos parámetros cuando la API es bloqueada por un adblocker.
+
+### Límite real
+YouTube ya no permite eliminar por parámetro el título, avatar, logo o enlaces de su reproductor. Pueden reaparecer al tocar, pausar o terminar el video; cubrirlos con capas propias rompería interacción y políticas del reproductor.
+
+### Verificación
+- Barra de reproducción original preservada; no se agregaron controles TR4INER alternativos.
+- Autocompletado al 85%, cierre del modal y fallback sin cambios funcionales.
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

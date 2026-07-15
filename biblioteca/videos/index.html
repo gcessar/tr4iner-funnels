@@ -377,6 +377,7 @@
 
     /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
     .onboard[hidden], .next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
+    #program-content[hidden] { display: none !important; }
 
     @media (max-width: 640px) {
       .onboard { grid-template-columns: 1fr; }
@@ -787,6 +788,64 @@
     .bridge-cta:hover svg { transform: translateX(3px); }
     .bridge-cta:focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
 
+    /* Tour nativo: tres focos, cero dependencia extra para una página estática. */
+    .tour {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      pointer-events: none;
+      overscroll-behavior: contain;
+    }
+    .tour[hidden] { display: none !important; }
+    .tour-spot {
+      position: fixed;
+      border: 2px solid var(--mark);
+      border-radius: 14px;
+      box-shadow: 0 0 0 9999px rgba(22, 19, 14, 0.76);
+    }
+    .tour-card {
+      position: fixed;
+      width: min(340px, calc(100vw - 32px));
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid var(--ink);
+      border-radius: 12px;
+      color: var(--ink);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+      pointer-events: auto;
+    }
+    .tour-count {
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .tour-card h2 {
+      margin-bottom: 6px;
+      font-family: var(--serif);
+      font-size: 23px;
+      font-weight: 560;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .tour-card > p:not(.tour-count) { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .tour-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; }
+    .tour-skip, .tour-next { font-family: var(--sans); cursor: pointer; }
+    .tour-skip { padding: 9px 0; background: none; border: none; color: var(--muted); font-size: 13.5px; }
+    .tour-skip:hover { color: var(--ink); }
+    .tour-next {
+      padding: 11px 17px;
+      background: var(--mark);
+      border: 1px solid var(--ink);
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
     footer {
       margin-top: 24px;
       padding-top: 22px;
@@ -840,7 +899,7 @@
     </div>
 
     <header class="hero">
-      <p class="hero-eyebrow rv" style="--i:0">Paso 3 de 3 · Plaza activada</p>
+      <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Paso 3 de 3 · Plaza activada</p>
       <h1 class="rv" style="--i:1" id="headline">Este es <span class="mk">tu Programa Cero</span><span id="saludo"></span>.</h1>
       <p class="dek rv" style="--i:2" id="dek">
         <strong><span id="total-count">18</span> sesiones en <span id="bloque-count">5</span> bloques</strong>,
@@ -886,6 +945,7 @@
       </a>
     </section>
 
+    <div id="program-content" hidden>
     <button type="button" class="next-card rv" id="next-card" hidden>
       <span class="thumb">
         <img id="nx-img" src="" alt="" loading="lazy" />
@@ -921,6 +981,7 @@
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </a>
     </section>
+    </div>
 
     <footer>
       <span class="brand">TR4INER</span>
@@ -944,6 +1005,19 @@
       </button>
     </div>
   </dialog>
+
+  <div class="tour" id="tour" hidden aria-hidden="true">
+    <div class="tour-spot" id="tour-spot" aria-hidden="true"></div>
+    <section class="tour-card" id="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
+      <p class="tour-count" id="tour-count"></p>
+      <h2 id="tour-title"></h2>
+      <p id="tour-text"></p>
+      <div class="tour-actions">
+        <button type="button" class="tour-skip" id="tour-skip">Omitir</button>
+        <button type="button" class="tour-next" id="tour-next">Siguiente</button>
+      </div>
+    </section>
+  </div>
 
   <script src="/attribution.js"></script>
   <script>
@@ -1126,6 +1200,7 @@
         renderLibrary();
         renderNextCard();
         updateBridge();
+        maybeStartTour();
       }
 
       function resolverIdentidad() {
@@ -1450,7 +1525,8 @@
 
       function plainIframe(v) {
         playerFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + v.id +
-          '?autoplay=1&rel=0" title="' + v.title.replace(/"/g, '&quot;') + '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+          '?autoplay=1&rel=0&playsinline=1&iv_load_policy=3" title="' + v.title.replace(/"/g, '&quot;') +
+          '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
       }
 
       function openPlayer(v, b) {
@@ -1467,11 +1543,20 @@
             ytPlayer = new YT.Player('yt-target', {
               videoId: v.id,
               host: 'https://www.youtube-nocookie.com',
-              playerVars: { autoplay: 1, rel: 0 },
+              playerVars: {
+                autoplay: 1,
+                playsinline: 1,
+                rel: 0,
+                iv_load_policy: 3,
+                origin: window.location.origin
+              },
               events: {
                 onStateChange: function (ev) {
                   if (ev.data === YT.PlayerState.PLAYING) startPoll(v);
-                  if (ev.data === YT.PlayerState.ENDED) { completarAuto(v); stopPoll(); }
+                  if (ev.data === YT.PlayerState.ENDED) {
+                    completarAuto(v);
+                    stopPoll();
+                  }
                 }
               }
             });
@@ -1480,6 +1565,7 @@
           }
         });
       }
+
       function closePlayer() {
         player.close();
       }
@@ -1514,6 +1600,8 @@
       function renderOnboard() {
         var onboard = document.getElementById('onboard');
         var chip = document.getElementById('plan-chip');
+        var program = document.getElementById('program-content');
+        program.hidden = gateActivo || !plan;
         if (gateActivo) {
           // Con el portón abierto no personalizamos nada: primero la identidad.
           onboard.hidden = true;
@@ -1521,6 +1609,10 @@
           return;
         }
         if (!plan) {
+          document.getElementById('hero-eyebrow').textContent = 'Paso obligatorio · 2 minutos';
+          document.getElementById('headline').innerHTML = 'Primero diseñemos <span class="mk">tu plan</span><span id="saludo"></span>.';
+          document.getElementById('dek').textContent =
+            'Calcula tus calorías y macros. Cuando termines, se desbloquean tus sesiones en el orden correcto para ti.';
           onboard.hidden = false;
           onboard.classList.add('is-in');
           document.getElementById('onboard-cta').href = planUrl();
@@ -1528,6 +1620,7 @@
           return;
         }
         onboard.hidden = true;
+        program.hidden = false;
         chip.hidden = false;
         chip.classList.add('is-in');
         chip.href = planUrl();
@@ -1624,6 +1717,108 @@
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
       });
 
+      // ── Tour de primera entrada ─────────────────────────────
+      var TOUR_KEY = 'tr4_tour_programa_cero_v1';
+      var tourIndex = 0;
+      var tourTimer = null;
+      var tourSteps = [
+        {
+          target: '#next-card',
+          title: 'Empieza por esta sesión.',
+          text: 'Tu ruta ya está ordenada. Esta tarjeta siempre te devuelve a la siguiente sesión pendiente.'
+        },
+        {
+          target: '.filters-wrap',
+          title: 'Esta es tu ruta.',
+          text: 'Puedes ver el programa completo o entrar directo a un bloque. El orden responde a tu objetivo.'
+        },
+        {
+          target: '.vcard .vdone',
+          title: 'Marca lo que terminas.',
+          text: 'Este check guarda tu avance. Al volver, el programa sabe exactamente por dónde continuar.'
+        }
+      ];
+      var tour = document.getElementById('tour');
+      var tourSpot = document.getElementById('tour-spot');
+      var tourCard = document.getElementById('tour-card');
+      var tourLastFocus = null;
+
+      function tourDone() {
+        try { window.localStorage.setItem(TOUR_KEY, '1'); } catch (e) { /* incógnito */ }
+        tour.hidden = true;
+        tour.setAttribute('aria-hidden', 'true');
+        document.querySelector('.page').inert = false;
+        if (tourTimer) clearTimeout(tourTimer);
+        if (tourLastFocus && typeof tourLastFocus.focus === 'function') tourLastFocus.focus({ preventScroll: true });
+      }
+      function positionTour(target) {
+        var r = target.getBoundingClientRect();
+        var pad = 8;
+        tourSpot.style.left = Math.max(6, r.left - pad) + 'px';
+        tourSpot.style.top = Math.max(6, r.top - pad) + 'px';
+        tourSpot.style.width = Math.min(window.innerWidth - 12, r.width + pad * 2) + 'px';
+        tourSpot.style.height = Math.min(window.innerHeight - 12, r.height + pad * 2) + 'px';
+
+        var cardRect = tourCard.getBoundingClientRect();
+        var below = r.bottom + 18;
+        var top = below + cardRect.height <= window.innerHeight - 16
+          ? below
+          : Math.max(16, r.top - cardRect.height - 18);
+        var left = Math.min(
+          window.innerWidth - cardRect.width - 16,
+          Math.max(16, r.left + (r.width - cardRect.width) / 2)
+        );
+        tourCard.style.top = top + 'px';
+        tourCard.style.left = left + 'px';
+      }
+      function showTourStep(index) {
+        if (index >= tourSteps.length) { tourDone(); return; }
+        var step = tourSteps[index];
+        var target = document.querySelector(step.target);
+        if (!target || target.hidden) { showTourStep(index + 1); return; }
+        tourIndex = index;
+        if (tour.hidden) tourLastFocus = document.activeElement;
+        target.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        document.getElementById('tour-count').textContent = 'Guía rápida · ' + (index + 1) + ' de ' + tourSteps.length;
+        document.getElementById('tour-title').textContent = step.title;
+        document.getElementById('tour-text').textContent = step.text;
+        document.getElementById('tour-next').textContent = index === tourSteps.length - 1 ? 'Entendido' : 'Siguiente';
+        tour.hidden = false;
+        tour.setAttribute('aria-hidden', 'false');
+        document.querySelector('.page').inert = true;
+        if (tourTimer) clearTimeout(tourTimer);
+        tourTimer = setTimeout(function () { positionTour(target); }, 360);
+        document.getElementById('tour-next').focus({ preventScroll: true });
+      }
+      function maybeStartTour() {
+        if (!plan || gateActivo) return;
+        try { if (window.localStorage.getItem(TOUR_KEY)) return; } catch (e) { /* incógnito */ }
+        setTimeout(function () { showTourStep(0); }, 550);
+      }
+      document.getElementById('tour-next').addEventListener('click', function () {
+        showTourStep(tourIndex + 1);
+      });
+      document.getElementById('tour-skip').addEventListener('click', tourDone);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !tour.hidden) tourDone();
+        if (e.key === 'Tab' && !tour.hidden) {
+          var skip = document.getElementById('tour-skip');
+          var nextButton = document.getElementById('tour-next');
+          if (e.shiftKey && document.activeElement === skip) {
+            e.preventDefault();
+            nextButton.focus();
+          } else if (!e.shiftKey && document.activeElement === nextButton) {
+            e.preventDefault();
+            skip.focus();
+          }
+        }
+      });
+      window.addEventListener('resize', function () {
+        if (tour.hidden) return;
+        var target = document.querySelector(tourSteps[tourIndex].target);
+        if (target) positionTour(target);
+      });
+
       var bridgeVisto = false;
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (entries, obs) {
@@ -1652,6 +1847,7 @@
       renderLibrary();
       renderNextCard();
       updateBridge();
+      maybeStartTour();
       requestAnimationFrame(checkReveals);
       setTimeout(checkReveals, 250);
     })();

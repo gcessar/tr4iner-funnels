@@ -283,6 +283,7 @@
     .opt-card .opt-body { min-width: 0; }
     .opt-card .opt-title { display: block; font-weight: 600; letter-spacing: -0.005em; }
     .opt-card .opt-desc { display: block; margin-top: 1px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .opts.multi .tick { border-radius: 4px; }
 
     /* Datos numéricos */
     .num-grid {
@@ -330,26 +331,68 @@
     }
     .err.visible { display: block; }
 
-    .grasa-toggle {
-      margin-top: 16px;
-      border-top: 1px dashed var(--rule);
-      padding-top: 14px;
-    }
-    .grasa-toggle summary {
-      list-style: none;
-      cursor: pointer;
-      color: var(--ink-soft);
-      font-size: 13.5px;
-      font-weight: 600;
-      display: flex;
+    /* Selector visual: una sola lámina por sexo y recorte instantáneo por rango. */
+    .grasa-selector {
+      display: grid;
+      grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
       align-items: center;
-      gap: 8px;
+      gap: 20px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--rule);
     }
-    .grasa-toggle summary::-webkit-details-marker { display: none; }
-    .grasa-toggle summary .chev { transition: transform 0.2s ease; }
-    .grasa-toggle[open] summary .chev { transform: rotate(90deg); }
-    .grasa-toggle .grasa-body { margin-top: 12px; max-width: 200px; }
-    .grasa-note { margin-top: 8px; color: var(--muted); font-size: 12.5px; }
+    .grasa-visual {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      background-color: var(--paper-deep);
+      background-repeat: no-repeat;
+      background-size: 400% 200%;
+      border: 1px solid var(--rule-strong);
+      border-radius: 12px;
+    }
+    .grasa-value {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      min-width: 62px;
+      padding: 6px 10px;
+      background: var(--mark);
+      border: 1px solid var(--ink);
+      border-radius: 7px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(22, 19, 14, 0.18);
+    }
+    .grasa-control label {
+      display: block;
+      font-weight: 600;
+      font-size: 14.5px;
+      margin-bottom: 4px;
+    }
+    .grasa-control p { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+    .grasa-range {
+      width: 100%;
+      height: 44px;
+      margin: 14px 0 2px;
+      accent-color: var(--mark);
+      cursor: pointer;
+    }
+    .grasa-range:focus-visible { outline-offset: 1px; }
+    .grasa-scale {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
 
     /* Navegación del wizard */
     .wiz-nav {
@@ -601,6 +644,8 @@
     @media (max-width: 480px) {
       .num-grid { grid-template-columns: 1fr 1fr; }
       .num-grid .field:first-child { grid-column: 1 / -1; }
+      .grasa-selector { grid-template-columns: 1fr; }
+      .grasa-visual { width: min(68vw, 220px); margin: 0 auto; }
       .stamp { position: static; display: inline-block; margin-bottom: 12px; }
     }
 
@@ -693,9 +738,9 @@
       <!-- Paso 2: situación -->
       <div class="step" data-step="situacion">
         <p class="q-label">Tu punto de partida</p>
-        <h2 class="q">¿Cuál de estas frases te describe mejor hoy?</h2>
-        <p class="q-hint">Sé honesto: esto no cambia tus números, cambia cómo te acompañamos.</p>
-        <div class="opts" role="group" aria-label="Situación actual">
+        <h2 class="q">¿Cuáles de estas frases te describen hoy?</h2>
+        <p class="q-hint">Marca todas las que correspondan. Esto no cambia tus números; cambia cómo te acompañamos.</p>
+        <div class="opts multi" role="group" aria-label="Situación actual: selección múltiple">
           <button type="button" class="opt-card" data-value="sin-camino"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Tengo un objetivo pero no sé cómo llegar.</span></span></button>
           <button type="button" class="opt-card" data-value="dietas-fallidas"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">He hecho dietas pero no logré los resultados.</span></span></button>
           <button type="button" class="opt-card" data-value="rebote"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Bajé de peso pero lo recuperé.</span></span></button>
@@ -703,9 +748,13 @@
           <button type="button" class="opt-card" data-value="subida"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Subí de peso y no logro bajarlo.</span></span></button>
           <button type="button" class="opt-card" data-value="confianza"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi cuerpo afecta mi confianza o mi salud.</span></span></button>
         </div>
+        <p class="err" id="err-situacion">Elige al menos una opción.</p>
         <div class="wiz-nav">
           <button type="button" class="wiz-back">← Atrás</button>
-          <span></span>
+          <button type="button" class="wiz-next" id="situacion-next">
+            Continuar
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+          </button>
         </div>
       </div>
 
@@ -717,31 +766,30 @@
         <div class="num-grid">
           <div class="field" id="f-edad">
             <label for="edad">Edad <span class="u">AÑOS</span></label>
-            <input class="control" id="edad" type="number" inputmode="numeric" min="16" max="80" placeholder="34" />
+            <input class="control" id="edad" name="edad" type="number" inputmode="numeric" autocomplete="off" min="16" max="80" placeholder="34" />
           </div>
           <div class="field" id="f-altura">
             <label for="altura">Altura <span class="u">CM</span></label>
-            <input class="control" id="altura" type="number" inputmode="numeric" min="130" max="220" placeholder="168" />
+            <input class="control" id="altura" name="altura" type="number" inputmode="numeric" autocomplete="off" min="130" max="220" placeholder="168" />
           </div>
           <div class="field" id="f-peso">
             <label for="peso">Peso <span class="u">KG</span></label>
-            <input class="control" id="peso" type="number" inputmode="decimal" min="35" max="200" step="0.1" placeholder="72" />
+            <input class="control" id="peso" name="peso" type="number" inputmode="decimal" autocomplete="off" min="35" max="200" step="0.1" placeholder="72" />
           </div>
         </div>
-        <p class="err" id="err-datos">Revisa tus datos: edad 16–80, altura 130–220 cm, peso 35–200 kg.</p>
-        <details class="grasa-toggle" id="grasa-toggle">
-          <summary>
-            <svg class="chev" viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 2l4 4-4 4"/></svg>
-            ¿Sabes tu % de grasa corporal? (opcional)
-          </summary>
-          <div class="grasa-body">
-            <div class="field" id="f-grasa">
-              <label for="grasa">% de grasa <span class="u">%</span></label>
-              <input class="control" id="grasa" type="number" inputmode="decimal" min="5" max="60" step="0.1" placeholder="24" />
-            </div>
-            <p class="grasa-note">Si lo sabes, usamos una fórmula más precisa. Si no, no pasa nada.</p>
+        <div class="grasa-selector" id="grasa-selector">
+          <div class="grasa-visual" id="grasa-visual" role="img" aria-label="Referencia visual del porcentaje de grasa seleccionado">
+            <output class="grasa-value" id="grasa-value" for="grasa">Elige</output>
           </div>
-        </details>
+          <div class="grasa-control">
+            <label for="grasa">¿Con qué porcentaje te identificas?</label>
+            <p>Mueve el control y compárate con la referencia. Necesitamos este dato para usar Katch-McArdle.</p>
+            <input class="grasa-range" id="grasa" name="grasa" type="range" step="1" autocomplete="off" aria-describedby="grasa-note" />
+            <div class="grasa-scale"><span id="grasa-min"></span><span id="grasa-max"></span></div>
+            <p id="grasa-note">Es una estimación visual, no una medición clínica.</p>
+          </div>
+        </div>
+        <p class="err" id="err-datos">Revisa edad, altura y peso, y mueve el control para elegir tu porcentaje de grasa.</p>
         <div class="wiz-nav">
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="datos-next">
@@ -792,7 +840,7 @@
         <p class="q-hint">El mismo con el que reservaste tu plaza: así tu avance queda en un solo expediente.</p>
         <div class="field" id="f-email">
           <label for="email">Correo</label>
-          <input class="control email-control" id="email" type="email" inputmode="email" autocomplete="email" placeholder="tu@correo.com" />
+          <input class="control email-control" id="email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="tu@correo.com" />
         </div>
         <p class="err" id="err-email">Ingresa un correo válido.</p>
         <div class="wiz-nav">
@@ -825,7 +873,7 @@
         <div class="ruta" id="ruta"></div>
 
         <a class="res-cta" id="res-cta" href="/biblioteca/videos/">
-          Empezar por mi primer bloque
+          Ver mi ruta
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
         </a>
         <p class="res-note">
@@ -888,11 +936,11 @@
       var datos = {
         sexo: sexoInicial,
         objetivo: null,
-        situacion: null,
+        situacion: [],
         edad: null,
         altura: null,
         peso: null,
-        grasa: 0,
+        grasa: null,
         actividad: null
       };
 
@@ -956,15 +1004,88 @@
             el.querySelectorAll('.opt-card').forEach(function (c) { c.classList.remove('selected'); });
             card.classList.add('selected');
             datos[campo] = card.getAttribute('data-value');
-            if (campo === 'sexo') { lead.sexo = datos.sexo; saveLead(); }
+            if (campo === 'sexo') {
+              lead.sexo = datos.sexo;
+              datos.grasa = null;
+              saveLead();
+              configureGrasa();
+            }
             setTimeout(next, 260);
           });
         });
       }
       wireOptions('sexo', 'sexo');
       wireOptions('objetivo', 'objetivo');
-      wireOptions('situacion', 'situacion');
       wireOptions('actividad', 'actividad');
+
+      // Situación es selección múltiple: no autoavanza porque puede marcar varias.
+      steps.situacion.querySelectorAll('.opt-card').forEach(function (card) {
+        card.setAttribute('aria-pressed', 'false');
+        card.addEventListener('click', function () {
+          marcarInicio();
+          var value = card.getAttribute('data-value');
+          var index = datos.situacion.indexOf(value);
+          if (index === -1) datos.situacion.push(value); else datos.situacion.splice(index, 1);
+          var selected = index === -1;
+          card.classList.toggle('selected', selected);
+          card.setAttribute('aria-pressed', String(selected));
+          document.getElementById('err-situacion').classList.remove('visible');
+        });
+      });
+      document.getElementById('situacion-next').addEventListener('click', function () {
+        var ok = datos.situacion.length > 0;
+        document.getElementById('err-situacion').classList.toggle('visible', !ok);
+        if (ok) next();
+      });
+
+      // Rangos visuales por sexo. El valor exacto alimenta la fórmula; la foto
+      // salta al referente más cercano para no fingir una precisión fotográfica.
+      var GRASA_CONFIG = {
+        Hombre: { min: 5, max: 50, start: 25, anchors: [10, 15, 20, 25, 30, 35, 40], image: '/biblioteca/plan/assets/grasa-hombre.webp' },
+        Mujer: { min: 12, max: 55, start: 32, anchors: [17, 22, 27, 32, 37, 42, 47], image: '/biblioteca/plan/assets/grasa-mujer.webp' }
+      };
+      var SPRITE_POS = [
+        ['0%', '0%'], ['33.333%', '0%'], ['66.667%', '0%'], ['100%', '0%'],
+        ['0%', '100%'], ['33.333%', '100%'], ['66.667%', '100%']
+      ];
+      var grasaInput = document.getElementById('grasa');
+      var grasaVisual = document.getElementById('grasa-visual');
+      var grasaValue = document.getElementById('grasa-value');
+
+      function nearestAnchorIndex(value, anchors) {
+        var best = 0;
+        anchors.forEach(function (anchor, i) {
+          if (Math.abs(anchor - value) < Math.abs(anchors[best] - value)) best = i;
+        });
+        return best;
+      }
+      function paintGrasa(value, chosen) {
+        var cfg = GRASA_CONFIG[datos.sexo || 'Hombre'];
+        var pos = SPRITE_POS[nearestAnchorIndex(value, cfg.anchors)];
+        grasaVisual.style.backgroundImage = 'url("' + cfg.image + '")';
+        grasaVisual.style.backgroundPosition = pos[0] + ' ' + pos[1];
+        grasaValue.textContent = chosen ? value + '%' : 'Elige';
+        grasaVisual.setAttribute('aria-label', chosen
+          ? 'Referencia corporal aproximada para ' + value + ' por ciento de grasa'
+          : 'Referencia corporal: mueve el control para elegir');
+        grasaInput.setAttribute('aria-valuetext', value + ' por ciento de grasa');
+      }
+      function configureGrasa() {
+        var cfg = GRASA_CONFIG[datos.sexo || 'Hombre'];
+        grasaInput.min = cfg.min;
+        grasaInput.max = cfg.max;
+        grasaInput.value = cfg.start;
+        document.getElementById('grasa-min').textContent = cfg.min + '%';
+        document.getElementById('grasa-max').textContent = cfg.max + '%';
+        paintGrasa(cfg.start, false);
+      }
+      grasaInput.addEventListener('input', function () {
+        marcarInicio();
+        datos.grasa = parseInt(grasaInput.value, 10);
+        paintGrasa(datos.grasa, true);
+        document.getElementById('err-datos').classList.remove('visible');
+      });
+      configureGrasa();
 
       // Paso de datos numéricos
       document.getElementById('datos-next').addEventListener('click', function () {
@@ -972,8 +1093,9 @@
         var edad = parseFloat(document.getElementById('edad').value);
         var altura = parseFloat(document.getElementById('altura').value);
         var peso = parseFloat(document.getElementById('peso').value);
-        var grasa = parseFloat(document.getElementById('grasa').value);
-        var ok = edad >= 16 && edad <= 80 && altura >= 130 && altura <= 220 && peso >= 35 && peso <= 200;
+        var cfg = GRASA_CONFIG[datos.sexo];
+        var grasaOk = datos.grasa >= cfg.min && datos.grasa <= cfg.max;
+        var ok = edad >= 16 && edad <= 80 && altura >= 130 && altura <= 220 && peso >= 35 && peso <= 200 && grasaOk;
         document.getElementById('err-datos').classList.toggle('visible', !ok);
         ['f-edad', 'f-altura', 'f-peso'].forEach(function (id, idx) {
           var v = [edad, altura, peso][idx];
@@ -984,7 +1106,6 @@
         datos.edad = edad;
         datos.altura = altura;
         datos.peso = peso;
-        datos.grasa = (grasa >= 5 && grasa <= 60) ? grasa : 0;
         next();
       });
 
@@ -1004,7 +1125,7 @@
       }
 
       // ── Cálculo: mismas fórmulas que test-macros.tr4iner.com ──
-      // BMR: Katch-McArdle si hay % de grasa, Mifflin-St Jeor si no.
+      // BMR: Katch-McArdle siempre; el % de grasa ahora es obligatorio.
       // TDEE ×(1.3/1.4/1.5) → ajuste ±10% por objetivo → reparto con cap de
       // proteína 2.5 g/kg (salvo MA) y reducción de carbos en PG.
       var MULT = { sedentario: 1.3, ligero: 1.4, activo: 1.5 };
@@ -1021,13 +1142,7 @@
       };
 
       function calcularMacros(d) {
-        var bmr;
-        if (d.grasa > 0) {
-          bmr = 370 + 21.6 * (d.peso * ((100 - d.grasa) / 100));
-        } else {
-          var base = 10 * d.peso + 6.25 * d.altura - 5 * d.edad;
-          bmr = d.sexo === 'Hombre' ? base + 5 : base - 161;
-        }
+        var bmr = 370 + 21.6 * (d.peso * ((100 - d.grasa) / 100));
         var tdee = bmr * MULT[d.actividad];
         var kcal = Math.round(tdee + tdee * ADJ[d.objetivo]);
         var pct = PCT[d.objetivo];
@@ -1081,6 +1196,7 @@
         var ruta = rutaPara(datos.objetivo, datos.sexo);
 
         var plan = {
+          sexo: datos.sexo,
           objetivo: datos.objetivo,
           situacion: datos.situacion,
           kcal: r.kcal,
@@ -1091,6 +1207,7 @@
           edad: datos.edad,
           altura: datos.altura,
           peso: datos.peso,
+          grasa: datos.grasa,
           ruta: ruta,
           ts: new Date().toISOString()
         };
@@ -1105,7 +1222,8 @@
           actividad: plan.actividad,
           situacion: plan.situacion,
           edad: plan.edad,
-          peso: plan.peso
+          peso: plan.peso,
+          grasa: plan.grasa
         });
 
         renderResultado(r, ruta);
@@ -1123,7 +1241,8 @@
         document.getElementById('res-obj-inline').textContent = OBJ_LABEL[datos.objetivo];
         document.getElementById('res-obj').innerHTML =
           '<strong>' + (datos.sexo === 'Mujer' ? 'Mujer' : 'Hombre') + ' · ' + datos.edad + ' años · ' +
-          datos.peso + ' kg</strong> — gasto estimado ' + r.tdee.toLocaleString('es') + ' kcal, ajustado a tu objetivo.';
+          datos.peso + ' kg · ' + datos.grasa + '% grasa</strong> — gasto estimado ' +
+          r.tdee.toLocaleString('es') + ' kcal, ajustado a tu objetivo.';
 
         var macros = [
           { name: 'Proteínas', sub: 'El material de construcción', val: r.proteinas },
