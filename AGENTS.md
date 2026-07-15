@@ -1,0 +1,94 @@
+# AGENTS.md — Contexto del repo (funnels TR4INER)
+
+> Contexto compartido para agentes de IA (Codex **y** Claude Code — `CLAUDE.md` es un symlink a este archivo). Mantener conciso. El registro cronológico de cambios va en `BITACORA.md`.
+
+## Qué es esto
+
+Páginas **HTML estáticas** de los funnels de TR4INER (coaching fitness de Anthoni Montalván). Sin framework ni build step (salvo un par de generadores `.mjs` sueltos). Cada archivo es una página autónoma con su CSS/JS inline.
+
+- **Deploy:** `.vercel/project.json` apunta al único proyecto canónico `tr4iner-funnels` (`prj_9Px…`). El duplicado `tr4iner-funnel-casos-estudio` (`prj_87…`) fue eliminado el 14-jul-2026. Dominio canónico futuro: `metodo.tr4iner.com`.
+- **Repo git:** `github.com/gcessar/tr4iner-funnels`.
+- **Dev local:** `.claude/launch.json` → `python3 -m http.server 4599`. Abrir `http://localhost:4599/index.html`.
+- **CRM separado:** el análisis/dashboards viven en otro repo (`crm-ventas`, Next.js). Este repo es solo las páginas del funnel.
+
+## Arquitectura acordada de funnels y dominio
+
+Este repo contiene **dos funnels distintos**, aunque compartan estilos, `track.js` y el mismo proyecto de Vercel:
+
+1. **Caso de Estudio:** adquisición y calificación. La landing principal registra nombre/email/sexo, muestra el VSL Flor o Dashiel, continúa a Typeform y luego al tramo de Calendly.
+2. **Biblioteca / Programa Cero:** lead magnet independiente para nutrir MQL. Vive completo bajo `/biblioteca/` (`registro → confirma → videos`). No confundir sus leads, webhook ni métricas con Caso de Estudio.
+
+Decisión del 14-jul-2026: mantener ambos funnels en **un solo proyecto Vercel y un solo dominio**, con rutas claramente separadas. El dominio canónico futuro será `metodo.tr4iner.com` cuando termine la migración desde ClickFunnels. Mientras se prueba, todas las páginas deben funcionar igual bajo cualquier deployment de preview de Vercel.
+
+Rutas objetivo del proyecto:
+
+- `/` (y posteriormente `/casos-de-estudio`, si se configura alias) → landing Caso de Estudio.
+- `/testimonio-flor` → página Flor (`registro-typeform-flor.html`).
+- `/testimonio-flor-va` → variante Flor para tráfico VA (`registro-typeform-flor-va.html`).
+- `/testimonio-dashiel` → página Dashiel (`registro-typeform-optimizado.html`).
+- `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
+- `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
+
+Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archivos `*-clickfunnels*` son compatibilidad temporal. **No son las versiones canónicas ni deben incluirse al decidir rutas o validar el funnel Vercel**, salvo pedido explícito.
+
+## Mapa de archivos
+
+| Archivo | Función |
+|---|---|
+| `index.html` | Landing + registro de **Caso de Estudio** (`/casos-de-estudio`). Captura nombre/email/sexo + UTMs y redirige al VSL. |
+| `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
+| `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
+| `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
+| `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
+| `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
+| `biblioteca/` | Videoteca / recursos. |
+| `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
+| `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |
+| `track.js` | Copia de compatibilidad antigua; no enlazar desde páginas nuevas porque algunos bloqueadores la interceptan. |
+| `BITACORA.md` | Changelog del funnel (registrar cada cambio con impacto en KPIs). |
+
+Las antiguas variantes `-A` fueron promovidas a los nombres canónicos el 14-jul-2026. El sufijo `-B` identifica las páginas anteriores archivadas. Cuando se implemente el A/B test real, documentar nuevamente la asignación y no cambiar las rutas públicas.
+
+En agendamiento, AN usa Vidalytics `w0UY0FRGIQo11cXX` y VA usa `2s1vpHRi_hOARyIm`. En `/calendly-confirma/`, `hasVaUtm()` revisa todos los valores `utm_*`: si alguno contiene `-VA-`, carga `Mb4FA69mwzRO27Er`; en cualquier otro caso carga `eSFGvAyB_NIHVP9e`. No romper esta selección al cambiar diseño o rutas.
+
+## Sistema tipográfico canónico
+
+La Biblioteca es la referencia visual del proyecto. Todas las páginas canónicas usan la misma carga de Google Fonts y estos roles: **Fraunces** para títulos editoriales, **Instrument Sans** para lectura e interfaz y **JetBrains Mono** para etiquetas, metadatos y estados. Base recomendada: cuerpo `17px/1.55`, display Fraunces `560` con `opsz 100`, cursiva `500`, y metadata Mono `10.5px/500` con tracking amplio. No introducir otra familia o variante de URL sin una decisión visual explícita.
+
+## Modelo de atribución (crítico)
+
+1. El tráfico entra a `index.html` (`/casos-de-estudio`) con UTMs en la URL (orgánico `-AN-`: YouTube/TikTok/Face/IG; o `utm_source=MetaAds`).
+2. `index.html` captura los UTMs (`utmData`, ~línea 1246) y el `?video=`.
+3. Al registrarse, `buildRedirectUrl()` (~línea 1285) redirige al VSL por **sexo**:
+   - `Mujer` → `/testimonio-flor` en el mismo origen de la página actual.
+   - `Hombre` → `/testimonio-dashiel` en el mismo origen de la página actual.
+   - **y adjunta `first_name`, `email`, `sexo`, `video` + TODOS los UTMs** (loop en ~línea 1294).
+4. El registro se guarda en el **Google Sheet `LEADS`** (id `1Tdf7SP70_05h1K7ZtqdH8uWVatob3KSzAXRstyqGfz0`, tab gid 783595842). Columnas: `FECHA · NOMBRE · CORREO · SEXO · UTM_CAMPAIGN · UTM_MEDIO · UTM_SOURCE`.
+
+> **Este opt-in NO va al CRM.** El CRM (`crm-ventas`) se nutre de Typeform, un paso posterior.
+
+### Regla de navegación y atribución
+
+- Durante previews, redirects y CTAs deben construirse con `window.location.origin` o rutas relativas; nunca hardcodear el dominio de producción. Así el recorrido permanece dentro del mismo deployment de Vercel.
+- En producción, el mismo código resolverá automáticamente sobre `https://metodo.tr4iner.com`.
+- **Cada salto entre páginas debe reenviar todos los parámetros de atribución presentes**, no una lista parcial: cualquier `utm_*`, `video`, `fbclid`, `gclid`, `fbc_id`, `h_ad_id` y futuros identificadores equivalentes.
+- También se preservan los datos funcionales necesarios (`first_name`, `name`, `email`, `sexo` y parámetros de Calendly). El email debe llegar con `@` literal cuando el siguiente sistema lo necesite.
+- Antes de publicar, probar la cadena completa con UTMs sintéticas y verificar la URL en cada salto.
+
+### Incidente resuelto — bug de UTMs (13-jul-2026)
+`buildRedirectUrl()` **no reenviaba los UTMs** a las páginas flor/dashiel (solo nombre/email/sexo). Del 11 al 13-jul los leads del sheet `LEADS` quedaron sin UTMs. **Ya corregido** (el loop de `utmData` en `buildRedirectUrl`). Regularización de los datos históricos (Clarity + GA4): ver detalle en `BITACORA.md`. Al tocar la lógica de redirect, **verificar siempre que los UTMs sigan viajando a testimonio-flor/dashiel**.
+
+## Convenciones
+
+- **Comentarios:** el **porqué**, en español rioplatense.
+- **Commits:** convencional (`feat(scope):`, `fix(scope):`, `docs`, `chore`).
+- **No crear archivos `.md`/README** salvo que el usuario lo pida (excepción: entradas en `BITACORA.md`).
+- **Al cambiar algo con impacto en conversión/atribución:** dejar entrada en `BITACORA.md` (hay TEMPLATE al final del archivo).
+
+## Método de trabajo Codex + Claude Code
+
+- No desplegar desde un working tree sucio. Primero rama descriptiva, verificación y commits lógicos; después Preview y recién entonces producción.
+- Un commit debe representar una responsabilidad reversible. No mezclar páginas del funnel, scripts offline, backups n8n y cambios del CRM en el mismo commit.
+- Antes de continuar trabajo de otro agente: leer `git status`, los últimos commits, `AGENTS.md` y la entrada más reciente de `BITACORA.md`. No rehacer lo ya validado.
+- El handoff se registra con rama + commit + pendientes en `BITACORA.md`. `CLAUDE.md` es symlink de este archivo para evitar dos contextos divergentes.
+- Integración CRM activa al 15-jul-2026: repo hermano `crm-ventas`, rama `codex/biblioteca-pipeline-hardening`, commit `d28172e`. Falta staging Vercel/Neon y deploy; no tocar el workflow nuevo de n8n porque lo revisa el usuario.
