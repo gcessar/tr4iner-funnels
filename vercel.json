@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/casos-de-estudio",
+      "destination": "/index"
+    },
+    {
+      "source": "/testimonio-flor",
+      "destination": "/registro-typeform-flor"
+    },
+    {
+      "source": "/testimonio-flor-va",
+      "destination": "/registro-typeform-flor-va"
+    },
+    {
+      "source": "/testimonio-dashiel",
+      "destination": "/registro-typeform-optimizado"
+    },
+    {
+      "source": "/calendly-an",
+      "destination": "/calendly-an-optimizado"
+    }
+  ]
+}

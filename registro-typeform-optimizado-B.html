@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#FAF7F2" />
+  <title>Caso de estudio · Dashiel · Versión B</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <link rel="preconnect" href="https://embed.typeform.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&family=Poppins:wght@500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #FAF7F2;
+      --bg-deeper: #F2EBE0;
+      --bg-warm: #EDE3D5;
+      --paper: #FFFDF8;
+      --ink: #1A1412;
+      --ink-soft: #3D332D;
+      --muted: #756B62;
+      --muted-2: #9A9089;
+      --rule: rgba(26, 20, 18, 0.12);
+      --rule-strong: rgba(26, 20, 18, 0.26);
+      --accent: #C27B5A;
+      --accent-deep: #A86545;
+      --accent-soft: #E8C9B5;
+      --gold: #F5C400;
+      --black: #11100F;
+      --max: 760px;
+      --gutter: clamp(18px, 4vw, 30px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 50% -12%, rgba(194, 123, 90, 0.12), transparent 36rem),
+        linear-gradient(180deg, #FFFDF8 0%, var(--bg) 30%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "Lexend", sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0.032;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 240px 240px;
+    }
+
+    a, button { touch-action: manipulation; }
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent-deep);
+      outline-offset: 4px;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: calc(28px + env(safe-area-inset-top)) var(--gutter) calc(86px + env(safe-area-inset-bottom));
+      position: relative;
+    }
+
+    .case-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      line-height: 1.2;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .case-mark::before,
+    .case-mark::after {
+      content: "";
+      width: clamp(18px, 7vw, 44px);
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .title {
+      max-width: 720px;
+      margin: 0 auto 16px;
+      color: var(--ink);
+      font-family: "Poppins", sans-serif;
+      font-size: clamp(36px, 7.3vw, 60px);
+      font-weight: 600;
+      letter-spacing: -0.045em;
+      line-height: 1.04;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .title em {
+      color: var(--accent-deep);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .dek {
+      max-width: 650px;
+      margin: 0 auto 22px;
+      color: var(--ink-soft);
+      font-size: clamp(16px, 2.2vw, 18px);
+      letter-spacing: -0.006em;
+      line-height: 1.5;
+      text-align: center;
+      text-wrap: pretty;
+    }
+
+    .dek strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .conversion-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      max-width: 660px;
+      margin: 0 auto 28px;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      background: var(--rule);
+    }
+
+    .conversion-strip span {
+      min-width: 0;
+      padding: 11px 10px;
+      background: rgba(255, 253, 248, 0.72);
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      line-height: 1.35;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .video-label,
+    .proof-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .video-label .left,
+    .proof-label .left {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+    }
+
+    .video-label .left::before,
+    .proof-label .left::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    .video-shell {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .video-container {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(26, 20, 18, 0.08);
+      background: var(--paper);
+      box-shadow: 0 30px 80px rgba(26, 20, 18, 0.08);
+      min-height: clamp(189px, 50vw, 390px);
+    }
+
+    .video-container > div {
+      width: 100%;
+      min-height: inherit;
+    }
+
+    .video-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-left: 2px solid var(--accent);
+      background: rgba(242, 235, 224, 0.58);
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .video-note b {
+      color: var(--accent-deep);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gate-timer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--rule);
+      background: rgba(255, 253, 248, 0.56);
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .gate-timer strong {
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .gate-timer.done {
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 260ms ease, transform 260ms ease;
+    }
+
+    body:not(.application-ready) .kit-after,
+    body:not(.application-ready) .page > footer {
+      display: none;
+    }
+
+    #typeform-cta {
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        max-height 900ms cubic-bezier(0.4, 0, 0.2, 1),
+        margin-top 600ms ease,
+        opacity 600ms ease,
+        transform 600ms ease;
+    }
+
+    #typeform-cta.visible {
+      max-height: 3600px;
+      margin-top: 34px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    body.application-ready .kit-after {
+      display: grid;
+    }
+
+    body.application-ready .page > footer {
+      display: block;
+    }
+
+    .application-card {
+      position: relative;
+      overflow: hidden;
+      border-top: 2px solid var(--accent);
+      border-bottom: 1px solid var(--rule);
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.58), rgba(242, 235, 224, 0.9)),
+        var(--bg-deeper);
+    }
+
+    .application-card::before,
+    .application-card::after {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      pointer-events: none;
+    }
+
+    .application-card::before {
+      top: 14px;
+      right: 14px;
+      border-top: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+    }
+
+    .application-card::after {
+      bottom: 14px;
+      left: 14px;
+      border-bottom: 1px solid var(--rule-strong);
+      border-left: 1px solid var(--rule-strong);
+    }
+
+    .application-header {
+      padding: 34px 30px 18px;
+    }
+
+    .cta-kicker {
+      margin-bottom: 14px;
+      color: var(--accent-deep);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .cta-title {
+      max-width: 640px;
+      margin-bottom: 14px;
+      color: var(--ink);
+      font-family: "Poppins", sans-serif;
+      font-size: clamp(28px, 5.4vw, 40px);
+      font-weight: 600;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      text-wrap: balance;
+    }
+
+    .cta-title em {
+      color: var(--accent-deep);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .cta-subtitle {
+      max-width: 58ch;
+      color: var(--ink-soft);
+      font-size: 15.5px;
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+
+    .micro-proof {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin: 8px 30px 0;
+      border: 1px solid var(--rule);
+      background: var(--rule);
+    }
+
+    .micro-proof div {
+      min-width: 0;
+      padding: 14px;
+      background: rgba(255, 253, 248, 0.45);
+    }
+
+    .micro-proof b {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .micro-proof span {
+      display: block;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    .cta-divider {
+      height: 1px;
+      margin: 24px 30px 0;
+      background: var(--rule);
+    }
+
+    .cta-typeform-frame {
+      padding: 8px 20px 28px;
+    }
+
+    .cta-typeform-frame [data-tf-live] {
+      min-height: 590px;
+      background: transparent;
+    }
+
+    .loading-form {
+      display: grid;
+      min-height: 360px;
+      place-items: center;
+      padding: 42px 20px;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .kit-after {
+      display: grid;
+      gap: 10px;
+      width: min(100%, 700px);
+      margin-inline: auto;
+      margin-top: 34px;
+    }
+
+    .kit-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+      width: 100%;
+      justify-self: stretch;
+      margin-inline: 0 !important;
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--black);
+      color: #F8F2E8;
+    }
+
+    .kit-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .kit-card small {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--gold);
+      font-family: "Poppins", sans-serif;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .kit-card h3 {
+      margin-bottom: 4px;
+      font-size: 17px;
+      line-height: 1.2;
+      letter-spacing: -0.012em;
+    }
+
+    .kit-card p {
+      color: rgba(248, 242, 232, 0.72);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: min(100%, 700px);
+      margin-inline: auto;
+      margin-top: 54px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .trust-avatar {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      border-radius: 999px;
+      background: var(--accent-soft);
+    }
+
+    .trust-avatar img {
+      display: block;
+      width: 46px;
+      height: 46px;
+      object-fit: cover;
+    }
+
+    .trust-label {
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.16em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .trust-name {
+      color: var(--ink);
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .trust-name .sub {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .trust-text {
+      flex: 0 1 auto;
+    }
+
+    .fine-print {
+      width: min(100%, 700px);
+      margin-inline: auto;
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted-2);
+      font-family: "Poppins", sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .fine-print a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .fine-print a:hover { color: var(--ink); }
+    .fine-print .divider { margin: 0 8px; color: var(--rule-strong); }
+
+    .sticky-apply {
+      position: fixed;
+      z-index: 30;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      display: none;
+      align-items: center;
+      gap: 12px;
+      max-width: calc(100vw - 32px);
+      padding: 9px 10px 9px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(17, 16, 15, 0.94);
+      color: #FFFDF8;
+      box-shadow: 0 18px 50px rgba(26, 20, 18, 0.22);
+      text-decoration: none;
+      transform: translateY(12px);
+      opacity: 0;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .sticky-apply.visible {
+      display: inline-flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sticky-apply span {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sticky-apply b {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.55; transform: scale(0.82); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding-top: calc(22px + env(safe-area-inset-top));
+      }
+
+      .title {
+        text-align: left;
+      }
+
+      .case-mark {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .case-mark::after { display: none; }
+
+      .dek {
+        margin-left: 0;
+        text-align: left;
+      }
+
+      .conversion-strip,
+      .micro-proof {
+        grid-template-columns: 1fr;
+      }
+
+      .conversion-strip span {
+        text-align: left;
+      }
+
+      .application-header {
+        padding: 30px 22px 16px;
+      }
+
+      .micro-proof,
+      .cta-divider {
+        margin-left: 22px;
+        margin-right: 22px;
+      }
+
+      .cta-typeform-frame {
+        padding: 0 0 22px;
+      }
+
+      .cta-typeform-frame [data-tf-live] {
+        min-height: 640px;
+      }
+
+      .kit-card {
+        align-items: start;
+      }
+
+      .sticky-apply.visible {
+        display: none;
+      }
+    }
+
+    @media (max-width: 390px) {
+      body { font-size: 16px; }
+      .title { font-size: 38px; }
+      .dek { font-size: 16px; }
+      .video-label { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page" id="inicio">
+    <div class="case-mark">Caso real · Sin guion · Video + aplicación</div>
+
+    <h1 class="title">Dashiel no necesitó más fuerza de voluntad. <em>Necesitó un plan que sobreviviera al trabajo.</em></h1>
+
+    <p class="dek">
+      Trabaja en construcción y sale a las seis. Años intentándolo solo: rutinas de internet, lesiones, estancamiento y rebote en invierno.
+      <strong>En este video ves qué se cambió y, si encaja contigo, respondes la aplicación.</strong>
+    </p>
+
+    <div class="conversion-strip" aria-label="Resumen del proceso">
+      <span>1. Mira el análisis</span>
+      <span>2. Responde 6 preguntas</span>
+      <span>3. Recibe una respuesta específica</span>
+    </div>
+
+    <section class="video-shell" aria-labelledby="video-title">
+      <div class="video-label">
+        <span class="left" id="video-title">Paso 1: mira el video</span>
+        <span>Activa el sonido</span>
+      </div>
+
+      <div class="video-container">
+        <div id="vidalytics_embed_5dtuyrV6J4QIqcbI"></div>
+      </div>
+
+      <div class="video-note">
+        <b>Nota</b>
+        <p>La aplicación aparece después de ver el inicio del análisis. Queremos que respondas con contexto, no por impulso.</p>
+      </div>
+
+      <div class="gate-timer" id="gate-timer" aria-live="polite">
+        <span id="gate-label">Paso 2 disponible en</span>
+        <strong id="gate-value"><span id="gate-count">10s</span></strong>
+      </div>
+    </section>
+
+    <section id="typeform-cta" aria-live="polite" aria-labelledby="application-title">
+      <div class="application-card">
+        <div class="application-header">
+          <div class="cta-kicker">Paso 2 · Aplicación</div>
+          <h2 class="cta-title" id="application-title">Solicita que revisemos tu caso para un <em>posible cupo.</em></h2>
+          <p class="cta-subtitle">
+            No trabajamos con todo el mundo. El equipo revisa tus respuestas para entender tu punto de partida y decidir si podemos ayudarte con un plan serio, sostenible y específico para ti.
+          </p>
+        </div>
+
+        <div class="micro-proof" aria-label="Qué esperar del formulario">
+          <div>
+            <b>3 minutos</b>
+            <span>Preguntas cerradas para ubicar tu caso rápido.</span>
+          </div>
+          <div>
+            <b>Revisión real</b>
+            <span>El equipo mira si hay encaje antes de contactarte.</span>
+          </div>
+          <div>
+            <b>Cupos limitados</b>
+            <span>Priorizamos casos donde podemos generar cambio.</span>
+          </div>
+        </div>
+
+        <div class="cta-divider"></div>
+
+        <div class="cta-typeform-frame">
+          <div class="loading-form" id="form-loader">Cargando aplicación…</div>
+          <div id="tf-embed" data-tf-live="01KHA5RZHGV02HW971F4227939"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kit-after" aria-labelledby="kit-title">
+      <div class="proof-label">
+        <span class="left" id="kit-title">Tu kit ya fue enviado</span>
+      </div>
+
+      <article class="kit-card">
+        <div class="kit-icon" aria-hidden="true">10</div>
+        <div>
+          <small>Revisa tu correo · Parte 1</small>
+          <h3>10 platos base para perder grasa</h3>
+          <p>Debe llegarte a la bandeja con comidas simples que puedes repetir sin contar todo ni improvisar.</p>
+        </div>
+      </article>
+
+      <article class="kit-card">
+        <div class="kit-icon" aria-hidden="true">%</div>
+        <div>
+          <small>Revisa tu correo · Parte 2</small>
+          <h3>Test de macros para ubicar tu punto de partida</h3>
+          <p>Si no lo ves en unos minutos, mira promociones o spam. El remitente es TR4INER.</p>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      <div class="trust">
+        <div class="trust-avatar">
+          <img
+            src="https://statics.myclickfunnels.com/workspace/edbqDD/image/22197776/file/14e7c03f9980e0cdc73965b45d97f719.png"
+            width="46"
+            height="46"
+            loading="lazy"
+            alt="Anthoni Montalván"
+          />
+        </div>
+        <div class="trust-text">
+          <div class="trust-label">Producción · TR4INER</div>
+          <div class="trust-name">Anthoni Montalván <span class="sub">· Coach</span></div>
+        </div>
+      </div>
+
+      <div class="fine-print">
+        © 2026 TR4INER · BodyMindFitCo LLC
+        <br />
+        <a href="#">Privacidad</a><span class="divider">|</span><a href="#">Términos</a>
+      </div>
+    </footer>
+  </main>
+
+  <a class="sticky-apply" id="sticky-apply" href="#typeform-cta">
+    <span>Completar aplicación</span>
+    <b aria-hidden="true">→</b>
+  </a>
+
+  <script>
+    (function (v, i, d, a, l, y, t, c, s) {
+      y = "_" + d.toLowerCase();
+      c = d + "L";
+      if (!v[d]) { v[d] = {}; }
+      if (!v[c]) { v[c] = {}; }
+      if (!v[y]) { v[y] = {}; }
+      var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
+      if (!vsl) {
+        vsl = function (u, cb) {
+          if (t) { cb(); return; }
+          s = i.createElement("script");
+          s.type = "text/javascript";
+          s.async = true;
+          s.src = u;
+          if (s.readyState) {
+            s.onreadystatechange = function () {
+              if (s.readyState === "loaded" || s.readyState === "complete") {
+                s.onreadystatechange = null;
+                vlf = 1;
+                cb();
+              }
+            };
+          } else {
+            s.onload = function () {
+              vlf = 1;
+              cb();
+            };
+          }
+          i.getElementsByTagName("head")[0].appendChild(s);
+        };
+      }
+      vsl(l + "loader.min.js", function () {
+        if (!vli) {
+          var vlc = v[c][vl];
+          vli = new vlc();
+        }
+        vli.loadScript(l + "player.min.js", function () {
+          var vec = v[d][ve];
+          t = new vec();
+          t.run(a);
+        });
+      });
+    })(window, document, "Vidalytics", "vidalytics_embed_5dtuyrV6J4QIqcbI", "https://fast.vidalytics.com/embeds/IoH8SL8U/5dtuyrV6J4QIqcbI/");
+  </script>
+
+  <script>
+    (function () {
+      /*
+        CONFIGURACION RAPIDA
+        - Tiempo normal antes de mostrar el Paso 2: cambia el 10 de DEFAULT_SECONDS.
+        - Trafico de Meta Ads (utm_source facebook/instagram/meta o fbclid): usa META_ADS_SECONDS (5 minutos).
+        - Prueba rapida: agrega ?tf_debug=1 a la URL y el contador baja a 2s.
+        - Prueba personalizada: agrega ?trigger_seconds=5 para probar con 5s (gana sobre la regla de Meta).
+      */
+      var params = new URLSearchParams(window.location.search);
+      var debugTrigger = params.get("tf_debug") === "1";
+
+      var DEFAULT_SECONDS = 10;
+      var META_ADS_SECONDS = 300; // 5 minutos para trafico pagado de Meta
+
+      // Meta Ads llega con utm_source=facebook/ig/etc. o con el parametro fbclid
+      // que Meta agrega automaticamente a los enlaces de anuncios.
+      var META_SOURCES = ["facebook", "fb", "instagram", "ig", "meta", "meta_ads", "metaads"];
+      var utmSource = (params.get("utm_source") || "").toLowerCase();
+      var isMetaAds = META_SOURCES.indexOf(utmSource) !== -1 || params.has("fbclid");
+
+      // Solo usa trigger_seconds si viene en la URL; si no, aplica la regla de Meta o el default.
+      // (Ojo: Number(null) es 0, por eso se valida params.has antes.)
+      var configuredSeconds = params.has("trigger_seconds") ? Number(params.get("trigger_seconds")) : NaN;
+      var REVEAL_SECONDS = debugTrigger ? 2 : (Number.isFinite(configuredSeconds) && configuredSeconds >= 0 ? configuredSeconds : (isMetaAds ? META_ADS_SECONDS : DEFAULT_SECONDS));
+
+      // Evita que el Paso 2 se muestre o cargue Typeform mas de una vez.
+      var triggered = false;
+      var typeformLoaded = false;
+
+      // Elementos principales que controla este script.
+      var tf = document.getElementById("tf-embed");
+      var loader = document.getElementById("form-loader");
+      var timer = document.getElementById("gate-timer");
+      var count = document.getElementById("gate-count");
+      var sticky = document.getElementById("sticky-apply");
+
+      function setHiddenFields() {
+        /*
+          Hidden fields enviados a Typeform.
+          Si agregas o quitas campos ocultos en Typeform, edita esta lista.
+          El script toma cada valor desde la URL, por ejemplo:
+          ?first_name=Juan&email=juan@email.com&utm_source=facebook
+        */
+        var identityFields = ["first_name", "name", "email", "sexo", "video"];
+        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+        var hiddenFields = [];
+        params.forEach(function (value, key) {
+          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
+          if (!allowed || !value) return;
+          // El @ literal evita que el workflow reciba correos con %40.
+          var encoded = encodeURIComponent(value).replace(/%40/gi, "@");
+          hiddenFields.push(key + "=" + encoded);
+        });
+        var hidden = hiddenFields.join(",");
+
+        // Typeform lee data-tf-hidden cuando carga su embed.js.
+        if (tf && hidden) {
+          tf.setAttribute("data-tf-hidden", hidden);
+        }
+      }
+
+      function loadTypeform() {
+        /*
+          Carga Typeform solo cuando el Paso 2 aparece.
+          Esto mejora la velocidad inicial porque embed.js no carga al abrir la pagina.
+        */
+        if (typeformLoaded) return;
+        typeformLoaded = true;
+        setHiddenFields();
+
+        var script = document.createElement("script");
+        script.src = "https://embed.typeform.com/next/embed.js";
+        script.async = true;
+
+        // Oculta el texto "Cargando aplicacion..." cuando Typeform termina de cargar.
+        script.onload = function () {
+          if (loader) loader.style.display = "none";
+        };
+        document.head.appendChild(script);
+      }
+
+      function showTypeform() {
+        /*
+          Revela el Paso 2.
+          Aqui ocurre todo lo visual:
+          - Se activa .application-ready para mostrar kit/footer.
+          - Se desvanece el contador.
+          - Se muestra #typeform-cta.
+          - Se carga Typeform.
+          - Se hace scroll suave hacia la aplicacion.
+        */
+        if (triggered) return;
+        triggered = true;
+
+        var el = document.getElementById("typeform-cta");
+        document.body.classList.add("application-ready");
+        if (timer) timer.classList.add("done");
+
+        if (el) {
+          el.classList.add("visible");
+          loadTypeform();
+
+          // Cambia 360 si quieres que el scroll espere mas/menos tras revelar el bloque.
+          window.setTimeout(function () {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 360);
+        }
+
+        // Muestra el boton flotante en desktop/tablet. En mobile el CSS lo oculta.
+        if (sticky) {
+          window.setTimeout(function () {
+            sticky.classList.add("visible");
+          }, 900);
+        }
+      }
+
+      /*
+        EL CONTADOR ARRANCA AL CARGAR LA PAGINA Y ES VISIBLE DESDE EL INICIO.
+        Se hace asi (y no atado al "play") porque el video suele reproducirse
+        en autoplay: el evento play puede dispararse antes de que lo escuchemos,
+        dejando el temporizador sin aparecer. Arrancar al cargar es predecible
+        con o sin autoplay.
+      */
+      var countdownStarted = false;
+
+      function formatRemaining(seconds) {
+        // Con tiempos largos (Meta Ads) muestra m:ss; con cortos mantiene "10s".
+        if (seconds >= 60) {
+          var m = Math.floor(seconds / 60);
+          var s = seconds % 60;
+          return m + ":" + (s < 10 ? "0" : "") + s;
+        }
+        return seconds + "s";
+      }
+
+      function startCountdown() {
+        if (countdownStarted || triggered) return;
+        countdownStarted = true;
+
+        var remaining = Math.max(0, Math.round(REVEAL_SECONDS));
+        if (count) count.textContent = formatRemaining(remaining);
+
+        var countdown = window.setInterval(function () {
+          remaining -= 1;
+          if (count) count.textContent = formatRemaining(Math.max(0, remaining));
+
+          // Cuando llega a cero, detiene el contador y revela el Paso 2.
+          if (remaining <= 0) {
+            window.clearInterval(countdown);
+            showTypeform();
+          }
+        }, 1000);
+      }
+
+      // Arranca en cuanto carga la pagina.
+      startCountdown();
+
+      // Funcion manual para pruebas desde consola: window.TR4INER_SHOW_TYPEFORM()
+      window.TR4INER_SHOW_TYPEFORM = showTypeform;
+    })();
+  </script>
+</body>
+</html>

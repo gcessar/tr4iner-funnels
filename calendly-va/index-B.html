@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#FAF7F2" />
+  <title>Agenda tu sesión · TR4INER · Versión B</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://calendly.com" />
+  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&family=Poppins:wght@500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #FAF7F2;
+      --bg-deeper: #F2EBE0;
+      --paper: #FFFDF8;
+      --ink: #1A1412;
+      --ink-soft: #3D332D;
+      --muted: #756B62;
+      --muted-2: #9A9089;
+      --rule: rgba(26, 20, 18, 0.12);
+      --rule-strong: rgba(26, 20, 18, 0.22);
+      --accent: #C27B5A;
+      --accent-deep: #A86545;
+      --gold: #F5C400;
+      --black: #11100F;
+      --max: 900px;
+      --gutter: clamp(18px, 4vw, 30px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html.modal-open {
+      overflow: hidden;
+    }
+
+    body {
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 50% -12%, rgba(194, 123, 90, 0.12), transparent 34rem),
+        linear-gradient(180deg, #FFFDF8 0%, var(--bg) 30%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "Lexend", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0.032;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 240px 240px;
+    }
+
+    a, button { touch-action: manipulation; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent-deep);
+      outline-offset: 4px;
+    }
+
+    .page {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: calc(26px + env(safe-area-inset-top)) var(--gutter) calc(68px + env(safe-area-inset-bottom));
+    }
+
+    .case-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      line-height: 1.2;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .case-mark::before,
+    .case-mark::after {
+      content: "";
+      width: clamp(18px, 7vw, 44px);
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .hero {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+      color: var(--accent-deep);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    h1 {
+      margin-bottom: 14px;
+      color: var(--ink);
+      font-family: "Poppins", sans-serif;
+      font-size: clamp(35px, 7vw, 58px);
+      font-weight: 600;
+      letter-spacing: -0.047em;
+      line-height: 1.03;
+      text-wrap: balance;
+    }
+
+    h1 em {
+      color: var(--accent-deep);
+      font-style: normal;
+    }
+
+    .dek {
+      max-width: 58ch;
+      margin: 0 auto;
+      color: var(--ink-soft);
+      font-size: clamp(15.5px, 2vw, 17px);
+      line-height: 1.5;
+      text-wrap: pretty;
+    }
+
+    .agenda-panel {
+      margin-top: 18px;
+      overflow: hidden;
+      border-top: 2px solid var(--accent);
+      border-bottom: 1px solid var(--rule);
+      padding: 24px 28px 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 248, 0.66), rgba(242, 235, 224, 0.92)),
+        var(--bg-deeper);
+      box-shadow: 0 28px 78px rgba(26, 20, 18, 0.08);
+    }
+
+    .agenda-action {
+      text-align: center;
+    }
+
+    .calendar-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: min(100%, 520px);
+      min-height: 58px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--black);
+      color: #FFFDF8;
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform 180ms ease, background-color 180ms ease;
+    }
+
+    .calendar-button:hover {
+      background: #000;
+      transform: translateY(-1px);
+    }
+
+    .calendar-button b {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .agenda-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .video-card,
+    .proof-card {
+      border: 1px solid var(--rule);
+      background: rgba(255, 253, 248, 0.54);
+    }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-family: "Poppins", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .video-card {
+      margin-top: 30px;
+      padding: 16px;
+    }
+
+    .video-container {
+      overflow: hidden;
+      border: 1px solid rgba(26, 20, 18, 0.08);
+      background: var(--paper);
+      min-height: clamp(210px, 38vw, 380px);
+    }
+
+    .video-container > div {
+      width: 100%;
+      min-height: inherit;
+    }
+
+    .proof-card {
+      margin-top: 26px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .proof-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .proof-card h2 {
+      max-width: 560px;
+      font-family: "Poppins", sans-serif;
+      font-size: clamp(22px, 4vw, 30px);
+      line-height: 1.06;
+      letter-spacing: -0.032em;
+      text-wrap: balance;
+    }
+
+    .proof-copy {
+      max-width: 58ch;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+
+    .carousel-controls {
+      display: inline-flex;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .carousel-controls button {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid var(--rule-strong);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .story-carousel {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .story-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-card {
+      position: relative;
+      flex: 0 0 188px;
+      min-height: 270px;
+      overflow: hidden;
+      border: 0;
+      border-radius: 8px;
+      background: var(--gold);
+      color: var(--black);
+      cursor: pointer;
+      scroll-snap-align: start;
+      text-align: left;
+      transition: transform 180ms ease;
+    }
+
+    .story-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .story-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 270px;
+      object-fit: contain;
+      background: var(--bg-deeper);
+    }
+
+    .story-card div {
+      position: absolute;
+      right: 11px;
+      bottom: 12px;
+      left: 11px;
+      z-index: 2;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    .story-card b {
+      display: block;
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .story-card span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      line-height: 1.32;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(17, 16, 15, 0.86);
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-inner {
+      position: relative;
+      width: auto;
+      height: min(86dvh, 746px);
+      max-width: min(100%, 420px);
+      aspect-ratio: 9 / 16;
+      background: #000;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+    }
+
+    .lightbox iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, 0.94);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .calendar-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      background: rgba(17, 16, 15, 0.82);
+    }
+
+    .calendar-modal.open {
+      display: flex;
+    }
+
+    .calendar-modal-inner {
+      position: relative;
+      overflow: hidden;
+      width: min(100%, 980px);
+      height: min(86dvh, 760px);
+      border: 1px solid rgba(255, 253, 248, 0.18);
+      border-radius: 10px;
+      background: #FFFDF8;
+      box-shadow: 0 34px 100px rgba(0, 0, 0, 0.42);
+    }
+
+    .calendar-modal iframe {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #FFFDF8;
+    }
+
+    .calendar-loader {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .calendar-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(26, 20, 18, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, 0.94);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: "Poppins", sans-serif;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .fine-print {
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted-2);
+      font-family: "Poppins", sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .mobile-book {
+      position: fixed;
+      z-index: 30;
+      right: 14px;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      left: 14px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 10px 9px 16px;
+      border-radius: 999px;
+      background: rgba(17, 16, 15, 0.94);
+      color: #FFFDF8;
+      box-shadow: 0 18px 50px rgba(26, 20, 18, 0.22);
+      font-family: "Poppins", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .mobile-book {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .mobile-book b {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding-top: calc(20px + env(safe-area-inset-top));
+      }
+
+      .case-mark {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .case-mark::after {
+        display: none;
+      }
+
+      .hero {
+        margin-bottom: 18px;
+        text-align: left;
+      }
+
+      h1 {
+        font-size: 35px;
+      }
+
+      .agenda-panel {
+        padding: 18px;
+      }
+
+      .proof-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .story-card {
+        flex-basis: 68%;
+        min-height: auto;
+      }
+
+      .mobile-book {
+        display: inline-flex;
+      }
+
+      .calendar-modal {
+        padding: 10px;
+      }
+
+      .calendar-modal-inner {
+        height: min(88dvh, 760px);
+        border-radius: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="case-mark">TR4INER · Sesión privada</div>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="status">Tu aplicación calificó</div>
+      <h1 id="hero-title">Elige tu horario para la <em>sesión de evaluación.</em></h1>
+      <p class="dek">Agenda el espacio que realmente puedas atender. En la llamada revisamos si tu caso encaja con el acompañamiento.</p>
+    </section>
+
+    <section class="video-card" aria-label="Mensaje antes de agendar">
+      <div class="section-label">Mensaje breve</div>
+      <div class="video-container">
+        <div id="vidalytics_embed_2s1vpHRi_hOARyIm" style="width: 100%; position: relative; padding-top: 56.25%;"></div>
+      </div>
+    </section>
+
+    <section class="agenda-panel" id="agenda" aria-label="Elegir horario para la sesión de evaluación">
+      <div class="agenda-action">
+        <button class="calendar-button open-calendly" type="button">
+          <span>Elegir horario en Calendly</span>
+          <b aria-hidden="true">→</b>
+        </button>
+        <p class="agenda-note">El calendario se abre aquí mismo para que elijas tu hora.</p>
+      </div>
+    </section>
+
+    <aside class="proof-card">
+      <div class="proof-head">
+        <div>
+          <div class="section-label">Prueba real</div>
+          <h2>Antes de agendar, mira lo que ya pasó con personas como tú.</h2>
+          <p class="proof-copy">Toca cualquier historia para ver el testimonio. La sesión sirve para revisar si también existe un plan sostenible para tu caso.</p>
+        </div>
+        <div class="carousel-controls" aria-label="Controles de testimonios">
+          <button type="button" class="carousel-prev" aria-label="Testimonio anterior">‹</button>
+          <button type="button" class="carousel-next" aria-label="Testimonio siguiente">›</button>
+        </div>
+      </div>
+
+      <div class="story-carousel" id="story-carousel">
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925219212">
+          <img src="https://images.clickfunnels.com/53/87146aae9749b595990d14ca3c8298/SAME-LEON.png" alt="Testimonio de Same Leon" loading="lazy" />
+          <div><b>Same Leon, Chile</b><span>Pasó de 89 a 69 kg y del 30% al 20% de grasa en 12 meses, sin dietas extremas.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856509800">
+          <img src="https://images.clickfunnels.com/8b/0bd2bf20fb4855b301e3ac56ccd6e7/HANNA-BRIYU.png" alt="Testimonio de Ana Briones" loading="lazy" />
+          <div><b>Ana Briones, Perú</b><span>Enfermera de UCI y madre de dos: perdió 13 kg sin pasar hambre ni dejar su vida.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856846588">
+          <img src="https://images.clickfunnels.com/0f/579fe1298d40e5994bb79f584b64c7/displays-videos-testimonios-hombres-fernando-pena.png" alt="Testimonio de Fernando Peña" loading="lazy" />
+          <div><b>Fernando Peña, Perú</b><span>A sus 57 años bajó 7 kg y 5 puntos de grasa. Hoy le dicen que se ve más joven.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245130">
+          <img src="https://images.clickfunnels.com/0e/87903ec2b649b79fdb39fc927e2f89/GUADALUPE-ELIGIO.png" alt="Testimonio de Guadalupe Eligio" loading="lazy" />
+          <div><b>Guadalupe Eligio, EE UU</b><span>A los 48 perdió 10 kg empezando desde cero, sin saber qué era un macro.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245461">
+          <img src="https://images.clickfunnels.com/ec/f62fbc010241aea9c64c3c10245b02/VICTORIA-SIFUENTES.png" alt="Testimonio de Victoria Sifuentes" loading="lazy" />
+          <div><b>Victoria Sifuentes, Perú</b><span>Llegó por salud tras un cuadro de estrés y terminó bajando 10 kg entrenando desde casa.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218713">
+          <img src="https://images.clickfunnels.com/67/d61d6eff864f46aaac2683f06556d2/ANZONNY.png" alt="Testimonio de Anzonny Malave" loading="lazy" />
+          <div><b>Anzonny Malave, Chile</b><span>Bajó del 26% al 18% de grasa en solo 6 meses, sin ensaladas tristes ni comida desabrida.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856835613">
+          <img src="https://images.clickfunnels.com/43/816e28325047fa8515707e2df2acd5/LETICIA-PEREIDA.png" alt="Testimonio de Leticia Pereira" loading="lazy" />
+          <div><b>Leticia Pereira, EE UU</b><span>Perdió 10 kg y definió el abdomen que otras dietas nunca le dieron, sin quedar débil.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218766">
+          <img src="https://images.clickfunnels.com/10/2ef98bb92b4d5eb9a406c03ee6f335/DANY.png" alt="Testimonio de Daniel Alarcón" loading="lazy" />
+          <div><b>Daniel Alarcón, México</b><span>Perdió 11 kg y llegó al 17% de grasa en solo 6 meses, con un plan hecho a su medida.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245204">
+          <img src="https://images.clickfunnels.com/eb/18c9c46eae40408dda35c21153f74d/JOSEFA.png" alt="Testimonio de Josefa Damian" loading="lazy" />
+          <div><b>Josefa Damian, EE UU</b><span>A sus 46 años perdió 11 kg y recuperó una autoestima que creía perdida.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218792">
+          <img src="https://images.clickfunnels.com/8b/56d8f2276b40b6980d23d413fa801f/DASHIEL.png" alt="Testimonio de Dashiell Ezequiel" loading="lazy" />
+          <div><b>Dashiell Ezequiel, Perú</b><span>Bajó del 32% al 22% de grasa viviendo solo, cocinándose él mismo y sin dejar los dulces.</span></div>
+        </button>
+
+        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245166">
+          <img src="https://images.clickfunnels.com/c8/a4ddd05b0c4bbc9b20920a2f73bda3/IRENE.png" alt="Testimonio de Irene Salom" loading="lazy" />
+          <div><b>Irene Salom, EE UU</b><span>Entrenó desde casa y siguió comiendo lo mismo que su familia, sin platos aparte.</span></div>
+        </button>
+      </div>
+    </aside>
+
+    <div class="fine-print">© 2026 TR4INER · BodyMindFitCo LLC · Privacidad · Términos</div>
+  </main>
+
+  <button class="mobile-book open-calendly" type="button">
+    <span>Elegir horario</span>
+    <b aria-hidden="true">→</b>
+  </button>
+
+  <div class="lightbox" id="video-lightbox" aria-hidden="true" role="dialog" aria-label="Video testimonio">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" type="button" aria-label="Cerrar video">×</button>
+      <iframe id="lightbox-frame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video testimonio"></iframe>
+    </div>
+  </div>
+
+  <div class="calendar-modal" id="calendar-modal" aria-hidden="true" role="dialog" aria-label="Calendario de reserva">
+    <div class="calendar-modal-inner">
+      <button class="calendar-modal-close" type="button" aria-label="Cerrar calendario">×</button>
+      <div class="calendar-loader">Cargando calendario</div>
+      <iframe id="calendar-frame" src="" loading="lazy" title="Reserva tu sesión en Calendly"></iframe>
+    </div>
+  </div>
+
+  <script>
+    (function (v, i, d, a, l, y, t, c, s) {
+      y = "_" + d.toLowerCase();
+      c = d + "L";
+      if (!v[d]) { v[d] = {}; }
+      if (!v[c]) { v[c] = {}; }
+      if (!v[y]) { v[y] = {}; }
+      var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
+      if (!vsl) {
+        vsl = function (u, cb) {
+          if (t) { cb(); return; }
+          s = i.createElement("script");
+          s.type = "text/javascript";
+          s.async = true;
+          s.src = u;
+          if (s.readyState) {
+            s.onreadystatechange = function () {
+              if (s.readyState === "loaded" || s.readyState === "complete") {
+                s.onreadystatechange = null;
+                vlf = 1;
+                cb();
+              }
+            };
+          } else {
+            s.onload = function () {
+              vlf = 1;
+              cb();
+            };
+          }
+          i.getElementsByTagName("head")[0].appendChild(s);
+        };
+      }
+      vsl(l + "loader.min.js", function () {
+        if (!vli) {
+          var vlc = v[c][vl];
+          vli = new vlc();
+        }
+        vli.loadScript(l + "player.min.js", function () {
+          var vec = v[d][ve];
+          t = new vec();
+          t.run(a);
+        });
+      });
+    })(window, document, "Vidalytics", "vidalytics_embed_2s1vpHRi_hOARyIm", "https://fast.vidalytics.com/embeds/IoH8SL8U/2s1vpHRi_hOARyIm/");
+  </script>
+
+  <script>
+    (function () {
+      var qp = new URLSearchParams(window.location.search);
+      var calendlyBase = "https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner?hide_event_type_details=1&hide_gdpr_banner=1&background_color=fffdf8&text_color=1a1412&primary_color=f5c400";
+      var calendlyUrl = new URL(calendlyBase);
+      var calendarModal = document.getElementById("calendar-modal");
+      var calendarFrame = document.getElementById("calendar-frame");
+      var calendarClose = document.querySelector(".calendar-modal-close");
+      var calendarLoaded = false;
+
+      qp.forEach(function (value, key) {
+        var passthrough = ["email", "first_name", "name", "sexo", "video", "fbclid", "gclid", "fbc_id", "h_ad_id"];
+        if (key.indexOf("utm_") === 0 || passthrough.indexOf(key) !== -1) {
+          calendlyUrl.searchParams.set(key, value);
+        }
+      });
+
+      function openCalendar() {
+        if (!calendarModal || !calendarFrame) return;
+        if (!calendarLoaded) {
+          calendarFrame.src = calendlyUrl.toString();
+          calendarLoaded = true;
+        }
+        calendarModal.classList.add("open");
+        calendarModal.setAttribute("aria-hidden", "false");
+        document.documentElement.classList.add("modal-open");
+      }
+
+      function closeCalendar() {
+        if (!calendarModal) return;
+        calendarModal.classList.remove("open");
+        calendarModal.setAttribute("aria-hidden", "true");
+        document.documentElement.classList.remove("modal-open");
+      }
+
+      document.querySelectorAll(".open-calendly").forEach(function (button) {
+        button.addEventListener("click", openCalendar);
+      });
+
+      if (calendarClose) calendarClose.addEventListener("click", closeCalendar);
+      if (calendarModal) {
+        calendarModal.addEventListener("click", function (event) {
+          if (event.target === calendarModal) closeCalendar();
+        });
+      }
+
+      var carousel = document.getElementById("story-carousel");
+      var prev = document.querySelector(".carousel-prev");
+      var next = document.querySelector(".carousel-next");
+      var lightbox = document.getElementById("video-lightbox");
+      var frame = document.getElementById("lightbox-frame");
+      var close = document.querySelector(".lightbox-close");
+
+      function scrollStories(direction) {
+        if (!carousel) return;
+        carousel.scrollBy({ left: direction * Math.max(210, carousel.clientWidth * 0.58), behavior: "smooth" });
+      }
+
+      function advanceStories() {
+        if (!carousel || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        var atEnd = carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 8;
+        if (atEnd) {
+          carousel.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          scrollStories(1);
+        }
+      }
+
+      function openLightbox(url) {
+        if (!lightbox || !frame) return;
+        frame.src = url + "?autoplay=1";
+        lightbox.classList.add("open");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.documentElement.classList.add("modal-open");
+      }
+
+      function closeLightbox() {
+        if (!lightbox || !frame) return;
+        lightbox.classList.remove("open");
+        lightbox.setAttribute("aria-hidden", "true");
+        frame.src = "";
+        document.documentElement.classList.remove("modal-open");
+      }
+
+      if (prev) prev.addEventListener("click", function () { scrollStories(-1); });
+      if (next) next.addEventListener("click", function () { scrollStories(1); });
+      if (carousel) window.setInterval(advanceStories, 4200);
+      if (close) close.addEventListener("click", closeLightbox);
+      if (lightbox) {
+        lightbox.addEventListener("click", function (event) {
+          if (event.target === lightbox) closeLightbox();
+        });
+      }
+
+      document.querySelectorAll(".story-card").forEach(function (card) {
+        card.addEventListener("click", function () {
+          openLightbox(card.getAttribute("data-video"));
+        });
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeLightbox();
+          closeCalendar();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

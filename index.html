@@ -22,6 +22,15 @@
     --accent-ink: #0A0A0A;
     --error: #C53030;
     --max: 620px;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Instrument Sans", -apple-system, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --display-weight: 560;
+    --display-leading: 1.06;
+    --display-tracking: -0.03em;
+    --meta-size: 10.5px;
+    --meta-weight: 500;
+    --meta-tracking: 0.14em;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,7 +38,7 @@
   html, body {
     background: var(--bg);
     color: var(--ink);
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 17px;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
@@ -81,9 +90,10 @@
     border-bottom: 1px solid var(--rule);
     padding-bottom: 14px;
     margin-bottom: 44px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: var(--meta-size);
+    font-weight: var(--meta-weight);
+    letter-spacing: var(--meta-tracking);
     text-transform: uppercase;
     color: var(--muted);
   }
@@ -109,9 +119,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
+    font-family: var(--mono);
+    font-size: var(--meta-size);
+    font-weight: var(--meta-weight);
+    letter-spacing: var(--meta-tracking);
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 20px;
@@ -127,19 +138,19 @@
 
   /* ─── Headline ─── */
   h1.headline {
-    font-family: 'Fraunces', serif;
-    font-variation-settings: "opsz" 144, "SOFT" 20;
-    font-weight: 450;
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 100;
+    font-weight: var(--display-weight);
     font-size: clamp(34px, 8.4vw, 46px);
-    line-height: 1.02;
-    letter-spacing: -0.025em;
+    line-height: var(--display-leading);
+    letter-spacing: var(--display-tracking);
     color: var(--ink);
     margin-bottom: 24px;
     text-wrap: balance;
   }
   h1.headline em {
     font-style: italic;
-    font-weight: 400;
+    font-weight: 500;
   }
   h1.headline .word {
     display: inline-block;
@@ -153,8 +164,8 @@
 
   /* ─── Subhead ─── */
   .subhead {
-    font-family: 'Instrument Sans', sans-serif;
-    font-size: 16.5px;
+    font-family: var(--sans);
+    font-size: clamp(16px, 2.1vw, 18.5px);
     line-height: 1.55;
     color: var(--ink-soft);
     margin-bottom: 40px;
@@ -164,7 +175,7 @@
     animation: fadeUp 0.8s 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
   .subhead::first-letter {
-    font-family: 'Fraunces', serif;
+    font-family: var(--serif);
     font-weight: 500;
     font-size: 2.6em;
     float: left;
@@ -257,7 +268,7 @@
     position: absolute;
     bottom: 12px;
     right: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.05em;
@@ -273,7 +284,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -286,7 +297,7 @@
 
   /* ─── Bullets ─── */
   .bullets-intro {
-    font-family: 'Fraunces', serif;
+    font-family: var(--serif);
     font-style: italic;
     font-weight: 400;
     font-size: 20px;
@@ -317,7 +328,7 @@
     animation: fadeUp 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
   .bullet-num {
-    font-family: 'Fraunces', serif;
+    font-family: var(--serif);
     font-variation-settings: "opsz" 144;
     font-size: 22px;
     font-weight: 400;
@@ -332,7 +343,7 @@
     margin-left: 1px;
   }
   .bullet-text {
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 16.5px;
     line-height: 1.5;
     color: var(--ink-soft);
@@ -359,7 +370,7 @@
     background: var(--ink);
     color: #F5F1E5;
     border: none;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -385,7 +396,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: none;
@@ -401,7 +412,7 @@
 
   .cta-microcopy {
     margin-top: 14px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.06em;
     color: var(--muted);
@@ -441,7 +452,7 @@
     min-width: 0;
   }
   .sticky-cta-kicker {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 9.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -449,7 +460,7 @@
     margin-bottom: 3px;
   }
   .sticky-cta-title {
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 13.5px;
     color: #F5F1E5;
     font-weight: 500;
@@ -462,7 +473,7 @@
     background: var(--accent);
     color: var(--ink);
     border: none;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -500,14 +511,14 @@
     flex-shrink: 0;
     border: 1px solid var(--rule);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Fraunces', serif;
+    font-family: var(--serif);
     font-weight: 500;
     font-size: 18px;
     color: var(--ink);
   }
   .trust-text { flex: 1; }
   .trust-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 9.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -515,7 +526,7 @@
     margin-bottom: 3px;
   }
   .trust-name {
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 13.5px;
     color: var(--ink);
     font-weight: 500;
@@ -531,7 +542,7 @@
     padding-top: 16px;
     border-top: 1px solid var(--rule);
     text-align: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 9.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -583,7 +594,7 @@
     border: none;
     background: transparent;
     cursor: pointer;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 22px;
     font-weight: 300;
     color: var(--muted);
@@ -602,7 +613,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -617,9 +628,9 @@
   }
 
   .modal-title {
-    font-family: 'Fraunces', serif;
-    font-variation-settings: "opsz" 144, "SOFT" 20;
-    font-weight: 450;
+    font-family: var(--serif);
+    font-variation-settings: "opsz" 100;
+    font-weight: var(--display-weight);
     font-size: 26px;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -643,7 +654,7 @@
   .m-field { margin-bottom: 16px; }
   .m-label {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -657,7 +668,7 @@
     border: none;
     border-bottom: 1px solid var(--rule-strong);
     padding: 10px 0 10px;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 16px;
     color: var(--ink);
     outline: none;
@@ -696,7 +707,7 @@
     border-radius: 2px;
     padding: 14px 14px;
     cursor: pointer;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 14px;
     font-weight: 500;
     color: var(--ink);
@@ -741,7 +752,7 @@
     color: var(--error);
     font-size: 12px;
     margin-top: 6px;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
   }
   .m-err::before { content: "✱ "; }
 
@@ -754,7 +765,7 @@
     color: #F5F1E5;
     border: none;
     border-radius: 2px;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -780,7 +791,7 @@
 
   .m-privacy {
     text-align: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.08em;
     color: var(--muted-2);
@@ -818,7 +829,7 @@
   .m-confirm-mark svg { width: 26px; height: 26px; stroke: var(--ink); }
 
   .m-confirm-kicker {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -827,8 +838,9 @@
   }
 
   .m-confirm-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 450;
+    font-family: var(--serif);
+    font-weight: var(--display-weight);
+    font-variation-settings: "opsz" 100;
     font-size: 24px;
     line-height: 1.15;
     letter-spacing: -0.02em;
@@ -856,7 +868,7 @@
   .m-confirm-info-row:last-child { margin-bottom: 0; }
   .m-confirm-info-row strong { color: var(--ink); font-weight: 600; }
   .m-confirm-info-row .ico {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 10px;
     font-weight: 600;
     color: var(--muted);
@@ -872,7 +884,7 @@
     color: #F5F1E5;
     border: none;
     border-radius: 2px;
-    font-family: 'Instrument Sans', sans-serif;
+    font-family: var(--sans);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -902,7 +914,7 @@
     position: fixed;
     left: 14px;
     bottom: 90px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -938,7 +950,7 @@
   <div class="masthead">
     <div class="brand">TR4INER / ESTUDIO</div>
     <div class="meta">
-      <span><span class="dot"></span> MAYO 2026</span>
+      <span><span class="dot"></span> JULIO 2026</span>
     </div>
   </div>
 
@@ -1127,6 +1139,7 @@
   </div>
 </div>
 
+<script src="/attribution.js"></script>
 <script>
   // ───────────────────────────────────────
   // Headline word-by-word reveal
@@ -1242,13 +1255,25 @@
   // Conserva: honeypot, UTM capture, validation, webhook, redirect
   // ───────────────────────────────────────
   (function() {
-    var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','fbclid','gclid'];
-    var params = new URLSearchParams(window.location.search);
+    var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','fbclid','gclid','fbc_id','h_ad_id'];
+    // Lee primero la URL actual para no depender de que /attribution.js exista en ClickFunnels.
+    var currentParams = new URLSearchParams(window.location.search);
     var utmData = {};
-    utmKeys.forEach(function(key) {
-      var val = params.get(key);
-      if (val) utmData[key] = val;
+    currentParams.forEach(function(value, key) {
+      if (value && (key.indexOf('utm_') === 0 || utmKeys.indexOf(key) !== -1)) {
+        utmData[key] = value;
+      }
     });
+    // TR4Track aporta atribución adicional cuando está disponible, sin borrar la URL actual.
+    if (window.TR4Track) {
+      var trackedUtms = window.TR4Track.getUTMs(utmKeys);
+      Object.keys(trackedUtms).forEach(function(key) {
+        if (!utmData[key]) utmData[key] = trackedUtms[key];
+      });
+    }
+    var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
+    // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
+    if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
 
     var dominiosFalsos = [
       'test.com','ejemplo.com','example.com','fake.com','temp.com',
@@ -1270,17 +1295,21 @@
       if (msg) el.textContent = msg;
     }
     function buildRedirectUrl(sexo, nombre, email) {
-      var base = sexo === 'Mujer'
-        ? 'https://metodo.tr4iner.com/testimonio-flor'
-        : 'https://metodo.tr4iner.com/testimonio-dashiel';
+      // Mismo origen: preview queda en preview y producción queda en metodo.tr4iner.com.
+      var base = new URL(
+        sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
+        window.location.origin
+      );
       var p = new URLSearchParams();
       p.set('first_name', nombre);
       p.set('email', email);
       p.set('sexo', sexo);
-      utmKeys.forEach(function(key) {
-        if (utmData[key]) p.set(key, utmData[key]);
+      if (videoId) p.set('video', videoId);
+      Object.keys(utmData).forEach(function(key) {
+        p.set(key, utmData[key]);
       });
-      return base + '?' + p.toString().replace(/%40/g, '@');
+      base.search = p.toString().replace(/%40/g, '@');
+      return base.toString();
     }
     function showTransition(nombre, email, sexo) {
   document.getElementById('lm-form-view').style.display = 'none';
@@ -1355,6 +1384,7 @@
         nombre:    nombre,
         email:     email,
         sexo:      sexoVal,
+        video:     videoId,
         utm:       utmData,
         page_url:  window.location.href,
         timestamp: new Date().toISOString()
