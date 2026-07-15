@@ -1,0 +1,397 @@
+<meta charset="UTF-8">
+<!-- FIT4CHALLENGE · pegar TODO este bloque en un elemento HTML/JS de ClickFunnels 2.0 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+<div id="f4c-video-root">
+  <div id="f4c-player"></div>
+
+  <section id="f4c-gate" aria-live="polite">
+    <!-- Estado: esperando -->
+    <div id="f4c-waiting">
+      <p class="f4c-kicker">TU ACCESO SE ACTIVA EN</p>
+      <div class="f4c-waiting-grid">
+        <div class="f4c-timer-group">
+          <div id="f4c-countdown">03:00</div>
+          <div class="f4c-progress" role="progressbar" aria-label="Progreso hasta desbloquear el acceso">
+            <span id="f4c-progress-fill"></span>
+          </div>
+        </div>
+        <p class="f4c-copy">
+          Mira el video con atención. Cuando termine el contador, podrás acceder
+          con toda la información clara.
+        </p>
+      </div>
+    </div>
+
+    <!-- Estado: desbloqueado -->
+    <div id="f4c-ready" hidden>
+      <p class="f4c-kicker f4c-kicker--accent">ACCESO DESBLOQUEADO</p>
+      <h2 class="f4c-headline">¿Este enfoque encaja contigo?</h2>
+      <p class="f4c-copy f4c-copy--lead">
+        Si la respuesta es sí, puedes empezar ahora con un plan adaptado a ti.
+      </p>
+      <a id="f4c-cta" href="#" rel="noopener">
+        <span>EMPEZAR FIT4CHALLENGE</span>
+        <span class="f4c-arrow">ahora</span>
+      </a>
+      <p class="f4c-microcopy">Acceso inmediato<span class="f4c-sep">·</span>Pago seguro vía Hotmart</p>
+    </div>
+  </section>
+</div>
+
+<style>
+  html,
+  body {
+    background: #EBE6D6 !important;
+  }
+
+  #f4c-video-root {
+    --f4c-bg: #F2EEE2;
+    --f4c-bg-deeper: #EBE6D6;
+    --f4c-ink: #0A0A0A;
+    --f4c-ink-soft: #2B2826;
+    --f4c-muted: #6B6660;
+    --f4c-muted-2: #8B857D;
+    --f4c-rule: rgba(10, 10, 10, 0.14);
+    --f4c-rule-strong: rgba(10, 10, 10, 0.28);
+    --f4c-accent: #F5C518;
+    --f4c-cream: #F5F1E5;
+
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--f4c-ink);
+    font-family: 'Lexend', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: left;
+  }
+
+  /* ── Reproductor ── */
+  #f4c-player > div {
+    overflow: hidden;
+    border: 1px solid var(--f4c-rule-strong);
+    background: var(--f4c-bg-deeper);
+  }
+
+  /* ── Bloque de acceso (gate) ── */
+  #f4c-gate {
+    position: relative;
+    margin-top: 26px;
+    padding: 26px 26px 30px;
+    background: var(--f4c-bg-deeper);
+    border: 1px solid var(--f4c-rule-strong);
+  }
+  #f4c-gate::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--f4c-ink);
+  }
+
+  /* ── Etiqueta superior ── */
+  .f4c-kicker {
+    margin: 0 0 13px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--f4c-ink);
+  }
+  .f4c-kicker--accent { color: var(--f4c-ink); }
+
+  .f4c-waiting-grid {
+    display: grid;
+    grid-template-columns: minmax(130px, .72fr) minmax(220px, 1.28fr);
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* ── Contador ── */
+  #f4c-countdown {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 9vw, 52px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--f4c-ink);
+  }
+  #f4c-countdown.f4c-tick {
+    animation: f4cTick .24s ease-out;
+  }
+  @keyframes f4cTick {
+    0% { opacity: .72; transform: translateY(2px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Línea de progreso dorada ── */
+  .f4c-progress {
+    position: relative;
+    height: 2px;
+    margin: 12px 0 0;
+    background: var(--f4c-rule);
+    overflow: hidden;
+  }
+  #f4c-progress-fill {
+    display: block;
+    width: 0%;
+    height: 100%;
+    background: var(--f4c-accent);
+    transition: width 0.3s linear;
+  }
+
+  /* ── Copys ── */
+  .f4c-copy {
+    max-width: 52ch;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--f4c-muted);
+    font-weight: 300;
+  }
+  .f4c-copy--lead {
+    margin: 14px 0 26px;
+    font-size: 17px;
+    color: var(--f4c-ink-soft);
+  }
+
+  /* ── Titular del estado desbloqueado ── */
+  .f4c-headline {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: clamp(27px, 6.5vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--f4c-ink);
+  }
+
+  /* ── CTA (firma index.html: relleno dorado desde la izquierda) ── */
+  #f4c-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 22px 26px;
+    background: var(--f4c-ink);
+    color: var(--f4c-cream);
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.35s ease;
+  }
+  #f4c-cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--f4c-accent);
+    transform: translateX(-100%);
+    transition: transform 0.45s cubic-bezier(0.7, 0, 0.3, 1);
+    z-index: 0;
+  }
+  #f4c-cta:hover::before { transform: translateX(0); }
+  #f4c-cta:hover { color: var(--f4c-ink); }
+  #f4c-cta > span { position: relative; z-index: 1; }
+  .f4c-arrow {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .f4c-arrow::after { content: "→"; font-size: 16px; margin-left: 6px; }
+  #f4c-cta:hover .f4c-arrow { transform: translateX(6px); }
+
+  /* ── Microcopy ── */
+  .f4c-microcopy {
+    margin: 14px 0 0;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    line-height: 1.7;
+    color: var(--f4c-muted);
+  }
+  .f4c-sep { display: inline-block; margin: 0 8px; color: var(--f4c-rule-strong); }
+
+  /* ── Reveal ── */
+  #f4c-ready.f4c-reveal { animation: f4cReveal 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  @keyframes f4cReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    #f4c-gate {
+      margin-top: 12px;
+      padding: 17px 18px 18px;
+    }
+    #f4c-gate::after { height: 1px; }
+    .f4c-kicker {
+      margin-bottom: 10px;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+    }
+    .f4c-waiting-grid {
+      grid-template-columns: 94px minmax(0, 1fr);
+      gap: 15px;
+    }
+    #f4c-countdown {
+      font-size: 34px;
+      letter-spacing: -0.03em;
+    }
+    .f4c-progress {
+      margin: 8px 0 0;
+    }
+    .f4c-copy {
+      max-width: 36ch;
+      font-size: 13.5px;
+      line-height: 1.48;
+    }
+    .f4c-copy--lead {
+      margin: 10px 0 18px;
+      font-size: 14px;
+    }
+    .f4c-headline {
+      font-size: 25px;
+      line-height: 1.14;
+    }
+    #f4c-cta {
+      padding: 17px 18px;
+      gap: 10px;
+      font-size: 12px;
+      letter-spacing: 0.065em;
+    }
+    #f4c-cta > span:first-child { white-space: nowrap; }
+    .f4c-arrow { font-size: 11px; }
+    .f4c-microcopy {
+      margin-top: 11px;
+      font-size: 9.5px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #f4c-ready.f4c-reveal { animation: none; }
+    #f4c-countdown.f4c-tick { animation: none; }
+    #f4c-progress-fill,
+    #f4c-cta, #f4c-cta::before, .f4c-arrow { transition: none; }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  var CTA_AT_SECONDS = 180;
+  var HOTMART_URL = 'https://pay.hotmart.com/K104111098X?off=9lmw8r6b';
+  var params = new URLSearchParams(window.location.search);
+
+  // Detecta "-VA-" en cualquier UTM (sin distinguir mayúsculas) -> video de Veronika.
+  var isVA = Array.from(params.entries()).some(function (entry) {
+    return entry[0].toLowerCase().indexOf('utm_') === 0 &&
+      entry[1].toUpperCase().indexOf('-VA-') !== -1;
+  });
+
+  var video = isVA
+    ? { id: 'vidalytics_embed_Rl_cXuqDVuhtabtp', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/Rl_cXuqDVuhtabtp/' }
+    : { id: 'vidalytics_embed_T7Hop2PBd6tWQl0W', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/T7Hop2PBd6tWQl0W/' };
+
+  // Conserva UTMs + identificadores publicitarios y los añade al checkout de Hotmart.
+  var checkoutUrl = new URL(HOTMART_URL);
+  params.forEach(function (value, key) {
+    var k = key.toLowerCase();
+    if (k.indexOf('utm_') === 0 || ['fbc_id', 'h_ad_id', 'fbclid'].indexOf(k) !== -1) {
+      checkoutUrl.searchParams.set(key, value);
+    }
+  });
+  document.getElementById('f4c-cta').href = checkoutUrl.toString();
+
+  // Inyecta ÚNICAMENTE el reproductor que corresponde (solo suena 1 video).
+  var embed = document.createElement('div');
+  embed.id = video.id;
+  embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
+  document.getElementById('f4c-player').appendChild(embed);
+
+  // Helper oficial: espera a que la API de Vidalytics esté lista.
+  !function (v, a, p, i) {
+    v.getVidalyticsPlayer = function (n) {
+      v[a] = v[a] || {}; v[a][p] = v[a][p] || {};
+      var d = v[a][p][n] = v[a][p][n] || {};
+      return new Promise(function (e) {
+        if (d[i]) return void e(d[i]);
+        var t; Object.defineProperty(d, i, { get: function () { return t; }, set: function (x) { t = x; e(x); } });
+      });
+    };
+  }(window, '_vidalytics', 'embeds', 'player');
+
+  loadVidalytics(video.id, video.url);
+
+  getVidalyticsPlayer(video.id).then(function (player) {
+    if (!player) return;
+
+    var countdown = document.getElementById('f4c-countdown');
+    var fill = document.getElementById('f4c-progress-fill');
+    var waiting = document.getElementById('f4c-waiting');
+    var ready = document.getElementById('f4c-ready');
+    var revealed = false;
+    var lastRemaining = null;
+
+    function render() {
+      var elapsed = Math.max(0, Number(player.currentTime()) || 0);
+      var remaining = Math.max(0, Math.ceil(CTA_AT_SECONDS - elapsed));
+      var pct = Math.min(100, (elapsed / CTA_AT_SECONDS) * 100);
+
+      countdown.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' +
+        String(remaining % 60).padStart(2, '0');
+      if (lastRemaining !== null && remaining !== lastRemaining) {
+        countdown.classList.remove('f4c-tick');
+        void countdown.offsetWidth;
+        countdown.classList.add('f4c-tick');
+      }
+      lastRemaining = remaining;
+      fill.style.width = pct + '%';
+
+      if (!revealed && elapsed >= CTA_AT_SECONDS) {
+        revealed = true;
+        waiting.hidden = true;
+        ready.hidden = false;
+        ready.classList.add('f4c-reveal');
+      }
+    }
+
+    player.on('timeupdate', render);
+    player.on('ratechange', render);
+    render();
+  });
+
+  function loadVidalytics(embedId, embedUrl) {
+    (function (v, i, d, a, l, y, t, c, s) {
+      y='_'+d.toLowerCase();c=d+'L';if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}
+      var vl='Loader',vli=v[y][vl],vsl=v[c][vl+'Script'],vlf=v[c][vl+'Loaded'],ve='Embed';
+      if(!vsl){vsl=function(u,cb){if(t){cb();return;}s=i.createElement('script');s.type='text/javascript';
+      s.async=1;s.src=u;if(s.readyState){s.onreadystatechange=function(){if(s.readyState==='loaded'||
+      s.readyState==='complete'){s.onreadystatechange=null;vlf=1;cb();}};}else{s.onload=function(){vlf=1;cb();};}
+      i.getElementsByTagName('head')[0].appendChild(s);};}
+      vsl(l+'loader.min.js',function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}
+      vli.loadScript(l+'player.min.js',function(){var vec=v[d][ve];t=new vec();t.run(a);});});
+    })(window, document, 'Vidalytics', embedId, embedUrl);
+  }
+})();
+</script>
