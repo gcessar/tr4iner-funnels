@@ -646,6 +646,27 @@ YouTube ya no permite eliminar por parámetro el título, avatar, logo o enlaces
 - Paquete curado de 22 archivos: conserva las 20 piezas canónicas anteriores, agrega las dos láminas WebP y excluye `.md`, generadores y versiones ClickFunnels temporales.
 - `/biblioteca/videos/`, `/biblioteca/plan/` y ambos assets de grasa responden `200` desde el alias público.
 
+## 2026-07-16 — GENESIS: entrada por sexo y registro personalizado
+
+### Qué cambió
+- La ruta de entrada abre con una sola pregunta: mujer u hombre. La selección se guarda como `?sexo=` y conserva todos los parámetros de atribución presentes.
+- Después de elegir, la misma página muestra una versión personalizada del caso: promesa, subtítulo, argumentos, CTA y formulario cambian según sexo.
+- El formulario recibe el sexo preseleccionado y oculta la pregunta repetida. Los redirects vigentes se preservan: mujer → Flor; hombre → Dashiel.
+- La identidad visible del programa en esta superficie pasó a `GENESIS`, manteniendo el sistema editorial de TR4INER.
+
+### Base del copy
+- Se revisaron los resúmenes enero–mayo y 149 compradores con Typeform del estudio 2026; 124 tenían sexo registrado (68 mujeres, 56 hombres).
+- El patrón dominante en ambos sexos es la falta de una estructura clara; el segundo es desorden con la comida/ansiedad.
+- En mujeres, el copy cruza pérdida de grasa y desarrollo de piernas/glúteos con horarios reales y rechazo a dietas rígidas. En hombres, cruza sobrepeso o grasa rebelde con fuerza, músculo y control de la comida.
+
+### Verificación local
+- Selector, cambio de perfil, copy mujer/hombre, modal con dos campos y sexo oculto probados en navegador.
+- Estado `sexo` y UTMs comprobados en la URL; lógica de webhook y construcción del redirect no modificadas.
+- Responsive validado en 375, 768 y 1280 px sin overflow; JavaScript válido y consola limpia.
+
+### Estado
+Prototipo local en la rama `codex/genesis-sex-personalization`. No desplegado.
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
