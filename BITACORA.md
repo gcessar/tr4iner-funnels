@@ -664,8 +664,12 @@ El sexo se usa antes del opt-in para que la primera promesa ya hable del problem
 - Los 14 IDs recientes de `@Veronikaalavarado` están presentes; no quedaron videos del scrape inicial del canal equivocado.
 - Responsive comprobado en 375, 768 y 1280 px; JavaScript válido, consola limpia y `git diff --check` sin errores.
 
-### Estado
-Prototipo local en la rama `codex/biblioteca-sex-entry`. No desplegado.
+### Deploy
+- Preview `dpl_C2HbeNjD1c73ssbZsUTEBHrZ7DWd` validado en estado `READY`.
+- Producción `dpl_6HxgGcsH5ZsS5XAoMsRoAkozkYwS` publicada en `tr4iner-funnels`, estado `READY`.
+- Alias principal actualizado: `https://tr4iner-funnel-casos-estudio.vercel.app`.
+- Paquete curado de 23 archivos públicos: conserva las 22 piezas del deployment anterior y agrega `/biblioteca/inicio/`; excluye `.md`, generadores y versiones ClickFunnels.
+- Rama de implementación: `codex/biblioteca-sex-entry`, commit funcional `d99ee04`.
 
 <!-- TEMPLATE para próximas entradas:
 
