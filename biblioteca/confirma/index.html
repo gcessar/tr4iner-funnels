@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Activa tu plaza · Programa Cero TR4INER</title>
+  <title>Activa tu plaza · GENESIS TR4INER</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -464,7 +464,7 @@
           <span class="mail-avatar" aria-hidden="true">A</span>
           <div>
             <p class="mail-from">Anthoni Montalván <time>ahora</time></p>
-            <p class="mail-subject">Tu plaza en el Programa Cero <b>(activación requerida)</b></p>
+            <p class="mail-subject">Tu plaza en GENESIS <b>(activación requerida)</b></p>
             <p class="mail-preview">Acabas de inscribirte al programa. Activa tu plaza aquí y empieza el Bloque 1…</p>
           </div>
         </div>
@@ -491,16 +491,16 @@
     <section class="unlock" aria-labelledby="unlock-title">
       <div class="unlock-head rv" style="--i:0">
         <p class="unlock-eyebrow">Al activar tu plaza</p>
-        <h2 id="unlock-title">Arranca tu Programa Cero, <em>armado para tu caso</em></h2>
+        <h2 id="unlock-title">Arranca tu GENESIS, <em>armado para tu caso</em></h2>
       </div>
       <div class="unlock-grid">
         <article class="unlock-card" style="--i:0">
-          <span class="unlock-num">18 SESIONES</span>
+          <span class="unlock-num" id="unlock-sessions">32 SESIONES</span>
           <h3>El método, no el feed</h3>
           <p>Cada sesión responde en orden lo que en internet buscarías a ciegas: dieta, ayuno, panza, rebote, músculo.</p>
         </article>
         <article class="unlock-card" style="--i:1">
-          <span class="unlock-num">5 BLOQUES</span>
+          <span class="unlock-num" id="unlock-blocks">6 BLOQUES</span>
           <h3>En orden de programa</h3>
           <p>Cómo comer, cómo entrenar, perder grasa, ganar músculo y hormonas. Empiezas por el bloque 1 y avanzas.</p>
         </article>
@@ -546,10 +546,14 @@
         document.getElementById('email-line').textContent = ' a ' + email;
       }
       if (sexo === 'Mujer') {
+        document.getElementById('unlock-sessions').textContent = '32 SESIONES';
+        document.getElementById('unlock-blocks').textContent = '6 BLOQUES';
         document.getElementById('sexo-num').textContent = 'PARA MUJERES';
         document.getElementById('sexo-copy').textContent =
-          'Tu programa incluye las sesiones de entrenamiento femenino y el bloque de hormonas y ciclo menstrual, que solo entra en programas de mujeres.';
+          'Tu ruta combina las sesiones de Anthoni con 14 sesiones de Veronika sobre alimentación, piernas, glúteos, confianza y constancia, además del bloque de ciclo menstrual.';
       } else if (sexo === 'Hombre') {
+        document.getElementById('unlock-sessions').textContent = '15 SESIONES';
+        document.getElementById('unlock-blocks').textContent = '4 BLOQUES';
         document.getElementById('sexo-num').textContent = 'PARA HOMBRES';
         document.getElementById('sexo-copy').textContent =
           'Tu programa va directo a grasa, músculo y definición, sin el contenido de fisiología femenina.';

@@ -646,6 +646,27 @@ YouTube ya no permite eliminar por parámetro el título, avatar, logo o enlaces
 - Paquete curado de 22 archivos: conserva las 20 piezas canónicas anteriores, agrega las dos láminas WebP y excluye `.md`, generadores y versiones ClickFunnels temporales.
 - `/biblioteca/videos/`, `/biblioteca/plan/` y ambos assets de grasa responden `200` desde el alias público.
 
+## 2026-07-16 — GENESIS: entrada por sexo y Biblioteca personalizada
+
+### Qué cambió
+- Se creó `/biblioteca/inicio/` como pre-registro independiente: pregunta Mujer u Hombre y reenvía a `/biblioteca/?sexo=` conservando todos los parámetros presentes en la URL.
+- `/biblioteca/` ya no vuelve a preguntar el sexo. Preselecciona el valor recibido, oculta ese campo y personaliza promesa, argumentos, cantidad de sesiones, miniaturas, formulario y CTA.
+- El nombre visible de Programa Cero pasó a `GENESIS` en registro, confirmación, test de macros y videoteca.
+- Se revisaron los 14 videos más recientes del canal femenino público `@Veronikaalavarado` y se incorporaron como contenido exclusivo para Mujer: 5 en Cómo comer, 3 en Cómo entrenar, 1 en Perder grasa y 5 en el nuevo bloque `Empezar y sostener`.
+- La ruta Mujer queda con 32 sesiones en 6 bloques; Hombre conserva 15 sesiones en 4 bloques. El plan calculado usa los mismos conteos y orden por objetivo.
+
+### Por qué
+El sexo se usa antes del opt-in para que la primera promesa ya hable del problema correcto y para eliminar una pregunta repetida del formulario. El bloque de constancia separa los videos de abandono, confianza y adherencia de los videos técnicos, en línea con el estudio 2026: falta de estructura y desorden con la comida pesan más que desconocer ejercicios.
+
+### Verificación local
+- Selector y registros Mujer/Hombre probados con UTMs sintéticas; `sexo` y atribución permanecen en la URL.
+- Mujer: 32 sesiones, 6 bloques, campo sexo oculto y bloques femeninos visibles. Hombre: 15 sesiones, 4 bloques y bloques de ciclo/constancia ocultos.
+- Los 14 IDs recientes de `@Veronikaalavarado` están presentes; no quedaron videos del scrape inicial del canal equivocado.
+- Responsive comprobado en 375, 768 y 1280 px; JavaScript válido, consola limpia y `git diff --check` sin errores.
+
+### Estado
+Prototipo local en la rama `codex/biblioteca-sex-entry`. No desplegado.
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

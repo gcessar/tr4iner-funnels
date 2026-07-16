@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Diseña tu plan · Programa Cero · TR4INER</title>
+  <title>Diseña tu plan · GENESIS · TR4INER</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -661,7 +661,7 @@
   <div class="page is-in">
 
     <div class="topbar">
-      <p class="wordmark">TR4INER <span>· PROGRAMA CERO</span></p>
+      <p class="wordmark">TR4INER <span>· GENESIS</span></p>
       <a class="back" id="back-link" href="/biblioteca/videos/">← Tus sesiones</a>
     </div>
 
@@ -856,7 +856,7 @@
       <div class="step" data-step="resultado">
         <div class="res-head">
           <span class="stamp" id="stamp">Plan calculado</span>
-          <p class="res-para" id="res-para">Tu plan · Programa Cero</p>
+          <p class="res-para" id="res-para">Tu plan · GENESIS</p>
           <p class="kcal-line">
             <span class="kcal-num" id="kcal-num">0</span>
             <span class="kcal-unit">kcal al día para <span id="res-obj-inline">tu objetivo</span></span>
@@ -885,7 +885,7 @@
 
     <footer>
       <span class="brand">TR4INER</span>
-      <span>Ficha técnica · Programa Cero</span>
+      <span>Ficha técnica · GENESIS</span>
     </footer>
   </div>
 
@@ -1171,16 +1171,17 @@
 
       // ── Ruta de sesiones por objetivo (bloques del catálogo de /biblioteca/videos/) ──
       var BLOQUE_INFO = {
-        comer:    { name: 'Cómo comer',       all: 6, mujer: 6, why: { PG: 'Tu déficit empieza en el plato, no en el cardio.', MM: 'Sin comer suficiente no hay músculo nuevo.', MA: 'La recomposición se decide en la cocina.' } },
-        entrenar: { name: 'Cómo entrenar',    all: 2, mujer: 4, why: { PG: 'Entrenar bien protege tu músculo mientras bajas.', MM: 'El estímulo correcto para crecer sin vivir en el gym.', MA: 'El estímulo que le dice a tu cuerpo qué conservar.' } },
-        grasa:    { name: 'Perder grasa',     all: 4, mujer: 4, why: { PG: 'El método para bajar sin rebote ni hambre.', MM: 'Para mantener la grasa a raya mientras subes.', MA: 'Bajar grasa sin sacrificar lo ganado.' } },
+        comer:    { name: 'Cómo comer',       all: 6, mujer: 11, why: { PG: 'Tu déficit empieza en el plato, no en el cardio.', MM: 'Sin comer suficiente no hay músculo nuevo.', MA: 'La recomposición se decide en la cocina.' } },
+        entrenar: { name: 'Cómo entrenar',    all: 2, mujer: 7, why: { PG: 'Entrenar bien protege tu músculo mientras bajas.', MM: 'El estímulo correcto para crecer sin vivir en el gym.', MA: 'El estímulo que le dice a tu cuerpo qué conservar.' } },
+        grasa:    { name: 'Perder grasa',     all: 4, mujer: 5, why: { PG: 'El método para bajar sin rebote ni hambre.', MM: 'Para mantener la grasa a raya mientras subes.', MA: 'Bajar grasa sin sacrificar lo ganado.' } },
         musculo:  { name: 'Ganar músculo',    all: 3, mujer: 3, why: { PG: 'Más músculo = más gasto en reposo. Tu seguro antirebote.', MM: 'El corazón de tu objetivo: fuerza y masa.', MA: 'Construir mientras defines: aquí está el cómo.' } },
-        hormonas: { name: 'Hormonas y ciclo', all: 0, mujer: 1, why: { PG: 'Ajustar el plan a tu ciclo lo hace sostenible.', MM: 'Tu ciclo también entrena: úsalo a tu favor.', MA: 'La pieza que casi todos los planes ignoran.' } }
+        hormonas: { name: 'Hormonas y ciclo', all: 0, mujer: 1, why: { PG: 'Ajustar el plan a tu ciclo lo hace sostenible.', MM: 'Tu ciclo también entrena: úsalo a tu favor.', MA: 'La pieza que casi todos los planes ignoran.' } },
+        sostener: { name: 'Empezar y sostener', all: 0, mujer: 5, why: { PG: 'El déficit no sirve si vuelves a abandonar.', MM: 'La constancia también se entrena.', MA: 'Para dejar de empezar de cero cada mes.' } }
       };
       var RUTAS = {
-        PG: ['comer', 'grasa', 'entrenar', 'musculo', 'hormonas'],
-        MM: ['comer', 'musculo', 'entrenar', 'grasa', 'hormonas'],
-        MA: ['comer', 'entrenar', 'musculo', 'grasa', 'hormonas']
+        PG: ['comer', 'sostener', 'grasa', 'entrenar', 'musculo', 'hormonas'],
+        MM: ['comer', 'sostener', 'musculo', 'entrenar', 'grasa', 'hormonas'],
+        MA: ['comer', 'sostener', 'entrenar', 'musculo', 'grasa', 'hormonas']
       };
 
       function rutaPara(objetivo, sexo) {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Programa Cero · TR4INER</title>
+  <title>GENESIS · TR4INER</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,7 +84,10 @@
     .hero::before {
       content: "";
       position: absolute;
-      inset: -30px -100vw 0;
+      top: -30px;
+      bottom: 0;
+      left: calc(50% - 50vw);
+      right: calc(50% - 50vw);
       z-index: -2;
       background: repeating-linear-gradient(
         to bottom,
@@ -324,6 +327,22 @@
       font-size: 15px;
       margin-bottom: 22px;
     }
+    .profile-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .profile-switch:hover { color: var(--ink); }
+    .profile-switch svg { width: 12px; height: 12px; }
+    #f-sexo[hidden], [data-profile-only][hidden] { display: none !important; }
 
     .field { margin-bottom: 16px; }
     .field > label {
@@ -536,23 +555,23 @@
   <div class="page">
 
     <header class="hero" id="hero">
-      <p class="eyebrow">TR4INER · Programa Cero</p>
-      <h1 class="rv" style="--i:0">
+      <p class="eyebrow" id="hero-eyebrow">TR4INER · GENESIS</p>
+      <h1 class="rv" id="hero-title" style="--i:0">
         Pierde grasa y gana músculo <span class="mk">con un plan</span>, <em>no con el algoritmo.</em>
       </h1>
-      <p class="dek rv" style="--i:1">
-        El <strong>Programa Cero</strong> es el método de Anthoni Montalván condensado en
-        <strong>5 bloques y 18 sesiones</strong>: qué comer, cómo entrenar y en qué orden hacerlo
+      <p class="dek rv" id="hero-dek" style="--i:1">
+        <strong>GENESIS</strong> es el método de Anthoni Montalván condensado en
+        <strong><span id="hero-block-count">6</span> bloques y <span id="hero-session-count">32</span> sesiones</strong>: qué comer, cómo entrenar y en qué orden hacerlo
         <strong>según tu fisiología</strong>. Te inscribes gratis y tu coach te guía sesión a sesión.
       </p>
       <p class="hero-meta rv" style="--i:2">
         <span>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4.5h12v8H2z"/><path d="M6.8 7l3 1.5-3 1.5z" fill="currentColor" stroke="none"/></svg>
-          18 sesiones
+          <span id="meta-session-count">32</span> sesiones
         </span>
         <span>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3h10M3 8h10M3 13h6"/></svg>
-          5 bloques
+          <span id="meta-block-count">6</span> bloques
         </span>
         <span>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5.2V8l2 1.4"/></svg>
@@ -566,14 +585,14 @@
       <section class="catalog" aria-label="Contenido del programa">
         <div class="catalog-head rv" style="--i:0">
           <h2>El plan de bloques</h2>
-          <span class="count">Semana 0 · 18 sesiones</span>
+          <span class="count" id="catalog-count">Semana 0 · 32 sesiones</span>
         </div>
 
         <div class="bloque" style="--i:1">
           <span class="bloque-num" aria-hidden="true">B1</span>
           <div class="bloque-info">
             <p class="bloque-name">Cómo comer</p>
-            <p class="bloque-sub">6 sesiones · dieta, ayuno, carbohidratos</p>
+            <p class="bloque-sub" id="eating-count">11 sesiones · dieta, ansiedad, ayuno, carbohidratos</p>
           </div>
           <div class="bloque-thumbs" aria-hidden="true">
             <img src="https://i.ytimg.com/vi/fJ3q8QXFb0I/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
@@ -586,12 +605,12 @@
           <span class="bloque-num" aria-hidden="true">B2</span>
           <div class="bloque-info">
             <p class="bloque-name">Cómo entrenar</p>
-            <p class="bloque-sub">4 sesiones · según tu edad, tu tiempo y tu caso</p>
+            <p class="bloque-sub" id="training-count">7 sesiones · según tu edad, tu tiempo y tu caso</p>
           </div>
           <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/RtWY67YnsAY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/iv038ZlizMs/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/gKV5At5iPz4/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img id="training-thumb-1" src="https://i.ytimg.com/vi/RtWY67YnsAY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img id="training-thumb-2" src="https://i.ytimg.com/vi/dECDDxJTz1M/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img id="training-thumb-3" src="https://i.ytimg.com/vi/sOZyt7RTDAU/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
           </div>
         </div>
 
@@ -599,7 +618,7 @@
           <span class="bloque-num" aria-hidden="true">B3</span>
           <div class="bloque-info">
             <p class="bloque-name">Perder grasa</p>
-            <p class="bloque-sub">4 sesiones · sin rebote y sin pasar hambre</p>
+            <p class="bloque-sub" id="fat-count">5 sesiones · sin rebote y sin pasar hambre</p>
           </div>
           <div class="bloque-thumbs" aria-hidden="true">
             <img src="https://i.ytimg.com/vi/SFvwRz-q6lw/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
@@ -621,7 +640,7 @@
           </div>
         </div>
 
-        <div class="bloque" style="--i:5">
+        <div class="bloque" id="female-block" data-profile-only="mujer" style="--i:5">
           <span class="bloque-num" aria-hidden="true">B5</span>
           <div class="bloque-info">
             <p class="bloque-name">Hormonas y ciclo</p>
@@ -632,26 +651,44 @@
           </div>
         </div>
 
-        <p class="catalog-lock rv" style="--i:6">
+        <div class="bloque" id="female-mindset-block" data-profile-only="mujer" style="--i:6">
+          <span class="bloque-num" aria-hidden="true">B6</span>
+          <div class="bloque-info">
+            <p class="bloque-name">Empezar y sostener</p>
+            <p class="bloque-sub">5 sesiones · constancia, confianza y dejar de abandonar</p>
+          </div>
+          <div class="bloque-thumbs" aria-hidden="true">
+            <img src="https://i.ytimg.com/vi/E8g2A30-FJU/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/v8_-EAFcVvg/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+            <img src="https://i.ytimg.com/vi/yn8fDkpbm2E/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
+          </div>
+        </div>
+
+        <p class="catalog-lock rv" style="--i:7">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
           Se desbloquea al inscribirte · gratis, sin tarjeta
         </p>
       </section>
 
       <section class="ficha rv" id="registro" style="--i:2" aria-label="Formulario de inscripción">
-        <h2>Reserva tu plaza</h2>
-        <p class="ficha-dek">La inscripción es gratis y tu programa se abre al instante.</p>
+        <a class="profile-switch" id="profile-switch" href="/biblioteca/inicio/">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8.5 2L4 6l4.5 4"/></svg>
+          <span id="profile-switch-label">Cambiar ruta</span>
+        </a>
+        <h2 id="form-title">Reserva tu plaza</h2>
+        <p class="ficha-dek" id="form-dek">La inscripción es gratis y tu programa se abre al instante.</p>
 
         <form id="lead-form" novalidate>
           <!-- Honeypot anti-bots: si se llena, se descarta el envío -->
           <input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off"
-                 style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true" />
+                 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap"
+                 aria-hidden="true" />
 
           <div class="field" id="f-nombre">
             <label for="nombre">Nombre</label>
             <input class="control" type="text" id="nombre" name="nombre"
-                   placeholder="¿Cómo te llamas?" autocomplete="given-name" />
-            <p class="err" id="err-nombre">Escribe tu nombre</p>
+                   placeholder="Ej. Veronika…" autocomplete="given-name" />
+            <p class="err" id="err-nombre" aria-live="polite">Escribe tu nombre</p>
           </div>
 
           <div class="field" id="f-whatsapp">
@@ -675,19 +712,19 @@
                 <option value="+1">+1 US</option>
               </select>
               <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="numeric"
-                     placeholder="Número con WhatsApp" autocomplete="tel-national" />
+                     placeholder="Ej. 987 654 321…" autocomplete="tel-national" />
             </div>
-            <p class="err" id="err-whatsapp">Ingresa un número válido (solo dígitos)</p>
+            <p class="err" id="err-whatsapp" aria-live="polite">Ingresa un número válido (solo dígitos)</p>
           </div>
 
           <div class="field" id="f-email">
             <label for="email">Correo</label>
             <input class="control" type="email" id="email" name="email"
-                   placeholder="El correo que sí revisas" autocomplete="email" />
-            <p class="err" id="err-email">Ingresa un correo válido</p>
+                   placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" />
+            <p class="err" id="err-email" aria-live="polite">Ingresa un correo válido</p>
           </div>
 
-          <div class="field" id="f-sexo">
+          <div class="field" id="f-sexo" hidden>
             <label id="sexo-label">Sexo</label>
             <div class="sexo-row" role="radiogroup" aria-labelledby="sexo-label">
               <label class="sexo-card" for="sexo-mujer">
@@ -702,11 +739,11 @@
               </label>
             </div>
             <p class="sexo-hint">Tu programa cambia según tu fisiología: no se entrena ni se come igual.</p>
-            <p class="err" id="err-sexo">Selecciona una opción para armar tu programa</p>
+            <p class="err" id="err-sexo" aria-live="polite">Selecciona una opción para armar tu programa</p>
           </div>
 
           <button class="submit" type="submit" id="submit-btn">
-            <span>Inscribirme al Programa Cero</span>
+            <span id="submit-label">Abrir mi GENESIS</span>
             <span class="spinner" aria-hidden="true"></span>
             <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
@@ -733,6 +770,85 @@
   <script>
     (function () {
       'use strict';
+
+      // El registro ya no pregunta el sexo: la ruta de entrada lo entrega por URL.
+      // Si alguien llega por un enlace viejo, lo enviamos al selector sin perder atribución.
+      var entryParams = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
+      function normalizeSexo(value) {
+        value = String(value || '').toLowerCase();
+        if (value === 'mujer' || value === 'm' || value === 'female') return 'Mujer';
+        if (value === 'hombre' || value === 'h' || value === 'male') return 'Hombre';
+        return null;
+      }
+      var entrySexo = normalizeSexo(entryParams.get('sexo'));
+      if (!entrySexo) {
+        var entryUrl = new URL('/biblioteca/inicio/', window.location.origin);
+        entryParams.delete('sexo');
+        entryParams.forEach(function (value, key) { entryUrl.searchParams.set(key, value); });
+        window.location.replace(entryUrl.toString());
+        return;
+      }
+
+      var PROFILES = {
+        Mujer: {
+          sessions: 32,
+          blocks: 6,
+          eating: 11,
+          eatingLabel: 'dieta, ansiedad, ayuno, carbohidratos',
+          training: 7,
+          fat: 5,
+          title: 'Pierde grasa y construye piernas y glúteos <span class="mk">con estructura</span>, <em>no con otra dieta rígida.</em>',
+          dek: '<strong>GENESIS para mujeres</strong> ordena tu alimentación y tu entrenamiento sin cinco comidas al día ni horarios que compitan con tu trabajo o tu familia. Incluye <strong>32 sesiones</strong> de Anthoni y Veronika sobre grasa, ansiedad por comer, piernas, glúteos, ciclo y constancia.',
+          formTitle: 'Activa tu ruta para mujer',
+          formDek: 'Déjanos tus datos y abre al instante las sesiones que corresponden a tu fisiología.',
+          submit: 'Abrir mi GENESIS para mujeres',
+          thumbs: ['bccwq7GYtAY', 'n52msKtyabg', '0MN_rqhuVUU']
+        },
+        Hombre: {
+          sessions: 15,
+          blocks: 4,
+          eating: 6,
+          eatingLabel: 'dieta, ayuno, carbohidratos',
+          training: 2,
+          fat: 4,
+          title: 'Baja la grasa que se quedó y recupera fuerza <span class="mk">con estructura</span>, <em>no improvisando.</em>',
+          dek: '<strong>GENESIS para hombres</strong> ordena tu dieta y tu entrenamiento para salir del sobrepeso o la grasa rebelde sin perder músculo. Son <strong>15 sesiones</strong> sobre alimentación, fuerza, definición y recomposición.',
+          formTitle: 'Activa tu ruta para hombre',
+          formDek: 'Déjanos tus datos y abre al instante una ruta centrada en grasa, fuerza y músculo.',
+          submit: 'Abrir mi GENESIS para hombres',
+          thumbs: ['iv038ZlizMs', 'gKV5At5iPz4']
+        }
+      };
+      var profile = PROFILES[entrySexo];
+      document.documentElement.dataset.sexo = entrySexo.toLowerCase();
+      document.title = 'GENESIS para ' + (entrySexo === 'Mujer' ? 'mujeres' : 'hombres') + ' · TR4INER';
+      document.getElementById('hero-title').innerHTML = profile.title;
+      document.getElementById('hero-dek').innerHTML = profile.dek;
+      document.getElementById('meta-session-count').textContent = profile.sessions;
+      document.getElementById('meta-block-count').textContent = profile.blocks;
+      document.getElementById('catalog-count').textContent = 'Semana 0 · ' + profile.sessions + ' sesiones';
+      document.getElementById('eating-count').textContent = profile.eating + ' sesiones · ' + profile.eatingLabel;
+      document.getElementById('training-count').textContent = profile.training + ' sesiones · según tu edad, tu tiempo y tu caso';
+      document.getElementById('fat-count').textContent = profile.fat + ' sesiones · sin rebote y sin pasar hambre';
+      document.getElementById('female-block').hidden = entrySexo !== 'Mujer';
+      document.getElementById('female-mindset-block').hidden = entrySexo !== 'Mujer';
+      [1, 2, 3].forEach(function (position, index) {
+        var thumb = document.getElementById('training-thumb-' + position);
+        var id = profile.thumbs[index];
+        thumb.hidden = !id;
+        if (id) thumb.src = 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg';
+      });
+      document.getElementById('form-title').textContent = profile.formTitle;
+      document.getElementById('form-dek').textContent = profile.formDek;
+      document.getElementById('submit-label').textContent = profile.submit;
+      document.getElementById('profile-switch-label').textContent = entrySexo + ' · cambiar ruta';
+      var switchUrl = new URL('/biblioteca/inicio/', window.location.origin);
+      entryParams.delete('sexo');
+      entryParams.forEach(function (value, key) { switchUrl.searchParams.set(key, value); });
+      document.getElementById('profile-switch').href = switchUrl.toString();
+      var selectedInput = document.querySelector('input[name="sexo"][value="' + entrySexo + '"]');
+      selectedInput.checked = true;
+      selectedInput.closest('.sexo-card').classList.add('selected');
 
       // ── Entradas: se revelan al entrar en el viewport ──
       function checkReveals() {
@@ -833,7 +949,10 @@
 
         if (!valid) {
           var firstError = document.querySelector('.field.has-error .control, .field.has-error .sexo-row');
-          if (firstError) firstError.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          if (firstError) {
+            firstError.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            if (firstError.focus) firstError.focus({ preventScroll: true });
+          }
           return;
         }
 

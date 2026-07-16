@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Tu Programa Cero · TR4INER</title>
+  <title>Tu GENESIS · TR4INER</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -895,12 +895,12 @@
   <div class="page is-in">
 
     <div class="topbar">
-      <p class="wordmark">TR4INER <span>· PROGRAMA CERO</span></p>
+      <p class="wordmark">TR4INER <span>· GENESIS</span></p>
     </div>
 
     <header class="hero">
       <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Paso 3 de 3 · Plaza activada</p>
-      <h1 class="rv" style="--i:1" id="headline">Este es <span class="mk">tu Programa Cero</span><span id="saludo"></span>.</h1>
+      <h1 class="rv" style="--i:1" id="headline">Este es <span class="mk">tu GENESIS</span><span id="saludo"></span>.</h1>
       <p class="dek rv" style="--i:2" id="dek">
         <strong><span id="total-count">18</span> sesiones en <span id="bloque-count">5</span> bloques</strong>,
         en el orden en que las pondría tu coach. Marca cada sesión al terminarla:
@@ -1025,13 +1025,14 @@
       'use strict';
 
       // ── Catálogo ─────────────────────────────────────────────
-      // sexo: 'all' = para ambos · 'mujer' = solo se muestra a mujeres
+      // sexo: 'all' = para ambos · 'mujer'/'hombre' = ruta exclusiva
       var BLOQUES = [
         { id: 'comer',    num: '01', name: 'Cómo comer',      desc: 'La base: dieta completa, carbohidratos, ayuno y los hábitos que sabotean tu progreso.' },
         { id: 'entrenar', num: '02', name: 'Cómo entrenar',   desc: 'Entrenar bien con el tiempo que tienes, según tu edad y tu punto de partida.' },
         { id: 'grasa',    num: '03', name: 'Perder grasa',    desc: 'Bajar grasa sin rebote, sin pasar hambre y sin vivir castigándote.' },
         { id: 'musculo',  num: '04', name: 'Ganar músculo',   desc: 'Fuerza, recomposición y los errores que frenan tu masa muscular.' },
-        { id: 'hormonas', num: '05', name: 'Hormonas y ciclo', desc: 'Cómo adaptar el entrenamiento a tu ciclo menstrual, con evidencia.' }
+        { id: 'hormonas', num: '05', name: 'Hormonas y ciclo', desc: 'Cómo adaptar el entrenamiento a tu ciclo menstrual, con evidencia.' },
+        { id: 'sostener',  num: '06', name: 'Empezar y sostener', desc: 'La parte mental del cambio: empezar, dejar de abandonar y recuperar confianza.' }
       ];
 
       var VIDEOS = [
@@ -1041,18 +1042,32 @@
         { id: 'FMi3OprRxEk', bloque: 'comer',    sexo: 'all',   title: 'Deja de comer en las noches ahora mismo' },
         { id: 'pNP0n7E9bFk', bloque: 'comer',    sexo: 'all',   title: 'Si comes esto antes de entrenar pierdes grasa más rápido' },
         { id: 'pQKyl2X7bNE', bloque: 'comer',    sexo: 'all',   title: 'Comer así me ayudó a tener abdominales en 3 meses' },
+        { id: 'BMLDoaH695w', bloque: 'comer',    sexo: 'mujer', title: 'Comes “saludable” pero tu cuerpo sigue igual' },
+        { id: 'Pyu12PS7vec', bloque: 'comer',    sexo: 'mujer', title: 'Todas mis comidas para tener un abdomen plano' },
+        { id: 'atxOtyiecLU', bloque: 'comer',    sexo: 'mujer', title: 'El cuerpo siempre me pide dulce… ¿qué hago?' },
+        { id: 'riSJ18pAlOk', bloque: 'comer',    sexo: 'mujer', title: 'Así curé mi adicción a la comida' },
+        { id: 'i5A-tck4jpg', bloque: 'comer',    sexo: 'mujer', title: 'Si se te hace imposible hacer dieta, mira esto' },
         { id: 'iv038ZlizMs', bloque: 'entrenar', sexo: 'all',   title: 'La forma más fácil de construir un cuerpo fuerte y definido' },
         { id: 'gKV5At5iPz4', bloque: 'entrenar', sexo: 'all',   title: 'Cómo entrenar para ganar músculo si eres una persona ocupada' },
         { id: 'RtWY67YnsAY', bloque: 'entrenar', sexo: 'mujer', title: 'El mejor entrenamiento para mujeres (según la ciencia y tu edad)' },
         { id: 'dECDDxJTz1M', bloque: 'entrenar', sexo: 'mujer', title: 'Los mejores ejercicios para perder el doble de grasa en mujeres' },
+        { id: 'bccwq7GYtAY', bloque: 'entrenar', sexo: 'mujer', title: 'Cómo reducir cintura y aumentar piernas' },
+        { id: 'n52msKtyabg', bloque: 'entrenar', sexo: 'mujer', title: 'Cuántos ejercicios necesitas para aumentar piernas y glúteos' },
+        { id: '0MN_rqhuVUU', bloque: 'entrenar', sexo: 'mujer', title: 'Cómo aumentar piernas sin engordar el abdomen' },
         { id: 'SFvwRz-q6lw', bloque: 'grasa',    sexo: 'all',   title: 'Cómo perder grasa para siempre y evitar el efecto rebote' },
         { id: 'QgT3uXfUOm4', bloque: 'grasa',    sexo: 'all',   title: 'Por esto no puedes bajar la panza (la solución)' },
         { id: 'brR2OZEfepQ', bloque: 'grasa',    sexo: 'all',   title: 'Pierde 10 kg de grasa sin pasar hambre (esto es lo más fácil)' },
         { id: 'zGzFT5ZkZH4', bloque: 'grasa',    sexo: 'all',   title: 'La nueva estrategia para estar definido a los 40' },
+        { id: 'XpWR4s7iCR4', bloque: 'grasa',    sexo: 'mujer', title: 'Por qué no puedes perder grasa abdominal' },
         { id: 'ljgAlXZAQ1A', bloque: 'musculo',  sexo: 'all',   title: 'Levanta menos peso si quieres ganar músculo' },
         { id: 'XT227ZlIreM', bloque: 'musculo',  sexo: 'all',   title: 'Haz esto y ganarás músculo más rápido' },
         { id: 'uRUchKIchJw', bloque: 'musculo',  sexo: 'all',   title: 'Cómo perder grasa y ganar músculo al mismo tiempo (guía paso a paso)' },
-        { id: 'T66O90E8Bkg', bloque: 'hormonas', sexo: 'mujer', title: 'Cómo entrenar según tu ciclo menstrual (según la ciencia)' }
+        { id: 'T66O90E8Bkg', bloque: 'hormonas', sexo: 'mujer', title: 'Cómo entrenar según tu ciclo menstrual (según la ciencia)' },
+        { id: 'E8g2A30-FJU', bloque: 'sostener', sexo: 'mujer', title: 'Si vas a empezar una transformación física, escucha esto' },
+        { id: 'v8_-EAFcVvg', bloque: 'sostener', sexo: 'mujer', title: 'Si abandonas fácilmente, mira esto' },
+        { id: 'Q2IwRit-luM', bloque: 'sostener', sexo: 'mujer', title: 'La gran mentira del fitness que nadie te cuenta' },
+        { id: 'tn1hzR5bxhs', bloque: 'sostener', sexo: 'mujer', title: 'Si no te gusta cómo te ves en las fotos, mira esto' },
+        { id: 'yn8fDkpbm2E', bloque: 'sostener', sexo: 'mujer', title: 'Cómo transformé mi cuerpo desde cero: 3 pasos para empezar' }
       ];
 
       // ── Estado: sexo y bloque activo ─────────────────────────
@@ -1258,6 +1273,7 @@
       // ── Helpers de visibilidad ───────────────────────────────
       function videoVisible(v) {
         if (state.sexo === 'Hombre' && v.sexo === 'mujer') return false;
+        if (state.sexo === 'Mujer' && v.sexo === 'hombre') return false;
         return true;
       }
       function videosDe(bloqueId) {
@@ -1444,8 +1460,9 @@
         card.className = 'vcard' + (isDone(v.id) ? ' done' : '');
         card.style.setProperty('--i', index % 6);
 
-        var badge = (v.sexo === 'mujer' && state.sexo !== 'Hombre')
-          ? '<span class="badge">Para mujeres</span>' : '';
+        var badge = v.sexo === 'mujer'
+          ? '<span class="badge">Para mujeres</span>'
+          : (v.sexo === 'hombre' ? '<span class="badge">Para hombres</span>' : '');
 
         card.innerHTML =
           '<button type="button" class="vmain" aria-label="Ver sesión: ' + v.title + '">' +
@@ -1686,7 +1703,7 @@
         if (estado === 'B') {
           eyebrow.textContent = 'Tu plan ya existe';
           h2.innerHTML = 'Ya sabes tus <em>' + plan.kcal.toLocaleString('es') + ' kcal</em>. La asesoría es ejecutarlas contigo.';
-          para.textContent = 'El Programa Cero te dio el mapa: tus calorías, tus macros y tu ruta. ' +
+          para.textContent = 'GENESIS te dio el mapa: tus calorías, tus macros y tu ruta. ' +
             'En la asesoría, Anthoni convierte esos números en tu dieta y tu semana de entrenamiento, con revisión cada semana.';
           cta.firstChild.textContent = 'Conocer la asesoría ';
         } else if (estado === 'C') {

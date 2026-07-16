@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>GENESIS · Elige tu ruta</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --paper: #F4EFE6;
+      --card: #FFFDF6;
+      --ink: #16130E;
+      --ink-soft: #46402F;
+      --muted: #7C7461;
+      --rule: rgba(22, 19, 14, 0.18);
+      --rule-strong: rgba(22, 19, 14, 0.38);
+      --mark: #F5C518;
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Instrument Sans", -apple-system, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      min-height: 100dvh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      background-size: 240px 240px;
+    }
+
+    .page {
+      min-height: 100dvh;
+      width: min(100%, 1040px);
+      margin: 0 auto;
+      padding: calc(28px + env(safe-area-inset-top)) clamp(18px, 4vw, 36px) calc(28px + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+    }
+    .page::before {
+      content: "GENESIS";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(22, 19, 14, 0.065);
+      font-family: var(--serif);
+      font-size: clamp(88px, 18vw, 210px);
+      font-weight: 700;
+      letter-spacing: -0.06em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .topbar, footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .topbar { padding-bottom: 18px; border-bottom: 1px solid var(--rule); }
+    .topbar span:last-child, footer { color: var(--muted); }
+
+    main {
+      width: min(100%, 820px);
+      margin: auto;
+      padding: clamp(48px, 9vh, 88px) 0;
+      text-align: center;
+    }
+    .eyebrow {
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 760px;
+      margin: 0 auto 14px;
+      font-family: var(--serif);
+      font-size: clamp(38px, 6.2vw, 66px);
+      font-weight: 560;
+      font-variation-settings: "opsz" 100;
+      letter-spacing: -0.035em;
+      line-height: 1.02;
+      text-wrap: balance;
+    }
+    h1 em { font-weight: 500; }
+    .dek {
+      max-width: 570px;
+      margin: 0 auto clamp(28px, 5vh, 42px);
+      color: var(--ink-soft);
+      font-size: clamp(16px, 2.1vw, 18.5px);
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--rule-strong);
+      background: var(--card);
+      box-shadow: 0 16px 44px rgba(22, 19, 14, 0.07);
+    }
+    .choice {
+      min-height: 176px;
+      padding: clamp(24px, 4vw, 34px);
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 180ms ease, color 180ms ease;
+    }
+    .choice + .choice { border-left: 1px solid var(--rule-strong); }
+    .choice:hover { background: var(--ink); color: var(--card); }
+    .choice:active { transform: translateY(1px); }
+    .choice:focus-visible { outline: 3px solid var(--mark); outline-offset: 4px; }
+    .choice-kicker {
+      display: block;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .choice:hover .choice-kicker { color: rgba(255, 253, 246, 0.66); }
+    .choice-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 8px;
+      font-family: var(--serif);
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 560;
+      line-height: 1;
+    }
+    .choice-title svg { width: 24px; height: 24px; flex: none; }
+    .choice-copy { display: block; max-width: 300px; font-size: 14.5px; line-height: 1.45; }
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+    }
+    footer { padding-top: 18px; border-top: 1px solid var(--rule); }
+
+    @media (max-width: 620px) {
+      .topbar span:last-child { display: none; }
+      main { padding: 38px 0; }
+      .choices { grid-template-columns: 1fr; }
+      .choice { min-height: 142px; }
+      .choice + .choice { border-left: 0; border-top: 1px solid var(--rule-strong); }
+      .choice-kicker { margin-bottom: 14px; }
+      footer span:last-child { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .choice { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <span>TR4INER · GENESIS</span>
+      <span>Tu ruta empieza aquí</span>
+    </header>
+
+    <main>
+      <p class="eyebrow">Una pregunta antes de empezar</p>
+      <h1>Tu cuerpo cambia la ruta. <em>Elige la tuya.</em></h1>
+      <p class="dek">Usamos tu respuesta para mostrarte el registro, las sesiones y el cálculo que corresponden a tu fisiología.</p>
+
+      <div class="choices" role="group" aria-label="Elige tu sexo">
+        <button class="choice" type="button" data-sexo="Mujer">
+          <span class="choice-kicker">Ruta femenina</span>
+          <span class="choice-title">
+            Mujer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg>
+          </span>
+          <span class="choice-copy">Pérdida de grasa, piernas, glúteos y sesiones adaptadas al ciclo.</span>
+        </button>
+        <button class="choice" type="button" data-sexo="Hombre">
+          <span class="choice-kicker">Ruta masculina</span>
+          <span class="choice-title">
+            Hombre
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg>
+          </span>
+          <span class="choice-copy">Pérdida de grasa, fuerza, músculo y una estructura que puedas sostener.</span>
+        </button>
+      </div>
+      <p class="note">No es un diagnóstico médico · solo personaliza tu experiencia</p>
+    </main>
+
+    <footer>
+      <span>TR4INER</span>
+      <span>Personalización inicial · 01</span>
+    </footer>
+  </div>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_sexo_view');
+
+      document.querySelectorAll('[data-sexo]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var sexo = button.getAttribute('data-sexo');
+          var next = new URL('/biblioteca/', window.location.origin);
+          var current = new URLSearchParams(window.location.search);
+          current.forEach(function (value, key) { next.searchParams.set(key, value); });
+          next.searchParams.set('sexo', sexo);
+          if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_sexo_select', { sexo: sexo });
+          window.location.href = next.toString();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
