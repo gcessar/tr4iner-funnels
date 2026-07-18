@@ -671,6 +671,39 @@ El sexo se usa antes del opt-in para que la primera promesa ya hable del problem
 - Paquete curado de 23 archivos públicos: conserva las 22 piezas del deployment anterior y agrega `/biblioteca/inicio/`; excluye `.md`, generadores y versiones ClickFunnels.
 - Rama de implementación: `codex/biblioteca-sex-entry`, commit funcional `d99ee04`.
 
+## 2026-07-18 — Lead magnet “10 platos para perder grasa”
+
+### Qué cambió
+- Se migró el funnel completo desde ClickFunnels a cuatro páginas estáticas: `/10platospg` (registro), `/10platospg-regd` (confirmación), `/10platospg-h` y `/10platospg-m` (video + descarga por sexo).
+- El formulario mantiene nombre, email y sexo; envía el payload al webhook existente `/webhook/leadmagnet1` del flujo n8n `xW4IFABjMJQaoYwN` y redirige aunque el navegador no pueda leer la respuesta.
+- Cada salto conserva todos los parámetros recibidos, incluidos futuros identificadores, y agrega `first_name`, `email` y `sexo`. Los UTMs, `video`, `fbclid` y demás atribución también viajan dentro del payload.
+- Los dos PDFs, mockup, retrato y miniaturas quedaron servidos desde este proyecto. Los videos usan fachada local y cargan YouTube sin cookies recién al hacer clic.
+- La landing usa la identidad tipográfica canónica y un “pase de cocina” como única firma visual. Confirmación y descargas comparten el sistema sin repetir la misma composición.
+
+### SEO / GEO
+- Solo `/10platospg` es indexable. Tiene canonical, hreflang, metadatos sociales, contenido que responde la intención de búsqueda y JSON-LD de `Organization`, `Person`, `WebPage` y `BreadcrumbList`.
+- Confirmación y páginas de descarga usan `noindex, nofollow` por ser superficies operativas y delgadas.
+- Se agregaron `robots.txt` y `sitemap.xml`; el sitemap incluye únicamente la landing indexable.
+
+### Verificación
+- Las cuatro páginas respondieron `200` y se revisaron en Chrome a 375, 768 y 1280 px: sin overflow, imágenes rotas ni errores de consola.
+- El formulario se probó con el webhook interceptado para no crear un lead falso: payload correcto y redirección con nombre, email, sexo, UTMs, `fbclid` y `video` preservados.
+- Ambos PDFs, mockup, `robots.txt` y `sitemap.xml` respondieron `200`; los dos botones de video crearon el iframe correcto.
+- JavaScript, JSON-LD, XML y `git diff --check` pasaron sin errores.
+
+### Resultado esperado
+- Mejorar la conversión de visita a lead al mostrar el formulario completo arriba del pliegue y eliminar el popup de ClickFunnels.
+- Capturar correctamente el sexo y la atribución sin mezclar este funnel con Caso de Estudio ni Biblioteca.
+- Crear una puerta de entrada orgánica para búsquedas sobre platos y comidas para perder grasa.
+
+### Deploy
+No desplegado. Queda listo para Preview y prueba real contra n8n/Brevo antes de mover producción. Rama `codex/10-platos-lead-magnet`; commit funcional `c40bc6f`.
+
+### Resultado medido (completar después)
+- Conversión visita → registro total y por dispositivo.
+- Entregabilidad del correo y clic hacia `/10platospg-h` o `/10platospg-m`.
+- Tráfico orgánico, consultas y posiciones de `/10platospg`.
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
