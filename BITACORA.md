@@ -914,6 +914,22 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 - GENESIS: UI y funciones desplegadas, recorrido E2E detenido en la frontera Funnel Preview → CRM Preview.
 - Producción y DNS: intactos.
 
+## 2026-07-22 — Promoción de `metodo.tr4iner.com` a Producción
+
+### Deploy
+- Se promovió sin reconstruir el Preview auditado del commit `a1e2be0` al deployment productivo `dpl_5vecQACfHCsy5c357VfFqHjM3whM`.
+- Vercel confirmó estado `READY`, target `production`, región `iad1` y el alias `metodo.tr4iner.com` sin errores.
+- El artifact promovido conserva la auditoría previa de 27 superficies: raíz `308`, 25 páginas públicas `200` y recuperación `404`.
+
+### DNS
+- Vercel verificó `metodo.tr4iner.com` dentro del proyecto canónico `tr4iner-funnels`.
+- Durante la promoción, Cloudflare DNS y Quad9 ya resolvían el CNAME de Vercel; Google DNS y el resolvedor local todavía conservaban ClickFunnels por caché.
+- La disponibilidad pública puede ser mixta hasta que expire la propagación del registro anterior.
+
+### Observabilidad y pendiente
+- El escaneo de Vercel no encontró errores de ejecución en los 15 minutos posteriores a la promoción.
+- Falta repetir la auditoría pública cuando todos los resolvedores entreguen Vercel y validar el recorrido dinámico completo de GENESIS contra el CRM productivo.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
