@@ -967,6 +967,21 @@ No desplegado. Validación local completada; pendiente de Preview antes de produ
 ### Deploy
 No desplegado. Cambio validado localmente y pendiente de Preview.
 
+## 2026-07-22 — CTA y testimonios más legibles en Calendly VA
+
+### Qué cambió
+- En `/calendly-va`, el botón principal ahora dice “Elige tu horario”.
+- El nombre de cada testimonio subió de 12 a 15 px y su descripción de 11 a 14 px.
+
+### Resultado esperado
+- Hacer más directa la acción de agendar y facilitar la lectura de la prueba social antes de elegir horario.
+
+### Verificación
+- Revisado a 375, 768 y 1280 px: el texto permanece dentro de las tarjetas y la página no presenta overflow horizontal.
+
+### Deploy
+No desplegado. Cambio validado localmente y pendiente de Preview.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
