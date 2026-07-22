@@ -1,5 +1,6 @@
 body.va-theme,
 html.va-context body {
+  --va-background: #FAF7F2;
   --serif: "Poppins", "Montserrat", Arial, sans-serif;
   --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   --mono: "Montserrat", "Helvetica Neue", Arial, sans-serif;
@@ -7,6 +8,7 @@ html.va-context body {
   --yellow: #e8a943;
   --accent: #e8a943;
   --va-display-weight: 500;
+  background-color: var(--va-background);
   font-family: var(--sans);
   font-weight: 300;
   font-synthesis: none;

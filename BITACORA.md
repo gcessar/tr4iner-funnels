@@ -982,6 +982,23 @@ No desplegado. Cambio validado localmente y pendiente de Preview.
 ### Deploy
 No desplegado. Cambio validado localmente y pendiente de Preview.
 
+## 2026-07-22 — Fondo unificado en las páginas VA
+
+### Qué cambió
+- El tema compartido VA usa `#FAF7F2`, tomado de `/testimonio-flor-va`, como fondo común de `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, `/fit4-va` y la variante VA de `/calendly-confirma`.
+- La confirmación sin contexto VA conserva su fondo AN y Biblioteca no carga este tema.
+- Los metadatos `theme-color` de Caso de Estudio VA y FIT4 VA se alinearon con el nuevo fondo.
+
+### Resultado esperado
+- Dar continuidad visual al recorrido completo de Veronika sin modificar estructura, contenido ni lógica de conversión.
+
+### Verificación
+- Las cinco superficies VA calculan `#FAF7F2`; se revisaron a 375, 768 y 1280 px sin overflow horizontal.
+- `/calendly-confirma` sin parámetros VA conserva el fondo AN `#F2EEE2`.
+
+### Deploy
+No desplegado. Validación local completada; pendiente de Preview.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
