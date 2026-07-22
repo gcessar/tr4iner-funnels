@@ -1395,6 +1395,11 @@
         window.location.origin
       );
       var p = new URLSearchParams();
+      // Conserva la query completa: así un identificador nuevo no desaparece
+      // antes de que podamos incorporarlo al esquema de atribución.
+      currentParams.forEach(function(value, key) {
+        p.set(key, value);
+      });
       p.set('first_name', nombre);
       p.set('email', email);
       p.set('sexo', sexo);
