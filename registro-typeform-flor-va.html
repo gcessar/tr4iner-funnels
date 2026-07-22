@@ -978,7 +978,6 @@
           - Se desvanece el contador.
           - Se muestra #typeform-cta.
           - Se carga Typeform.
-          - Se hace scroll suave hacia la aplicacion.
         */
         if (triggered) return;
         triggered = true;
@@ -990,11 +989,6 @@
         if (el) {
           el.classList.add("visible");
           loadTypeform();
-
-          // Cambia 360 si quieres que el scroll espere mas/menos tras revelar el bloque.
-          window.setTimeout(function () {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 360);
         }
 
         // Muestra el boton flotante en desktop/tablet. En mobile el CSS lo oculta.

@@ -955,6 +955,18 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 ### Deploy
 No desplegado. Validación local completada; pendiente de Preview antes de producción.
 
+## 2026-07-22 — Formulario VA sin desplazamiento automático
+
+### Qué cambió
+- En `/testimonio-flor-va`, el Paso 2 sigue apareciendo y cargando Typeform después de 10 segundos, pero ya no desplaza la página automáticamente hacia el formulario.
+- El botón flotante conserva su enlace al formulario para que el desplazamiento ocurra únicamente por acción de la usuaria.
+
+### Resultado esperado
+- Evitar interrumpir la lectura o el video cuando se habilita la aplicación, sin retrasar ni ocultar el siguiente paso.
+
+### Deploy
+No desplegado. Cambio validado localmente y pendiente de Preview.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
