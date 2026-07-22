@@ -3,7 +3,7 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/index",
+      "source": "/",
       "destination": "/casos-de-estudio",
       "permanent": true
     },
@@ -29,10 +29,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/api/root-redirect"
-    },
     {
       "source": "/casos-de-estudio",
       "destination": "/index"
