@@ -1,6 +1,6 @@
 body.va-theme,
 html.va-context body {
-  --serif: "Montserrat", "Arial Narrow", Arial, sans-serif;
+  --serif: "Poppins", "Montserrat", Arial, sans-serif;
   --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   --mono: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   --rust: #c48a42;

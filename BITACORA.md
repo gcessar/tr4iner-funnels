@@ -933,8 +933,8 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 ## 2026-07-22 — Peso tipográfico VA y retiro de imágenes ClickFunnels
 
 ### Qué cambió
-- El sistema compartido VA conserva Montserrat, pero baja los títulos de 900 a 500 en `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, la confirmación con contexto VA y `/fit4-va`. Biblioteca no se modificó.
-- El HTML base de `/casos-de-estudio-va` también declara 500 en su título principal y el título del modal; así no reaparece el peso 900 cuando se abre el archivo local sin cargar el tema compartido.
+- El cuerpo y la interfaz VA conservan Montserrat, pero todos los títulos usan Poppins 500 en `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, la confirmación con contexto VA y `/fit4-va`. Biblioteca no se modificó.
+- Los HTML base de las cinco superficies también declaran Poppins 500; así la identidad se mantiene al abrir un archivo local sin cargar el tema compartido.
 - El avatar inferior de `/casos-de-estudio-va` usa la nueva foto de Veronika alojada en `/assets/va/vero-perfil-footer.webp`.
 - Se descargaron al repositorio los once retratos del carrusel de testimonios de Calendly y la foto de Anthoni usada en Flor/Dashiel. Las páginas públicas y sus variantes B ya no cargan imágenes desde `images.clickfunnels.com` ni `statics.myclickfunnels.com`.
 
@@ -947,7 +947,7 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 - Cero dependencia de la suscripción de ClickFunnels para servir imágenes del funnel.
 
 ### Verificación
-- Las cinco superficies VA renderizan Montserrat 500 en sus títulos a 375, 768 y 1280 px, sin overflow ni imágenes visibles rotas. La fuente 500 cargó realmente en el navegador.
+- Las cinco superficies VA renderizan Poppins 500 en sus títulos a 375, 768 y 1280 px, sin overflow ni imágenes visibles rotas. La fuente 500 cargó realmente en el navegador.
 - El nuevo avatar de Veronika se revisó visualmente en móvil y conserva un recorte legible dentro del círculo.
 - Los trece archivos locales migrados respondieron `200` desde Vercel Dev con `image/png` o `image/webp` correcto. El repositorio quedó sin referencias activas a dominios de imágenes de ClickFunnels.
 - El navegador no mostró overlays ni errores de la aplicación. Meta Pixel mantuvo únicamente el aviso esperado de permisos sobre localhost.
