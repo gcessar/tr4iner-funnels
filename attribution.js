@@ -16,10 +16,33 @@
     return key.indexOf('utm_') === 0 || UTM_KEYS.indexOf(key) !== -1;
   }
 
-  function params() {
+  function getCanonicalParams(search) {
     // Los embeds ClickFunnels inyectan la query del documento padre porque un
     // iframe srcdoc no conserva por sí solo esos parámetros.
-    return new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
+    var raw = new URLSearchParams(
+      typeof search === 'string'
+        ? search
+        : (window.__TR4_SEARCH__ || window.location.search)
+    );
+    var canonical = new URLSearchParams();
+
+    // Si una plataforma agrega UTMs duplicados, conserva la nomenclatura del
+    // enlace original. Un valor posterior solo completa uno anterior vacío.
+    raw.forEach(function (value, key) {
+      if (!isAttributionKey(key)) {
+        canonical.append(key, value);
+        return;
+      }
+      if (!canonical.has(key) || (!canonical.get(key) && value)) {
+        canonical.set(key, value);
+      }
+    });
+
+    return canonical;
+  }
+
+  function params() {
+    return getCanonicalParams();
   }
 
   function safeGetStored(key) {
@@ -107,6 +130,7 @@
   window.TR4Track = {
     UTM_KEYS: UTM_KEYS,
     isAttributionKey: isAttributionKey,
+    getCanonicalParams: getCanonicalParams,
     getVideo: getVideo,
     getUTMs: getUTMs,
     getAttribution: getAttribution,

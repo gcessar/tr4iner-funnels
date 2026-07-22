@@ -1013,6 +1013,24 @@ Desplegado en Producción dentro del artifact `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`
 ### Estado
 Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fuera del tema compartido condicionado por contexto VA.
 
+## 2026-07-22 — UTMs duplicados conservan la nomenclatura original
+
+### Incidente
+- Instagram agregó `utm_source=ig`, `utm_medium=social` y `utm_content=link_in_bio` a un enlace que ya incluía la nomenclatura editorial AN.
+- La landing recorría todos los parámetros duplicados y sobrescribía cada clave con su última aparición; por eso el registro llegaba a Dashiel con `utm_source=ig`.
+
+### Qué cambió
+- `/casos-de-estudio` consolida los parámetros duplicados antes de cargar GTM, para que analítica, webhook y redirect trabajen con la misma query.
+- La regla compartida en `attribution.js` conserva el primer valor no vacío de cada clave de atribución. Un valor posterior solo completa una aparición anterior vacía; los parámetros funcionales quedan fuera de esta normalización.
+- El redirect a Flor/Dashiel recibe una sola copia de cada parámetro y continúa preservando identificadores futuros.
+
+### Verificación
+- Una prueba sintética con UTMs duplicados conservó `utm_source=Instagram-AN-perfil` y `utm_medium=Social`, completó el `utm_content` inicialmente vacío y produjo una URL única hacia `/testimonio-dashiel`.
+- Los scripts inline y `attribution.js` compilan sin errores.
+
+### Deploy
+No desplegado. Pendiente de Preview y Producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:

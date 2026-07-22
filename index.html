@@ -4,6 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <script>
+    /*
+      Instagram puede agregar sus propios UTMs a un enlace que ya los trae.
+      Normalizamos antes de GTM para que analítica, formulario y redirect lean
+      una sola fuente: gana el primer valor no vacío de cada dato de atribución.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
   <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -1351,7 +1384,9 @@
   (function() {
     var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','fbclid','gclid','fbc_id','h_ad_id'];
     // Lee primero la URL actual para no depender de que /attribution.js exista en ClickFunnels.
-    var currentParams = new URLSearchParams(window.location.search);
+    var currentParams = window.TR4Track && window.TR4Track.getCanonicalParams
+      ? window.TR4Track.getCanonicalParams()
+      : new URLSearchParams(window.location.search);
     var utmData = {};
     currentParams.forEach(function(value, key) {
       if (value && (key.indexOf('utm_') === 0 || utmKeys.indexOf(key) !== -1)) {
