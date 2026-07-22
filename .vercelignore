@@ -1,0 +1,10 @@
+.DS_Store
+.claude
+.git
+.vercel
+*.log
+*.md
+*.mjs
+*-B.html
+**/clickfunnels.html
+fit4challenge-video-clickfunnels.html

@@ -1,7 +1,38 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/index",
+      "destination": "/casos-de-estudio",
+      "permanent": true
+    },
+    {
+      "source": "/registro-typeform-flor",
+      "destination": "/testimonio-flor",
+      "permanent": true
+    },
+    {
+      "source": "/registro-typeform-flor-va",
+      "destination": "/testimonio-flor-va",
+      "permanent": true
+    },
+    {
+      "source": "/registro-typeform-optimizado",
+      "destination": "/testimonio-dashiel",
+      "permanent": true
+    },
+    {
+      "source": "/calendly-an-optimizado",
+      "destination": "/calendly-an",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/",
+      "destination": "/api/root-redirect"
+    },
     {
       "source": "/casos-de-estudio",
       "destination": "/index"
