@@ -1029,7 +1029,9 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Los scripts inline y `attribution.js` compilan sin errores.
 
 ### Deploy
-No desplegado. Pendiente de Preview y Producción.
+- Preview `dpl_2CqaQraCnRc4V9BGsuiCDpYZ78Uo` validado con target `preview` y estado `Ready`.
+- Promovido sin reconstrucción manual a Producción como `dpl_WsVLwaLtLRuovTc4n5KgAe5rgWvA`.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
 ---
 
