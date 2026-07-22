@@ -704,6 +704,195 @@ No desplegado. Queda listo para Preview y prueba real contra n8n/Brevo antes de 
 - Entregabilidad del correo y clic hacia `/10platospg-h` o `/10platospg-m`.
 - Tráfico orgánico, consultas y posiciones de `/10platospg`.
 
+## 2026-07-18 — Rediseño directo del lead magnet “10 platos”
+
+### Qué cambió
+- Se reemplazó la estética editorial crema/serif por la identidad real del ebook: Poppins, blanco, negro cálido y amarillo.
+- `/10platospg` quedó reducido a título, descripción, tres beneficios, mockup y formulario. Se eliminaron el encabezado de marca y las secciones largas posteriores al registro.
+- `/10platospg-regd`, `/10platospg-h` y `/10platospg-m` perdieron sus barras superiores y adoptaron el mismo sistema visual del producto.
+- Tras la revisión visual, los soportes negros del mockup se cambiaron por gris piedra; el negro quedó reservado para la sección de video y el amarillo para la base del producto.
+- Se conservaron el webhook, el payload, la redirección y la propagación completa de parámetros sin cambios funcionales.
+
+### Por qué
+La estética anterior ya parecía una plantilla generada por IA y competía con el producto. El nuevo diseño usa el mockup como pieza principal y reduce la página de captación a una decisión directa: entender la promesa y dejar los datos.
+
+### Verificación
+- Las cuatro rutas respondieron `200` en Chrome y se revisaron a 375, 768 y 1280 px sin desbordes horizontales.
+- El registro interceptado envió nombre, correo, sexo, UTMs, `fbclid` y `video`; la confirmación recibió los mismos valores con `@` literal.
+- Ambos videos cargaron el ID correcto y los PDFs para hombre y mujer respondieron `200`.
+- `git diff --check` pasó sin errores.
+
+### Resultado esperado
+- Mejorar la conversión visita → registro reduciendo fricción y evitando scroll innecesario antes del formulario.
+- Aumentar coherencia y recordación al hacer que las páginas se sientan parte del ebook, no de una plantilla genérica.
+
+### Deploy
+No desplegado. Pendiente de aprobación visual y Preview.
+
+## 2026-07-19 — Analítica completa del funnel Caso de Estudio
+
+### Qué cambió
+- Se instaló `GTM-T88G63P` en las siete páginas canónicas: landing, testimonios Flor/Dashiel, variante Flor VA, agendamiento AN/VA y confirmación.
+- GA4 `G-CGWMFER9V4`, Clarity `m58dvc10t1` y Meta Pixel `841122323338135` quedan gobernados por el contenedor existente de GTM; no se agregaron inicializaciones directas que dupliquen `page_view`.
+- Cada página conserva los fallbacks `noscript` de GTM y Meta para navegadores sin JavaScript.
+- Las variantes archivadas `-B` y los archivos de compatibilidad ClickFunnels quedaron fuera.
+- Se agregó al contexto del repo la regla obligatoria de optimización SEO/GEO para toda página nueva o rediseñada, manteniendo `noindex` en pasos operativos o delgados.
+
+### Por qué
+La migración a `metodo.tr4iner.com` necesita continuidad de medición sin heredar la duplicación de Pixel detectada en ClickFunnels. GTM conserva los disparadores y etiquetas ya configurados por el negocio.
+
+### Verificación
+- La prueba local confirmó que el contenedor inyecta una sola carga de GA4, Google Ads, Clarity y Meta en las siete páginas, sin errores de consola. Durante la revisión se detectaron y eliminaron las cargas directas redundantes antes de cerrar el cambio.
+- Cada página canónica contiene una sola inicialización de GTM y no se tocaron las páginas archivadas.
+- `git diff --check` pasó sin errores.
+
+### Resultado esperado
+- Mantener sesiones, conversiones, audiencias y grabaciones durante el corte de dominio sin doble conteo de visitas.
+- Poder validar el recorrido completo en Preview antes de mover producción.
+
+### Deploy
+No desplegado. Pendiente de Preview, validación en Tag Assistant/GA4 DebugView, Meta Pixel Helper y Clarity, y recién después migración de producción.
+
+## 2026-07-19 — SEO/GEO multiruta y VSL FIT4CHALLENGE
+
+### Qué cambió
+- `/casos-de-estudio` quedó como URL canónica e indexable del funnel principal; `/` redirige con `308` a esa ruta mediante una función mínima que conserva la query completa.
+- La landing recibió descripción, canonical, `hreflang`, metadatos sociales y JSON-LD de `Organization`, `Person`, `WebPage` y `BreadcrumbList`. La entidad TR4INER apunta al dominio principal `tr4iner.com` para no fragmentar autoridad entre WordPress y el subdominio de funnels.
+- Las rutas internas de Caso de Estudio, GENESIS, 10 Platos y FIT4 recibieron título, descripción y canonical propios, pero conservan `noindex, nofollow` porque son pasos operativos, privados o delgados.
+- El sitemap contiene únicamente `/casos-de-estudio` y `/10platospg`. `.vercelignore` evita publicar variantes `-B`, generadores y archivos temporales de ClickFunnels.
+- GTM `GTM-T88G63P` se extendió a las cinco páginas canónicas de GENESIS, las cuatro de 10 Platos y la nueva FIT4; GA4, Clarity y Meta siguen gobernados por el contenedor sin inicializaciones directas duplicadas.
+- Se creó `/fit4`: cualquier `utm_*` que contenga `-VA-` carga `Rl_cXuqDVuhtabtp`; cualquier otro tráfico carga `T7Hop2PBd6tWQl0W`. El CTA se desbloquea al segundo 180 y reenvía a Hotmart todos los parámetros presentes más la atribución persistida.
+- FIT4 expone en `dataLayer` los eventos `fit4_vsl_loaded`, `fit4_offer_unlocked` y `fit4_checkout_click`, con la dimensión `fit4_variant` (`AN` o `VA`).
+
+### Por qué
+El proyecto Vercel pasa a funcionar como un alojamiento multiruta de funnels. La indexación selectiva evita que páginas de confirmación, VSL privadas y variantes compitan entre sí, mientras las superficies con intención orgánica sí consolidan señales SEO/GEO. FIT4 reemplaza la página ClickFunnels destinada actualmente a menores de edad sin perder la selección AN/VA ni la atribución.
+
+### Verificación
+- JavaScript válido en las 17 páginas canónicas; JSON-LD, `vercel.json`, sitemap XML y `git diff --check` sin errores.
+- Las 17 páginas tienen robots, descripción, canonical, una sola inicialización de GTM y un solo fallback `noscript`.
+- `vercel dev` confirmó `308` de `/` a `/casos-de-estudio` conservando UTMs, `fbclid` y un identificador futuro. Las 17 rutas canónicas, `robots.txt`, sitemap y `attribution.js` respondieron `200`; variantes `-B` y la página ClickFunnels de FIT4 respondieron `404`.
+- `/fit4` revisada en Chrome a 375, 768 y 1280 px: sin overflow, overlays ni errores de consola.
+- Con UTMs sintéticas, VA y AN cargaron exclusivamente el embed correspondiente. Hotmart recibió UTMs, `fbclid`, nombre, email y un identificador futuro no previsto.
+- Se simuló el segundo 181: la oferta apareció, `fit4_offer_unlocked` se emitió y el clic produjo `fit4_checkout_click` sin navegar al checkout durante la prueba.
+
+### Límite y experimento futuro
+- No se cambió la lógica externa de Typeform. Hoy FIT4 sigue mostrándose solo a menores de edad; el destino debe actualizarse manualmente de `/fit4challenge-b` a `/fit4` al migrar.
+- Incluir también el rango de 19 a 25 años queda como experimento futuro. Antes de activarlo se debe comparar conversión a agenda, compra FIT4 y valor por lead por edad y variante.
+
+### Resultado esperado
+- Migrar funnels a un único proyecto Vercel sin generar duplicados indexables ni perder atribución o medición.
+- Mantener el desvío low ticket de menores con la VSL correcta y datos suficientes para decidir si conviene ampliar la oferta a 19–25 años.
+
+### Deploy
+No desplegado. Pendiente de Preview, validación de routing limpio y revisión de eventos en GTM/GA4 antes de producción.
+
+## 2026-07-20 — Variante completa de Veronika: registro, tipografía y FIT4 separado
+
+### Qué cambió
+- Se creó `/casos-de-estudio-va` con la composición aprobada de Veronika y la lámina `caso-veronika.jpg`. El ZIP de Mont traía archivos DEMO que imprimían marcas dentro de los glifos; la verificación visual los rechazó y se retiraron del proyecto. Se usa Montserrat Black 900/Light 300, aprobada como reemplazo.
+- El popup conserva únicamente nombre y correo. `sexo=Mujer` se fija en HTML y JavaScript, y el copy aclara “Solo para mujeres”.
+- El registro sigue usando `webhook/casos-estudio`: entra a Brevo lista 14 y al Sheet LEADS, pero no crea una tarjeta en el CRM. Después continúa a `/testimonio-flor-va`; el CRM sigue recibiendo únicamente a quienes completan Typeform mediante `Typeform → Brevo → CRM`.
+- Si el enlace VA llega sin UTMs, se agregan `utm_source=LANDING-VA-DIRECTO` y `utm_campaign=CASOS-VA`; nunca se pisan UTMs existentes. También viajan `funnel=VA` y `funnel_variant` para el mapeo posterior.
+- El sistema Montserrat 900/300 se aplicó a `/testimonio-flor-va`, `/calendly-va` y dinámicamente a `/calendly-confirma` cuando la atribución identifica VA. Las marcas visibles de esas páginas ahora dicen Veronika Alvarado.
+- Se creó `/fit4-va` como ruta fija de Veronika con su VSL `Rl_cXuqDVuhtabtp`, canonical propio y eventos `fit4_*` marcados con `fit4_variant=VA` y `funnel_variant=fit4-va`.
+
+### SEO / GEO y medición
+- Las rutas VA mantienen canonical, descripción semántica y GTM `GTM-T88G63P`; siguen en `noindex, nofollow` porque son variantes operativas y no deben competir con `/casos-de-estudio`.
+- `/casos-de-estudio-va` agrega Open Graph, Twitter Card y JSON-LD de `Organization`, `Person` y `WebPage` sin inventar reseñas ni resultados cuantificados.
+- `/fit4-va` reenvía a Hotmart todos los parámetros recibidos, la atribución persistida y las marcas explícitas de variante.
+
+### Verificación
+- Vercel Dev respondió `200` en `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, `/calendly-confirma?funnel=VA` y `/fit4-va`.
+- Las cinco superficies se verificaron en Chrome con viewport real de 375, 768 y 1280 px: `scrollWidth` coincidió con el viewport, Montserrat 900 cargó y no hubo excepciones JavaScript. Se eliminó el CTA móvil duplicado de Calendly VA porque tapaba la prueba social.
+- El formulario se ejecutó con `fetch` interceptado para no crear un lead real. El payload llevó nombre, correo, `sexo=Mujer`, UTMs, `fbclid`, `funnel` y variante; el redirect llegó a `/testimonio-flor-va` con el `@` literal. Una segunda prueba sin UTMs generó correctamente `LANDING-VA-DIRECTO` + `CASOS-VA`.
+- FIT4 VA emitió `fit4_vsl_loaded` con variante VA y construyó el checkout Hotmart con `funnel=VA`, `funnel_variant=fit4-va` y las UTMs.
+- Meta Pixel mostró el bloqueo esperado de permisos sobre `localhost`; debe repetirse la comprobación de tags en un Preview Vercel autorizado antes de producción.
+
+### Resultado esperado
+- Medir el recorrido Veronika por ruta aunque una integración externa pierda una UTM opcional.
+- Reducir fricción del registro femenino eliminando la pregunta de sexo sin perder segmentación en Brevo, Sheet, Typeform ni CRM posterior.
+- Evitar mezclar compras o vistas FIT4 de Anthoni y Veronika al mapear el low ticket en el CRM.
+
+### Deploy
+No desplegado. Pendiente de Preview y comprobación de los eventos GTM/Meta en dominio Vercel antes de producción.
+
+## 2026-07-22 — GENESIS privado conectado al CRM
+
+### Qué cambió
+- `/biblioteca/inicio/` conserva la selección por sexo y suma “Ya soy miembro”, reenviando `?video=` y toda la query.
+- Se crearon `/biblioteca/acceso/` y `/biblioteca/verificar/` para solicitar y consumir enlaces mágicos sin contraseña.
+- El registro mantiene n8n/atribución y también llama al CRM GENESIS. Solo avanza a confirmación cuando el CRM acepta el envío del correo.
+- Las funciones `/api/genesis/*` hacen de proxy same-origin: el secreto interno queda en Vercel y la sesión de 30 días vive en cookie HttpOnly.
+- Plan y videos exigen sesión real. La URL con correo ya no autentica y el portón anterior que aceptaba cualquier email quedó reemplazado por recuperación vía correo.
+- El catálogo, la segmentación por sexo y el banner de contenido nuevo llegan desde el CMS del CRM; si el CRM no responde, el catálogo actual embebido funciona como respaldo.
+- El reproductor conserva “Ver en YouTube” y envía heartbeats únicamente mientras YouTube está reproduciendo y la pestaña está visible. El check manual no suma scoring.
+- `?video=ID` abre el video solicitado a miembros con plan; un lead nuevo conserva ese destino a través de registro, correo y cálculo de macros.
+
+### Seguridad, SEO y atribución
+- Todas las páginas operativas nuevas usan `noindex, nofollow`, canonical de `metodo.tr4iner.com` y el sistema tipográfico GENESIS.
+- Ningún correo, nombre o token de sesión se guarda en la URL después de autenticar. El token mágico vence y se usa una sola vez en el CRM.
+- Se preservan UTMs y cualquier `video` existente en los saltos. El payload n8n lleva `suppress_access_email=true` para desactivar su DOI heredado cuando se actualice ese workflow.
+
+### Verificación
+- Los scripts inline de las siete páginas Biblioteca compilan con JavaScript válido.
+- Las nueve funciones proxy nuevas pasan `node --check`; `git diff --check` pasó.
+- No se desplegó ni se probaron correos reales: falta enlazar Preview del funnel con Preview CRM/Neon y configurar `GENESIS_CRM_API_URL` + `GENESIS_INTERNAL_SECRET`.
+
+### Resultado esperado
+- Evitar que compartir el link comparta el expediente, medir consumo real por lead y permitir publicar contenido/avisos sin editar HTML.
+- Mantener YouTube como canal abierto mientras GENESIS funciona como club privado de nutrición y calificación.
+
+### Deploy
+No desplegado. Requiere primero migración Neon Preview, secretos cruzados, ajuste n8n para no duplicar correo y prueba integral multi-dispositivo.
+
+## 2026-07-22 — Puentes condicionales de salida para Typeform
+
+### Qué cambió
+- Se crearon `/redirectionutmstr4iner` para presupuesto de USD 100 y `/redirectionutmstr4iner2` para presupuesto de USD 300, conservando las rutas usadas actualmente en ClickFunnels.
+- Se creó `/fit4challenge-b` como reemplazo transparente de la salida FIT4 actual de Typeform: campañas o marcadores VA van a `/fit4-va`; el resto va a `/fit4` de Anthoni.
+- El primer puente envía `TR4INER-VA`/`CASOS-VA` al WhatsApp de VA, tráfico `MetaAds + Caso_Estudio` al WhatsApp AN con su mensaje corto y el resto al WhatsApp AN con el mensaje general.
+- El segundo envía campañas VA a `/calendly-va` y el resto a `/calendly-an`, preservando la query completa. Usa el origen actual para que Preview permanezca en Preview y, tras migrar el dominio, funcione igual en `metodo.tr4iner.com`.
+- FIT4 reconoce `TR4INER-VA`, `CASOS-VA`, `funnel=VA`, `funnel_variant` y cualquier valor `utm_*` donde VA sea un segmento completo, incluso al final del valor; corrige el caso que no detectaba campañas terminadas en `-VA`.
+- Los tres puentes son operativos, usan `noindex, nofollow` y reemplazan el historial para que Atrás no devuelva al puente.
+
+### Resultado esperado
+- Cambiar el dominio de ClickFunnels a Vercel sin modificar las salidas condicionales de Typeform ni perder atribución.
+
+### Deploy
+Pendiente de Preview y prueba de las ramas VA, MetaAds y fallback antes de mover `metodo.tr4iner.com`.
+
+## 2026-07-22 — Recuperación de rutas antiguas con 404 orientado a conversión
+
+### Qué cambió
+- Se creó `404.html` para que cualquier URL retirada después de la migración ofrezca tres salidas útiles: asesoría 1 a 1, plan gratuito GENESIS y casos reales.
+- La asesoría abre WhatsApp con “Hola, quiero empezar.”: AN usa `17439014239` y VA usa `15677024560`.
+- GENESIS recibe la query completa en `/biblioteca/inicio/`; casos reales envía AN a `/casos-de-estudio` y VA a `/casos-de-estudio-va`, también sin perder parámetros.
+- La detección VA comparte la regla robusta de los puentes Typeform. Tráfico desconocido cae en AN.
+- La página usa `noindex, follow`, el sistema visual canónico y los eventos `legacy_route_recovery_view` / `legacy_route_recovery_click` para medir recuperación por acción y variante.
+
+### Resultado esperado
+- Recuperar tráfico de enlaces antiguos, campañas guardadas o URLs compartidas en lugar de perderlo en un error técnico sin salida.
+
+### Deploy
+Pendiente de Preview y prueba real de una ruta inexistente antes de migrar `metodo.tr4iner.com`.
+
+## 2026-07-22 — Confirmación de compra FIT4CHALLENGE
+
+### Qué cambió
+- Se creó `/gracias-fit4-challenge` conservando la ruta configurada en Hotmart para compras aprobadas.
+- La página confirma el acceso, explica la entrega de credenciales por WhatsApp/correo y dirige a `https://club.tr4iner.com/`.
+- La confirmación usa un sello circular animado y una ráfaga de confeti inline de 1.5 segundos, sin Lottie ni CDN. Se reproduce una sola vez por sesión y respeta `prefers-reduced-motion`.
+- El saludo usa `first_name`, `firstName`, `name` o `nombre` cuando están disponibles. FIT4 conserva temporalmente el nombre y la variante en `sessionStorage` para cubrir el regreso desde Hotmart sin exponer datos nuevos.
+- Se agregaron `fit4_thankyou_view` y `fit4_club_click`. La página no emite `Purchase`: la confirmación de pago continúa dependiendo de Hotmart para evitar duplicados por recarga.
+
+### Resultado esperado
+- Reducir dudas inmediatamente después de pagar y aumentar el ingreso efectivo al club y la evaluación inicial.
+
+### Deploy
+No desplegado. Pendiente de Preview y validación del retorno real desde una compra aprobada de Hotmart.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

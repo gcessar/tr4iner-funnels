@@ -22,11 +22,15 @@ Decisión del 14-jul-2026: mantener ambos funnels en **un solo proyecto Vercel y
 
 Rutas objetivo del proyecto:
 
-- `/` (y posteriormente `/casos-de-estudio`, si se configura alias) → landing Caso de Estudio.
+- `/` → redirección permanente a `/casos-de-estudio`.
+- `/casos-de-estudio` → landing canónica de Caso de Estudio.
+- `/casos-de-estudio-va` → registro exclusivo de Veronika; captura nombre/email, fuerza `sexo=Mujer` y continúa a Flor VA.
 - `/testimonio-flor` → página Flor (`registro-typeform-flor.html`).
 - `/testimonio-flor-va` → variante Flor para tráfico VA (`registro-typeform-flor-va.html`).
 - `/testimonio-dashiel` → página Dashiel (`registro-typeform-optimizado.html`).
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
+- `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
+- `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
 
 Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archivos `*-clickfunnels*` son compatibilidad temporal. **No son las versiones canónicas ni deben incluirse al decidir rutas o validar el funnel Vercel**, salvo pedido explícito.
@@ -36,6 +40,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | Archivo | Función |
 |---|---|
 | `index.html` | Landing + registro de **Caso de Estudio** (`/casos-de-estudio`). Captura nombre/email/sexo + UTMs y redirige al VSL. |
+| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer`, UTMs VA de respaldo y redirige a `/testimonio-flor-va`. |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
@@ -43,17 +48,27 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
 | `biblioteca/` | Videoteca / recursos. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
+| `fit4/index.html`, `fit4-va/index.html` | VSL FIT4 públicas de Anthoni/compatibilidad y Veronika. La ruta VA siempre carga su video y eventos propios. |
+| `assets/va/` | Imagen del caso y tema compartido de Veronika. Usa Montserrat 900/300; no publicar los archivos Mont DEMO. |
 | `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |
 | `track.js` | Copia de compatibilidad antigua; no enlazar desde páginas nuevas porque algunos bloqueadores la interceptan. |
 | `BITACORA.md` | Changelog del funnel (registrar cada cambio con impacto en KPIs). |
 
 Las antiguas variantes `-A` fueron promovidas a los nombres canónicos el 14-jul-2026. El sufijo `-B` identifica las páginas anteriores archivadas. Cuando se implemente el A/B test real, documentar nuevamente la asignación y no cambiar las rutas públicas.
 
-En agendamiento, AN usa Vidalytics `w0UY0FRGIQo11cXX` y VA usa `2s1vpHRi_hOARyIm`. En `/calendly-confirma/`, `hasVaUtm()` revisa todos los valores `utm_*`: si alguno contiene `-VA-`, carga `Mb4FA69mwzRO27Er`; en cualquier otro caso carga `eSFGvAyB_NIHVP9e`. No romper esta selección al cambiar diseño o rutas.
+En agendamiento, AN usa Vidalytics `w0UY0FRGIQo11cXX` y VA usa `2s1vpHRi_hOARyIm`. En `/calendly-confirma/`, `hasVaUtm()` reconoce `funnel=VA`, `funnel_variant` VA o cualquier valor `utm_*` con `-VA-`; en esos casos carga `Mb4FA69mwzRO27Er`, y en cualquier otro carga `eSFGvAyB_NIHVP9e`. No romper esta selección al cambiar diseño o rutas.
 
 ## Sistema tipográfico canónico
 
 La Biblioteca es la referencia visual del proyecto. Todas las páginas canónicas usan la misma carga de Google Fonts y estos roles: **Fraunces** para títulos editoriales, **Instrument Sans** para lectura e interfaz y **JetBrains Mono** para etiquetas, metadatos y estados. Base recomendada: cuerpo `17px/1.55`, display Fraunces `560` con `opsz 100`, cursiva `500`, y metadata Mono `10.5px/500` con tracking amplio. No introducir otra familia o variante de URL sin una decisión visual explícita.
+
+## SEO y GEO obligatorios
+
+- Toda página nueva o rediseñada debe salir con una decisión explícita de indexación y una revisión SEO/GEO; no se deja para después del deploy.
+- Las páginas indexables necesitan como mínimo título y descripción únicos, canonical, metadatos sociales, jerarquía semántica, contenido rastreable que responda la intención, entidades claras y JSON-LD pertinente.
+- GEO exige respuestas directas y citables, autoría/marca identificable, datos verificables y estructura fácil de interpretar por buscadores y asistentes de IA.
+- Los pasos operativos o delgados del funnel (confirmaciones, descargas y agendamiento) deben usar `noindex`; optimizar no significa indexar basura.
+- Al migrar el dominio, revisar canonicals, `robots.txt`, `sitemap.xml`, redirects y ausencia de URLs de preview antes de publicar.
 
 ## Modelo de atribución (crítico)
 
