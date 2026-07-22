@@ -1,17 +1,29 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="robots" content="noindex" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FAF7F2" />
-  <title>Agenda tu sesión · TR4INER</title>
+  <title>Agenda tu sesión · Veronika Alvarado | TR4INER</title>
+  <meta name="description" content="Elige el horario de tu sesión de evaluación con el equipo de TR4INER." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/calendly-va/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://calendly.com" />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;900&display=swap" rel="stylesheet" />
 
   <style>
       :root {
@@ -691,12 +703,15 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="/assets/va/va-theme.css" />
 </head>
 
-<body>
+<body class="va-theme">
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <a class="skip-link" href="#main-content">Saltar al contenido</a>
   <main class="page" id="main-content">
-    <header class="masthead"><span>Anthoni Montalván / Estudio</span><span class="masthead-date">Agenda privada</span></header>
+    <header class="masthead"><span>Veronika Alvarado / Estudio</span><span class="masthead-date">Agenda privada</span></header>
 
     <section class="hero" aria-labelledby="hero-title">
       <div class="status">Tu aplicación calificó</div>
@@ -864,6 +879,12 @@
   <script>
     (function () {
       var qp = new URLSearchParams(window.location.search);
+      // La agenda VA queda identificada aunque Typeform no reenvíe una UTM opcional.
+      if (!qp.has("utm_source")) qp.set("utm_source", "LANDING-VA-DIRECTO");
+      if (!qp.has("utm_campaign")) qp.set("utm_campaign", "CASOS-VA");
+      if (!qp.has("sexo")) qp.set("sexo", "Mujer");
+      qp.set("funnel", "VA");
+      qp.set("funnel_variant", "calendly-va");
       var calendlyBase = "https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner?hide_event_type_details=1&hide_gdpr_banner=1&background_color=fffdf8&text_color=1a1412&primary_color=f5c400";
       var calendlyUrl = new URL(calendlyBase);
       var calendarModal = document.getElementById("calendar-modal");
@@ -872,7 +893,7 @@
       var calendarLoaded = false;
 
       qp.forEach(function (value, key) {
-        var passthrough = ["email", "first_name", "name", "sexo", "video", "fbclid", "gclid", "fbc_id", "h_ad_id"];
+        var passthrough = ["email", "first_name", "name", "sexo", "video", "fbclid", "gclid", "fbc_id", "h_ad_id", "funnel", "funnel_variant"];
         if (key.indexOf("utm_") === 0 || passthrough.indexOf(key) !== -1) {
           calendlyUrl.searchParams.set(key, value);
         }

@@ -1,16 +1,40 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="robots" content="noindex" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <script>
+    // Evita el flash de la tipografía AN cuando la confirmación pertenece a Veronika.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var isVA = params.get("funnel") === "VA" || /va/i.test(params.get("funnel_variant") || "");
+      params.forEach(function (value, key) {
+        if (key.indexOf("utm_") === 0 && value.toUpperCase().indexOf("-VA-") !== -1) isVA = true;
+      });
+      if (isVA) document.documentElement.classList.add("va-context");
+    })();
+  </script>
+
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FAF7F2" />
-  <title>Confirmacion de agenda · TR4INER</title>
+  <title>Confirmación de agenda · TR4INER</title>
+  <meta name="description" content="Tu sesión con TR4INER quedó agendada. Revisa las indicaciones antes de la evaluación." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/calendly-confirma/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;900&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -446,9 +470,12 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="/assets/va/va-theme.css" />
 </head>
 
 <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <main class="page">
     <header class="masthead"><span>Anthoni Montalván / Estudio</span><span class="masthead-date">Sesión confirmada</span></header>
 
@@ -515,8 +542,9 @@
 
     function hasVaUtm() {
       const urlParams = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
+      if (urlParams.get("funnel") === "VA" || /va/i.test(urlParams.get("funnel_variant") || "")) return true;
       for (const [key, value] of urlParams.entries()) {
-        if (key.indexOf("utm_") === 0 && value.indexOf("-VA-") !== -1) {
+        if (key.indexOf("utm_") === 0 && value.toUpperCase().indexOf("-VA-") !== -1) {
           return true;
         }
       }
@@ -671,6 +699,8 @@
 
     document.addEventListener("DOMContentLoaded", function () {
       if (hasVaUtm()) {
+        const brand = document.querySelector(".masthead span:first-child");
+        if (brand) brand.textContent = "Veronika Alvarado / Estudio";
         loadVaVideo();
       } else {
         loadDefaultVideo();

@@ -1,0 +1,48 @@
+body.va-theme,
+html.va-context body {
+  --serif: "Montserrat", "Arial Narrow", Arial, sans-serif;
+  --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --rust: #c48a42;
+  --yellow: #e8a943;
+  --accent: #e8a943;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-synthesis: none;
+}
+
+body.va-theme :is(h1, h2, h3, .title, .cta-title, .offer-title),
+html.va-context body :is(h1, h2, h3, .title, .cta-title, .offer-title) {
+  font-family: var(--serif);
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+body.va-theme :is(h1, h2, h3, .title, .cta-title, .offer-title) em,
+html.va-context body :is(h1, h2, h3, .title, .cta-title, .offer-title) em {
+  font-style: normal;
+  font-weight: 900;
+}
+
+body.va-theme :is(button, .cta, .calendar-button, .mobile-book, .sticky-apply),
+html.va-context body :is(button, .cta, .calendar-button, .mobile-book, .sticky-apply) {
+  font-family: var(--sans);
+  font-weight: 900;
+}
+
+body.va-theme :is(.masthead, .flor-masthead, .kicker, .status, .section-label, .case-mark, .video-label, .cta-kicker, .fine-print),
+html.va-context body :is(.masthead, .flor-masthead, .kicker, .status, .section-label, .case-mark, .video-label, .cta-kicker, .fine-print) {
+  font-family: var(--mono);
+  font-weight: 900;
+}
+
+body.va-theme .trust-avatar img[src*="caso-veronika"] {
+  object-position: 18% 28%;
+  transform: scale(2.1);
+}
+
+/* La agenda principal ya queda visible arriba del pliegue; el duplicado fijo tapaba la prueba social en móvil. */
+body.va-theme .mobile-book {
+  display: none;
+}

@@ -1,16 +1,29 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FAF7F2" />
-  <title>Caso de estudio · Flor de María</title>
+  <title>Caso de estudio de Flor de María · Veronika Alvarado</title>
+  <meta name="description" content="Mira el análisis de la transformación de Flor de María y completa tu evaluación para saber qué ruta de TR4INER encaja contigo." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-flor-va" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
   <link rel="preconnect" href="https://embed.typeform.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;900&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -747,12 +760,15 @@
       .video-label { align-items: flex-start; flex-direction: column; }
     }
   </style>
+  <link rel="stylesheet" href="/assets/va/va-theme.css" />
 </head>
 
-<body>
+<body class="va-theme">
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <main class="page" id="inicio">
     <header class="flor-masthead">
-      <span class="flor-masthead-brand">Anthoni Montalván / Estudio</span>
+      <span class="flor-masthead-brand">Veronika Alvarado / Estudio</span>
       <span class="flor-masthead-date">Junio 2026</span>
     </header>
 
@@ -805,16 +821,16 @@
       <div class="trust">
         <div class="trust-avatar">
           <img
-            src="https://statics.myclickfunnels.com/workspace/edbqDD/image/22197776/file/14e7c03f9980e0cdc73965b45d97f719.png"
+            src="/assets/va/caso-veronika.jpg"
             width="46"
             height="46"
             loading="lazy"
-            alt="Anthoni Montalván"
+            alt="Veronika Alvarado"
           />
         </div>
         <div class="trust-text">
           <div class="trust-label">Producción · TR4INER</div>
-          <div class="trust-name">Anthoni Montalván <span class="sub">· Coach</span></div>
+          <div class="trust-name">Veronika Alvarado <span class="sub">· Coach</span></div>
         </div>
       </div>
 
@@ -886,6 +902,12 @@
         - Prueba personalizada: agrega ?trigger_seconds=5 para probar con 5s.
       */
       var params = new URLSearchParams(window.location.search);
+      // La ruta VA debe conservar su identidad aun cuando se abra sin UTMs.
+      if (!params.has("utm_source")) params.set("utm_source", "LANDING-VA-DIRECTO");
+      if (!params.has("utm_campaign")) params.set("utm_campaign", "CASOS-VA");
+      if (!params.has("sexo")) params.set("sexo", "Mujer");
+      params.set("funnel", "VA");
+      params.set("funnel_variant", "testimonio-flor-va");
       var debugTrigger = params.get("tf_debug") === "1";
       // Solo usa trigger_seconds si viene en la URL; si no, usa 10 por defecto.
       // (Ojo: Number(null) es 0, por eso se valida params.has antes.)
@@ -910,7 +932,7 @@
           El script toma cada valor desde la URL, por ejemplo:
           ?first_name=Juan&email=juan@email.com&utm_source=facebook
         */
-        var identityFields = ["first_name", "name", "email", "sexo", "video"];
+        var identityFields = ["first_name", "name", "email", "sexo", "video", "funnel", "funnel_variant"];
         var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
         var hiddenFields = [];
         params.forEach(function (value, key) {
