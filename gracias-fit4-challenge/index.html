@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- GTM centraliza la medición. Purchase se confirma por Hotmart, nunca por cargar esta página. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#F2EEE2">
+  <title>Compra aprobada · FIT4CHALLENGE</title>
+  <meta name="description" content="Tu compra de FIT4CHALLENGE fue aprobada. Entra al club y completa tu evaluación inicial.">
+  <link rel="canonical" href="https://metodo.tr4iner.com/gracias-fit4-challenge">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #F2EEE2;
+      --surface: #F8F4E9;
+      --ink: #0A0A0A;
+      --ink-soft: #38342F;
+      --muted: #6B6660;
+      --rule: rgba(10, 10, 10, 0.16);
+      --rule-strong: rgba(10, 10, 10, 0.32);
+      --accent: #F5C518;
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 48px;
+      --space-6: 64px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { touch-action: manipulation; -webkit-tap-highlight-color: rgba(245, 197, 24, 0.28); }
+    a:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; box-shadow: 0 0 0 7px var(--accent); }
+    ::selection { background: var(--accent); color: var(--ink); }
+
+    .confetti-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: var(--space-2);
+      left: var(--space-2);
+      z-index: 100;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--surface);
+      font-weight: 700;
+      text-decoration: none;
+      transform: translateY(-160%);
+      transition: transform 160ms ease;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .page {
+      width: min(100%, 1120px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: calc(var(--space-4) + env(safe-area-inset-top)) clamp(20px, 5vw, 56px) calc(var(--space-4) + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .topbar,
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .topbar {
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .topbar span:last-child,
+    footer { color: var(--muted); }
+
+    main {
+      width: 100%;
+      margin: auto;
+      padding: var(--space-6) 0;
+    }
+    .confirmation {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+      border: 1px solid var(--rule-strong);
+      background: var(--surface);
+    }
+    .hero,
+    .next { padding: clamp(28px, 5vw, 56px); }
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .next { border-left: 1px solid var(--rule-strong); }
+
+    .approval-mark {
+      width: 112px;
+      height: 112px;
+      margin-bottom: var(--space-4);
+      display: grid;
+      place-items: center;
+      animation: mark-arrive 560ms 100ms cubic-bezier(.16, 1, .3, 1) both;
+    }
+    .approval-mark svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .approval-disc {
+      fill: var(--accent);
+      stroke: var(--ink);
+      stroke-width: 2;
+    }
+    .approval-check {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 5;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: check-arrive 380ms 330ms cubic-bezier(.2, .9, .25, 1.25) both;
+    }
+    .approval-rays {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 2;
+      stroke-linecap: square;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: rays-arrive 520ms 240ms cubic-bezier(.16, 1, .3, 1) both;
+    }
+    @keyframes mark-arrive {
+      from { opacity: 0; transform: scale(0.62) rotate(-8deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    @keyframes check-arrive {
+      from { opacity: 0; transform: scale(0.45); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes rays-arrive {
+      from { opacity: 0; transform: scale(0.65) rotate(-12deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    .eyebrow,
+    .section-label,
+    .step-number {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .eyebrow { margin-bottom: 14px; color: var(--muted); }
+    h1 {
+      max-width: 10ch;
+      font-family: var(--serif);
+      font-size: clamp(44px, 6vw, 70px);
+      font-weight: 560;
+      font-variation-settings: "opsz" 100;
+      letter-spacing: -0.045em;
+      line-height: 0.98;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+    }
+    .lede {
+      max-width: 52ch;
+      margin: var(--space-3) 0 var(--space-4);
+      color: var(--ink-soft);
+      font-size: clamp(16px, 1.7vw, 18px);
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+    .cta {
+      position: relative;
+      width: 100%;
+      min-height: 64px;
+      padding: 18px 22px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      background: var(--ink);
+      color: var(--surface);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 240ms ease;
+    }
+    .cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      transform: translateX(-101%);
+      transition: transform 360ms cubic-bezier(.7, 0, .3, 1);
+    }
+    .cta span,
+    .cta svg { position: relative; z-index: 1; }
+    .cta svg { width: 24px; height: 24px; transition: transform 180ms ease; }
+    .cta:hover { color: var(--ink); }
+    .cta:hover::before { transform: translateX(0); }
+    .cta:hover svg { transform: translateX(4px); }
+    .cta:active { transform: translateY(1px); }
+    .cta-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+    }
+
+    .section-label {
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .steps { list-style: none; }
+    .step {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      gap: var(--space-2);
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .step-number { padding-top: 3px; color: var(--muted); }
+    .step h2 {
+      margin-bottom: 5px;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 560;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+    .step p {
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .support {
+      margin-top: var(--space-3);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .support a {
+      color: var(--ink);
+      font-weight: 700;
+      text-underline-offset: 3px;
+    }
+
+    footer {
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--rule-strong);
+    }
+
+    @media (max-width: 820px) {
+      main { padding: var(--space-5) 0; }
+      .confirmation { grid-template-columns: 1fr; }
+      .next { border-top: 1px solid var(--rule-strong); border-left: 0; }
+      h1 { max-width: 12ch; }
+    }
+    @media (max-width: 520px) {
+      .page { padding-left: 16px; padding-right: 16px; }
+      main { padding: var(--space-4) 0; }
+      .topbar span:last-child { display: none; }
+      .hero,
+      .next { padding: 24px 20px; }
+      .approval-mark { width: 92px; height: 92px; margin-bottom: var(--space-3); }
+      h1 { font-size: clamp(40px, 13vw, 54px); }
+      .lede { margin: 20px 0 24px; font-size: 16px; }
+      .cta { min-height: 60px; padding: 16px 18px; font-size: 11px; }
+      .step { grid-template-columns: 28px minmax(0, 1fr); padding: 20px 0; }
+      .step h2 { font-size: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
+  <canvas class="confetti-layer" id="confetti-layer" width="1" height="1" aria-hidden="true"></canvas>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <div class="page">
+    <header class="topbar">
+      <span translate="no">TR4INER / FIT4CHALLENGE</span>
+      <span>Compra aprobada</span>
+    </header>
+
+    <main id="contenido">
+      <div class="confirmation">
+        <section class="hero" aria-labelledby="page-title">
+          <div class="approval-mark" aria-hidden="true">
+            <svg viewBox="0 0 112 112" fill="none">
+              <g class="approval-rays">
+                <path d="M56 2v12M56 98v12M2 56h12M98 56h12M18 18l9 9M85 85l9 9M94 18l-9 9M27 85l-9 9"/>
+              </g>
+              <circle class="approval-disc" cx="56" cy="56" r="36"/>
+              <g class="approval-check">
+                <path d="M38 56.5 50.5 69 76 41"/>
+              </g>
+            </svg>
+          </div>
+          <p class="eyebrow">FIT4CHALLENGE · Compra aprobada</p>
+          <h1 id="page-title">Ya estás dentro.</h1>
+          <p class="lede">Tu acceso a FIT4CHALLENGE está confirmado. Ahora entra al club y completa tu evaluación inicial para que el equipo conozca tu punto de partida.</p>
+          <a class="cta" id="club-cta" href="https://club.tr4iner.com/">
+            <span>Entrar al club</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg>
+          </a>
+          <p class="cta-note">Abre en <span translate="no">club.tr4iner.com</span></p>
+        </section>
+
+        <aside class="next" aria-labelledby="next-title">
+          <p class="section-label" id="next-title">Qué ocurre ahora</p>
+          <ol class="steps">
+            <li class="step">
+              <span class="step-number">01</span>
+              <div>
+                <h2>Revisa tus mensajes</h2>
+                <p>Recibirás tu usuario y contraseña por WhatsApp y también por correo.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-number">02</span>
+              <div>
+                <h2>Busca nuestro remitente</h2>
+                <p>El correo llegará desde <span translate="no">clientes@club.tr4iner.com</span>. Revisa también spam o promociones.</p>
+              </div>
+            </li>
+            <li class="step">
+              <span class="step-number">03</span>
+              <div>
+                <h2>Completa tu evaluación</h2>
+                <p>Al ingresar al club, responde la evaluación inicial para establecer tu punto de partida.</p>
+              </div>
+            </li>
+          </ol>
+          <p class="support">¿No recibiste tus credenciales? Escríbenos a <a href="mailto:clientes@club.tr4iner.com" translate="no">clientes@club.tr4iner.com</a> indicando tu nombre completo.</p>
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      <span translate="no">TR4INER · FIT4CHALLENGE</span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var params = new URLSearchParams(window.location.search);
+      var nameKeys = ['first_name', 'firstName', 'name', 'nombre'];
+      var firstName = '';
+
+      function safeFirstName(value) {
+        if (!value) return '';
+        var candidate = value.trim().replace(/\s+/g, ' ').split(' ')[0];
+        return /^[A-Za-zÀ-ÖØ-öø-ÿ'’-]{2,30}$/.test(candidate) ? candidate : '';
+      }
+
+      nameKeys.some(function (key) {
+        firstName = safeFirstName(params.get(key));
+        return Boolean(firstName);
+      });
+
+      if (!firstName) {
+        try { firstName = safeFirstName(window.sessionStorage.getItem('tr4_fit4_buyer_name')); }
+        catch (error) { firstName = ''; }
+      }
+
+      var campaign = (params.get('utm_campaign') || '').trim().toUpperCase();
+      var funnel = (params.get('funnel') || '').trim().toUpperCase();
+      var funnelVariant = (params.get('funnel_variant') || '').trim();
+      var vaMarker = /(^|[-_])VA($|[-_])/i;
+      var hasVaUtm = Array.from(params.entries()).some(function (entry) {
+        return entry[0].toLowerCase().indexOf('utm_') === 0 && vaMarker.test(entry[1]);
+      });
+      var isVa = campaign === 'TR4INER-VA' ||
+        campaign === 'CASOS-VA' ||
+        funnel === 'VA' ||
+        vaMarker.test(funnelVariant) ||
+        hasVaUtm;
+
+      if (!isVa) {
+        try { isVa = window.sessionStorage.getItem('tr4_fit4_variant') === 'VA'; }
+        catch (error) { isVa = false; }
+      }
+
+      if (firstName) {
+        document.getElementById('page-title').textContent = firstName + ', ya estás dentro.';
+        document.title = firstName + ', tu compra fue aprobada · FIT4CHALLENGE';
+      }
+
+      function celebrateOnce() {
+        if (!window.matchMedia || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var celebrationKey = 'tr4_fit4_thankyou_celebrated';
+        try {
+          if (window.sessionStorage.getItem(celebrationKey)) return;
+          window.sessionStorage.setItem(celebrationKey, '1');
+        } catch (error) { /* Sin almacenamiento, el efecto sigue siendo seguro y descartable. */ }
+
+        var canvas = document.getElementById('confetti-layer');
+        var context = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+        var mark = document.querySelector('.approval-mark');
+        if (!context || !mark) return;
+
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        var origin = mark.getBoundingClientRect();
+        var originX = origin.left + origin.width / 2;
+        var originY = origin.top + origin.height / 2;
+        var colors = ['#F5C518', '#0A0A0A', '#B99010', '#FFFDF6'];
+        var count = width < 520 ? 34 : 48;
+        var particles = [];
+
+        for (var index = 0; index < count; index += 1) {
+          var speed = 7 + Math.random() * 7;
+          var angle = -Math.PI / 2 + (Math.random() - 0.42) * 1.75;
+          particles.push({
+            x: originX + (Math.random() - 0.5) * 18,
+            y: originY + (Math.random() - 0.5) * 12,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            width: 4 + Math.random() * 6,
+            height: 8 + Math.random() * 8,
+            rotation: Math.random() * Math.PI,
+            spin: (Math.random() - 0.5) * 0.34,
+            color: colors[index % colors.length]
+          });
+        }
+
+        var startedAt = window.performance.now();
+        var previousFrame = startedAt;
+
+        function draw(frameTime) {
+          var elapsed = frameTime - startedAt;
+          var step = Math.min((frameTime - previousFrame) / 16.67, 2);
+          var opacity = elapsed < 950 ? 1 : Math.max(0, 1 - (elapsed - 950) / 550);
+          previousFrame = frameTime;
+          context.clearRect(0, 0, width, height);
+
+          particles.forEach(function (particle) {
+            particle.x += particle.vx * step;
+            particle.y += particle.vy * step;
+            particle.vx *= Math.pow(0.992, step);
+            particle.vy += 0.24 * step;
+            particle.rotation += particle.spin * step;
+
+            context.save();
+            context.globalAlpha = opacity;
+            context.translate(particle.x, particle.y);
+            context.rotate(particle.rotation);
+            context.fillStyle = particle.color;
+            context.fillRect(-particle.width / 2, -particle.height / 2, particle.width, particle.height);
+            context.restore();
+          });
+
+          if (elapsed < 1500) {
+            window.requestAnimationFrame(draw);
+          } else {
+            context.clearRect(0, 0, width, height);
+            canvas.width = 1;
+            canvas.height = 1;
+          }
+        }
+
+        window.requestAnimationFrame(draw);
+      }
+
+      var approvalMark = document.querySelector('.approval-mark');
+      var celebrationStarted = false;
+      function startCelebration() {
+        if (celebrationStarted) return;
+        celebrationStarted = true;
+        celebrateOnce();
+      }
+      approvalMark.addEventListener('animationend', startCelebration, { once: true });
+      window.setTimeout(startCelebration, 750);
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'fit4_thankyou_view',
+        purchase_status: 'approved',
+        fit4_variant: isVa ? 'VA' : 'AN',
+        name_personalized: Boolean(firstName)
+      });
+
+      document.getElementById('club-cta').addEventListener('click', function () {
+        window.dataLayer.push({
+          event: 'fit4_club_click',
+          purchase_status: 'approved',
+          fit4_variant: isVa ? 'VA' : 'AN'
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

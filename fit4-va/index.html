@@ -351,6 +351,13 @@
       var variant = 'VA';
       var video = { id: 'vidalytics_embed_Rl_cXuqDVuhtabtp', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/Rl_cXuqDVuhtabtp/' };
 
+      // La vuelta desde Hotmart no garantiza reenviar el nombre; lo guardamos solo durante esta pestaña.
+      var buyerName = params.get('first_name') || params.get('name') || params.get('nombre') || '';
+      try {
+        if (buyerName) window.sessionStorage.setItem('tr4_fit4_buyer_name', buyerName);
+        window.sessionStorage.setItem('tr4_fit4_variant', variant);
+      } catch (error) { /* Safari privado o almacenamiento bloqueado: la compra sigue igual. */ }
+
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ event: 'fit4_vsl_loaded', fit4_variant: variant, funnel_variant: 'fit4-va' });
 
