@@ -891,6 +891,29 @@ Pendiente de Preview y prueba real de una ruta inexistente antes de migrar `meto
 ### Deploy
 No desplegado. Pendiente de Preview y validación del retorno real desde una compra aprobada de Hotmart.
 
+## 2026-07-22 — Preview integral antes de migrar `metodo.tr4iner.com`
+
+### Consolidación y deploy
+- La rama `codex/genesis-platform` se consolidó en commits separados para 10 Platos, variante VA, confirmación FIT4, routing Vercel, documentación y atribución.
+- El Preview final de código quedó en `https://tr4iner-funnels-19bxprgsa-metodotr4iners-projects.vercel.app`, asociado al commit `9036570` y con target `preview`; no se promovió a producción ni se modificó DNS.
+- Durante la prueba se corrigió el formulario AN para reenviar toda la query recibida, incluidos identificadores futuros, antes de sobrescribir nombre, correo y sexo con los valores validados.
+
+### Verificación
+- Las 27 superficies respondieron en el deployment final: `/` devolvió `308`, las 25 páginas públicas `200` y una ruta inexistente `404` con la página de recuperación.
+- La raíz y los alias técnicos conservaron UTMs, `video`, correo y un identificador sintético futuro hasta su URL canónica.
+- Las ramas Typeform quedaron comprobadas sin enviar leads reales: USD 100 selecciona el WhatsApp AN/VA correcto; USD 300 selecciona Calendly AN/VA; FIT4 selecciona la VSL AN/VA y conserva la query completa.
+- Los dos PDFs, videos, mockup, imagen VA, `robots.txt`, sitemap y `attribution.js` respondieron `200` con su tipo de contenido correcto.
+- Las 26 superficies HTML, incluido el 404, contienen metadata base; los 53 scripts inline compilan sin errores de sintaxis.
+
+### Bloqueo encontrado
+- El funnel Preview tiene `GENESIS_CRM_API_URL` y `GENESIS_INTERNAL_SECRET`, pero `/api/genesis/me` recibe `401 Protected deployment` al intentar llegar al CRM Preview. La protección SSO de Vercel corta la llamada antes de la API y de Neon.
+- Para cerrar la prueba GENESIS hace falta habilitar un bypass de automatización en el CRM Preview y enviarlo desde el proxy del funnel, o publicar un hostname de staging protegido por el secreto interno. No se alteró esa barrera de seguridad en este paso.
+
+### Estado
+- Caso de Estudio, salidas Typeform, FIT4, 10 Platos, 404 y routing: listos en Preview.
+- GENESIS: UI y funciones desplegadas, recorrido E2E detenido en la frontera Funnel Preview → CRM Preview.
+- Producción y DNS: intactos.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
