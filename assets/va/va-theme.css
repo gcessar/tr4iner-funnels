@@ -6,7 +6,7 @@ html.va-context body {
   --rust: #c48a42;
   --yellow: #e8a943;
   --accent: #e8a943;
-  --va-display-weight: 700;
+  --va-display-weight: 500;
   font-family: var(--sans);
   font-weight: 300;
   font-synthesis: none;
