@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://metodo.tr4iner.com/fit4challenge-b">
+  <title>Preparando FIT4CHALLENGE · TR4INER</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f4efe6; color: #16130e; }
+    main { padding: 24px; text-align: center; }
+    p { margin: 0; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Preparando tu presentación…</p>
+    <noscript><p>Activa JavaScript para continuar.</p></noscript>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const queryString = window.location.search;
+      const params = new URLSearchParams(queryString);
+      const campaign = (params.get("utm_campaign") || "").trim().toUpperCase();
+      const funnel = (params.get("funnel") || "").trim().toUpperCase();
+      const funnelVariant = (params.get("funnel_variant") || "").trim();
+      const vaMarker = /(^|[-_])VA($|[-_])/i;
+
+      const hasVaUtm = Array.from(params.entries()).some(function (entry) {
+        return entry[0].toLowerCase().indexOf("utm_") === 0 && vaMarker.test(entry[1]);
+      });
+
+      const isVa = campaign === "TR4INER-VA" ||
+        campaign === "CASOS-VA" ||
+        funnel === "VA" ||
+        vaMarker.test(funnelVariant) ||
+        hasVaUtm;
+
+      const destination = isVa ? "/fit4-va" : "/fit4";
+      window.location.replace(window.location.origin + destination + queryString);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://metodo.tr4iner.com/redirectionutmstr4iner">
+  <title>Continuando a WhatsApp · TR4INER</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f4efe6; color: #16130e; }
+    main { padding: 24px; text-align: center; }
+    p { margin: 0; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Abriendo WhatsApp…</p>
+    <noscript><p>Activa JavaScript para continuar.</p></noscript>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const campaign = urlParams.get("utm_campaign");
+      const source = urlParams.get("utm_source");
+      const medium = urlParams.get("utm_medium");
+
+      const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+      const isMetaCaseStudy = source === "MetaAds" && medium === "Caso_Estudio";
+      const phone = isVa ? "15677024560" : "17439014239";
+      const message = isMetaCaseStudy && !isVa
+        ? "¡Hola! Quiero más información."
+        : "Hola! Necesito ayuda con mi transformacion fisica y buscaba conocer mas sobre los programas que ofrece Tr4iner.";
+
+      window.location.replace(
+        "https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(message)
+      );
+    });
+  </script>
+</body>
+</html>
