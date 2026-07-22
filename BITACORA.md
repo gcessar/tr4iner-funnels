@@ -953,7 +953,7 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 - El navegador no mostró overlays ni errores de la aplicación. Meta Pixel mantuvo únicamente el aviso esperado de permisos sobre localhost.
 
 ### Deploy
-No desplegado. Validación local completada; pendiente de Preview antes de producción.
+Desplegado en Producción dentro del artifact `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`.
 
 ## 2026-07-22 — Formulario VA sin desplazamiento automático
 
@@ -965,7 +965,7 @@ No desplegado. Validación local completada; pendiente de Preview antes de produ
 - Evitar interrumpir la lectura o el video cuando se habilita la aplicación, sin retrasar ni ocultar el siguiente paso.
 
 ### Deploy
-No desplegado. Cambio validado localmente y pendiente de Preview.
+Desplegado en Producción dentro del artifact `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`.
 
 ## 2026-07-22 — CTA y testimonios más legibles en Calendly VA
 
@@ -980,7 +980,7 @@ No desplegado. Cambio validado localmente y pendiente de Preview.
 - Revisado a 375, 768 y 1280 px: el texto permanece dentro de las tarjetas y la página no presenta overflow horizontal.
 
 ### Deploy
-No desplegado. Cambio validado localmente y pendiente de Preview.
+Desplegado en Producción dentro del artifact `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`.
 
 ## 2026-07-22 — Fondo unificado en las páginas VA
 
@@ -997,7 +997,21 @@ No desplegado. Cambio validado localmente y pendiente de Preview.
 - `/calendly-confirma` sin parámetros VA conserva el fondo AN `#F2EEE2`.
 
 ### Deploy
-No desplegado. Validación local completada; pendiente de Preview.
+Desplegado en Producción dentro del artifact `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`.
+
+## 2026-07-22 — Publicación de los ajustes VA en Producción
+
+### Consolidación
+- Se publicó la rama `codex/va-assets-vercel` en el proyecto canónico `tr4iner-funnels`, desde el commit `e6bf564`.
+- El alcance incluye la migración local de imágenes de ClickFunnels, foto inferior de Veronika, títulos Poppins 500, fecha de julio, formulario sin scroll automático, CTA y testimonios legibles en Calendly VA, y fondo VA unificado.
+
+### Verificación y promoción
+- Vercel construyó el Preview `dpl_3inMs6smc2edQGgCJDKB1SPcnrEa` y confirmó target `preview` con estado `Ready`.
+- Ese mismo artifact se promovió a Producción como `dpl_2bnDKjAo5A8dwaPxm7sTzJvvJqaE`, sin una reconstrucción manual distinta.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
+
+### Estado
+Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fuera del tema compartido condicionado por contexto VA.
 
 ---
 
