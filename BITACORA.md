@@ -934,6 +934,7 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 
 ### Qué cambió
 - El sistema compartido VA conserva Montserrat, pero baja los títulos de 900 a 500 en `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, la confirmación con contexto VA y `/fit4-va`. Biblioteca no se modificó.
+- El HTML base de `/casos-de-estudio-va` también declara 500 en su título principal y el título del modal; así no reaparece el peso 900 cuando se abre el archivo local sin cargar el tema compartido.
 - El avatar inferior de `/casos-de-estudio-va` usa la nueva foto de Veronika alojada en `/assets/va/vero-perfil-footer.webp`.
 - Se descargaron al repositorio los once retratos del carrusel de testimonios de Calendly y la foto de Anthoni usada en Flor/Dashiel. Las páginas públicas y sus variantes B ya no cargan imágenes desde `images.clickfunnels.com` ni `statics.myclickfunnels.com`.
 
