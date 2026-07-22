@@ -930,6 +930,30 @@ No desplegado. Pendiente de Preview y validación del retorno real desde una com
 - El escaneo de Vercel no encontró errores de ejecución en los 15 minutos posteriores a la promoción.
 - Falta repetir la auditoría pública cuando todos los resolvedores entreguen Vercel y validar el recorrido dinámico completo de GENESIS contra el CRM productivo.
 
+## 2026-07-22 — Peso tipográfico VA y retiro de imágenes ClickFunnels
+
+### Qué cambió
+- El sistema compartido VA conserva Montserrat, pero baja los títulos de 900 a 700 en `/casos-de-estudio-va`, `/testimonio-flor-va`, `/calendly-va`, la confirmación con contexto VA y `/fit4-va`. Biblioteca no se modificó.
+- El avatar inferior de `/casos-de-estudio-va` usa la nueva foto de Veronika alojada en `/assets/va/vero-perfil-footer.webp`.
+- Se descargaron al repositorio los once retratos del carrusel de testimonios de Calendly y la foto de Anthoni usada en Flor/Dashiel. Las páginas públicas y sus variantes B ya no cargan imágenes desde `images.clickfunnels.com` ni `statics.myclickfunnels.com`.
+
+### Por qué
+- Reducir el peso visual de la identidad VA sin cambiar familia, copy, layout ni lógica de conversión.
+- Evitar que la cancelación de ClickFunnels deje imágenes rotas en el funnel servido por Vercel.
+
+### Resultado esperado
+- Una jerarquía VA menos pesada y consistente en todo su recorrido.
+- Cero dependencia de la suscripción de ClickFunnels para servir imágenes del funnel.
+
+### Verificación
+- Las cinco superficies VA renderizan Montserrat 700 en sus títulos a 375, 768 y 1280 px, sin overflow ni imágenes visibles rotas. La fuente 700 cargó realmente en el navegador.
+- El nuevo avatar de Veronika se revisó visualmente en móvil y conserva un recorte legible dentro del círculo.
+- Los trece archivos locales migrados respondieron `200` desde Vercel Dev con `image/png` o `image/webp` correcto. El repositorio quedó sin referencias activas a dominios de imágenes de ClickFunnels.
+- El navegador no mostró overlays ni errores de la aplicación. Meta Pixel mantuvo únicamente el aviso esperado de permisos sobre localhost.
+
+### Deploy
+No desplegado. Validación local completada; pendiente de Preview antes de producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
