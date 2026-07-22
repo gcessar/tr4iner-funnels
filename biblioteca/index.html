@@ -1,11 +1,23 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>GENESIS · TR4INER</title>
+  <meta name="description" content="Reserva gratis tu plaza en GENESIS y recibe una ruta de alimentación y entrenamiento adaptada a tu objetivo." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -552,6 +564,8 @@
   </style>
 </head>
 <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <div class="page">
 
     <header class="hero" id="hero">
@@ -973,6 +987,9 @@
           page_url:  window.location.href,
           timestamp: new Date().toISOString()
         };
+        // El CRM emite el enlace mágico real. n8n conserva automatizaciones y
+        // atribución, pero esta bandera permite desactivar su correo heredado.
+        payload.suppress_access_email = true;
 
         saveLead({ nombre: nombre, email: email, sexo: sexo });
         // El whatsapp viaja en props: el CRM lo necesita para que el setter contacte al SQL
@@ -992,7 +1009,29 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        }).then(next).catch(next);
+        }).catch(function () { /* El acceso ya no depende del fan-out de n8n. */ });
+
+        var genesisPayload = {
+          nombre: nombre,
+          whatsapp: prefijo + telefono,
+          email: email,
+          sexo: sexo,
+          video: videoId
+        };
+        Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });
+        fetch('/api/genesis/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(genesisPayload)
+        }).then(function (response) {
+          if (!response.ok) throw new Error('No pudimos enviar el correo');
+          next();
+        }).catch(function () {
+          btn.classList.remove('loading');
+          btn.querySelector('span').textContent = 'Reintentar envío';
+          btn.disabled = false;
+          setFieldError('f-email', true, 'No pudimos enviar el acceso. Revisa el correo e inténtalo otra vez.');
+        });
       });
     })();
   </script>

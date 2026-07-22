@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F4EFE6" />
+  <title>Acceso de miembros · GENESIS TR4INER</title>
+  <meta name="description" content="Solicita tu enlace privado para volver a GENESIS." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/acceso/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --paper:#F4EFE6; --card:#FFFDF6; --ink:#16130E; --muted:#766e60; --rule:rgba(22,19,14,.2); --mark:#F5C518; --serif:"Fraunces",Georgia,serif; --sans:"Instrument Sans",sans-serif; --mono:"JetBrains Mono",monospace; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { min-height:100dvh; display:grid; place-items:center; background:var(--paper); color:var(--ink); font:17px/1.55 var(--sans); padding:24px; }
+    .page { width:min(100%,620px); }
+    .top { display:flex; justify-content:space-between; padding-bottom:15px; border-bottom:1px solid var(--rule); color:var(--muted); font:500 10px/1 var(--mono); letter-spacing:.17em; text-transform:uppercase; }
+    main { margin-top:34px; background:var(--card); border:1px solid var(--rule); padding:clamp(25px,6vw,46px); box-shadow:0 20px 55px rgba(54,43,22,.12); }
+    .kicker { color:var(--muted); font:600 10px/1.2 var(--mono); letter-spacing:.17em; text-transform:uppercase; }
+    h1 { margin-top:14px; max-width:480px; font:560 clamp(34px,7vw,52px)/1.04 var(--serif); letter-spacing:-.035em; }
+    h1 em { font-weight:500; }
+    .dek { margin-top:16px; max-width:490px; color:#514a3e; }
+    form { margin-top:28px; }
+    label { display:block; font:600 11px/1.2 var(--mono); letter-spacing:.1em; text-transform:uppercase; }
+    input { width:100%; margin-top:9px; border:1px solid var(--rule); background:white; padding:15px; color:var(--ink); font:16px var(--sans); outline:none; }
+    input:focus { border-color:var(--ink); box-shadow:0 0 0 3px rgba(245,197,24,.3); }
+    button { width:100%; margin-top:12px; border:1px solid var(--ink); background:var(--mark); color:var(--ink); padding:15px 18px; font:700 15px var(--sans); cursor:pointer; }
+    button:disabled { opacity:.55; cursor:wait; }
+    .status { margin-top:16px; border-left:3px solid var(--mark); padding-left:12px; color:#514a3e; font-size:14px; }
+    .status[hidden] { display:none; }
+    .foot { margin-top:20px; text-align:center; color:var(--muted); font-size:13px; }
+    a { color:var(--ink); font-weight:650; text-underline-offset:3px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top"><span>TR4INER · GENESIS</span><span>Acceso privado</span></header>
+    <main>
+      <p class="kicker">Ya soy miembro</p>
+      <h1>Vuelve a tu GENESIS <em>sin contraseña.</em></h1>
+      <p class="dek">Escribe el correo o el teléfono de tu ficha. Te enviaremos un enlace personal al correo asociado y volverás justo al contenido que buscabas.</p>
+      <form id="access-form">
+        <label for="identifier">Correo o teléfono</label>
+        <input id="identifier" name="identifier" type="text" autocomplete="email" inputmode="email" placeholder="tu@correo.com o 999 999 999" required />
+        <button id="submit" type="submit">Enviarme mi enlace →</button>
+      </form>
+      <p class="status" id="status" hidden>Si encontramos tu ficha, el enlace llegará en menos de 2 minutos. Revisa también Promociones y Spam.</p>
+      <p class="foot">¿Aún no eres miembro? <a id="register-link" href="/biblioteca/inicio/">Empieza gratis</a></p>
+    </main>
+  </div>
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var params = new URLSearchParams(window.location.search);
+      var register = new URL('/biblioteca/inicio/', window.location.origin);
+      params.forEach(function (value, key) { register.searchParams.set(key, value); });
+      document.getElementById('register-link').href = register.toString();
+
+      fetch('/api/genesis/me').then(function (response) {
+        if (!response.ok) return;
+        var next = new URL('/biblioteca/videos/', window.location.origin);
+        params.forEach(function (value, key) { next.searchParams.set(key, value); });
+        window.location.replace(next.toString());
+      }).catch(function () {});
+
+      document.getElementById('access-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var button = document.getElementById('submit');
+        button.disabled = true;
+        button.textContent = 'Buscando tu ficha…';
+        fetch('/api/genesis/request-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: document.getElementById('identifier').value.trim(), video: params.get('video') })
+        }).then(function (response) {
+          if (!response.ok) throw new Error('No se pudo solicitar el acceso');
+          document.getElementById('status').hidden = false;
+          button.textContent = 'Enlace solicitado';
+          if (window.TR4Track && TR4Track.track) TR4Track.track('genesis_access_requested');
+        }).catch(function () {
+          button.disabled = false;
+          button.textContent = 'Intentar otra vez →';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

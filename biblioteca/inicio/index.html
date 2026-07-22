@@ -1,11 +1,23 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>GENESIS · Elige tu ruta</title>
+  <meta name="description" content="Elige tu ruta para personalizar el programa gratuito GENESIS de TR4INER según tu fisiología." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/inicio/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -177,6 +189,20 @@
       font-size: 10px;
       letter-spacing: 0.08em;
     }
+    .member-entry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 12px 18px;
+      border: 1px solid var(--rule-strong);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .18s ease, border-color .18s ease;
+    }
+    .member-entry:hover { background: var(--card); border-color: var(--ink); }
     footer { padding-top: 18px; border-top: 1px solid var(--rule); }
 
     @media (max-width: 620px) {
@@ -194,6 +220,8 @@
   </style>
 </head>
 <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <div class="page">
     <header class="topbar">
       <span>TR4INER · GENESIS</span>
@@ -224,6 +252,7 @@
         </button>
       </div>
       <p class="note">No es un diagnóstico médico · solo personaliza tu experiencia</p>
+      <a class="member-entry" id="member-entry" href="/biblioteca/acceso/">Ya soy miembro →</a>
     </main>
 
     <footer>
@@ -237,6 +266,12 @@
     (function () {
       'use strict';
       if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_sexo_view');
+
+      var memberUrl = new URL('/biblioteca/acceso/', window.location.origin);
+      new URLSearchParams(window.location.search).forEach(function (value, key) {
+        memberUrl.searchParams.set(key, value);
+      });
+      document.getElementById('member-entry').href = memberUrl.toString();
 
       document.querySelectorAll('[data-sexo]').forEach(function (button) {
         button.addEventListener('click', function () {

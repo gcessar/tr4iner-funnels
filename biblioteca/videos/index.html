@@ -1,11 +1,23 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Tu GENESIS · TR4INER</title>
+  <meta name="description" content="Accede a tus sesiones y continúa la ruta personalizada de GENESIS." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/videos/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -297,6 +309,7 @@
     }
     .next-card .thumb { border-radius: 9px; }
     .next-card .nx-meta {
+      display: block;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 9.5px;
@@ -306,6 +319,7 @@
       margin-bottom: 5px;
     }
     .next-card .nx-title {
+      display: block;
       font-family: var(--serif);
       font-size: clamp(18px, 2.8vw, 24px);
       font-weight: 560;
@@ -375,6 +389,29 @@
     .gate-note { margin-top: 14px; }
     .gate-note a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
 
+    /* Aviso editorial: una sola señal amarilla, no un popup que interrumpe. */
+    .new-release {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      margin: -6px 0 30px;
+      padding: 15px;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-left: 5px solid var(--mark);
+      box-shadow: 0 16px 36px -26px rgba(22, 19, 14, .45);
+    }
+    .new-release[hidden] { display: none !important; }
+    .new-release img { width: 150px; aspect-ratio: 16/9; object-fit: cover; }
+    .new-release-kicker { color: #8A6F00; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+    .new-release h2 { margin-top: 4px; font-family: var(--serif); font-size: clamp(19px, 2.5vw, 25px); font-weight: 560; line-height: 1.15; }
+    .new-release p:not(.new-release-kicker) { margin-top: 4px; color: var(--muted); font-size: 13.5px; }
+    .new-release-actions { display: flex; align-items: center; gap: 8px; }
+    .new-release-open, .new-release-close { border: none; font-family: var(--sans); cursor: pointer; }
+    .new-release-open { padding: 12px 15px; background: var(--mark); color: var(--ink); font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .new-release-close { padding: 9px; background: transparent; color: var(--muted); font-size: 20px; }
+
     /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
     .onboard[hidden], .next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
     #program-content[hidden] { display: none !important; }
@@ -383,6 +420,10 @@
       .onboard { grid-template-columns: 1fr; }
       .next-card { grid-template-columns: 1fr; }
       .next-card .thumb { max-height: 180px; }
+      .new-release { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
+      .new-release img { width: 96px; }
+      .new-release-actions { grid-column: 1 / -1; }
+      .new-release-open { flex: 1; }
     }
 
     /* ── Filtros por bloque ── */
@@ -892,6 +933,8 @@
   </style>
 </head>
 <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <div class="page is-in">
 
     <div class="topbar">
@@ -917,6 +960,19 @@
       </a>
     </header>
 
+    <section class="new-release" id="new-release" hidden aria-label="Nuevo contenido disponible">
+      <img id="new-release-img" src="" alt="" />
+      <div>
+        <p class="new-release-kicker">Nuevo en GENESIS</p>
+        <h2 id="new-release-title"></h2>
+        <p id="new-release-body"></p>
+      </div>
+      <div class="new-release-actions">
+        <button type="button" class="new-release-open" id="new-release-open">Ver ahora →</button>
+        <button type="button" class="new-release-close" id="new-release-close" aria-label="Ocultar aviso">×</button>
+      </div>
+    </section>
+
     <section class="onboard gate" id="gate" hidden aria-label="Confirma tu plaza">
       <div>
         <h2 id="gate-title"></h2>
@@ -926,7 +982,7 @@
           <button type="button" class="gate-ghost" id="gate-no">No soy yo</button>
         </div>
         <div class="gate-row" id="gate-email" hidden>
-          <input class="gate-input" id="gate-input" type="email" inputmode="email" autocomplete="email" placeholder="tu@correo.com" aria-label="Tu correo" />
+          <input class="gate-input" id="gate-input" type="text" inputmode="email" autocomplete="email" placeholder="tu@correo.com o tu teléfono" aria-label="Tu correo o teléfono" />
           <button type="button" class="onboard-cta" id="gate-go">Continuar</button>
         </div>
         <p class="gate-err" id="gate-err" hidden>Ingresa un correo válido.</p>
@@ -1021,7 +1077,7 @@
 
   <script src="/attribution.js"></script>
   <script>
-    (function () {
+    (async function () {
       'use strict';
 
       // ── Catálogo ─────────────────────────────────────────────
@@ -1073,8 +1129,47 @@
       // ── Estado: sexo y bloque activo ─────────────────────────
       // ClickFunnels carga esta página dentro de un iframe sin query string propia.
       var params = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
-      var lead = {};
-      try { lead = JSON.parse(window.localStorage.getItem('tr4_lead') || '{}'); } catch (e) { /* incógnito */ }
+      var memberSession = null;
+      try {
+        var memberResponse = await fetch('/api/genesis/me', { cache: 'no-store' });
+        if (memberResponse.ok) memberSession = await memberResponse.json();
+      } catch (e) { /* el portón ofrece reintentar por correo */ }
+      var lead = memberSession ? {
+        nombre: memberSession.member.nombre || '',
+        email: memberSession.member.email || '',
+        sexo: memberSession.member.sexo || ''
+      } : {};
+      if (memberSession) {
+        try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); } catch (e) { /* incógnito */ }
+      }
+
+      var activeAnnouncement = null;
+      if (memberSession) {
+        try {
+          var catalogResponse = await fetch('/api/genesis/catalog', { cache: 'no-store' });
+          if (catalogResponse.ok) {
+            var catalogData = await catalogResponse.json();
+            if (catalogData.modules && catalogData.modules.length) {
+              BLOQUES = catalogData.modules.map(function (module) {
+                return { id: module.slug, num: module.num, name: module.title, desc: module.description || '' };
+              });
+              VIDEOS = [];
+              catalogData.modules.forEach(function (module) {
+                module.contents.forEach(function (content) {
+                  VIDEOS.push({
+                    id: content.youtubeId,
+                    bloque: module.slug,
+                    sexo: content.audience === 'WOMEN' ? 'mujer' : (content.audience === 'MEN' ? 'hombre' : 'all'),
+                    title: content.title,
+                    intentLevel: content.intentLevel
+                  });
+                });
+              });
+            }
+            activeAnnouncement = catalogData.announcement || null;
+          }
+        } catch (e) { /* el catálogo embebido mantiene el programa disponible */ }
+      }
 
       var state = {
         sexo: normalizeSexo(params.get('sexo') || lead.sexo),
@@ -1095,14 +1190,14 @@
       // con identidad ajena pedimos confirmación, sin identidad pedimos el correo.
       // Tras resolver, limpiamos email/nombre de la barra de direcciones para que
       // compartir el link no regale el expediente de nadie.
-      var urlNombre = params.get('nombre') || params.get('first_name') || '';
-      var urlEmail = String(params.get('email') || '').trim().toLowerCase();
-      var urlSexo = normalizeSexo(params.get('sexo'));
+      var urlNombre = '';
+      var urlEmail = '';
+      var urlSexo = null;
       var storedEmail = String(lead.email || '').trim().toLowerCase();
 
       var nombre = '';
       var email = '';
-      var gateActivo = false;
+      var gateActivo = !memberSession;
 
       function saveLead() {
         try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); } catch (e) { /* incógnito */ }
@@ -1130,8 +1225,10 @@
       }
 
       // ── Plan del test de macros (si ya lo hizo) ──
-      var plan = null;
-      try { plan = JSON.parse(window.localStorage.getItem('tr4_plan') || 'null'); } catch (e) { /* incógnito */ }
+      var plan = memberSession && memberSession.member.plan ? memberSession.member.plan : null;
+      if (plan) {
+        try { window.localStorage.setItem('tr4_plan', JSON.stringify(plan)); } catch (e) { /* incógnito */ }
+      }
       if (plan && (!plan.kcal || !plan.ruta)) plan = null;
 
       // ── Eventos de actividad (lead scoring) ──
@@ -1199,8 +1296,8 @@
           yes.textContent = 'Cambiar a ' + (urlFirst || 'esa plaza');
           no.textContent = 'Seguir como ' + storedFirst;
         } else {
-          title.textContent = 'Abre tu expediente.';
-          text.textContent = 'Escribe el correo con el que reservaste tu plaza: así tu avance y tu plan te siguen en cualquier dispositivo.';
+          title.textContent = 'Esta página es privada.';
+          text.textContent = 'Escribe el correo o teléfono de tu ficha. Te enviaremos un enlace personal al correo asociado para abrir tu avance en este dispositivo.';
         }
         gate.hidden = false;
         gate.classList.add('is-in');
@@ -1258,13 +1355,30 @@
         mostrarGate('email');
       });
       document.getElementById('gate-go').addEventListener('click', function () {
-        var v = document.getElementById('gate-input').value.trim().toLowerCase();
-        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        var input = document.getElementById('gate-input');
+        var v = input.value.trim().toLowerCase();
+        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || v.replace(/\D/g, '').length >= 9;
         document.getElementById('gate-err').hidden = ok;
         if (!ok) return;
-        lead.email = v;
-        saveLead();
-        resolverGate();
+        var button = document.getElementById('gate-go');
+        button.disabled = true;
+        button.textContent = 'Enviando…';
+        fetch('/api/genesis/request-access', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: v, video: params.get('video') })
+        }).then(function (response) {
+          if (!response.ok) throw new Error('No se pudo solicitar el acceso');
+          document.getElementById('gate-title').textContent = 'Revisa tu correo.';
+          document.getElementById('gate-text').textContent = 'Si encontramos tu ficha, ya enviamos un enlace personal. Vence en 15 minutos.';
+          document.getElementById('gate-email').hidden = true;
+          button.textContent = 'Enlace enviado';
+        }).catch(function () {
+          button.disabled = false;
+          button.textContent = 'Intentar otra vez';
+          document.getElementById('gate-err').textContent = 'No pudimos enviar el enlace. Inténtalo otra vez.';
+          document.getElementById('gate-err').hidden = false;
+        });
       });
       document.getElementById('gate-input').addEventListener('keydown', function (e) {
         if (e.key === 'Enter') document.getElementById('gate-go').click();
@@ -1294,9 +1408,15 @@
 
       // ── Progreso de sesiones (persistente) ──
       var PROGRESO_KEY = 'tr4_progreso';
-      var progreso = [];
-      try { progreso = JSON.parse(window.localStorage.getItem(PROGRESO_KEY) || '[]'); } catch (e) { /* incógnito */ }
+      var remoteProgress = {};
+      (memberSession && memberSession.progress || []).forEach(function (item) {
+        remoteProgress[item.videoId] = item;
+      });
+      var progreso = (memberSession && memberSession.progress || []).filter(function (item) {
+        return item.completed;
+      }).map(function (item) { return item.videoId; });
       if (!Array.isArray(progreso)) progreso = [];
+      saveProgreso();
 
       function isDone(id) { return progreso.indexOf(id) !== -1; }
       function saveProgreso() {
@@ -1314,7 +1434,9 @@
       // Completar una sesión emite el evento de scoring; si cierra su bloque, también.
       // El servidor deduplica por id, así que re-marcar no infla el score.
       function emitirCompletada(v, modo) {
-        track('sesion_completada', { sesion: v.id, bloque: v.bloque, modo: modo });
+        // El check manual solo organiza la interfaz. El score se alimenta del
+        // heartbeat de YouTube y del 85% visto, no de una declaración del lead.
+        if (modo !== 'manual') track('sesion_completada', { sesion: v.id, bloque: v.bloque, modo: modo });
         var vids = videosDe(v.bloque);
         if (vids.length && doneIn(vids) === vids.length) {
           track('bloque_completado', { bloque: v.bloque });
@@ -1501,6 +1623,9 @@
       var ytPlayer = null;
       var pollTimer = null;
       var openId = 0;
+      var activeVideo = null;
+      var watchedDelta = 0;
+      var playStartedSent = false;
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
       // caemos al iframe simple de siempre — se ve el video, sin autocompletar.
@@ -1524,17 +1649,42 @@
 
       function stopPoll() {
         if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+        if (activeVideo && watchedDelta > 0) pushProgress(activeVideo, false);
+        activeVideo = null;
+        watchedDelta = 0;
+        playStartedSent = false;
+      }
+      function pushProgress(v, playStarted) {
+        if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+        var duration = 0, position = 0;
+        try { duration = ytPlayer.getDuration() || 0; position = ytPlayer.getCurrentTime() || 0; } catch (e) { return; }
+        var delta = watchedDelta;
+        watchedDelta = 0;
+        fetch('/api/genesis/progress', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ videoId: v.id, watchedDelta: delta, position: position, duration: duration, playStarted: !!playStarted }),
+          keepalive: true
+        }).catch(function () { watchedDelta += delta; });
       }
       function startPoll(v) {
-        stopPoll();
+        if (activeVideo && activeVideo.id !== v.id) stopPoll();
+        activeVideo = v;
+        if (!playStartedSent) {
+          playStartedSent = true;
+          pushProgress(v, true);
+        }
+        if (pollTimer) return;
         pollTimer = setInterval(function () {
           try {
             if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
             var d = ytPlayer.getDuration();
             var t = ytPlayer.getCurrentTime();
+            if (document.visibilityState === 'visible' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) watchedDelta += 5;
+            if (watchedDelta >= 20) pushProgress(v, false);
             if (d > 0 && t / d >= 0.85) {
+              pushProgress(v, false);
               completarAuto(v);
-              stopPoll();
             }
           } catch (e) { /* player en transición */ }
         }, 5000);
@@ -1568,9 +1718,16 @@
                 origin: window.location.origin
               },
               events: {
+                onReady: function (ev) {
+                  var saved = remoteProgress[v.id];
+                  if (saved && saved.lastPositionSeconds > 5 && saved.maxPercent < 95) {
+                    try { ev.target.seekTo(saved.lastPositionSeconds, true); } catch (e) { /* sin permiso de seek */ }
+                  }
+                },
                 onStateChange: function (ev) {
                   if (ev.data === YT.PlayerState.PLAYING) startPoll(v);
                   if (ev.data === YT.PlayerState.ENDED) {
+                    pushProgress(v, false);
                     completarAuto(v);
                     stopPoll();
                   }
@@ -1597,6 +1754,42 @@
       document.getElementById('player-close').addEventListener('click', closePlayer);
       player.addEventListener('click', function (e) {
         if (e.target === player) closePlayer();
+      });
+
+      function announceEvent(action) {
+        if (!activeAnnouncement) return;
+        fetch('/api/genesis/announcement', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ publicationId: activeAnnouncement.id, action: action }),
+          keepalive: true
+        }).catch(function () {});
+      }
+
+      function showAnnouncement() {
+        if (!activeAnnouncement || gateActivo) return;
+        var banner = document.getElementById('new-release');
+        document.getElementById('new-release-img').src = activeAnnouncement.thumbnail ||
+          ('https://i.ytimg.com/vi/' + activeAnnouncement.videoId + '/hqdefault.jpg');
+        document.getElementById('new-release-title').textContent = activeAnnouncement.title;
+        document.getElementById('new-release-body').textContent = activeAnnouncement.body || activeAnnouncement.videoTitle;
+        banner.hidden = false;
+        announceEvent('viewed');
+      }
+
+      document.getElementById('new-release-open').addEventListener('click', function () {
+        if (!activeAnnouncement) return;
+        var video = VIDEOS.find(function (item) { return item.id === activeAnnouncement.videoId; });
+        var block = video && BLOQUES.find(function (item) { return item.id === video.bloque; });
+        announceEvent('clicked');
+        document.getElementById('new-release').hidden = true;
+        if (video && block) openPlayer(video, block);
+      });
+      document.getElementById('new-release-close').addEventListener('click', function () {
+        announceEvent('dismissed');
+        document.getElementById('new-release').hidden = true;
+        activeAnnouncement = null;
+        maybeStartTour();
       });
 
       // ── URL del wizard del plan, con identidad + atribución ──
@@ -1808,7 +2001,7 @@
         document.getElementById('tour-next').focus({ preventScroll: true });
       }
       function maybeStartTour() {
-        if (!plan || gateActivo) return;
+        if (!plan || gateActivo || activeAnnouncement) return;
         try { if (window.localStorage.getItem(TOUR_KEY)) return; } catch (e) { /* incógnito */ }
         setTimeout(function () { showTourStep(0); }, 550);
       }
@@ -1850,7 +2043,7 @@
       }
 
       // ── Arranque ─────────────────────────────────────────────
-      resolverIdentidad();
+      if (memberSession) aplicarIdentidad(); else mostrarGate('email');
       (function fixRegistroLink() {
         var base = new URL('/biblioteca/', window.location.origin);
         var p = new URLSearchParams();
@@ -1865,6 +2058,12 @@
       renderNextCard();
       updateBridge();
       maybeStartTour();
+      showAnnouncement();
+      if (memberSession && plan && params.get('video')) {
+        var requested = VIDEOS.find(function (item) { return item.id === params.get('video'); });
+        var requestedBlock = requested && BLOQUES.find(function (item) { return item.id === requested.bloque; });
+        if (requested && requestedBlock) setTimeout(function () { openPlayer(requested, requestedBlock); }, 350);
+      }
       requestAnimationFrame(checkReveals);
       setTimeout(checkReveals, 250);
     })();

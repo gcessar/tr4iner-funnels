@@ -1,11 +1,23 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-419">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Diseña tu plan · GENESIS · TR4INER</title>
+  <meta name="description" content="Calcula tu punto de partida y organiza tu ruta personalizada dentro de GENESIS." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/plan/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -658,6 +670,8 @@
   </style>
 </head>
 <body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <div class="page is-in">
 
     <div class="topbar">
@@ -891,12 +905,28 @@
 
   <script src="/attribution.js"></script>
   <script>
-    (function () {
+    (async function () {
       'use strict';
 
-      // ── Identidad: URL > tr4_lead (el correo DOI puede abrirse en otro dispositivo) ──
+      // ── Identidad privada: la cookie HttpOnly manda; la URL nunca autentica. ──
       var params = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
-      var lead = (window.TR4Track && TR4Track.getLead()) || {};
+      var sessionResponse;
+      try { sessionResponse = await fetch('/api/genesis/me', { cache: 'no-store' }); } catch (e) { /* red inestable */ }
+      if (!sessionResponse || !sessionResponse.ok) {
+        var accessUrl = new URL('/biblioteca/acceso/', window.location.origin);
+        params.forEach(function (value, key) { accessUrl.searchParams.set(key, value); });
+        window.location.replace(accessUrl.toString());
+        return;
+      }
+      var sessionData = await sessionResponse.json();
+      var lead = {
+        nombre: sessionData.member.nombre || '',
+        email: sessionData.member.email || '',
+        sexo: sessionData.member.sexo || ''
+      };
+      if (sessionData.member.plan) {
+        try { window.localStorage.setItem('tr4_plan', JSON.stringify(sessionData.member.plan)); } catch (e) { /* incógnito */ }
+      }
 
       function normalizeSexo(v) {
         if (!v) return null;
@@ -912,7 +942,7 @@
       // La identidad de la URL solo se adopta si no contradice el expediente local
       // (un link compartido no debe pisar la identidad de nadie; el caso conflictivo
       // lo resuelve el portón de /biblioteca/videos/, y este wizard pide correo si falta).
-      var urlEmail = String(params.get('email') || '').trim().toLowerCase();
+      var urlEmail = '';
       var storedEmail = String(lead.email || '').trim().toLowerCase();
       var urlIdentityOk = !urlEmail || !storedEmail || urlEmail === storedEmail;
 
@@ -1213,6 +1243,13 @@
           ts: new Date().toISOString()
         };
         try { window.localStorage.setItem('tr4_plan', JSON.stringify(plan)); } catch (e) { /* incógnito */ }
+
+        fetch('/api/genesis/plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(plan),
+          keepalive: true
+        }).catch(function () { /* La copia local permite reintentar sin perder el cálculo. */ });
 
         track('test_macros_completado', {
           objetivo: plan.objetivo,
