@@ -1175,7 +1175,10 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 - Funnel Preview `dpl_DAMzZpUmr2FTRHSWrGdYJsTLcdSh`: `Ready`; `/api/genesis/me` llegó al CRM y respondió `Sesión vencida`, la respuesta correcta sin cookie.
 - CRM Producción `dpl_FG7GqynB533gM1fm4eTSKAp8Yzwz`: `Ready`, alias `https://hub.tr4iner.com`.
 - Funnel Producción inicial `dpl_GmVitJw5PSm2xVr2sDbG6rKHk18t`: `Ready`. La prueba detectó que aún heredaba la URL del Preview del CRM; se corrigió la variable antes del deployment final.
-- Pendiente: confirmar el deployment final del funnel y repetir registro → correo mágico → acceso.
+- Funnel Producción final `dpl_4vur9pnqhGKJc6MmC17Q9kJG7VHH`: `Ready`, commit `7277aa5`. En `https://metodo.tr4iner.com/api/genesis/me`, una petición sin cookie responde `Sesión vencida`; un registro inválido llega al CRM y devuelve `400`, no el `401` interno anterior.
+- El workflow n8n público `iMiNGcGxsmdd7nyt` se publicó en versión `555a0332-e591-4131-b546-0f1f0dbf0540` sin cambiar `biblioteca-eventos`. `biblioteca_sexo_view` quedó validado en Producción (`475698`) y un registro duplicado recorrió Data Table → CRM → Brevo (`475699`), ambos `success`.
+- Vercel no registró errores runtime en funnel ni CRM durante los 30 minutos posteriores.
+- Pendiente humano: repetir registro → correo mágico → acceso → regreso en otro dispositivo con autorización explícita del destinatario del correo.
 
 ---
 
