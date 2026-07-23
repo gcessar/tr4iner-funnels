@@ -1048,6 +1048,27 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Promovido a Producción como `dpl_8JCaQ3x5VZuD3i4saS3MozTEnw4o`.
 - Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
+## 2026-07-23 — Paridad visual VA entre local y Producción
+
+### Incidente
+- Las pruebas abiertas con `file://` no cargaban `/assets/va/va-theme.css`; por eso local mostraba los pesos inline mientras Producción sí aplicaba el tema compartido.
+- El tema forzaba metadata a Montserrat 900 y las descripciones de testimonios heredaban 900 desde el botón contenedor.
+
+### Qué cambió
+- La metadata VA, la frase destacada de Flor y el contador de FIT4 usan peso 500.
+- En Calendly VA se conservan los tamaños aprobados de 15 px y 14 px, con pesos 500 y 300.
+- El footer de Flor VA usa `vero-perfil-footer.webp`, con un encuadre más abierto que mantiene visible la cabeza.
+- Las cinco superficies VA versionan `va-theme.css` con `?v=20260723-1` para invalidar el CSS anterior en caché.
+
+### Verificación
+- Revisado por HTTP a 375, 808 y 1280 px sin overflow horizontal.
+- Verificado nuevamente sobre `https://metodo.tr4iner.com`: Flor, Calendly y FIT4 calculan los pesos nuevos y reciben el CSS versionado.
+
+### Deploy
+- Preview `dpl_DtKk6hc5fRnCHawoQ9C8vtAS7N1d` validado con target `preview` y estado `Ready`.
+- Promovido a Producción como `dpl_GeWD4UpNPuxsWpfHPBxX3M3BG1kU`.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
