@@ -37,7 +37,7 @@ html.va-context body :is(button, .cta, .calendar-button, .mobile-book, .sticky-a
 body.va-theme :is(.masthead, .flor-masthead, .kicker, .status, .section-label, .case-mark, .video-label, .cta-kicker, .fine-print),
 html.va-context body :is(.masthead, .flor-masthead, .kicker, .status, .section-label, .case-mark, .video-label, .cta-kicker, .fine-print) {
   font-family: var(--mono);
-  font-weight: 900;
+  font-weight: 500;
 }
 
 body.va-theme .trust-avatar img[src*="caso-veronika"] {
@@ -47,7 +47,7 @@ body.va-theme .trust-avatar img[src*="caso-veronika"] {
 
 body.va-theme .trust-avatar img[src*="vero-perfil-footer"] {
   object-position: 50% 18%;
-  transform: scale(2.2);
+  transform: scale(1.55);
   transform-origin: 50% 18%;
 }
 
