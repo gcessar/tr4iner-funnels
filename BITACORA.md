@@ -1090,6 +1090,21 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Promovido a Producción como `dpl_8ZmwsnGvKMut15s62DQy1uoqf7xu`.
 - Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
+## 2026-07-23 — Metadata y modal móvil del registro VA
+
+### Qué cambió
+- `/casos-de-estudio-va` usa JetBrains Mono 500 en la firma superior, el nombre de Veronika y el pie legal.
+- El nombre deja de usar Montserrat 900.
+- En móvil, el formulario deja de ser un bottom sheet: aparece centrado horizontalmente en la zona superior, conserva bordes completos y usa scroll interno con overscroll contenido.
+
+### Verificación
+- Revisado por HTTP a 375, 768 y 1280 px sin overflow horizontal.
+- A 375 × 812 px, la tarjeta mide 343 px, inicia a unos 31 px del borde superior y mantiene todo el formulario accesible mediante scroll.
+
+### Deploy
+- Preview `dpl_9itL4FkE21EGqMAP3SgB8ScykakH` validado con target `preview` y estado `Ready`.
+- Pendiente de aprobación antes de promover a Producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
