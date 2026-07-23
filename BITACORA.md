@@ -1121,6 +1121,25 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Promovido a Producción como `dpl_HzoSWnABBwnHdBAm25zXfRjg1K1o`.
 - Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
+## 2026-07-23 — GitHub recupera la autoridad + protocolo Codex/Claude
+
+### Qué cambió
+- `main` avanzó por fast-forward de `c982aa2` a `6de12f4` (48 commits). `main`, `origin/main` y el working tree quedaron idénticos.
+- Producción ya corría `e33b49c` de `codex/va-assets-vercel`; entre ese commit y la punta solo cambiaba `BITACORA.md`, así que el deployment resultante fue funcionalmente idéntico.
+- Deploy de Producción `dpl_9eJ8avRUmN7VrTcWczMyuqTuqphS`, estado `Ready`, alias `metodo.tr4iner.com`, sin errores de runtime en los 30 min posteriores.
+- `AGENTS.md` incorpora reglas duras de trabajo con dos agentes, el ciclo de una tarea y la tabla de fuentes oficiales.
+
+### Por qué
+Se venía promoviendo Previews desde ramas locales sin integrar `main`. Eso dejaba a Vercel por delante de GitHub: durante semanas el repo publicado no describía lo que estaba en producción, y los 48 commits de GENESIS/biblioteca existían **solo en el disco local**, sin copia en ningún remoto. Además había 9 ramas `codex/*` huérfanas donde ya no era evidente cuál era producción.
+
+### Resultado esperado
+- GitHub vuelve a ser la fuente de verdad del código publicado.
+- Ningún agente trabaja directamente sobre `main` (es Production Branch: cada push publica).
+- El trabajo va en ramas `work/<tarea>` compartidas por turnos entre Codex y Claude, con push obligatorio al cerrar cada turno.
+
+### Resultado medido (completar después)
+- Pendiente: limpieza de las ramas `codex/*` absorbidas y del worktree huérfano `.claude/worktrees/xenodochial-noyce-1ed3ec`, verificando cada una con `git branch --merged main` antes de borrar.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:

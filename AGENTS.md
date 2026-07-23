@@ -102,6 +102,37 @@ La Biblioteca es la referencia visual del proyecto. Todas las páginas canónica
 
 ## Método de trabajo Codex + Claude Code
 
+### Reglas duras (23-jul-2026)
+
+- **`main` es la Production Branch de Vercel: cada push a `main` publica.** Ningún agente trabaja directamente sobre `main`.
+- **Rama por tarea, no por agente:** `work/<tarea>` (ej. `work/biblioteca-home`). Codex y Claude se turnan sobre la *misma* rama. Una rama por agente es lo que produjo las 9 ramas huérfanas de julio, donde ya no se sabía cuál era producción.
+- **Turnos estrictos.** Ambos agentes pueden apuntar al mismo working tree; dos escrituras simultáneas corrompen el estado. Para paralelismo real, uno de los dos usa su propio `git worktree`.
+- **Nunca cerrar sesión con commits importantes solo en local.** GitHub sincroniza el código, `BITACORA.md` sincroniza el contexto, los chats no sincronizan nada. Push al terminar cada turno, siempre.
+- **Prohibido promover un Preview a Producción sin integrar `main` en el mismo movimiento.** Deja Vercel por delante de GitHub y el repo deja de describir lo publicado.
+- **Borrado de ramas/worktrees:** solo tras verificar con Git que están absorbidas (`git branch --merged main`). Nunca por inferencia.
+
+### Ciclo de una tarea
+
+1. Abrir turno: `git fetch --prune`, revisar `git status`, últimos commits y la entrada más reciente de `BITACORA.md`.
+2. Trabajar en `work/<tarea>` con commits pequeños y reversibles.
+3. Cerrar turno: entrada en `BITACORA.md` + `git push`.
+4. GitHub genera el Preview de la rama. **El usuario aprueba.**
+5. Integrar en `main` → el push publica Producción.
+6. Confirmar Vercel `Ready` + ID del deployment. Recién entonces borrar la rama.
+
+### Fuentes oficiales
+
+| Elemento | Fuente |
+|---|---|
+| Código publicado | `main` en GitHub |
+| Trabajo en curso | rama `work/*` subida a GitHub |
+| Instrucciones compartidas | `AGENTS.md` (`CLAUDE.md` es symlink) |
+| Historial funcional | `BITACORA.md` |
+| Estado de publicación | Vercel + ID del deployment |
+| Chats de agentes | **no son fuente oficial** |
+
+### Higiene general
+
 - No desplegar desde un working tree sucio. Primero rama descriptiva, verificación y commits lógicos; después Preview y recién entonces producción.
 - Un commit debe representar una responsabilidad reversible. No mezclar páginas del funnel, scripts offline, backups n8n y cambios del CRM en el mismo commit.
 - Antes de continuar trabajo de otro agente: leer `git status`, los últimos commits, `AGENTS.md` y la entrada más reciente de `BITACORA.md`. No rehacer lo ya validado.
