@@ -1105,6 +1105,22 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Preview `dpl_9itL4FkE21EGqMAP3SgB8ScykakH` validado con target `preview` y estado `Ready`.
 - Pendiente de aprobación antes de promover a Producción.
 
+## 2026-07-23 — Firma editorial de Veronika unificada
+
+### Qué cambió
+- Se auditaron las cinco superficies VA canónicas; solo `/casos-de-estudio-va` y `/testimonio-flor-va` incluyen una firma de autora.
+- `/casos-de-estudio-va` adopta el patrón ya aprobado en Flor VA: avatar de 46 px, etiqueta “Producción · TR4INER” en JetBrains Mono y nombre en Instrument Sans con “· Coach” en tono secundario.
+- Se eliminó la tercera línea descriptiva para mantener la firma compacta y consistente.
+
+### Verificación
+- Comparados los estilos calculados de ambas firmas por HTTP: etiqueta 9.5 px/400, nombre 13.5 px/500, rol 13.5 px/400 y avatar 46 × 46 px.
+- Verificado en `https://metodo.tr4iner.com/casos-de-estudio-va`: tipografías, avatar, encuadre y ausencia de overflow horizontal coinciden con el Preview aprobado.
+
+### Deploy
+- Preview `dpl_DxqdukwjdJBWahM9YcZEJQHnMW9J` validado con target `preview` y estado `Ready`.
+- Promovido a Producción como `dpl_HzoSWnABBwnHdBAm25zXfRjg1K1o`.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
