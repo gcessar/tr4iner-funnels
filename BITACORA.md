@@ -1033,6 +1033,19 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Promovido sin reconstrucción manual a Producción como `dpl_WsVLwaLtLRuovTc4n5KgAe5rgWvA`.
 - Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
+## 2026-07-23 — Paso 2 visible a los tres segundos
+
+### Qué cambió
+- `/testimonio-flor`, `/testimonio-dashiel` y `/testimonio-flor-va` muestran el Paso 2 a los 3 segundos en lugar de 10.
+- Los modos de prueba `tf_debug` y `trigger_seconds` mantienen su comportamiento.
+- Las variantes `-B` archivadas no se modificaron.
+
+### Resultado esperado
+- Reducir la espera para iniciar la aplicación sin cambiar Typeform, atribución ni navegación.
+
+### Deploy
+No desplegado. Pendiente de Preview y Producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:

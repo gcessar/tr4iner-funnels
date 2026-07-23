@@ -706,16 +706,16 @@
     (function () {
       /*
         CONFIGURACION RAPIDA
-        - Tiempo normal antes de mostrar el Paso 2: cambia el 10 de REVEAL_SECONDS.
+        - Tiempo normal antes de mostrar el Paso 2: cambia el 3 de REVEAL_SECONDS.
         - Prueba rapida: agrega ?tf_debug=1 a la URL y el Paso 2 aparece en 2s.
         - Prueba personalizada: agrega ?trigger_seconds=5 para probar con 5s.
       */
       var params = new URLSearchParams(window.location.search);
       var debugTrigger = params.get("tf_debug") === "1";
-      // Solo usa trigger_seconds si viene en la URL; si no, usa 10 por defecto.
+      // Solo usa trigger_seconds si viene en la URL; si no, usa 3 por defecto.
       // (Ojo: Number(null) es 0, por eso se valida params.has antes.)
       var configuredSeconds = params.has("trigger_seconds") ? Number(params.get("trigger_seconds")) : NaN;
-      var REVEAL_SECONDS = debugTrigger ? 2 : (Number.isFinite(configuredSeconds) && configuredSeconds >= 0 ? configuredSeconds : 10);
+      var REVEAL_SECONDS = debugTrigger ? 2 : (Number.isFinite(configuredSeconds) && configuredSeconds >= 0 ? configuredSeconds : 3);
 
       // Evita que el Paso 2 se muestre o cargue Typeform mas de una vez.
       var triggered = false;
