@@ -1159,6 +1159,22 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 
 ---
 
+## 2026-07-23 — Rollout GENESIS: acceso mágico y CRM MQL
+
+### Diagnóstico
+- Producción registró cuatro `401` en `POST /api/genesis/register`.
+- El registro sí llegaba a n8n, pero el proxy del funnel y el CRM tenían valores distintos de `GENESIS_INTERNAL_SECRET`; el error visible no provenía de Brevo.
+
+### Cambios de infraestructura
+- Se rotó `GENESIS_INTERNAL_SECRET` con un único valor sensible en los proyectos Vercel `tr4iner-funnels` y `crm-ventas`, para Preview y Producción, sin leerlo ni escribirlo en el repo.
+- La rotación solo entra en vigor al crear deployments nuevos. El rollout conserva los deployments anteriores como rollback hasta terminar la prueba real.
+
+### Verificación pendiente
+- Generar y validar los dos Previews coordinados.
+- Publicar ambos `main`, confirmar Vercel `Ready` y repetir registro → correo mágico → acceso.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
