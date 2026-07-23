@@ -1044,7 +1044,9 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Reducir la espera para iniciar la aplicación sin cambiar Typeform, atribución ni navegación.
 
 ### Deploy
-No desplegado. Pendiente de Preview y Producción.
+- Preview `dpl_32bsUVcnBRzQvP7MBRrVpALJUmKP` validado con target `preview` y estado `Ready`.
+- Promovido a Producción como `dpl_8JCaQ3x5VZuD3i4saS3MozTEnw4o`.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
 ---
 
