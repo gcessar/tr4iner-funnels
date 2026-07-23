@@ -701,7 +701,7 @@
           <div class="field" id="f-nombre">
             <label for="nombre">Nombre</label>
             <input class="control" type="text" id="nombre" name="nombre"
-                   placeholder="Ej. Veronika…" autocomplete="given-name" />
+                   placeholder="Ej. Veronika…" autocomplete="given-name" data-name-placeholder />
             <p class="err" id="err-nombre" aria-live="polite">Escribe tu nombre</p>
           </div>
 
@@ -816,6 +816,7 @@
           formTitle: 'Activa tu ruta para mujer',
           formDek: 'Déjanos tus datos y abre al instante las sesiones que corresponden a tu fisiología.',
           submit: 'Abrir mi GENESIS para mujeres',
+          namePlaceholder: 'Ej. Veronika…',
           thumbs: ['bccwq7GYtAY', 'n52msKtyabg', '0MN_rqhuVUU']
         },
         Hombre: {
@@ -830,6 +831,7 @@
           formTitle: 'Activa tu ruta para hombre',
           formDek: 'Déjanos tus datos y abre al instante una ruta centrada en grasa, fuerza y músculo.',
           submit: 'Abrir mi GENESIS para hombres',
+          namePlaceholder: 'Ej. Anthoni…',
           thumbs: ['iv038ZlizMs', 'gKV5At5iPz4']
         }
       };
@@ -854,6 +856,7 @@
       });
       document.getElementById('form-title').textContent = profile.formTitle;
       document.getElementById('form-dek').textContent = profile.formDek;
+      document.querySelector('[data-name-placeholder]').placeholder = profile.namePlaceholder;
       document.getElementById('submit-label').textContent = profile.submit;
       document.getElementById('profile-switch-label').textContent = entrySexo + ' · cambiar ruta';
       var switchUrl = new URL('/biblioteca/inicio/', window.location.origin);

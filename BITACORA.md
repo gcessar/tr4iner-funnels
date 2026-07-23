@@ -1140,6 +1140,23 @@ Se venía promoviendo Previews desde ramas locales sin integrar `main`. Eso deja
 ### Resultado medido (completar después)
 - Pendiente: limpieza de las ramas `codex/*` absorbidas y del worktree huérfano `.claude/worktrees/xenodochial-noyce-1ed3ec`, verificando cada una con `git branch --merged main` antes de borrar.
 
+## 2026-07-23 — Placeholder de Nombre personalizado por sexo en `/biblioteca`
+
+### Qué cambió
+- `biblioteca/index.html`: el placeholder del campo Nombre de la ficha de inscripción ahora sigue el perfil de `PROFILES` (`Mujer`/`Hombre`), igual que el resto de textos del formulario (título, dek, botón).
+- Mujer conserva `Ej. Veronika…`; Hombre pasa de heredar el mismo texto a `Ej. Anthoni…`.
+
+### Por qué
+El campo era el único texto de la ficha que no se personalizaba por sexo: en la ruta `/biblioteca?sexo=Hombre` el ejemplo de nombre seguía siendo "Veronika", inconsistente con el resto del copy ya adaptado (hero, dek, botón "Abrir mi GENESIS para hombres").
+
+### Resultado esperado
+- `/biblioteca?sexo=Hombre` muestra `Ej. Anthoni…` en el campo Nombre.
+- `/biblioteca?sexo=Mujer` no cambia de comportamiento.
+
+### Resultado medido
+- Verificado en local (`localhost:4599`) con ambos valores de `sexo`: `document.getElementById('nombre').placeholder` devuelve `Ej. Anthoni…` y `Ej. Veronika…` respectivamente.
+- Pendiente: validar en Preview de Vercel antes de aprobar promoción a Producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
