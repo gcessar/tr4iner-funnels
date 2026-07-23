@@ -1167,11 +1167,15 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 
 ### Cambios de infraestructura
 - Se rotó `GENESIS_INTERNAL_SECRET` con un único valor sensible en los proyectos Vercel `tr4iner-funnels` y `crm-ventas`, para Preview y Producción, sin leerlo ni escribirlo en el repo.
-- La rotación solo entra en vigor al crear deployments nuevos. El rollout conserva los deployments anteriores como rollback hasta terminar la prueba real.
+- `GENESIS_CRM_API_URL` de Producción se corrigió de un Preview protegido del CRM a `https://hub.tr4iner.com`.
+- El rollout conserva los deployments anteriores como rollback hasta terminar la prueba real.
 
-### Verificación pendiente
-- Generar y validar los dos Previews coordinados.
-- Publicar ambos `main`, confirmar Vercel `Ready` y repetir registro → correo mágico → acceso.
+### Verificación
+- CRM Preview `dpl_6Uor32b4oig6BkNwVp3avmvjTZkX`: `Ready`.
+- Funnel Preview `dpl_DAMzZpUmr2FTRHSWrGdYJsTLcdSh`: `Ready`; `/api/genesis/me` llegó al CRM y respondió `Sesión vencida`, la respuesta correcta sin cookie.
+- CRM Producción `dpl_FG7GqynB533gM1fm4eTSKAp8Yzwz`: `Ready`, alias `https://hub.tr4iner.com`.
+- Funnel Producción inicial `dpl_GmVitJw5PSm2xVr2sDbG6rKHk18t`: `Ready`. La prueba detectó que aún heredaba la URL del Preview del CRM; se corrigió la variable antes del deployment final.
+- Pendiente: confirmar el deployment final del funnel y repetir registro → correo mágico → acceso.
 
 ---
 
