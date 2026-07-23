@@ -1069,6 +1069,27 @@ Producción actualizada. No se modificaron DNS, Biblioteca ni las páginas AN fu
 - Promovido a Producción como `dpl_GeWD4UpNPuxsWpfHPBxX3M3BG1kU`.
 - Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
 
+## 2026-07-23 — Tipografías VA preservadas entre local y Producción
+
+### Incidente
+- `va-theme.css` reemplazaba las variables tipográficas propias de cada página por Montserrat y también sobreescribía títulos, metadata y botones.
+- La comparación con `file://` ocultaba esa cascada porque las rutas absolutas del tema no cargaban.
+
+### Qué cambió
+- El tema compartido VA queda limitado a fondo, colores, avatar y comportamiento común; ya no modifica familias, pesos ni tracking.
+- FIT4, Flor, Calendly y la confirmación VA conservan Poppins para títulos, Instrument Sans para lectura y JetBrains Mono para metadata, contador y CTAs definidos como mono.
+- Caso de Estudio VA conserva su lectura Montserrat y sus títulos Poppins, igual que en su CSS local.
+- Las cinco superficies actualizan el tema a `va-theme.css?v=20260723-2` para invalidar la versión anterior en caché.
+
+### Verificación
+- Revisado por HTTP a 375, 768 y 1280 px sin overflow horizontal.
+- Verificado nuevamente en `https://metodo.tr4iner.com`: las familias calculadas coinciden con local y el navegador recibe el CSS versionado.
+
+### Deploy
+- Preview `dpl_AFAmBAWmKaLvSHfZ3KZegiuhN67j` validado con target `preview` y estado `Ready`.
+- Promovido a Producción como `dpl_8ZmwsnGvKMut15s62DQy1uoqf7xu`.
+- Vercel confirmó target `production`, estado `Ready` y el alias `https://metodo.tr4iner.com`.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
