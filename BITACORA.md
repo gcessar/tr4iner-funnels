@@ -1210,8 +1210,9 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 ### Deploy
 - Preview `dpl_91MLKg6AhSNX3gEh8JWCGC9nRQsH`, commit `dcd924f`, target `preview`, estado `READY` y build sin errores.
 - La URL protegida se validó con acceso temporal: copy, rutas Mujer/Hombre, portadas, formulario y UTMs corresponden al commit.
-- Bloqueo antes de Producción: Bunny responde `403` para la librería `658343` tanto con Referer de `metodo.tr4iner.com` como del alias de Preview. Falta añadir ambos hostnames en `Stream → Library → Security → Allowed Domains`.
-- Producción no se promovió con videos rotos.
+- Bunny quedó autorizado para `metodo.tr4iner.com`: los siete embeds de la librería `658343` respondieron `200` con Referer de Producción.
+- El alias estable de Preview todavía responde `403`; queda como pendiente de la whitelist de Bunny, pero no bloquea Producción porque el dominio público ya está validado.
+- Producción quedó habilitada para integrar el mismo commit aprobado en `main`.
 
 ---
 
