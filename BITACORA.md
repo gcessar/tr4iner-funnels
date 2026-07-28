@@ -1182,6 +1182,36 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 
 ---
 
+## 2026-07-28 — Biblioteca orientada a salud + testimonios Bunny
+
+### Qué cambió
+- `/biblioteca/` deja de presentar GENESIS como una suma de bloques, sesiones y lecciones; el registro ahora parte de energía, movilidad, bienestar y señales que ya afectan la vida diaria.
+- La ruta Mujer destaca a Mayra Razo y la ruta Hombre a Carlos Márquez. Ambas muestran otras seis experiencias en un índice editorial sin convertir la página en una galería estética.
+- Los siete videos verticales de Bunny usan un único `<dialog>` 9:16. No existe ningún iframe al cargar: se crea después del clic y se elimina al cerrar.
+- Se añadieron portadas locales optimizadas para que la prueba social no dependa del thumbnail remoto.
+- El evento anónimo `biblioteca_testimonial_open` llega a `dataLayer` solo con el identificador de la historia y la ruta; no envía síntomas, diagnósticos ni datos del lead.
+- El formulario conserva el webhook de n8n, `/api/genesis/register`, `suppress_access_email`, el acceso mágico y el reenvío de UTMs hacia `/biblioteca/confirma/`.
+
+### Por qué
+- Ventas reportó leads con baja conciencia y demasiada orientación estética. Las personas que compran suelen reaccionar cuando reconocen deterioro en energía, salud, movilidad, trabajo o vida familiar.
+- Mostrar módulos y cantidades hacía que GENESIS se percibiera como un curso de bajo valor, en vez de una ruta privada de orientación.
+
+### SEO / GEO
+- `/biblioteca/` mantiene `noindex, nofollow`: es un paso de registro, no una página que deba competir en búsqueda.
+- El canonical continúa en `https://metodo.tr4iner.com/biblioteca/` y el contenido rastreable identifica a GENESIS y TR4INER sin prometer diagnóstico, tratamiento ni curación.
+
+### Verificación
+- Scripts inline compilados y `git diff --check` sin errores.
+- Matriz local Mujer/Hombre en 375, 768 y 1280 px: cero overflow horizontal, Mayra/Carlos destacados según ruta y seis historias secundarias en el orden correcto.
+- Reproductor: cero iframes al cargar, uno después del clic, proporción 9:16, cierre de 44 × 44 px, limpieza del iframe y restauración del foco.
+- Envío interceptado sin tocar servicios reales: payloads de n8n y GENESIS conservaron WhatsApp, sexo, `suppress_access_email` y UTMs; la confirmación recibió nombre, email, sexo y atribución.
+- El cambio directo de ruta y la entrada sin `sexo` preservaron las UTMs sintéticas completas.
+
+### Deploy
+- Preview y Producción: pendientes de esta entrega.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
