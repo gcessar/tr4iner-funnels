@@ -1243,7 +1243,10 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 - Test completo validado en 375, 768 y 1280 px: cálculo, POST privado, evento sin señal, CTA sin señal, cero overflow y disclaimer visible.
 - Ruta privada validada con sesión, plan, catálogo y progreso simulados: señal visible solo dentro del expediente, títulos editoriales, CTA Flor con UTMs y cero errores JavaScript.
 - Recorrido de navegador repetido en 375, 768 y 1280 px: enlaces legales reales, `EMPIEZA AQUÍ` estable, `1.760 kcal` con formato editorial y atribución ampliada preservada sin filtrar la señal.
-- Pendiente en esta entrada: Preview, promoción a `main` y verificación pública de Producción.
+- Preview `dpl_9JCwtkA9awmzu4RcGDMWmY3DHF8X`, commit `322152e`, target `preview`, estado `READY`; el artefacto desplegado conservó la pregunta, las seis señales y el cierre del CRM sin credenciales.
+- Producción coordinada: primero CRM `dpl_FVWqUSaE5mTX5fdNZRw3VCnebKzh` (`READY`) y después funnel `dpl_AZRd541mdwK6T99DMvmzgbK3h3Df` (`READY`), sin promover un Preview por fuera de `main`.
+- Verificación pública en `https://metodo.tr4iner.com`: registro con siete testimonios y cero iframes iniciales, test con seis señales, descargo profesional, UTMs preservadas y proxy GENESIS respondiendo `Sesión vencida` sin cookie.
+- Pendiente humano no bloqueante: completar una vez registro → correo mágico → acceso → segundo dispositivo con un destinatario real autorizado.
 
 ---
 
