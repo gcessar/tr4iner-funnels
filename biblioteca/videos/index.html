@@ -16,13 +16,13 @@
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Tu GENESIS · TR4INER</title>
-  <meta name="description" content="Accede a tus sesiones y continúa la ruta personalizada de GENESIS." />
+  <meta name="description" content="Abre tu ruta privada de orientación en nutrición y entrenamiento y continúa desde tu punto de partida." />
   <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/videos/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://i.ytimg.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -70,12 +70,25 @@
       background-size: 240px 240px;
     }
 
-    a, button { touch-action: manipulation; }
-    a:focus-visible, button:focus-visible {
+    a, button, summary { touch-action: manipulation; }
+    a:focus-visible, button:focus-visible, summary:focus-visible {
       outline: 2px solid var(--ink);
       outline-offset: 3px;
       border-radius: 4px;
     }
+    .skip-link {
+      position: fixed;
+      z-index: 300;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 13px;
+      text-decoration: none;
+      transform: translateY(-160%);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
 
     .page {
       width: min(100%, var(--max));
@@ -189,7 +202,7 @@
       width: 0%;
       background: var(--mark);
       border-radius: 99px;
-      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: none;
     }
     .avance-num { color: var(--ink); font-weight: 600; }
 
@@ -699,6 +712,7 @@
       background: var(--ink);
       color: var(--paper);
       box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.55);
+      overscroll-behavior: contain;
     }
     dialog.player::backdrop {
       background: rgba(22, 19, 14, 0.72);
@@ -930,38 +944,496 @@
       .vcard.is-in:hover { transform: none; }
       .thumb img, .play { transition: none; }
     }
+
+    /* ── Ruta editorial GENESIS ──────────────────────────────── */
+    .library-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 50px;
+      margin-bottom: 64px;
+      text-align: left;
+    }
+    .library-hero .hero-eyebrow {
+      justify-content: flex-start;
+    }
+    .library-hero .hero-eyebrow::before { display: none; }
+    .library-hero h1 {
+      max-width: 900px;
+      margin: 0 0 20px;
+    }
+    .library-hero .dek {
+      max-width: 750px;
+      margin: 0;
+      font-size: 18px;
+    }
+    .active-label {
+      min-width: 190px;
+      padding: 16px 18px;
+      border-left: 3px solid var(--mark);
+      background: var(--ink);
+      color: var(--card);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .active-label span,
+    .active-label b { display: block; }
+    .active-label span { margin-bottom: 5px; color: var(--mark); }
+    .active-label b { font-weight: 600; }
+
+    .library-layout {
+      display: grid;
+      grid-template-columns: minmax(310px, .34fr) minmax(0, .66fr);
+      align-items: start;
+      gap: 42px;
+    }
+    .file-sheet {
+      position: relative;
+      border: 1px solid var(--rule-strong);
+      background: var(--card);
+      box-shadow: 0 20px 52px -36px rgba(22, 19, 14, .56);
+    }
+    .file-sheet::after {
+      position: absolute;
+      z-index: -1;
+      inset: 10px -10px -10px 10px;
+      border: 1px solid var(--rule);
+      background: var(--paper-deep);
+      content: "";
+    }
+    .file-tab {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 10px 20px;
+      background: var(--ink);
+      color: var(--card);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .file-tab b { color: var(--mark); font-weight: 600; }
+    .profile-summary > :not(.file-tab) {
+      margin-right: 26px;
+      margin-left: 26px;
+    }
+    .section-code {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .profile-summary .section-code { margin-top: 30px; }
+    .profile-summary h2 {
+      margin: 4px 26px 28px;
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 560;
+      letter-spacing: -.02em;
+      line-height: 1.08;
+    }
+    .profile-summary dl { margin-top: 0; }
+    .profile-summary dl div {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .profile-summary dt {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .profile-summary dd {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .weekly-progress { margin-top: 26px; padding: 20px 0 10px; }
+    .weekly-progress > span {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .1em;
+    }
+    .weekly-progress > div {
+      height: 5px;
+      margin: 10px 0 7px;
+      background: var(--paper-deep);
+    }
+    .weekly-progress > div i {
+      width: 0;
+      height: 100%;
+      display: block;
+      background: var(--mark);
+      transition: width .3s ease;
+    }
+    .weekly-progress p { margin: 0; color: var(--ink-soft); font-size: 13px; }
+    .profile-summary .plan-chip {
+      margin: 14px 26px 28px;
+      border: 0;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-decoration: underline;
+      text-transform: none;
+      text-underline-offset: 4px;
+    }
+    .profile-summary .plan-chip .dot { display: none; }
+    .route-content { min-width: 0; }
+
+    #program-content .priority-guide {
+      width: 100%;
+      min-height: 390px;
+      display: grid;
+      grid-template-columns: .46fr .54fr;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--rule-strong);
+      border-radius: 0;
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: 0 20px 52px -36px rgba(22, 19, 14, .56);
+      cursor: pointer;
+      font-family: var(--sans);
+      text-align: left;
+    }
+    #program-content .priority-guide::before { display: none; }
+    #program-content .priority-guide:hover { transform: translateY(-2px); }
+    .guide-visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--card);
+    }
+    .guide-visual::before,
+    .guide-visual::after {
+      position: absolute;
+      border: 1px solid rgba(255, 253, 246, .16);
+      content: "";
+    }
+    .guide-visual::before { width: 220px; height: 220px; transform: rotate(9deg); }
+    .guide-visual::after { width: 156px; height: 156px; transform: rotate(-12deg); }
+    .guide-kicker {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--mark);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+    }
+    .guide-symbol { z-index: 1; text-align: center; }
+    .guide-symbol i {
+      width: 68px;
+      height: 5px;
+      display: block;
+      margin: 10px auto;
+      background: var(--mark);
+    }
+    .guide-symbol i:nth-child(2) { width: 106px; }
+    .guide-symbol i:nth-child(3) { width: 42px; }
+    .guide-symbol b {
+      display: block;
+      margin-top: 24px;
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 560;
+    }
+    .guide-copy { padding: 38px 34px; }
+    .guide-copy h2 {
+      margin: 4px 0 16px;
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 560;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+    }
+    .guide-copy .nx-title {
+      display: block;
+      margin: 4px 0 16px;
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 560;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+    }
+    .guide-copy > p:not(.section-code),
+    #nx-description { display: block; color: var(--ink-soft); font-size: 15px; }
+    .guide-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px 16px;
+      margin: 26px 0 22px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .primary-button,
+    .yellow-button {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .primary-button { border: 1px solid var(--ink); background: var(--ink); color: var(--card); }
+
+    .editorial-index { margin-top: 48px; }
+    .index-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .index-head h2 {
+      margin: 4px 0 0;
+      font-family: var(--serif);
+      font-size: 33px;
+      font-weight: 560;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+    }
+    .index-head > span {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+    }
+    .route-group {
+      border: 0;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .route-group > summary {
+      min-height: 92px;
+      display: grid;
+      grid-template-columns: 40px 1fr auto 22px;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 4px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .route-group > summary::-webkit-details-marker { display: none; }
+    .route-group[open] > summary {
+      padding-left: 16px;
+      box-shadow: inset 4px 0 0 var(--mark);
+    }
+    .route-group.recommended > summary {
+      padding-left: 16px;
+      box-shadow: inset 4px 0 0 var(--mark);
+    }
+    .index-num {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+    .index-copy { display: flex; flex-direction: column; }
+    .index-copy strong {
+      font-family: var(--serif);
+      font-size: 20px;
+      font-weight: 560;
+      line-height: 1.2;
+    }
+    .index-copy small { color: var(--ink-soft); font-size: 13px; }
+    .index-status {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .index-arrow { font-style: normal; transition: transform .2s ease; }
+    .route-group[open] .index-arrow { transform: rotate(90deg); }
+    .route-group-body {
+      padding: 4px 4px 28px 16px;
+    }
+    .route-group-body .bloque-desc { margin-bottom: 18px; }
+    .route-group-body .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .route-group-body .bloque-bar { margin: 0 0 18px; }
+    .vmeta { letter-spacing: .09em; }
+
+    .conversion-bridge {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 410px;
+      margin-top: 88px;
+      background: var(--ink);
+      color: var(--card);
+      border-radius: 0;
+      padding: 0;
+      text-align: left;
+    }
+    .bridge-case {
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid rgba(255, 253, 246, .22);
+      background: var(--mark);
+      color: var(--ink);
+    }
+    .bridge-case::after {
+      position: absolute;
+      right: -42px;
+      bottom: -58px;
+      width: 170px;
+      height: 170px;
+      border: 1px solid rgba(22, 19, 14, .35);
+      content: "";
+      transform: rotate(18deg);
+    }
+    .bridge-case span,
+    .bridge-case small {
+      position: absolute;
+      left: 24px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+    }
+    .bridge-case span { top: 28px; }
+    .bridge-case small { right: 20px; bottom: 26px; line-height: 1.5; }
+    .bridge-case strong {
+      position: absolute;
+      top: 92px;
+      left: 24px;
+      font-family: var(--serif);
+      font-size: 43px;
+      font-weight: 560;
+      letter-spacing: -.04em;
+      line-height: .94;
+    }
+    .bridge-case > i {
+      position: absolute;
+      top: 230px;
+      left: 24px;
+      font-family: var(--serif);
+      font-size: 58px;
+      font-style: normal;
+      line-height: 1;
+    }
+    .bridge-copy { padding: 48px 52px; }
+    .section-code.light { color: #c7bdab; }
+    .bridge-copy h2 {
+      max-width: 680px;
+      margin: 4px 0 20px;
+      color: var(--card);
+      font-family: var(--serif);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 560;
+      letter-spacing: -.03em;
+      line-height: 1.08;
+    }
+    .bridge-copy > p:not(.section-code) { max-width: 690px; color: #d8d0c2; }
+    .yellow-button { margin-top: 14px; background: var(--mark); color: var(--ink); }
+    .bridge-copy > small {
+      display: block;
+      max-width: 520px;
+      margin-top: 14px;
+      color: #aaa08e;
+      font-size: 11px;
+    }
+    .medical-disclaimer {
+      max-width: 760px;
+      margin: 38px auto 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .library-hero,
+      .library-layout { grid-template-columns: 1fr; }
+      .library-hero { align-items: start; }
+      .active-label { width: max-content; }
+      .profile-summary { order: 2; }
+      .route-content { order: 1; }
+    }
+    @media (max-width: 560px) {
+      .library-hero { gap: 26px; margin-bottom: 44px; }
+      .library-hero h1 { font-size: 40px; }
+      .active-label { min-width: 178px; padding: 12px 14px; font-size: 8px; }
+      .library-layout { gap: 44px; }
+      .file-sheet::after { inset: 7px -7px -7px 7px; }
+      .file-tab { min-height: 38px; gap: 8px; padding: 9px 12px; font-size: 7.6px; letter-spacing: .08em; }
+      #program-content .priority-guide { grid-template-columns: 1fr; }
+      .guide-visual { min-height: 240px; }
+      .guide-copy { padding: 30px 22px 34px; }
+      .guide-copy h2,
+      .guide-copy .nx-title { font-size: 30px; }
+      .index-head { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .route-group > summary { min-height: 104px; grid-template-columns: 28px 1fr 16px; gap: 10px; }
+      .index-status { grid-column: 2; font-size: 7.5px; }
+      .index-arrow { grid-row: 1 / 3; grid-column: 3; }
+      .route-group[open] > summary,
+      .route-group.recommended > summary { padding-left: 12px; }
+      .route-group-body { padding-left: 12px; }
+      .route-group-body .grid { grid-template-columns: 1fr; }
+      .conversion-bridge { grid-template-columns: 1fr; margin-top: 64px; }
+      .bridge-case { height: 280px; border-right: 0; border-bottom: 1px solid rgba(255, 253, 246, .22); }
+      .bridge-case strong { top: 80px; font-size: 47px; }
+      .bridge-case > i { top: 178px; }
+      .bridge-copy { padding: 34px 24px 38px; }
+      .bridge-copy h2 { font-size: 31px; }
+    }
   </style>
 </head>
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <div class="page is-in">
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+  <main class="page is-in" id="contenido">
 
     <div class="topbar">
       <p class="wordmark">TR4INER <span>· GENESIS</span></p>
     </div>
 
-    <header class="hero">
-      <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Paso 3 de 3 · Plaza activada</p>
-      <h1 class="rv" style="--i:1" id="headline">Este es <span class="mk">tu GENESIS</span><span id="saludo"></span>.</h1>
-      <p class="dek rv" style="--i:2" id="dek">
-        <strong><span id="total-count">18</span> sesiones en <span id="bloque-count">5</span> bloques</strong>,
-        en el orden en que las pondría tu coach. Marca cada sesión al terminarla:
-        el programa avanza contigo.
-      </p>
-      <div class="avance rv" style="--i:3" id="avance" hidden>
-        <span>Tu avance</span>
-        <span class="avance-track"><i id="avance-fill"></i></span>
-        <span class="avance-num" id="avance-num">0/18</span>
+    <header class="library-hero">
+      <div>
+        <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Tu ruta privada · GENESIS</p>
+        <h1 class="rv" style="--i:1" id="headline">No necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em><span id="saludo"></span></h1>
+        <p class="dek rv" style="--i:2" id="dek">
+          Tu punto de partida queda guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.
+        </p>
       </div>
-      <a class="plan-chip rv" style="--i:4" id="plan-chip" href="/biblioteca/plan/" hidden>
-        <span class="dot" aria-hidden="true"></span>
-        <span id="plan-chip-text">Tu plan · <strong>0 kcal</strong></span>
-      </a>
+      <div class="active-label rv" id="active-label" hidden>
+        <span>RUTA ACTIVA</span>
+        <b id="active-label-value">GENESIS</b>
+      </div>
     </header>
 
     <section class="new-release" id="new-release" hidden aria-label="Nuevo contenido disponible">
-      <img id="new-release-img" src="" alt="" />
+      <img id="new-release-img" src="" alt="" width="320" height="180" />
       <div>
         <p class="new-release-kicker">Nuevo en GENESIS</p>
         <h2 id="new-release-title"></h2>
@@ -992,63 +1464,117 @@
 
     <section class="onboard rv" id="onboard" hidden aria-label="Diseña tu plan">
       <div>
-        <h2 id="onboard-title">El siguiente paso no es una sesión: <em>son tus números.</em></h2>
-        <p>Responde 4 preguntas y tu coach calcula cuánto necesitas comer y en qué orden tomar tus sesiones. Dos minutos.</p>
+        <h2 id="onboard-title">Antes de abrir tu ruta, <em>necesitamos tu punto de partida.</em></h2>
+        <p>Responde unas preguntas breves para estimar tus necesidades y ordenar las orientaciones según tu realidad.</p>
       </div>
       <a class="onboard-cta" id="onboard-cta" href="/biblioteca/plan/">
-        Diseñar mi plan
+        Calcular mi punto de partida
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </a>
     </section>
 
     <div id="program-content" hidden>
-    <button type="button" class="next-card rv" id="next-card" hidden>
-      <span class="thumb">
-        <img id="nx-img" src="" alt="" loading="lazy" />
-        <span class="play" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>
-      </span>
-      <span>
-        <span class="nx-meta" id="nx-meta"></span>
-        <span class="nx-title" id="nx-title"></span>
-        <span class="nx-go">Continuar donde ibas <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg></span>
-      </span>
-    </button>
+      <div class="library-layout">
+        <aside class="file-sheet profile-summary rv" aria-label="Resumen privado de tu punto de partida">
+          <div class="file-tab">
+            <span>EXPEDIENTE PRIVADO</span>
+            <b>RUTA ACTIVA</b>
+          </div>
+          <p class="section-code" id="profile-route">GENESIS · RUTA PERSONAL</p>
+          <h2>Tu punto de partida.</h2>
+          <dl>
+            <div><dt>Señal principal</dt><dd id="profile-signal">Punto de partida guardado</dd></div>
+            <div><dt>Base estimada</dt><dd id="profile-kcal">—</dd></div>
+            <div><dt>Foco actual</dt><dd id="profile-focus">Construir una base sostenible</dd></div>
+          </dl>
+          <div class="weekly-progress">
+            <span>AVANCE DE TU RUTA</span>
+            <div><i id="profile-progress-fill"></i></div>
+            <p id="profile-progress-label">Tu avance queda guardado.</p>
+          </div>
+          <div class="avance" id="avance" hidden aria-hidden="true">
+            <span class="avance-track"><i id="avance-fill"></i></span>
+            <span class="avance-num" id="avance-num"></span>
+          </div>
+          <a class="plan-chip" id="plan-chip" href="/biblioteca/plan/" hidden>
+            <span class="dot" aria-hidden="true"></span>
+            <span id="plan-chip-text">Revisar mi punto de partida →</span>
+          </a>
+        </aside>
 
-    <div class="filters-wrap rv" style="--i:3">
-      <div class="filters" id="filters" role="group" aria-label="Filtrar por bloque"></div>
-    </div>
+        <div class="route-content">
+          <button type="button" class="priority-guide rv" id="next-card" hidden>
+            <span class="guide-visual" aria-hidden="true">
+              <span class="guide-kicker">RECOMENDADO PARA TI</span>
+              <span class="guide-symbol">
+                <i></i><i></i><i></i>
+                <b>HOY</b>
+              </span>
+            </span>
+            <span class="guide-copy">
+              <span class="section-code" id="nx-meta">TU SIGUIENTE ENFOQUE</span>
+              <span class="nx-title" id="nx-title"></span>
+              <span id="nx-description">Empieza por una orientación que puedas aplicar desde hoy.</span>
+              <span class="guide-meta">
+                <span id="nx-category">TU RUTA</span>
+                <span>APLICACIÓN INMEDIATA</span>
+              </span>
+              <span class="primary-button">Abrir esta orientación <i>→</i></span>
+            </span>
+          </button>
 
-    <main id="library" aria-live="polite"></main>
+          <section class="editorial-index rv" aria-labelledby="route-index-title">
+            <div class="index-head">
+              <div>
+                <p class="section-code">ÍNDICE DE TU RUTA</p>
+                <h2 id="route-index-title">Lo que sigue, en orden.</h2>
+              </div>
+              <span>SEGÚN TU PERFIL</span>
+            </div>
+            <div class="filters-wrap" hidden aria-hidden="true">
+              <div class="filters" id="filters"></div>
+            </div>
+            <div id="library" aria-live="polite"></div>
+            <div class="empty" id="empty">
+              <p>No hay orientaciones disponibles.</p>
+              <span>Vuelve a intentarlo en unos minutos.</span>
+            </div>
+          </section>
+        </div>
+      </div>
 
-    <div class="empty" id="empty">
-      <p>Nada por aquí.</p>
-      <span>Prueba con otro bloque.</span>
-    </div>
+      <section class="conversion-bridge bridge rv" aria-label="Conoce un proceso acompañado">
+        <div class="bridge-case" id="bridge-case" aria-label="Caso de estudio">
+          <span>CASO DE ESTUDIO</span>
+          <strong id="bridge-case-name">Dashiel</strong>
+          <i>→</i>
+          <small>UN PROCESO REAL · PASO A PASO</small>
+        </div>
+        <div class="bridge-copy">
+          <p class="section-code light" id="bridge-eyebrow">EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN</p>
+          <h2 id="bridge-title">Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.</h2>
+          <p id="bridge-text">Conoce un caso real y qué cambió cuando dejó de depender de consejos sueltos antes de decidir si quieres orientación para tu caso.</p>
+          <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
+            <span id="bridge-cta-label">Ver el caso de Dashiel</span> <i>→</i>
+          </a>
+          <small>Al final del caso podrás responder una evaluación y conocer el siguiente paso que corresponde.</small>
+        </div>
+      </section>
 
-    <section class="bridge rv" aria-label="Siguiente paso: la asesoría">
-      <p class="bridge-eyebrow">Después del bloque 05</p>
-      <h2>El siguiente bloque no es una sesión: <em>es tu plan.</em></h2>
-      <p>
-        Hasta aquí llega lo que un programa general puede hacer por ti. Si quieres el tuyo —
-        tu dieta, tu entrenamiento y un coach que revisa tu semana — eso es la asesoría de Anthoni.
-      </p>
-      <a class="bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
-        Conocer la asesoría
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
-      </a>
-    </section>
+      <p class="medical-disclaimer">GENESIS ofrece orientación educativa sobre nutrición y entrenamiento. No diagnostica, trata ni sustituye atención médica.</p>
     </div>
 
     <footer>
       <span class="brand">TR4INER</span>
+      <span>GENESIS · Orientación educativa en nutrición y entrenamiento</span>
       <nav aria-label="Legal">
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+        <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
       </nav>
     </footer>
-  </div>
+  </main>
 
-  <dialog class="player" id="player" aria-label="Reproductor de la sesión">
+  <dialog class="player" id="player" aria-label="Reproductor de la orientación">
     <div class="player-frame" id="player-frame"></div>
     <div class="player-bar">
       <div class="player-meta">
@@ -1081,50 +1607,98 @@
       'use strict';
 
       // ── Catálogo ─────────────────────────────────────────────
-      // sexo: 'all' = para ambos · 'mujer'/'hombre' = ruta exclusiva
+      // Los IDs y el orden siguen siendo administrables desde el CRM. Esta capa
+      // editorial evita presentar GENESIS como un curso o prometer resultados.
+      var EDITORIAL_BLOCKS = {
+        comer: { name: 'Comer con estructura', desc: 'Decisiones simples que puedas repetir sin depender de una dieta extrema.' },
+        entrenar: { name: 'Entrenar según tu realidad', desc: 'Fuerza y movimiento ajustados al tiempo, energía y experiencia que tienes hoy.' },
+        grasa: { name: 'Peso y composición corporal', desc: 'Qué observar para entender tendencias sin depender solo de la balanza.' },
+        musculo: { name: 'Fuerza y masa muscular', desc: 'Principios para progresar con criterio y cuidar tu capacidad física.' },
+        hormonas: { name: 'Ciclo y entrenamiento', desc: 'Orientación educativa para adaptar la carga al contexto de cada etapa.' },
+        sostener: { name: 'Constancia sin perfección', desc: 'Cómo retomar, ajustar expectativas y sostener lo importante sin empezar de cero.' }
+      };
+      var EDITORIAL_TITLES = {
+        fJ3q8QXFb0I: 'Cómo construir una alimentación completa',
+        bY6sAaBeGgk: 'Carbohidratos: cómo incluirlos con criterio',
+        sY3z2CGhGLY: 'Ayuno: cuándo ayuda y cuándo complica',
+        FMi3OprRxEk: 'Comer de noche: qué importa de verdad',
+        pNP0n7E9bFk: 'Qué comer antes de entrenar',
+        pQKyl2X7bNE: 'Cómo organizar un día de comidas',
+        BMLDoaH695w: 'Comer saludable no siempre significa comer según tu objetivo',
+        Pyu12PS7vec: 'Un ejemplo real de comidas para una semana ordenada',
+        atxOtyiecLU: 'Qué hacer cuando aparece el antojo por dulce',
+        riSJ18pAlOk: 'Cómo recuperar control frente a la comida',
+        'i5A-tck4jpg': 'Cuando sostener una dieta se vuelve imposible',
+        iv038ZlizMs: 'Una base simple para ganar fuerza',
+        gKV5At5iPz4: 'Cómo entrenar si tienes poco tiempo',
+        RtWY67YnsAY: 'Entrenamiento para mujeres según edad y contexto',
+        dECDDxJTz1M: 'Ejercicios de fuerza para mujeres',
+        bccwq7GYtAY: 'Cintura y piernas: qué sí puede cambiar el entrenamiento',
+        n52msKtyabg: 'Cuánto entrenamiento necesitan tus piernas',
+        '0MN_rqhuVUU': 'Cómo progresar piernas sin descuidar el resto',
+        'SFvwRz-q6lw': 'Cómo evitar el ciclo de bajar y recuperar peso',
+        QgT3uXfUOm4: 'Por qué la grasa abdominal puede resistirse',
+        brR2OZEfepQ: 'Cómo perder peso sin vivir con hambre',
+        zGzFT5ZkZH4: 'Composición corporal después de los 40',
+        XpWR4s7iCR4: 'Grasa abdominal en mujeres: factores que conviene revisar',
+        ljgAlXZAQ1A: 'Cuándo usar menos peso para estimular músculo',
+        XT227ZlIreM: 'Cómo progresar en fuerza y masa muscular',
+        uRUchKIchJw: 'Recomposición corporal: qué significa y cómo abordarla',
+        T66O90E8Bkg: 'Cómo adaptar el entrenamiento al ciclo menstrual',
+        'E8g2A30-FJU': 'Cómo empezar sin exigirte una transformación perfecta',
+        'v8_-EAFcVvg': 'Qué hacer cuando vuelves a abandonar',
+        'Q2IwRit-luM': 'La expectativa que más sabotea tu constancia',
+        tn1hzR5bxhs: 'Cuando tu imagen empieza a afectar cómo te sientes',
+        yn8fDkpbm2E: 'Tres pasos para retomar desde cero'
+      };
+
       var BLOQUES = [
-        { id: 'comer',    num: '01', name: 'Cómo comer',      desc: 'La base: dieta completa, carbohidratos, ayuno y los hábitos que sabotean tu progreso.' },
-        { id: 'entrenar', num: '02', name: 'Cómo entrenar',   desc: 'Entrenar bien con el tiempo que tienes, según tu edad y tu punto de partida.' },
-        { id: 'grasa',    num: '03', name: 'Perder grasa',    desc: 'Bajar grasa sin rebote, sin pasar hambre y sin vivir castigándote.' },
-        { id: 'musculo',  num: '04', name: 'Ganar músculo',   desc: 'Fuerza, recomposición y los errores que frenan tu masa muscular.' },
-        { id: 'hormonas', num: '05', name: 'Hormonas y ciclo', desc: 'Cómo adaptar el entrenamiento a tu ciclo menstrual, con evidencia.' },
-        { id: 'sostener',  num: '06', name: 'Empezar y sostener', desc: 'La parte mental del cambio: empezar, dejar de abandonar y recuperar confianza.' }
+        { id: 'comer', num: '01', name: EDITORIAL_BLOCKS.comer.name, desc: EDITORIAL_BLOCKS.comer.desc },
+        { id: 'entrenar', num: '02', name: EDITORIAL_BLOCKS.entrenar.name, desc: EDITORIAL_BLOCKS.entrenar.desc },
+        { id: 'grasa', num: '03', name: EDITORIAL_BLOCKS.grasa.name, desc: EDITORIAL_BLOCKS.grasa.desc },
+        { id: 'musculo', num: '04', name: EDITORIAL_BLOCKS.musculo.name, desc: EDITORIAL_BLOCKS.musculo.desc },
+        { id: 'hormonas', num: '05', name: EDITORIAL_BLOCKS.hormonas.name, desc: EDITORIAL_BLOCKS.hormonas.desc },
+        { id: 'sostener', num: '06', name: EDITORIAL_BLOCKS.sostener.name, desc: EDITORIAL_BLOCKS.sostener.desc }
       ];
 
+      // sexo: 'all' = para ambos · 'mujer'/'hombre' = ruta exclusiva
       var VIDEOS = [
-        { id: 'fJ3q8QXFb0I', bloque: 'comer',    sexo: 'all',   title: 'Así es más rápido perder grasa (dieta completa)' },
-        { id: 'bY6sAaBeGgk', bloque: 'comer',    sexo: 'all',   title: 'Pierde grasa rápido comiendo más carbohidratos' },
-        { id: 'sY3z2CGhGLY', bloque: 'comer',    sexo: 'all',   title: 'Cómo hacer ayuno para perder mucha grasa' },
-        { id: 'FMi3OprRxEk', bloque: 'comer',    sexo: 'all',   title: 'Deja de comer en las noches ahora mismo' },
-        { id: 'pNP0n7E9bFk', bloque: 'comer',    sexo: 'all',   title: 'Si comes esto antes de entrenar pierdes grasa más rápido' },
-        { id: 'pQKyl2X7bNE', bloque: 'comer',    sexo: 'all',   title: 'Comer así me ayudó a tener abdominales en 3 meses' },
-        { id: 'BMLDoaH695w', bloque: 'comer',    sexo: 'mujer', title: 'Comes “saludable” pero tu cuerpo sigue igual' },
-        { id: 'Pyu12PS7vec', bloque: 'comer',    sexo: 'mujer', title: 'Todas mis comidas para tener un abdomen plano' },
-        { id: 'atxOtyiecLU', bloque: 'comer',    sexo: 'mujer', title: 'El cuerpo siempre me pide dulce… ¿qué hago?' },
-        { id: 'riSJ18pAlOk', bloque: 'comer',    sexo: 'mujer', title: 'Así curé mi adicción a la comida' },
-        { id: 'i5A-tck4jpg', bloque: 'comer',    sexo: 'mujer', title: 'Si se te hace imposible hacer dieta, mira esto' },
-        { id: 'iv038ZlizMs', bloque: 'entrenar', sexo: 'all',   title: 'La forma más fácil de construir un cuerpo fuerte y definido' },
-        { id: 'gKV5At5iPz4', bloque: 'entrenar', sexo: 'all',   title: 'Cómo entrenar para ganar músculo si eres una persona ocupada' },
-        { id: 'RtWY67YnsAY', bloque: 'entrenar', sexo: 'mujer', title: 'El mejor entrenamiento para mujeres (según la ciencia y tu edad)' },
-        { id: 'dECDDxJTz1M', bloque: 'entrenar', sexo: 'mujer', title: 'Los mejores ejercicios para perder el doble de grasa en mujeres' },
-        { id: 'bccwq7GYtAY', bloque: 'entrenar', sexo: 'mujer', title: 'Cómo reducir cintura y aumentar piernas' },
-        { id: 'n52msKtyabg', bloque: 'entrenar', sexo: 'mujer', title: 'Cuántos ejercicios necesitas para aumentar piernas y glúteos' },
-        { id: '0MN_rqhuVUU', bloque: 'entrenar', sexo: 'mujer', title: 'Cómo aumentar piernas sin engordar el abdomen' },
-        { id: 'SFvwRz-q6lw', bloque: 'grasa',    sexo: 'all',   title: 'Cómo perder grasa para siempre y evitar el efecto rebote' },
-        { id: 'QgT3uXfUOm4', bloque: 'grasa',    sexo: 'all',   title: 'Por esto no puedes bajar la panza (la solución)' },
-        { id: 'brR2OZEfepQ', bloque: 'grasa',    sexo: 'all',   title: 'Pierde 10 kg de grasa sin pasar hambre (esto es lo más fácil)' },
-        { id: 'zGzFT5ZkZH4', bloque: 'grasa',    sexo: 'all',   title: 'La nueva estrategia para estar definido a los 40' },
-        { id: 'XpWR4s7iCR4', bloque: 'grasa',    sexo: 'mujer', title: 'Por qué no puedes perder grasa abdominal' },
-        { id: 'ljgAlXZAQ1A', bloque: 'musculo',  sexo: 'all',   title: 'Levanta menos peso si quieres ganar músculo' },
-        { id: 'XT227ZlIreM', bloque: 'musculo',  sexo: 'all',   title: 'Haz esto y ganarás músculo más rápido' },
-        { id: 'uRUchKIchJw', bloque: 'musculo',  sexo: 'all',   title: 'Cómo perder grasa y ganar músculo al mismo tiempo (guía paso a paso)' },
-        { id: 'T66O90E8Bkg', bloque: 'hormonas', sexo: 'mujer', title: 'Cómo entrenar según tu ciclo menstrual (según la ciencia)' },
-        { id: 'E8g2A30-FJU', bloque: 'sostener', sexo: 'mujer', title: 'Si vas a empezar una transformación física, escucha esto' },
-        { id: 'v8_-EAFcVvg', bloque: 'sostener', sexo: 'mujer', title: 'Si abandonas fácilmente, mira esto' },
-        { id: 'Q2IwRit-luM', bloque: 'sostener', sexo: 'mujer', title: 'La gran mentira del fitness que nadie te cuenta' },
-        { id: 'tn1hzR5bxhs', bloque: 'sostener', sexo: 'mujer', title: 'Si no te gusta cómo te ves en las fotos, mira esto' },
-        { id: 'yn8fDkpbm2E', bloque: 'sostener', sexo: 'mujer', title: 'Cómo transformé mi cuerpo desde cero: 3 pasos para empezar' }
-      ];
+        { id: 'fJ3q8QXFb0I', bloque: 'comer', sexo: 'all' },
+        { id: 'bY6sAaBeGgk', bloque: 'comer', sexo: 'all' },
+        { id: 'sY3z2CGhGLY', bloque: 'comer', sexo: 'all' },
+        { id: 'FMi3OprRxEk', bloque: 'comer', sexo: 'all' },
+        { id: 'pNP0n7E9bFk', bloque: 'comer', sexo: 'all' },
+        { id: 'pQKyl2X7bNE', bloque: 'comer', sexo: 'all' },
+        { id: 'BMLDoaH695w', bloque: 'comer', sexo: 'mujer' },
+        { id: 'Pyu12PS7vec', bloque: 'comer', sexo: 'mujer' },
+        { id: 'atxOtyiecLU', bloque: 'comer', sexo: 'mujer' },
+        { id: 'riSJ18pAlOk', bloque: 'comer', sexo: 'mujer' },
+        { id: 'i5A-tck4jpg', bloque: 'comer', sexo: 'mujer' },
+        { id: 'iv038ZlizMs', bloque: 'entrenar', sexo: 'all' },
+        { id: 'gKV5At5iPz4', bloque: 'entrenar', sexo: 'all' },
+        { id: 'RtWY67YnsAY', bloque: 'entrenar', sexo: 'mujer' },
+        { id: 'dECDDxJTz1M', bloque: 'entrenar', sexo: 'mujer' },
+        { id: 'bccwq7GYtAY', bloque: 'entrenar', sexo: 'mujer' },
+        { id: 'n52msKtyabg', bloque: 'entrenar', sexo: 'mujer' },
+        { id: '0MN_rqhuVUU', bloque: 'entrenar', sexo: 'mujer' },
+        { id: 'SFvwRz-q6lw', bloque: 'grasa', sexo: 'all' },
+        { id: 'QgT3uXfUOm4', bloque: 'grasa', sexo: 'all' },
+        { id: 'brR2OZEfepQ', bloque: 'grasa', sexo: 'all' },
+        { id: 'zGzFT5ZkZH4', bloque: 'grasa', sexo: 'all' },
+        { id: 'XpWR4s7iCR4', bloque: 'grasa', sexo: 'mujer' },
+        { id: 'ljgAlXZAQ1A', bloque: 'musculo', sexo: 'all' },
+        { id: 'XT227ZlIreM', bloque: 'musculo', sexo: 'all' },
+        { id: 'uRUchKIchJw', bloque: 'musculo', sexo: 'all' },
+        { id: 'T66O90E8Bkg', bloque: 'hormonas', sexo: 'mujer' },
+        { id: 'E8g2A30-FJU', bloque: 'sostener', sexo: 'mujer' },
+        { id: 'v8_-EAFcVvg', bloque: 'sostener', sexo: 'mujer' },
+        { id: 'Q2IwRit-luM', bloque: 'sostener', sexo: 'mujer' },
+        { id: 'tn1hzR5bxhs', bloque: 'sostener', sexo: 'mujer' },
+        { id: 'yn8fDkpbm2E', bloque: 'sostener', sexo: 'mujer' }
+      ].map(function (video) {
+        video.title = EDITORIAL_TITLES[video.id] || 'Orientación GENESIS';
+        return video;
+      });
 
       // ── Estado: sexo y bloque activo ─────────────────────────
       // ClickFunnels carga esta página dentro de un iframe sin query string propia.
@@ -1151,7 +1725,13 @@
             var catalogData = await catalogResponse.json();
             if (catalogData.modules && catalogData.modules.length) {
               BLOQUES = catalogData.modules.map(function (module) {
-                return { id: module.slug, num: module.num, name: module.title, desc: module.description || '' };
+                var editorialBlock = EDITORIAL_BLOCKS[module.slug];
+                return {
+                  id: module.slug,
+                  num: module.num,
+                  name: editorialBlock ? editorialBlock.name : module.title,
+                  desc: editorialBlock ? editorialBlock.desc : (module.description || '')
+                };
               });
               VIDEOS = [];
               catalogData.modules.forEach(function (module) {
@@ -1160,7 +1740,7 @@
                     id: content.youtubeId,
                     bloque: module.slug,
                     sexo: content.audience === 'WOMEN' ? 'mujer' : (content.audience === 'MEN' ? 'hombre' : 'all'),
-                    title: content.title,
+                    title: EDITORIAL_TITLES[content.youtubeId] || content.title,
                     intentLevel: content.intentLevel
                   });
                 });
@@ -1260,7 +1840,8 @@
         nombre = lead.nombre || '';
         email = lead.email || '';
         state.sexo = normalizeSexo(lead.sexo) || state.sexo;
-        document.getElementById('saludo').textContent = nombre ? ', ' + primerNombre(nombre) : '';
+        var saludo = document.getElementById('saludo');
+        if (saludo) saludo.textContent = nombre ? ', ' + primerNombre(nombre) : '';
         emitirEventosDeVisita();
         stripIdentityFromUrl();
       }
@@ -1406,7 +1987,7 @@
         });
       }
 
-      // ── Progreso de sesiones (persistente) ──
+      // ── Progreso de orientaciones (persistente) ──
       var PROGRESO_KEY = 'tr4_progreso';
       var remoteProgress = {};
       (memberSession && memberSession.progress || []).forEach(function (item) {
@@ -1431,7 +2012,7 @@
         return vids.filter(function (v) { return isDone(v.id); }).length;
       }
 
-      // Completar una sesión emite el evento de scoring; si cierra su bloque, también.
+      // Los nombres de eventos se conservan por compatibilidad con el scoring.
       // El servidor deduplica por id, así que re-marcar no infla el score.
       function emitirCompletada(v, modo) {
         // El check manual solo organiza la interfaz. El score se alimenta del
@@ -1459,44 +2040,34 @@
           if (!meta) return;
           var vids = videosDe(b.id);
           var d = doneIn(vids);
-          meta.textContent = d + '/' + vids.length + ' sesiones';
+          var group = meta.closest('.route-group');
+          meta.textContent = group && group.classList.contains('recommended')
+            ? 'EMPIEZA AQUÍ'
+            : (vids.length && d === vids.length ? 'PARA REVISAR' : 'EN TU RUTA');
           var fill = document.querySelector('[data-bar="' + b.id + '"]');
           if (fill) fill.style.width = (vids.length ? (d / vids.length) * 100 : 0) + '%';
         });
         var visibles = VIDEOS.filter(videoVisible);
         var d = doneIn(visibles);
         var avance = document.getElementById('avance');
-        avance.hidden = d === 0;
-        if (!avance.hidden) avance.classList.add('is-in');
-        document.getElementById('avance-num').textContent = d + '/' + visibles.length;
+        avance.hidden = true;
+        document.getElementById('avance-num').textContent = '';
         document.getElementById('avance-fill').style.width = (visibles.length ? (d / visibles.length) * 100 : 0) + '%';
+        var profileFill = document.getElementById('profile-progress-fill');
+        var profileLabel = document.getElementById('profile-progress-label');
+        if (profileFill) profileFill.style.width = (visibles.length ? (d / visibles.length) * 100 : 0) + '%';
+        if (profileLabel) {
+          profileLabel.textContent = d
+            ? 'Tu avance está guardado. Continúa desde la recomendación de hoy.'
+            : 'Empieza por la recomendación de hoy; tu avance quedará guardado.';
+        }
       }
 
-      // ── Render de filtros ────────────────────────────────────
+      // El índice editorial reemplaza los filtros con contadores.
       var filtersEl = document.getElementById('filters');
 
       function renderFilters() {
         filtersEl.innerHTML = '';
-        var todos = mkFilterBtn('todos', plan ? 'Tu ruta completa' : 'Todo el programa', totalVisible());
-        filtersEl.appendChild(todos);
-        bloquesOrdenados().forEach(function (b) {
-          var n = videosDe(b.id).length;
-          if (n === 0) return;
-          filtersEl.appendChild(mkFilterBtn(b.id, 'B' + parseInt(b.num, 10) + ' · ' + b.name, n));
-        });
-      }
-
-      function mkFilterBtn(id, label, count) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.setAttribute('aria-pressed', String(state.bloque === id));
-        btn.innerHTML = '<span>' + label + '</span><span class="n">' + count + '</span>';
-        btn.addEventListener('click', function () {
-          state.bloque = id;
-          renderFilters();
-          renderLibrary();
-        });
-        return btn;
       }
 
       // ── Render de la biblioteca ──────────────────────────────
@@ -1519,36 +2090,48 @@
         var shown = 0;
 
         var enRuta = bloquesOrdenados();
+        var firstPendingBlockId = null;
+        enRuta.some(function (block) {
+          var blockVideos = videosDe(block.id);
+          if (blockVideos.some(function (video) { return !isDone(video.id); })) {
+            firstPendingBlockId = block.id;
+            return true;
+          }
+          return false;
+        });
         enRuta.forEach(function (b, orden) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
           var vids = videosDe(b.id);
           if (vids.length === 0) return;
           shown += vids.length;
 
-          var section = document.createElement('section');
-          section.className = 'bloque-section';
-          section.setAttribute('aria-label', 'Bloque ' + b.num + ': ' + b.name);
+          var section = document.createElement('details');
+          section.className = 'route-group';
+          section.setAttribute('aria-label', 'Orientación ' + String(orden + 1).padStart(2, '0') + ': ' + b.name);
+          if (b.id === firstPendingBlockId) section.classList.add('recommended');
 
-          var paso = plan
-            ? '<span class="paso">Paso ' + String(orden + 1).padStart(2, '0') + ' de tu ruta</span>'
-            : '';
-          var header = document.createElement('div');
-          header.className = 'bloque-header';
-          header.innerHTML =
-            '<span class="num">BLOQUE ' + b.num + '</span>' +
-            '<h2>' + b.name + '</h2>' + paso +
-            '<span class="meta" data-meta="' + b.id + '"></span>';
-          section.appendChild(header);
+          var summary = document.createElement('summary');
+          summary.innerHTML =
+            '<span class="index-num">' + String(orden + 1).padStart(2, '0') + '</span>' +
+            '<span class="index-copy"><strong>' + escapeHtml(b.name) + '</strong><small>' + escapeHtml(b.desc) + '</small></span>' +
+            '<b class="index-status" data-meta="' + escapeHtml(b.id) + '">' +
+              (b.id === firstPendingBlockId ? 'EMPIEZA AQUÍ' : 'EN TU RUTA') +
+            '</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>';
+          section.appendChild(summary);
+
+          var body = document.createElement('div');
+          body.className = 'route-group-body';
 
           var bar = document.createElement('div');
           bar.className = 'bloque-bar';
-          bar.innerHTML = '<i data-bar="' + b.id + '"></i>';
-          section.appendChild(bar);
+          bar.innerHTML = '<i data-bar="' + escapeHtml(b.id) + '"></i>';
+          body.appendChild(bar);
 
           var desc = document.createElement('p');
           desc.className = 'bloque-desc';
-          desc.textContent = b.desc;
-          section.appendChild(desc);
+          desc.textContent = 'Abre la orientación que más conecta con lo que necesitas aplicar ahora.';
+          body.appendChild(desc);
 
           var grid = document.createElement('div');
           grid.className = 'grid';
@@ -1557,7 +2140,8 @@
             grid.appendChild(mkCard(v, b, i));
           });
 
-          section.appendChild(grid);
+          body.appendChild(grid);
+          section.appendChild(body);
           libraryEl.appendChild(section);
         });
 
@@ -1565,40 +2149,41 @@
         requestAnimationFrame(checkReveals);
         setTimeout(checkReveals, 250);
 
-        // Actualiza el resumen del hero (con plan hecho, renderOnboard reescribe
-        // el dek y estos spans desaparecen — de ahí los guards)
-        var totalCount = document.getElementById('total-count');
-        if (totalCount) totalCount.textContent = totalVisible();
-        var bloqueCount = document.getElementById('bloque-count');
-        if (bloqueCount) bloqueCount.textContent = BLOQUES.filter(function (b) {
-          return videosDe(b.id).length > 0;
-        }).length;
-
         updateProgressUI();
+      }
+
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
       }
 
       function mkCard(v, b, index) {
         var card = document.createElement('article');
         card.className = 'vcard' + (isDone(v.id) ? ' done' : '');
         card.style.setProperty('--i', index % 6);
+        card.setAttribute('data-video-id', v.id);
 
         var badge = v.sexo === 'mujer'
           ? '<span class="badge">Para mujeres</span>'
           : (v.sexo === 'hombre' ? '<span class="badge">Para hombres</span>' : '');
 
         card.innerHTML =
-          '<button type="button" class="vmain" aria-label="Ver sesión: ' + v.title + '">' +
+          '<button type="button" class="vmain" aria-label="Ver orientación: ' + escapeHtml(v.title) + '">' +
             '<span class="thumb">' +
-              '<img src="https://i.ytimg.com/vi/' + v.id + '/maxresdefault.jpg" alt="" loading="lazy" ' +
-                'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\'" />' +
+              '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
+                'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />' +
               '<span class="play" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
             '</span>' +
             '<span class="vbody">' +
-              '<span class="vmeta"><span>B' + parseInt(b.num, 10) + ' · Sesión ' + (index + 1) + '</span>' + badge + '</span>' +
-              '<span class="vtitle">' + v.title + '</span>' +
+              '<span class="vmeta"><span>ORIENTACIÓN · ' + escapeHtml(b.name) + '</span>' + badge + '</span>' +
+              '<span class="vtitle">' + escapeHtml(v.title) + '</span>' +
             '</span>' +
           '</button>' +
-          '<button type="button" class="vdone" aria-pressed="' + isDone(v.id) + '" aria-label="Marcar la sesión «' + v.title + '» como completada">' +
+          '<button type="button" class="vdone" aria-pressed="' + isDone(v.id) + '" aria-label="Marcar la orientación «' + escapeHtml(v.title) + '» como aplicada">' +
             '<svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6.5"/></svg>' +
           '</button>';
 
@@ -1699,7 +2284,7 @@
       function openPlayer(v, b) {
         var myOpen = ++openId;
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
-        document.getElementById('player-bloque').textContent = 'BLOQUE ' + b.num + ' · ' + b.name.toUpperCase();
+        document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
         document.getElementById('player-yt').href = 'https://www.youtube.com/watch?v=' + v.id;
         playerFrame.innerHTML = '<div id="yt-target"></div>';
@@ -1805,46 +2390,118 @@
         return base.toString();
       }
 
-      // ── Onboarding: sin plan, el primer paso son sus números ──
-      var OBJ_LABEL = { PG: 'perder grasa', MM: 'ganar músculo', MA: 'tu recomposición' };
+      // ── Onboarding y expediente: la señal solo se lee dentro de la sesión ──
+      var SIGNAL_INFO = {
+        energia_cansancio: {
+          label: 'Energía baja o cansancio frecuente',
+          short: 'ENERGÍA',
+          focus: 'Ordenar alimentación y carga de entrenamiento',
+          title: 'Ordena tus comidas antes de recortar más.',
+          description: 'Construye una base que te dé estructura y energía sin depender de una dieta extrema.',
+          category: 'ALIMENTACIÓN'
+        },
+        movilidad_limitada: {
+          label: 'Movilidad o actividades cotidianas limitadas',
+          short: 'MOVILIDAD',
+          focus: 'Recuperar capacidad con una carga sostenible',
+          title: 'Recupera movimiento sin castigar tu semana.',
+          description: 'Empieza por fuerza y movimiento ajustados a tu realidad para construir capacidad de forma gradual.',
+          category: 'MOVIMIENTO'
+        },
+        diagnostico_analisis: {
+          label: 'Diagnóstico o análisis que genera preocupación',
+          short: 'SEGUIMIENTO',
+          focus: 'Construir hábitos y mantener seguimiento profesional',
+          title: 'Empieza por una base clara y medible.',
+          description: 'Ordena alimentación y entrenamiento sin reemplazar el seguimiento indicado por tu profesional de salud.',
+          category: 'PUNTO DE PARTIDA'
+        },
+        peso_grasa_abdominal: {
+          label: 'Peso o grasa abdominal en aumento',
+          short: 'TENDENCIA',
+          focus: 'Observar tendencias y ordenar decisiones',
+          title: 'Mide tendencias antes de recortar más.',
+          description: 'Usa una referencia más completa que la balanza para decidir qué ajustar y qué conviene sostener.',
+          category: 'COMPOSICIÓN'
+        },
+        hambre_desorden_alimentario: {
+          label: 'Hambre difícil de manejar o alimentación desordenada',
+          short: 'SACIEDAD',
+          focus: 'Crear estructura, saciedad y regularidad',
+          title: 'Construye saciedad antes de exigir más disciplina.',
+          description: 'Organiza tus comidas para reducir decisiones impulsivas y sostener una pauta más estable.',
+          category: 'ALIMENTACIÓN'
+        },
+        prevencion: {
+          label: 'Prevención antes de que aparezcan problemas',
+          short: 'PREVENCIÓN',
+          focus: 'Sostener hábitos y revisar tendencias',
+          title: 'Crea una base que puedas sostener.',
+          description: 'Prioriza decisiones repetibles de alimentación, fuerza y movimiento antes de necesitar cambios urgentes.',
+          category: 'HÁBITOS'
+        }
+      };
+
+      function currentSignal() {
+        var raw = plan && (plan.senal || (typeof plan.situacion === 'string' ? plan.situacion : ''));
+        return SIGNAL_INFO[raw] ? raw : 'prevencion';
+      }
+
       function renderOnboard() {
         var onboard = document.getElementById('onboard');
         var chip = document.getElementById('plan-chip');
         var program = document.getElementById('program-content');
+        var activeLabel = document.getElementById('active-label');
         program.hidden = gateActivo || !plan;
         if (gateActivo) {
           // Con el portón abierto no personalizamos nada: primero la identidad.
           onboard.hidden = true;
           chip.hidden = true;
+          activeLabel.hidden = true;
           return;
         }
         if (!plan) {
-          document.getElementById('hero-eyebrow').textContent = 'Paso obligatorio · 2 minutos';
-          document.getElementById('headline').innerHTML = 'Primero diseñemos <span class="mk">tu plan</span><span id="saludo"></span>.';
+          document.getElementById('hero-eyebrow').textContent = 'Punto de partida · 2 minutos';
+          document.getElementById('headline').innerHTML = 'Antes de abrir tu ruta, <em>necesitamos tu punto de partida.</em>';
           document.getElementById('dek').textContent =
-            'Calcula tus calorías y macros. Cuando termines, se desbloquean tus sesiones en el orden correcto para ti.';
+            'Estima tus necesidades de alimentación y elige una sola señal prioritaria. Con eso ordenaremos qué conviene revisar primero.';
           onboard.hidden = false;
           onboard.classList.add('is-in');
           document.getElementById('onboard-cta').href = planUrl();
           chip.hidden = true;
+          activeLabel.hidden = true;
           return;
         }
         onboard.hidden = true;
         program.hidden = false;
+        activeLabel.hidden = false;
+        activeLabel.classList.add('is-in');
         chip.hidden = false;
         chip.classList.add('is-in');
         chip.href = planUrl();
-        document.getElementById('plan-chip-text').innerHTML =
-          'Tu plan · <strong>' + plan.kcal.toLocaleString('es') + ' kcal</strong> · P' +
-          plan.proteinas + ' C' + plan.carbohidratos + ' G' + plan.grasas;
-        document.getElementById('dek').innerHTML =
-          '<strong>' + totalVisible() + ' sesiones en ' + bloquesOrdenados().filter(function (b) {
-            return videosDe(b.id).length > 0;
-          }).length + ' bloques</strong>, ordenadas para <strong>' + OBJ_LABEL[plan.objetivo] +
-          '</strong>. Marca cada sesión al terminarla: tu coach ve tu avance.';
+        document.getElementById('plan-chip-text').textContent = 'Ver o actualizar mi punto de partida →';
+
+        var signal = SIGNAL_INFO[currentSignal()];
+        var first = primerNombre(lead.nombre || nombre);
+        document.getElementById('hero-eyebrow').textContent = 'Tu ruta privada · GENESIS';
+        document.getElementById('headline').innerHTML =
+          (first ? escapeHtml(first) + ', ' : '') +
+          'no necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em>';
+        document.getElementById('dek').textContent =
+          'Tu punto de partida ya está guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.';
+        document.getElementById('active-label-value').textContent =
+          (state.sexo ? state.sexo.toUpperCase() + ' · ' : '') + signal.short;
+        document.getElementById('profile-route').textContent =
+          (first ? first.toUpperCase() + ' · ' : 'GENESIS · ') +
+          (state.sexo ? 'RUTA ' + state.sexo.toUpperCase() : 'RUTA PERSONAL');
+        document.getElementById('profile-signal').textContent = signal.label;
+        document.getElementById('profile-kcal').textContent =
+          String(Math.round(Number(plan.kcal))).replace(/\B(?=(\d{3})+(?!\d))/g, '.') +
+          ' kcal estimadas';
+        document.getElementById('profile-focus').textContent = signal.focus;
       }
 
-      // ── Tu siguiente sesión (primera pendiente de la ruta) ──
+      // ── Siguiente orientación: primera pendiente de la ruta ──
       var nextCardEl = document.getElementById('next-card');
       var nextVideo = null;
       var nextBloque = null;
@@ -1861,11 +2518,11 @@
         if (!nextVideo) { nextCardEl.hidden = true; return; }
         nextCardEl.hidden = false;
         nextCardEl.classList.add('is-in');
-        var img = document.getElementById('nx-img');
-        img.src = 'https://i.ytimg.com/vi/' + nextVideo.id + '/maxresdefault.jpg';
-        img.onerror = function () { this.onerror = null; this.src = 'https://i.ytimg.com/vi/' + nextVideo.id + '/hqdefault.jpg'; };
-        document.getElementById('nx-meta').textContent = 'BLOQUE ' + nextBloque.num + ' · ' + nextBloque.name.toUpperCase();
-        document.getElementById('nx-title').textContent = nextVideo.title;
+        var signal = SIGNAL_INFO[currentSignal()];
+        document.getElementById('nx-meta').textContent = 'TU SIGUIENTE ENFOQUE';
+        document.getElementById('nx-title').textContent = signal.title;
+        document.getElementById('nx-description').textContent = signal.description;
+        document.getElementById('nx-category').textContent = signal.category;
       }
       nextCardEl.addEventListener('click', function () {
         if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
@@ -1886,26 +2543,23 @@
 
       function updateBridge() {
         var estado = estadoBisagra();
-        var bridge = document.querySelector('.bridge');
-        var eyebrow = bridge.querySelector('.bridge-eyebrow');
-        var h2 = bridge.querySelector('h2');
-        var para = bridge.querySelector('p:not(.bridge-eyebrow)');
+        var eyebrow = document.getElementById('bridge-eyebrow');
+        var h2 = document.getElementById('bridge-title');
+        var para = document.getElementById('bridge-text');
         var cta = document.getElementById('bridge-cta');
-        var testigo = state.sexo === 'Mujer' ? 'Flor' : 'Dashiel';
+        var esMujer = state.sexo === 'Mujer';
+        var testigo = esMujer ? 'Flor de María' : 'Dashiel';
 
-        if (estado === 'B') {
-          eyebrow.textContent = 'Tu plan ya existe';
-          h2.innerHTML = 'Ya sabes tus <em>' + plan.kcal.toLocaleString('es') + ' kcal</em>. La asesoría es ejecutarlas contigo.';
-          para.textContent = 'GENESIS te dio el mapa: tus calorías, tus macros y tu ruta. ' +
-            'En la asesoría, Anthoni convierte esos números en tu dieta y tu semana de entrenamiento, con revisión cada semana.';
-          cta.firstChild.textContent = 'Conocer la asesoría ';
-        } else if (estado === 'C') {
-          eyebrow.textContent = 'Tu plaza en asesoría';
-          h2.innerHTML = 'Hiciste tu parte. <em>Ahora te toca un plan con tu nombre.</em>';
-          para.textContent = testigo + ' empezó exactamente donde estás tú: con sus números claros y las primeras sesiones hechas. ' +
-            'Mira cómo pasó de ahí a su resultado con la asesoría de Anthoni.';
-          cta.firstChild.textContent = 'Ver el caso de ' + testigo + ' ';
-        }
+        eyebrow.textContent = 'EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN';
+        h2.textContent = esMujer
+          ? 'Cuando quieras dejar de hacerlo sola, mira cómo se construye un proceso acompañado.'
+          : 'Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.';
+        para.textContent = esMujer
+          ? 'Flor de María hacía horas de cardio y comía muy poco. Adelgazaba, pero no estaba construyendo un proceso sostenible. Mira qué cambió paso a paso antes de decidir si quieres orientación para tu caso.'
+          : 'Dashiel también necesitaba algo más que consejos sueltos. Mira cómo construyó un proceso acompañado antes de decidir si quieres orientación para tu caso.';
+        document.getElementById('bridge-case-name').innerHTML = esMujer ? 'Flor<br>de María' : 'Dashiel';
+        document.getElementById('bridge-case').setAttribute('aria-label', 'Caso de estudio de ' + testigo);
+        document.getElementById('bridge-cta-label').textContent = 'Ver el caso de ' + testigo;
 
         var base = new URL(
           state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
@@ -1928,24 +2582,24 @@
       });
 
       // ── Tour de primera entrada ─────────────────────────────
-      var TOUR_KEY = 'tr4_tour_programa_cero_v1';
+      var TOUR_KEY = 'tr4_tour_genesis_route_v2';
       var tourIndex = 0;
       var tourTimer = null;
       var tourSteps = [
         {
           target: '#next-card',
-          title: 'Empieza por esta sesión.',
-          text: 'Tu ruta ya está ordenada. Esta tarjeta siempre te devuelve a la siguiente sesión pendiente.'
+          title: 'Empieza por esta orientación.',
+          text: 'Tu ruta ya está ordenada. Esta recomendación te devuelve a lo que conviene aplicar ahora.'
         },
         {
-          target: '.filters-wrap',
+          target: '.editorial-index',
           title: 'Esta es tu ruta.',
-          text: 'Puedes ver el programa completo o entrar directo a un bloque. El orden responde a tu objetivo.'
+          text: 'Abre cada tema cuando lo necesites. El orden responde a tu objetivo y a tu punto de partida.'
         },
         {
-          target: '.vcard .vdone',
-          title: 'Marca lo que terminas.',
-          text: 'Este check guarda tu avance. Al volver, el programa sabe exactamente por dónde continuar.'
+          target: '.route-group:first-child > summary',
+          title: 'Abre solo lo que necesites.',
+          text: 'Cada tema reúne orientaciones concretas. Tu avance queda guardado cuando las aplicas.'
         }
       ];
       var tour = document.getElementById('tour');
@@ -2001,7 +2655,7 @@
         document.getElementById('tour-next').focus({ preventScroll: true });
       }
       function maybeStartTour() {
-        if (!plan || gateActivo || activeAnnouncement) return;
+        if (!plan || gateActivo || activeAnnouncement || params.get('video')) return;
         try { if (window.localStorage.getItem(TOUR_KEY)) return; } catch (e) { /* incógnito */ }
         setTimeout(function () { showTourStep(0); }, 550);
       }

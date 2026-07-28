@@ -16,248 +16,446 @@
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>GENESIS · Elige tu ruta</title>
-  <meta name="description" content="Elige tu ruta para personalizar el programa gratuito GENESIS de TR4INER según tu fisiología." />
+  <meta name="description" content="Elige tu ruta para ordenar alimentación y entrenamiento según tu fisiología, tu realidad y las señales que hoy afectan tu bienestar." />
   <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/inicio/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
 
   <style>
     :root {
       --paper: #F4EFE6;
+      --paper-deep: #ECE5D7;
       --card: #FFFDF6;
       --ink: #16130E;
       --ink-soft: #46402F;
       --muted: #7C7461;
-      --rule: rgba(22, 19, 14, 0.18);
-      --rule-strong: rgba(22, 19, 14, 0.38);
       --mark: #F5C518;
-      --serif: "Fraunces", Georgia, serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
-      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --rule: rgba(22, 19, 14, 0.14);
+      --rule-strong: rgba(22, 19, 14, 0.32);
+      --shadow: 0 20px 52px -36px rgba(22, 19, 14, 0.56);
+      --display: "Fraunces", Georgia, serif;
+      --body: "Instrument Sans", Arial, sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", monospace;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
-    body {
-      min-height: 100dvh;
+    * { box-sizing: border-box; }
+    html {
       background: var(--paper);
       color: var(--ink);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      font-family: var(--body);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-text-size-adjust: 100%;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      pointer-events: none;
-      opacity: 0.035;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-size: 240px 240px;
-    }
-
-    .page {
+    body {
+      min-width: 320px;
       min-height: 100dvh;
-      width: min(100%, 1040px);
+      margin: 0;
+      overflow-x: hidden;
+      background-color: var(--paper);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        rgba(22, 19, 14, 0.035) 32px
+      );
+      -webkit-font-smoothing: antialiased;
+    }
+    a, button {
+      color: inherit;
+      -webkit-tap-highlight-color: rgba(245, 197, 24, 0.28);
+      touch-action: manipulation;
+    }
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--mark);
+      outline-offset: 3px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 20;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 13px;
+      text-decoration: none;
+      transform: translateY(-160%);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
+
+    .page-frame {
+      width: min(100% - 64px, 1180px);
       margin: 0 auto;
-      padding: calc(28px + env(safe-area-inset-top)) clamp(18px, 4vw, 36px) calc(28px + env(safe-area-inset-bottom));
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      position: relative;
     }
-    .page::before {
-      content: "GENESIS";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: -1;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(22, 19, 14, 0.065);
-      font-family: var(--serif);
-      font-size: clamp(88px, 18vw, 210px);
-      font-weight: 700;
-      letter-spacing: -0.06em;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-    .topbar, footer {
+    .site-header {
+      height: 82px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+      gap: 20px;
+      border-bottom: 1px solid var(--rule-strong);
     }
-    .topbar { padding-bottom: 18px; border-bottom: 1px solid var(--rule); }
-    .topbar span:last-child, footer { color: var(--muted); }
-
-    main {
-      width: min(100%, 820px);
-      margin: auto;
-      padding: clamp(48px, 9vh, 88px) 0;
-      text-align: center;
-    }
-    .eyebrow {
-      margin-bottom: 18px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    h1 {
-      max-width: 760px;
-      margin: 0 auto 14px;
-      font-family: var(--serif);
-      font-size: clamp(38px, 6.2vw, 66px);
-      font-weight: 560;
-      font-variation-settings: "opsz" 100;
-      letter-spacing: -0.035em;
-      line-height: 1.02;
-      text-wrap: balance;
-    }
-    h1 em { font-weight: 500; }
-    .dek {
-      max-width: 570px;
-      margin: 0 auto clamp(28px, 5vh, 42px);
-      color: var(--ink-soft);
-      font-size: clamp(16px, 2.1vw, 18.5px);
-      line-height: 1.55;
-      text-wrap: pretty;
-    }
-
-    .choices {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border: 1px solid var(--rule-strong);
-      background: var(--card);
-      box-shadow: 0 16px 44px rgba(22, 19, 14, 0.07);
-    }
-    .choice {
-      min-height: 176px;
-      padding: clamp(24px, 4vw, 34px);
-      border: 0;
-      background: transparent;
-      color: var(--ink);
-      font: inherit;
-      text-align: left;
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: background 180ms ease, color 180ms ease;
-    }
-    .choice + .choice { border-left: 1px solid var(--rule-strong); }
-    .choice:hover { background: var(--ink); color: var(--card); }
-    .choice:active { transform: translateY(1px); }
-    .choice:focus-visible { outline: 3px solid var(--mark); outline-offset: 4px; }
-    .choice-kicker {
-      display: block;
-      margin-bottom: 20px;
-      color: var(--muted);
+    .brand,
+    .header-status,
+    .eyebrow,
+    .section-code,
+    .file-tab,
+    .scope-line {
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-    .choice:hover .choice-kicker { color: rgba(255, 253, 246, 0.66); }
-    .choice-title {
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+    }
+    .brand span,
+    .header-status { color: var(--muted); }
+
+    main { min-height: calc(100vh - 170px); }
+    .view { padding: 84px 0 96px; }
+    h1, h2, p { margin-top: 0; }
+    h1, h2 {
+      font-family: var(--display);
+      font-optical-sizing: auto;
+      font-weight: 560;
+      letter-spacing: -0.035em;
+      line-height: 1.03;
+      scroll-margin-top: 24px;
+      text-wrap: balance;
+    }
+    h1 {
+      margin-bottom: 28px;
+      font-size: clamp(50px, 5.4vw, 68px);
+    }
+    h2 { font-size: clamp(30px, 3.1vw, 42px); }
+    h1 em,
+    h2 em { font-weight: 500; }
+    p { text-wrap: pretty; }
+    .centered {
+      max-width: 910px;
+      margin-inline: auto;
+      text-align: center;
+    }
+    .eyebrow {
+      margin-bottom: 20px;
+      color: var(--muted);
+    }
+    .lede {
+      max-width: 750px;
+      margin: 0 auto;
+      color: var(--ink-soft);
+      font-size: 19px;
+      line-height: 1.58;
+    }
+    .coach-note {
+      display: inline-block;
+      margin: 28px 0 0;
+      font-family: var(--display);
+      font-size: 21px;
+      font-style: italic;
+    }
+    .coach-note span {
+      position: relative;
+      z-index: 0;
+    }
+    .coach-note span::before {
+      position: absolute;
+      z-index: -1;
+      right: -4px;
+      bottom: 0.08em;
+      left: -4px;
+      height: 0.54em;
+      background: var(--mark);
+      content: "";
+      transform: rotate(-1deg);
+    }
+
+    .file-sheet {
+      position: relative;
+      border: 1px solid var(--rule-strong);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .file-sheet::after {
+      position: absolute;
+      z-index: -1;
+      inset: 10px -10px -10px 10px;
+      border: 1px solid var(--rule);
+      background: var(--paper-deep);
+      content: "";
+    }
+    .file-tab {
+      min-height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 8px;
-      font-family: var(--serif);
-      font-size: clamp(28px, 4vw, 38px);
-      font-weight: 560;
-      line-height: 1;
+      gap: 20px;
+      padding: 10px 20px;
+      background: var(--ink);
+      color: var(--card);
     }
-    .choice-title svg { width: 24px; height: 24px; flex: none; }
-    .choice-copy { display: block; max-width: 300px; font-size: 14.5px; line-height: 1.45; }
-    .note {
-      margin-top: 16px;
+    .file-tab b {
+      color: var(--mark);
+      font-weight: 600;
+    }
+    .route-sheet {
+      max-width: 850px;
+      margin: 64px auto 0;
+    }
+    .route-head {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 48px 52px 34px;
+      text-align: center;
+    }
+    .section-code {
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+    .route-head h2 { margin-bottom: 18px; }
+    .route-head p:last-child {
+      margin-bottom: 0;
+      color: var(--ink-soft);
+    }
+    .route-options {
+      border-top: 1px solid var(--rule-strong);
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .route-option {
+      min-height: 132px;
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 26px 34px;
+      text-decoration: none;
+      transition: background 180ms ease;
+    }
+    .route-option + .route-option { border-top: 1px solid var(--rule); }
+    .route-option:hover { background: rgba(245, 197, 24, 0.09); }
+    .route-option:active { background: rgba(245, 197, 24, 0.16); }
+    .route-index {
       color: var(--muted);
       font-family: var(--mono);
+      font-size: 11px;
+    }
+    .route-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .route-copy strong {
+      font-family: var(--display);
+      font-size: 27px;
+      font-weight: 560;
+      line-height: 1.15;
+    }
+    .route-copy small {
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+    .route-action {
+      font-family: var(--mono);
       font-size: 10px;
+      font-weight: 600;
       letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-    .member-entry {
+    .route-action i {
+      margin-left: 8px;
+      font-style: normal;
+    }
+    .text-link {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 18px;
-      padding: 12px 18px;
-      border: 1px solid var(--rule-strong);
-      color: var(--ink);
+      margin: 22px 28px 26px;
+      color: var(--ink-soft);
       font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: background .18s ease, border-color .18s ease;
+      font-weight: 600;
+      text-underline-offset: 4px;
     }
-    .member-entry:hover { background: var(--card); border-color: var(--ink); }
-    footer { padding-top: 18px; border-top: 1px solid var(--rule); }
+    .text-link:hover,
+    .site-footer a:hover { color: var(--ink); }
+    .scope-line {
+      margin: 42px auto 0;
+      color: var(--muted);
+      text-align: center;
+    }
+    .site-footer {
+      min-height: 88px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+      border-top: 1px solid var(--rule-strong);
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .site-footer > span {
+      color: var(--ink);
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+    .site-footer p { margin: 0; }
+    .site-footer nav {
+      display: flex;
+      gap: 18px;
+    }
 
-    @media (max-width: 620px) {
-      .topbar span:last-child { display: none; }
-      main { padding: 38px 0; }
-      .choices { grid-template-columns: 1fr; }
-      .choice { min-height: 142px; }
-      .choice + .choice { border-left: 0; border-top: 1px solid var(--rule-strong); }
-      .choice-kicker { margin-bottom: 14px; }
-      footer span:last-child { display: none; }
+    @media (max-width: 860px) {
+      .page-frame { width: min(100% - 40px, 690px); }
+      .site-header { height: 68px; }
+      .view { padding: 56px 0 72px; }
+      h1 { font-size: clamp(41px, 10vw, 56px); }
+    }
+    @media (max-width: 560px) {
+      html { font-size: 16px; }
+      body {
+        background-image: repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 27px,
+          rgba(22, 19, 14, 0.033) 28px
+        );
+      }
+      .page-frame { width: calc(100% - 36px); }
+      .site-header { height: 62px; }
+      .brand,
+      .header-status { font-size: 8.5px; }
+      .brand { letter-spacing: 0.12em; }
+      .header-status { letter-spacing: 0.09em; }
+      .view { padding: 48px 0 60px; }
+      h1 {
+        margin-bottom: 22px;
+        font-size: 41px;
+        line-height: 1.04;
+      }
+      h2 { font-size: 31px; }
+      .lede { font-size: 17px; }
+      .eyebrow {
+        margin-bottom: 16px;
+        font-size: 9px;
+      }
+      .coach-note { font-size: 18px; }
+      .route-sheet { margin-top: 46px; }
+      .file-sheet::after { inset: 7px -7px -7px 7px; }
+      .file-tab {
+        min-height: 38px;
+        gap: 8px;
+        padding: 9px 12px;
+        font-size: 7.6px;
+        letter-spacing: 0.08em;
+      }
+      .route-head { padding: 34px 22px 26px; }
+      .route-head h2 { font-size: 30px; }
+      .route-head p:last-child { font-size: 14px; }
+      .route-option {
+        min-height: 144px;
+        grid-template-columns: 28px 1fr;
+        gap: 8px 12px;
+        padding: 23px 18px;
+      }
+      .route-copy strong { font-size: 23px; }
+      .route-copy small { font-size: 13px; }
+      .route-action {
+        grid-column: 2;
+        font-size: 8.5px;
+      }
+      .text-link {
+        margin-right: 18px;
+        margin-left: 18px;
+        font-size: 13px;
+      }
+      .scope-line {
+        margin-top: 32px;
+        font-size: 8px;
+        line-height: 1.6;
+      }
+      .site-footer {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 18px 0;
+      }
+      .site-footer p {
+        grid-row: 2;
+        grid-column: 1 / -1;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
-      .choice { transition: none; }
+      .route-option { transition: none; }
     }
   </style>
 </head>
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <div class="page">
-    <header class="topbar">
-      <span>TR4INER · GENESIS</span>
-      <span>Tu ruta empieza aquí</span>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <div class="page-frame">
+    <header class="site-header">
+      <a class="brand" id="home-link" href="/biblioteca/inicio/">TR4INER <span>· GENESIS</span></a>
+      <span class="header-status">Selección de ruta</span>
     </header>
 
-    <main>
-      <p class="eyebrow">Una pregunta antes de empezar</p>
-      <h1>Tu cuerpo cambia la ruta. <em>Elige la tuya.</em></h1>
-      <p class="dek">Usamos tu respuesta para mostrarte el registro, las sesiones y el cálculo que corresponden a tu fisiología.</p>
+    <main id="contenido">
+      <article class="view">
+        <section class="centered">
+          <p class="eyebrow">Antes de abrir tu ruta</p>
+          <h1>Tu objetivo puede empezar por el peso. <em>Pero no termina ahí.</em></h1>
+          <p class="lede">GENESIS te ayuda a ordenar tu alimentación y entrenamiento para recuperar dirección, constancia y bienestar, con una ruta ajustada a tu realidad.</p>
+          <p class="coach-note"><span>No hace falta sentirte peor</span> para empezar a ordenar tus hábitos.</p>
+        </section>
 
-      <div class="choices" role="group" aria-label="Elige tu sexo">
-        <button class="choice" type="button" data-sexo="Mujer">
-          <span class="choice-kicker">Ruta femenina</span>
-          <span class="choice-title">
-            Mujer
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg>
-          </span>
-          <span class="choice-copy">Pérdida de grasa, piernas, glúteos y sesiones adaptadas al ciclo.</span>
-        </button>
-        <button class="choice" type="button" data-sexo="Hombre">
-          <span class="choice-kicker">Ruta masculina</span>
-          <span class="choice-title">
-            Hombre
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg>
-          </span>
-          <span class="choice-copy">Pérdida de grasa, fuerza, músculo y una estructura que puedas sostener.</span>
-        </button>
-      </div>
-      <p class="note">No es un diagnóstico médico · solo personaliza tu experiencia</p>
-      <a class="member-entry" id="member-entry" href="/biblioteca/acceso/">Ya soy miembro →</a>
+        <section class="file-sheet route-sheet" aria-label="Selector de ruta">
+          <div class="file-tab">
+            <span>Expediente privado · GENESIS</span>
+            <b>Estado · Por abrir</b>
+          </div>
+          <div class="route-head">
+            <p class="section-code">Punto de partida</p>
+            <h2>Tu cuerpo cambia la ruta. <em>Empecemos por ahí.</em></h2>
+            <p>Elige la opción que corresponde a tu fisiología. Esto ajusta la experiencia inicial; no es una evaluación médica.</p>
+          </div>
+          <div class="route-options" aria-label="Elige tu sexo">
+            <a class="route-option" data-sexo="Mujer" href="/biblioteca/?sexo=Mujer">
+              <span class="route-index">01</span>
+              <span class="route-copy">
+                <strong>Ruta para mujer</strong>
+                <small>Alimentación y entrenamiento ajustados a la fisiología femenina.</small>
+              </span>
+              <span class="route-action">Elegir esta ruta <i>→</i></span>
+            </a>
+            <a class="route-option" data-sexo="Hombre" href="/biblioteca/?sexo=Hombre">
+              <span class="route-index">02</span>
+              <span class="route-copy">
+                <strong>Ruta para hombre</strong>
+                <small>Alimentación y entrenamiento ajustados a la fisiología masculina.</small>
+              </span>
+              <span class="route-action">Elegir esta ruta <i>→</i></span>
+            </a>
+          </div>
+          <a class="text-link" id="member-entry" href="/biblioteca/acceso/">Ya tengo acceso a GENESIS →</a>
+        </section>
+
+        <p class="scope-line">Orientación educativa en nutrición y entrenamiento · Equipo con nutricionista y entrenadores certificados</p>
+      </article>
     </main>
 
-    <footer>
+    <footer class="site-footer">
       <span>TR4INER</span>
-      <span>Personalización inicial · 01</span>
+      <p>GENESIS · Orientación educativa en nutrición y entrenamiento</p>
+      <nav aria-label="Legal">
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+        <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+      </nav>
     </footer>
   </div>
 
@@ -267,21 +465,25 @@
       'use strict';
       if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_sexo_view');
 
+      var current = new URLSearchParams(window.location.search);
+      var homeUrl = new URL('/biblioteca/inicio/', window.location.origin);
+      current.forEach(function (value, key) { homeUrl.searchParams.set(key, value); });
+      document.getElementById('home-link').href = homeUrl.toString();
+
       var memberUrl = new URL('/biblioteca/acceso/', window.location.origin);
-      new URLSearchParams(window.location.search).forEach(function (value, key) {
-        memberUrl.searchParams.set(key, value);
-      });
+      current.forEach(function (value, key) { memberUrl.searchParams.set(key, value); });
       document.getElementById('member-entry').href = memberUrl.toString();
 
-      document.querySelectorAll('[data-sexo]').forEach(function (button) {
-        button.addEventListener('click', function () {
-          var sexo = button.getAttribute('data-sexo');
-          var next = new URL('/biblioteca/', window.location.origin);
-          var current = new URLSearchParams(window.location.search);
-          current.forEach(function (value, key) { next.searchParams.set(key, value); });
-          next.searchParams.set('sexo', sexo);
-          if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_sexo_select', { sexo: sexo });
-          window.location.href = next.toString();
+      document.querySelectorAll('[data-sexo]').forEach(function (route) {
+        var sexo = route.getAttribute('data-sexo');
+        var next = new URL('/biblioteca/', window.location.origin);
+        current.forEach(function (value, key) { next.searchParams.set(key, value); });
+        next.searchParams.set('sexo', sexo);
+        route.href = next.toString();
+        route.addEventListener('click', function () {
+          if (window.TR4Track && TR4Track.track) {
+            TR4Track.track('biblioteca_sexo_select', { sexo: sexo });
+          }
         });
       });
     })();

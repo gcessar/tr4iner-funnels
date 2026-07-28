@@ -21,7 +21,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -36,7 +36,8 @@
       --mark: #F5C518;
       --mark-soft: rgba(245, 197, 24, 0.32);
       --error: #A83A22;
-      --max: 620px;
+      --max: 760px;
+      --frame: 1180px;
       --gutter: clamp(18px, 4vw, 32px);
       --serif: "Fraunces", Georgia, serif;
       --sans: "Instrument Sans", -apple-system, sans-serif;
@@ -76,11 +77,24 @@
       outline-offset: 3px;
       border-radius: 4px;
     }
+    .skip-link {
+      position: fixed;
+      z-index: 120;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 13px;
+      text-decoration: none;
+      transform: translateY(-160%);
+    }
+    .skip-link:focus-visible { transform: translateY(0); }
 
     .page {
-      width: min(100%, var(--max));
+      width: min(100%, var(--frame));
       margin: 0 auto;
-      padding: calc(20px + env(safe-area-inset-top)) var(--gutter) calc(56px + env(safe-area-inset-bottom));
+      padding: calc(26px + env(safe-area-inset-top)) var(--gutter) calc(56px + env(safe-area-inset-bottom));
     }
 
     .topbar {
@@ -89,7 +103,7 @@
       justify-content: space-between;
       gap: 14px;
       padding-bottom: 16px;
-      margin-bottom: 30px;
+      margin-bottom: 72px;
       border-bottom: 1px solid var(--rule-strong);
     }
     .wordmark {
@@ -112,11 +126,15 @@
     .back:hover { color: var(--ink); }
 
     /* ── Cabecera del expediente ── */
-    .head { text-align: center; margin-bottom: 26px; }
+    .head {
+      max-width: var(--max);
+      margin: 0 auto 50px;
+      text-align: left;
+    }
     .eyebrow {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 14px;
       margin-bottom: 14px;
       color: var(--muted);
@@ -126,16 +144,11 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
     }
-    .eyebrow::before, .eyebrow::after {
-      content: "";
-      width: clamp(18px, 6vw, 44px);
-      height: 1px;
-      background: var(--rule-strong);
-    }
+    .eyebrow::before, .eyebrow::after { display: none; }
     h1 {
-      margin: 0 auto 10px;
+      margin: 0 0 18px;
       font-family: var(--serif);
-      font-size: clamp(28px, 6vw, 42px);
+      font-size: clamp(42px, 5vw, 61px);
       font-weight: 560;
       font-variation-settings: "opsz" 100;
       letter-spacing: -0.03em;
@@ -160,10 +173,10 @@
     }
     .is-in .mk::before, .mk.is-in::before { transform: rotate(-0.7deg) scaleX(1); }
     .head .dek {
-      max-width: 460px;
-      margin: 0 auto;
+      max-width: 720px;
+      margin: 0;
       color: var(--ink-soft);
-      font-size: 15.5px;
+      font-size: 17px;
       text-wrap: pretty;
     }
 
@@ -172,8 +185,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      max-width: 380px;
-      margin: 18px auto 0;
+      max-width: none;
+      margin: 0 0 52px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10px;
@@ -198,31 +211,58 @@
       transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .progress-label { color: var(--ink); font-weight: 600; white-space: nowrap; }
+    .progress-state { color: var(--ink); font-weight: 600; white-space: nowrap; }
+    .progress[hidden] { display: none; }
 
     /* ── Ficha del wizard ── */
     .ficha {
       position: relative;
+      width: min(100%, var(--max));
+      margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--rule-strong);
-      border-radius: 14px;
-      padding: clamp(24px, 4.5vw, 36px);
+      border-radius: 2px;
+      padding: 80px 42px 38px;
       box-shadow: 0 1px 2px rgba(22, 19, 14, 0.05), 0 14px 40px -18px rgba(22, 19, 14, 0.22);
     }
     .ficha::before {
-      content: "FICHA TÉCNICA · 01";
+      content: attr(data-tab);
       position: absolute;
-      top: -9px;
-      left: 24px;
-      padding: 2px 10px;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
       background: var(--ink);
       color: var(--paper);
-      border-radius: 4px;
+      border-radius: 0;
       font-family: var(--mono);
       font-size: 9.5px;
       font-weight: 500;
       letter-spacing: 0.18em;
     }
-    .ficha.is-result::before { content: "EXPEDIENTE · PLAN CALCULADO"; background: var(--ink); }
+    .file-status {
+      display: none;
+      position: absolute;
+      top: 0;
+      right: 20px;
+      height: 42px;
+      align-items: center;
+      padding: 0;
+      background: var(--ink);
+      color: var(--mark);
+      border: 0;
+      border-radius: 0;
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .ficha.is-signal .file-status,
+    .ficha.is-result .file-status { display: flex; }
 
     /* ── Steps ── */
     .step {
@@ -295,7 +335,41 @@
     .opt-card .opt-body { min-width: 0; }
     .opt-card .opt-title { display: block; font-weight: 600; letter-spacing: -0.005em; }
     .opt-card .opt-desc { display: block; margin-top: 1px; color: var(--muted); font-size: 13px; line-height: 1.4; }
-    .opts.multi .tick { border-radius: 4px; }
+
+    .signal-fieldset {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    .signal-fieldset legend { width: 100%; }
+    .signal-step > .q-label { display: none; }
+    .signal-step .q {
+      max-width: 590px;
+      margin-bottom: 12px;
+      font-size: 35px;
+    }
+    .signal-step .q-hint { margin-bottom: 28px; }
+    .signal-step .opt-card { min-height: 64px; padding: 14px 16px; }
+    .signal-step .opt-card.selected { background: rgba(245, 197, 24, 0.1); }
+    .signal-step .wiz-nav {
+      display: grid;
+      grid-template-columns: auto minmax(320px, 1fr);
+      margin-top: 26px;
+    }
+    .signal-step .wiz-next { justify-content: center; }
+    .privacy-note {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: 26px;
+      padding: 15px 16px;
+      border-left: 3px solid var(--mark);
+      background: var(--paper);
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .privacy-note strong { color: var(--ink); }
 
     /* Datos numéricos */
     .num-grid {
@@ -448,163 +522,126 @@
     .wiz-next svg { width: 15px; height: 15px; transition: transform 0.18s ease; }
     .wiz-next:hover svg { transform: translateX(3px); }
 
-    /* ── Resultado ── */
-    .res-head {
-      text-align: center;
-      padding-bottom: 20px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--rule-strong);
-      position: relative;
-    }
-    .res-para {
+    /* ── Resultado: lectura inicial del expediente, no catálogo de curso ── */
+    .section-code {
       color: var(--muted);
       font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.16em;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      margin-bottom: 10px;
     }
-    .kcal-line {
+    .result-top {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 32px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .calorie-number {
+      display: block;
+      margin: 7px 0 12px;
       font-family: var(--serif);
+      font-size: clamp(52px, 11vw, 68px);
       font-weight: 560;
       font-variation-settings: "opsz" 100;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.045em;
       line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
-    .kcal-num { font-size: clamp(56px, 14vw, 84px); }
-    .kcal-unit {
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
+    .calorie-number small {
+      font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+    .result-explainer {
       color: var(--ink-soft);
-      display: block;
-      margin-top: 8px;
-      text-transform: uppercase;
+      font-size: 13.5px;
+      line-height: 1.5;
     }
-    .res-obj { margin-top: 12px; color: var(--ink-soft); font-size: 14.5px; }
-    .res-obj strong { color: var(--ink); }
-
-    /* Sello del coach */
-    .stamp {
-      position: absolute;
-      top: -6px;
-      right: -8px;
-      padding: 6px 10px;
-      border: 1.5px solid var(--ink);
-      border-radius: 6px;
+    .macro-grid { margin: 0; }
+    .macro-grid div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .macro-grid dt { color: var(--muted); font-size: 13px; }
+    .macro-grid dd {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 25px;
+      font-weight: 560;
+      font-variant-numeric: tabular-nums;
+    }
+    .macro-grid dd small {
+      font-family: var(--sans);
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .signal-result {
+      margin: 0 -42px;
+      padding: 40px 42px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+    .signal-result h2 {
+      margin: 8px 0 12px;
+      font-family: var(--serif);
+      font-size: clamp(26px, 5vw, 34px);
+      font-weight: 560;
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+      text-wrap: balance;
+    }
+    .signal-result > p:not(.section-code) {
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+    .coach-mark {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 7px 10px;
+      background: var(--mark);
       color: var(--ink);
       font-family: var(--mono);
       font-size: 9px;
       font-weight: 600;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.08em;
+      line-height: 1.45;
       text-transform: uppercase;
-      background: transparent;
-      transform: rotate(4deg) scale(1);
-      opacity: 0.82;
     }
-    .stamp.stamp-in { animation: stampIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s both; }
-    @keyframes stampIn {
-      from { transform: rotate(-6deg) scale(1.5); opacity: 0; }
-      to { transform: rotate(4deg) scale(1); opacity: 0.82; }
+    .route-start {
+      margin: 0 -42px;
+      padding: 38px 42px 26px;
     }
-
-    .macros { display: grid; gap: 0; margin-bottom: 22px; }
-    .macro-row {
+    .route-start > div {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: baseline;
-      gap: 12px;
-      padding: 13px 2px;
+      grid-template-columns: 30px 0.8fr 1.2fr;
+      gap: 14px;
+      padding: 16px 0;
       border-bottom: 1px solid var(--rule);
     }
-    .macro-name { font-weight: 600; font-size: 15.5px; }
-    .macro-sub {
-      margin-top: 1px;
+    .route-start > div > span {
+      padding-top: 3px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-    .macro-val {
-      font-family: var(--serif);
-      font-size: 30px;
-      font-weight: 560;
-      letter-spacing: -0.02em;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .macro-val small {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      margin-left: 3px;
-    }
-
-    .ruta-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .ruta-head h2 {
-      font-family: var(--serif);
-      font-size: 21px;
-      font-weight: 560;
-      letter-spacing: -0.02em;
-    }
-    .ruta-head .n {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-    .ruta { display: grid; gap: 8px; margin-bottom: 24px; counter-reset: paso; }
-    .ruta-item {
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      padding: 12px 14px;
-      background: #FFFFFF;
-      border: 1px solid var(--rule);
-      border-radius: 10px;
-    }
-    .ruta-item::before {
-      counter-increment: paso;
-      content: counter(paso, decimal-leading-zero);
-      font-family: var(--mono);
-      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--ink);
-      border: 1px solid var(--rule-strong);
-      border-radius: 6px;
-      background: var(--card);
-      padding: 5px 8px;
-      flex: none;
     }
-    .ruta-item.primero { border-color: var(--ink); box-shadow: 0 0 0 3px var(--mark-soft); }
-    .ruta-info { min-width: 0; flex: 1; }
-    .ruta-name { font-weight: 600; font-size: 15px; line-height: 1.3; }
-    .ruta-why { color: var(--muted); font-size: 12.5px; line-height: 1.35; }
-    .ruta-count {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 9.5px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      white-space: nowrap;
+    .route-start h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 560;
+      line-height: 1.3;
     }
-    .ruta-item.primero .ruta-count { color: var(--ink-soft); }
+    .route-start p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13.5px;
+    }
 
     .res-cta {
       display: flex;
@@ -613,8 +650,8 @@
       gap: 10px;
       width: 100%;
       padding: 16px 20px;
-      background: var(--mark);
-      color: var(--ink);
+      background: var(--ink);
+      color: var(--card);
       border: none;
       border-radius: 10px;
       font-family: var(--sans);
@@ -624,7 +661,7 @@
       cursor: pointer;
       transition: background 0.18s ease, transform 0.12s ease;
     }
-    .res-cta:hover { background: #FFD23F; }
+    .res-cta:hover { background: #2B2519; }
     .res-cta:active { transform: scale(0.985); }
     .res-cta svg { width: 16px; height: 16px; transition: transform 0.18s ease; }
     .res-cta:hover svg { transform: translateX(3px); }
@@ -635,6 +672,15 @@
       text-align: center;
       line-height: 1.5;
     }
+    .medical-disclaimer {
+      max-width: 580px;
+      margin: 26px auto 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+      text-align: center;
+    }
+    .medical-disclaimer[hidden] { display: none; }
 
     footer {
       margin-top: 40px;
@@ -654,17 +700,58 @@
     footer .brand { color: var(--ink); font-weight: 600; }
 
     @media (max-width: 480px) {
+      .page { padding-right: 18px; padding-left: 18px; }
+      .topbar { margin-bottom: 48px; }
+      .head { margin-bottom: 42px; }
+      .progress {
+        gap: 9px;
+        margin-bottom: 46px;
+        font-size: 7.5px;
+        letter-spacing: 0.08em;
+      }
+      .progress-track { height: 3px; }
+      h1 { font-size: 40px; line-height: 1.06; }
+      .head .dek { font-size: 16px; }
+      .ficha {
+        padding: 76px 20px 28px;
+        border-radius: 0;
+      }
+      .ficha::before {
+        max-width: none;
+        right: 0;
+        overflow: hidden;
+        padding: 0 124px 0 11px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .file-status {
+        right: 11px;
+        font-size: 7.8px;
+      }
+      .signal-step .q { font-size: 30px; }
+      .signal-step .opt-card { min-height: 66px; padding: 13px; }
+      .signal-step .opt-card .opt-title { font-size: 14px; line-height: 1.35; }
+      .signal-step .wiz-nav {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .signal-step .wiz-next { grid-row: 1; width: 100%; }
+      .signal-step .wiz-back { grid-row: 2; justify-self: center; }
+      .privacy-note { margin-top: 8px; padding: 14px; }
       .num-grid { grid-template-columns: 1fr 1fr; }
       .num-grid .field:first-child { grid-column: 1 / -1; }
       .grasa-selector { grid-template-columns: 1fr; }
       .grasa-visual { width: min(68vw, 220px); margin: 0 auto; }
-      .stamp { position: static; display: inline-block; margin-bottom: 12px; }
+      .result-top { grid-template-columns: 1fr; gap: 18px; }
+      .signal-result { margin-right: -20px; margin-left: -20px; padding: 30px 22px; }
+      .route-start { margin-right: -20px; margin-left: -20px; padding: 30px 22px 20px; }
+      .route-start > div { grid-template-columns: 26px 1fr; gap: 5px 8px; }
+      .route-start p { grid-column: 2; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .step.active { animation: none; }
       .mk::before { transform: rotate(-0.7deg) scaleX(1); transition: none; }
-      .stamp.stamp-in { animation: none; opacity: 0.82; }
       .progress-track i { transition: none; }
     }
   </style>
@@ -672,33 +759,36 @@
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <div class="page is-in">
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+  <main class="page is-in" id="contenido">
 
     <div class="topbar">
       <p class="wordmark">TR4INER <span>· GENESIS</span></p>
-      <a class="back" id="back-link" href="/biblioteca/videos/">← Tus sesiones</a>
+      <a class="back" id="back-link" href="/biblioteca/videos/">← Tu ruta</a>
     </div>
 
     <header class="head">
-      <p class="eyebrow">Ficha técnica del programa</p>
-      <h1 id="headline">Diseñemos <span class="mk">tu plan</span><span id="saludo"></span>.</h1>
-      <p class="dek">
-        Cuatro preguntas y tu coach sabe cuánto necesitas comer
-        y en qué orden tomar tus sesiones. Dos minutos.
-      </p>
-      <div class="progress" id="progress">
-        <span class="progress-label" id="progress-label">Pregunta 1 de 4</span>
+      <div class="progress" id="progress" role="progressbar" aria-label="Progreso del perfil inicial" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+        <span class="progress-label" id="progress-label">Perfil inicial</span>
         <span class="progress-track"><i id="progress-fill"></i></span>
+        <span class="progress-state">En progreso</span>
       </div>
+      <p class="eyebrow" id="hero-eyebrow">Tu expediente privado</p>
+      <h1 id="headline">Diseñemos <span class="mk">tu punto de partida</span><span id="saludo"></span>.</h1>
+      <p class="dek">
+        Reúne tu objetivo, tus números y la señal que hoy merece más atención.
+        Solo te tomará unos minutos.
+      </p>
     </header>
 
-    <section class="ficha" id="ficha" aria-live="polite">
+    <section class="ficha" id="ficha" data-tab="PERFIL INICIAL · 01" aria-live="polite">
+      <span class="file-status" id="file-status" aria-hidden="true">Dato privado</span>
 
       <!-- Paso 0 (condicional): sexo -->
       <div class="step" data-step="sexo">
         <p class="q-label">Antes de empezar</p>
-        <h2 class="q">Tu programa cambia según tu fisiología.</h2>
-        <p class="q-hint">Elige para calcular tu plan con la fórmula correcta.</p>
+        <h2 class="q">Necesitamos este dato para estimar tu punto de partida.</h2>
+        <p class="q-hint">Se usa únicamente para aplicar la fórmula correspondiente.</p>
         <div class="opts" role="group" aria-label="Sexo">
           <button type="button" class="opt-card" data-value="Mujer">
             <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
@@ -718,27 +808,27 @@
       <!-- Paso 1: objetivo -->
       <div class="step" data-step="objetivo">
         <p class="q-label">Tu objetivo</p>
-        <h2 class="q">¿Qué quieres lograr con tu cuerpo?</h2>
-        <p class="q-hint">Tu plan de comida y tu ruta de sesiones salen de aquí.</p>
+        <h2 class="q">¿Qué cambio quieres priorizar?</h2>
+        <p class="q-hint">Esto ajusta la referencia de energía y macronutrientes.</p>
         <div class="opts" role="group" aria-label="Objetivo">
           <button type="button" class="opt-card" data-value="PG">
             <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
-              <span class="opt-title">Perder grasa</span>
-              <span class="opt-desc">Bajar grasa más rápido mientras mantienes o aumentas músculo.</span>
+              <span class="opt-title">Reducir grasa corporal</span>
+              <span class="opt-desc">Crear una tendencia gradual mientras conservas masa muscular.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="MM">
             <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
-              <span class="opt-title">Ganar músculo</span>
-              <span class="opt-desc">Ganar tejido muscular controlando tus niveles de grasa.</span>
+              <span class="opt-title">Desarrollar masa muscular</span>
+              <span class="opt-desc">Dar a tu cuerpo energía y estímulo para construir fuerza y tejido.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="MA">
             <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
-              <span class="opt-title">Recomposición corporal</span>
+              <span class="opt-title">Mejorar mi composición corporal</span>
               <span class="opt-desc">Reducir grasa mientras mantienes o mejoras tu masa muscular.</span>
             </span>
           </button>
@@ -749,34 +839,40 @@
         </div>
       </div>
 
-      <!-- Paso 2: situación -->
-      <div class="step" data-step="situacion">
-        <p class="q-label">Tu punto de partida</p>
-        <h2 class="q">¿Cuáles de estas frases te describen hoy?</h2>
-        <p class="q-hint">Marca todas las que correspondan. Esto no cambia tus números; cambia cómo te acompañamos.</p>
-        <div class="opts multi" role="group" aria-label="Situación actual: selección múltiple">
-          <button type="button" class="opt-card" data-value="sin-camino"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Tengo un objetivo pero no sé cómo llegar.</span></span></button>
-          <button type="button" class="opt-card" data-value="dietas-fallidas"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">He hecho dietas pero no logré los resultados.</span></span></button>
-          <button type="button" class="opt-card" data-value="rebote"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Bajé de peso pero lo recuperé.</span></span></button>
-          <button type="button" class="opt-card" data-value="estancado"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Avancé por mi cuenta pero estoy estancado/a.</span></span></button>
-          <button type="button" class="opt-card" data-value="subida"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Subí de peso y no logro bajarlo.</span></span></button>
-          <button type="button" class="opt-card" data-value="confianza"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi cuerpo afecta mi confianza o mi salud.</span></span></button>
-        </div>
-        <p class="err" id="err-situacion">Elige al menos una opción.</p>
+      <!-- Paso 2: señal principal -->
+      <div class="step signal-step" data-step="senal">
+        <p class="q-label">Tu expediente · señal principal</p>
+        <fieldset class="signal-fieldset">
+          <legend class="q">¿Qué señal te preocupa más en este momento?</legend>
+          <p class="q-hint">Elige la que mejor describe por qué quieres cambiar ahora.</p>
+          <div class="opts" role="radiogroup" aria-label="Señal principal">
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="energia_cansancio"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me falta energía o me canso con facilidad.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="movilidad_limitada"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi peso ya limita mi movilidad o actividades cotidianas.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="diagnostico_analisis"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Tengo un diagnóstico o análisis que me preocupa.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="peso_grasa_abdominal"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi grasa abdominal o peso siguen aumentando.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="hambre_desorden_alimentario"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me cuesta manejar el hambre o mantener una alimentación ordenada.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="prevencion"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Quiero prevenir antes de que aparezcan problemas.</span></span></button>
+          </div>
+        </fieldset>
+        <p class="err" id="err-senal">Elige la señal que mejor describe tu situación actual.</p>
         <div class="wiz-nav">
           <button type="button" class="wiz-back">← Atrás</button>
-          <button type="button" class="wiz-next" id="situacion-next">
-            Continuar
+          <button type="button" class="wiz-next" id="senal-next">
+            Guardar y continuar
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
+        </div>
+        <div class="privacy-note">
+          <strong>Esta respuesta orienta tu ruta; no es una evaluación médica.</strong>
+          <span>Se guarda en tu perfil privado y no se envía en URLs ni a plataformas publicitarias.</span>
         </div>
       </div>
 
       <!-- Paso 3: datos -->
       <div class="step" data-step="datos">
         <p class="q-label">Tus números</p>
-        <h2 class="q">Los datos que tu coach anotaría primero.</h2>
-        <p class="q-hint">Con esto calculamos tu gasto energético real.</p>
+        <h2 class="q">Los datos que necesitamos para una referencia inicial.</h2>
+        <p class="q-hint">Con esto calculamos un gasto energético estimado.</p>
         <div class="num-grid">
           <div class="field" id="f-edad">
             <label for="edad">Edad <span class="u">AÑOS</span></label>
@@ -797,7 +893,7 @@
           </div>
           <div class="grasa-control">
             <label for="grasa">¿Con qué porcentaje te identificas?</label>
-            <p>Mueve el control y compárate con la referencia. Necesitamos este dato para usar Katch-McArdle.</p>
+            <p>Mueve el control y compárate con la referencia. Este dato permite estimar tu masa libre de grasa.</p>
             <input class="grasa-range" id="grasa" name="grasa" type="range" step="1" autocomplete="off" aria-describedby="grasa-note" />
             <div class="grasa-scale"><span id="grasa-min"></span><span id="grasa-max"></span></div>
             <p id="grasa-note">Es una estimación visual, no una medición clínica.</p>
@@ -850,8 +946,8 @@
       <!-- Paso 5 (condicional): email para guardar el expediente -->
       <div class="step" data-step="email">
         <p class="q-label">Tu expediente</p>
-        <h2 class="q">¿A qué correo guardamos tu plan?</h2>
-        <p class="q-hint">El mismo con el que reservaste tu plaza: así tu avance queda en un solo expediente.</p>
+        <h2 class="q">¿A qué correo guardamos tu punto de partida?</h2>
+        <p class="q-hint">Usa el mismo correo de tu acceso para mantener todo en un solo expediente.</p>
         <div class="field" id="f-email">
           <label for="email">Correo</label>
           <input class="control email-control" id="email" name="email" type="email" inputmode="email" autocomplete="email" spellcheck="false" placeholder="tu@correo.com" />
@@ -860,7 +956,7 @@
         <div class="wiz-nav">
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="email-next">
-            Calcular mi plan
+            Calcular mi punto de partida
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
         </div>
@@ -868,40 +964,61 @@
 
       <!-- Resultado -->
       <div class="step" data-step="resultado">
-        <div class="res-head">
-          <span class="stamp" id="stamp">Plan calculado</span>
-          <p class="res-para" id="res-para">Tu plan · GENESIS</p>
-          <p class="kcal-line">
-            <span class="kcal-num" id="kcal-num">0</span>
-            <span class="kcal-unit">kcal al día para <span id="res-obj-inline">tu objetivo</span></span>
-          </p>
-          <p class="res-obj" id="res-obj"></p>
+        <div class="result-top">
+          <div>
+            <p class="section-code">Tu base diaria estimada</p>
+            <strong class="calorie-number"><span id="kcal-num">0</span> <small>kcal</small></strong>
+            <p class="result-explainer">Una base medible para empezar; no un número que debas perseguir con perfección.</p>
+          </div>
+          <dl class="macro-grid" id="macros"></dl>
         </div>
 
-        <div class="macros" id="macros"></div>
-
-        <div class="ruta-head">
-          <h2>Tu ruta de sesiones</h2>
-          <span class="n" id="ruta-n"></span>
+        <div class="signal-result">
+          <p class="section-code">Lo que más te preocupa</p>
+          <h2 id="signal-label"></h2>
+          <p id="signal-guidance"></p>
+          <span class="coach-mark" id="signal-priority"></span>
         </div>
-        <div class="ruta" id="ruta"></div>
+
+        <div class="route-start">
+          <p class="section-code">Tu ruta empieza así</p>
+          <div>
+            <span>01</span>
+            <h3>Ordena lo que comes</h3>
+            <p>Usa tus números como estructura, no como una nueva obsesión.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <h3>Entrena para recuperar capacidad</h3>
+            <p>Construye fuerza y movimiento desde tu semana real.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <h3>Mide más que el peso</h3>
+            <p>Observa energía, cintura, fuerza, movilidad y constancia.</p>
+          </div>
+        </div>
 
         <a class="res-cta" id="res-cta" href="/biblioteca/videos/">
-          Ver mi ruta
+          Entrar a mi ruta en GENESIS
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
         </a>
         <p class="res-note">
-          Tu plan queda guardado en tu expediente. Tus sesiones ahora siguen este orden.
+          Este punto de partida queda guardado en tu expediente.
         </p>
       </div>
 
     </section>
 
+    <p class="medical-disclaimer" id="medical-disclaimer" hidden>
+      GENESIS ofrece orientación educativa en nutrición y entrenamiento. No realiza diagnósticos ni sustituye evaluación o tratamiento médico. Si tienes un diagnóstico, tomas medicación o presentas síntomas persistentes, consulta con tu profesional de salud antes de hacer cambios importantes.
+    </p>
+
     <footer>
       <span class="brand">TR4INER</span>
-      <span>Ficha técnica · GENESIS</span>
+      <span>Expediente privado · GENESIS</span>
     </footer>
-  </div>
+  </main>
 
   <script src="/attribution.js"></script>
   <script>
@@ -966,7 +1083,7 @@
       var datos = {
         sexo: sexoInicial,
         objetivo: null,
-        situacion: [],
+        senal: null,
         edad: null,
         altura: null,
         peso: null,
@@ -977,7 +1094,7 @@
       // Los pasos condicionales solo aparecen si falta el dato.
       var FLOW = [];
       if (!datos.sexo) FLOW.push('sexo');
-      FLOW.push('objetivo', 'situacion', 'datos', 'actividad');
+      FLOW.push('objetivo', 'senal', 'datos', 'actividad');
       var necesitaEmail = !lead.email;
       if (necesitaEmail) FLOW.push('email');
 
@@ -999,14 +1116,56 @@
         track('test_macros_iniciado');
       }
 
+      function firstName() {
+        return nombre ? nombre.split(' ')[0] : '';
+      }
+
+      function renderDefaultHero() {
+        var headline = document.getElementById('headline');
+        headline.textContent = '';
+        headline.appendChild(document.createTextNode('Diseñemos '));
+        var mark = document.createElement('span');
+        mark.className = 'mk is-in';
+        mark.textContent = 'tu punto de partida';
+        headline.appendChild(mark);
+        headline.appendChild(document.createTextNode((firstName() ? ', ' + firstName() : '') + '.'));
+        document.getElementById('hero-eyebrow').textContent = 'Tu expediente privado';
+        document.querySelector('.head .dek').textContent =
+          'Reúne tu objetivo, tus números y la señal que hoy merece más atención. Solo te tomará unos minutos.';
+      }
+
+      function renderSignalHero() {
+        var headline = document.getElementById('headline');
+        headline.textContent = '';
+        headline.appendChild(document.createTextNode('Lo que ves en el espejo '));
+        var emphasis = document.createElement('em');
+        emphasis.textContent = 'es solo una parte';
+        headline.appendChild(emphasis);
+        headline.appendChild(document.createTextNode('.'));
+        document.getElementById('hero-eyebrow').textContent = 'Tu expediente · señal principal';
+        document.querySelector('.head .dek').textContent =
+          'Queremos entender qué aspecto está afectando más tu día a día.';
+      }
+
       function showStep(i) {
         stepIndex = i;
         Object.keys(steps).forEach(function (k) { steps[k].classList.remove('active'); });
-        steps[FLOW[i]].classList.add('active');
+        var stepName = FLOW[i];
+        steps[stepName].classList.add('active');
         var visibleTotal = FLOW.length;
-        document.getElementById('progress-label').textContent = 'Pregunta ' + (i + 1) + ' de ' + visibleTotal;
-        document.getElementById('progress-fill').style.width = ((i) / visibleTotal * 100) + '%';
+        var progress = document.getElementById('progress');
+        progress.setAttribute('aria-valuemax', String(visibleTotal));
+        progress.setAttribute('aria-valuenow', String(i + 1));
+        progress.setAttribute('aria-valuetext', 'Pregunta ' + (i + 1) + ' de ' + visibleTotal);
+        document.getElementById('progress-fill').style.width = ((i + 1) / visibleTotal * 100) + '%';
         var ficha = document.getElementById('ficha');
+        var isSignal = stepName === 'senal';
+        ficha.classList.toggle('is-signal', isSignal);
+        ficha.setAttribute('data-tab', isSignal
+          ? 'PERFIL INICIAL' + (firstName() ? ' · ' + firstName().toUpperCase() : '')
+          : 'PERFIL INICIAL · ' + String(i + 1).padStart(2, '0'));
+        document.getElementById('file-status').textContent = isSignal ? 'Dato privado' : '';
+        if (isSignal) renderSignalHero(); else renderDefaultHero();
         ficha.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
 
@@ -1048,23 +1207,23 @@
       wireOptions('objetivo', 'objetivo');
       wireOptions('actividad', 'actividad');
 
-      // Situación es selección múltiple: no autoavanza porque puede marcar varias.
-      steps.situacion.querySelectorAll('.opt-card').forEach(function (card) {
-        card.setAttribute('aria-pressed', 'false');
+      // Una sola señal principal reduce fricción y queda separada de la analítica publicitaria.
+      steps.senal.querySelectorAll('.opt-card').forEach(function (card) {
         card.addEventListener('click', function () {
           marcarInicio();
-          var value = card.getAttribute('data-value');
-          var index = datos.situacion.indexOf(value);
-          if (index === -1) datos.situacion.push(value); else datos.situacion.splice(index, 1);
-          var selected = index === -1;
-          card.classList.toggle('selected', selected);
-          card.setAttribute('aria-pressed', String(selected));
-          document.getElementById('err-situacion').classList.remove('visible');
+          steps.senal.querySelectorAll('.opt-card').forEach(function (option) {
+            option.classList.remove('selected');
+            option.setAttribute('aria-checked', 'false');
+          });
+          card.classList.add('selected');
+          card.setAttribute('aria-checked', 'true');
+          datos.senal = card.getAttribute('data-value');
+          document.getElementById('err-senal').classList.remove('visible');
         });
       });
-      document.getElementById('situacion-next').addEventListener('click', function () {
-        var ok = datos.situacion.length > 0;
-        document.getElementById('err-situacion').classList.toggle('visible', !ok);
+      document.getElementById('senal-next').addEventListener('click', function () {
+        var ok = Boolean(datos.senal);
+        document.getElementById('err-senal').classList.toggle('visible', !ok);
         if (ok) next();
       });
 
@@ -1165,10 +1324,37 @@
         PG: { p: 32, c: 39, f: 28 },
         MA: { p: 34, c: 38, f: 27 }
       };
-      var OBJ_LABEL = {
-        PG: 'perder grasa',
-        MM: 'ganar músculo',
-        MA: 'tu recomposición'
+      var SENAL_INFO = {
+        energia_cansancio: {
+          label: 'Me falta energía o me canso con facilidad.',
+          guidance: 'Tu ruta empezará por ordenar la energía disponible, la alimentación y una carga de entrenamiento que puedas sostener.',
+          priority: 'Prioridad · recuperar estructura antes de recortar más'
+        },
+        movilidad_limitada: {
+          label: 'Mi peso ya limita mi movilidad o actividades cotidianas.',
+          guidance: 'Tu ruta empezará por recuperar capacidad de movimiento con una progresión que respete tu punto de partida y tu semana real.',
+          priority: 'Prioridad · movimiento tolerable antes de exigir más'
+        },
+        diagnostico_analisis: {
+          label: 'Tengo un diagnóstico o análisis que me preocupa.',
+          guidance: 'Tu ruta empezará por ordenar hábitos observables sin interpretar ni tratar ese diagnóstico. Coordina cambios importantes con tu profesional de salud.',
+          priority: 'Prioridad · avanzar con contexto y seguimiento profesional'
+        },
+        peso_grasa_abdominal: {
+          label: 'Mi grasa abdominal o peso siguen aumentando.',
+          guidance: 'Tu ruta empezará por poner estructura a la alimentación, el movimiento y las mediciones para observar tendencias sin recurrir a medidas extremas.',
+          priority: 'Prioridad · consistencia y tendencias antes que extremos'
+        },
+        hambre_desorden_alimentario: {
+          label: 'Me cuesta manejar el hambre o mantener una alimentación ordenada.',
+          guidance: 'Tu ruta empezará por construir comidas más previsibles y saciantes que puedas sostener, sin convertir el proceso en otra dieta rígida.',
+          priority: 'Prioridad · saciedad y orden antes que más restricción'
+        },
+        prevencion: {
+          label: 'Quiero prevenir antes de que aparezcan problemas.',
+          guidance: 'Tu ruta empezará por establecer hábitos y referencias simples para detectar cambios a tiempo y cuidar tu capacidad a largo plazo.',
+          priority: 'Prioridad · construir base antes de que el problema avance'
+        }
       };
 
       function calcularMacros(d) {
@@ -1199,14 +1385,14 @@
         };
       }
 
-      // ── Ruta de sesiones por objetivo (bloques del catálogo de /biblioteca/videos/) ──
-      var BLOQUE_INFO = {
-        comer:    { name: 'Cómo comer',       all: 6, mujer: 11, why: { PG: 'Tu déficit empieza en el plato, no en el cardio.', MM: 'Sin comer suficiente no hay músculo nuevo.', MA: 'La recomposición se decide en la cocina.' } },
-        entrenar: { name: 'Cómo entrenar',    all: 2, mujer: 7, why: { PG: 'Entrenar bien protege tu músculo mientras bajas.', MM: 'El estímulo correcto para crecer sin vivir en el gym.', MA: 'El estímulo que le dice a tu cuerpo qué conservar.' } },
-        grasa:    { name: 'Perder grasa',     all: 4, mujer: 5, why: { PG: 'El método para bajar sin rebote ni hambre.', MM: 'Para mantener la grasa a raya mientras subes.', MA: 'Bajar grasa sin sacrificar lo ganado.' } },
-        musculo:  { name: 'Ganar músculo',    all: 3, mujer: 3, why: { PG: 'Más músculo = más gasto en reposo. Tu seguro antirebote.', MM: 'El corazón de tu objetivo: fuerza y masa.', MA: 'Construir mientras defines: aquí está el cómo.' } },
-        hormonas: { name: 'Hormonas y ciclo', all: 0, mujer: 1, why: { PG: 'Ajustar el plan a tu ciclo lo hace sostenible.', MM: 'Tu ciclo también entrena: úsalo a tu favor.', MA: 'La pieza que casi todos los planes ignoran.' } },
-        sostener: { name: 'Empezar y sostener', all: 0, mujer: 5, why: { PG: 'El déficit no sirve si vuelves a abandonar.', MM: 'La constancia también se entrena.', MA: 'Para dejar de empezar de cero cada mes.' } }
+      // ── Orden interno de la ruta por objetivo; no expone conteos ni lenguaje de curso. ──
+      var RUTA_DISPONIBILIDAD = {
+        comer:    { all: true, mujer: true },
+        entrenar: { all: true, mujer: true },
+        grasa:    { all: true, mujer: true },
+        musculo:  { all: true, mujer: true },
+        hormonas: { all: false, mujer: true },
+        sostener: { all: false, mujer: true }
       };
       var RUTAS = {
         PG: ['comer', 'sostener', 'grasa', 'entrenar', 'musculo', 'hormonas'],
@@ -1216,8 +1402,7 @@
 
       function rutaPara(objetivo, sexo) {
         return RUTAS[objetivo].filter(function (id) {
-          var n = sexo === 'Mujer' ? BLOQUE_INFO[id].mujer : BLOQUE_INFO[id].all;
-          return n > 0;
+          return sexo === 'Mujer' ? RUTA_DISPONIBILIDAD[id].mujer : RUTA_DISPONIBILIDAD[id].all;
         });
       }
 
@@ -1229,7 +1414,8 @@
         var plan = {
           sexo: datos.sexo,
           objetivo: datos.objetivo,
-          situacion: datos.situacion,
+          senal: datos.senal,
+          situacion: datos.senal,
           kcal: r.kcal,
           proteinas: r.proteinas,
           carbohidratos: r.carbohidratos,
@@ -1258,66 +1444,55 @@
           carbohidratos: plan.carbohidratos,
           grasas: plan.grasas,
           actividad: plan.actividad,
-          situacion: plan.situacion,
           edad: plan.edad,
           peso: plan.peso,
           grasa: plan.grasa
         });
 
-        renderResultado(r, ruta);
+        renderResultado(r);
       }
 
-      function renderResultado(r, ruta) {
-        document.getElementById('ficha').classList.add('is-result');
-        document.getElementById('progress').style.visibility = 'hidden';
-        document.getElementById('headline').innerHTML =
-          'Este es <span class="mk is-in">tu plan</span>' +
-          (nombre ? ', ' + nombre.split(' ')[0] : '') + '.';
+      function renderResultado(r) {
+        var ficha = document.getElementById('ficha');
+        ficha.classList.remove('is-signal');
+        ficha.classList.add('is-result');
+        ficha.setAttribute('data-tab', 'EXPEDIENTE PRIVADO' + (firstName() ? ' · ' + firstName().toUpperCase() : ''));
+        document.getElementById('file-status').textContent = 'Lectura inicial';
+        document.getElementById('progress').hidden = true;
+        document.getElementById('hero-eyebrow').textContent = 'Punto de partida · listo';
+        document.getElementById('headline').textContent =
+          'Ya no estás empezando a ciegas' + (firstName() ? ', ' + firstName() : '') + '.';
         document.querySelector('.head .dek').textContent =
-          'Tus números y tu ruta, como los anotaría tu coach. Guardados en tu expediente.';
-
-        document.getElementById('res-obj-inline').textContent = OBJ_LABEL[datos.objetivo];
-        document.getElementById('res-obj').innerHTML =
-          '<strong>' + (datos.sexo === 'Mujer' ? 'Mujer' : 'Hombre') + ' · ' + datos.edad + ' años · ' +
-          datos.peso + ' kg · ' + datos.grasa + '% grasa</strong> — gasto estimado ' +
-          r.tdee.toLocaleString('es') + ' kcal, ajustado a tu objetivo.';
+          'Estos números son una referencia inicial para ordenar alimentación y entrenamiento. No son una dieta cerrada ni una evaluación clínica.';
 
         var macros = [
-          { name: 'Proteínas', sub: 'El material de construcción', val: r.proteinas },
-          { name: 'Carbohidratos', sub: 'La energía para entrenar', val: r.carbohidratos },
-          { name: 'Grasas', sub: 'Tus hormonas funcionando', val: r.grasas }
+          { name: 'Proteína', val: r.proteinas },
+          { name: 'Carbohidratos', val: r.carbohidratos },
+          { name: 'Grasas', val: r.grasas }
         ];
         var macrosEl = document.getElementById('macros');
         macrosEl.innerHTML = '';
         macros.forEach(function (m) {
           var row = document.createElement('div');
-          row.className = 'macro-row';
-          row.innerHTML =
-            '<div><p class="macro-name">' + m.name + '</p><p class="macro-sub">' + m.sub + '</p></div>' +
-            '<p class="macro-val">' + m.val + '<small>G / DÍA</small></p>';
+          var term = document.createElement('dt');
+          var value = document.createElement('dd');
+          var unit = document.createElement('small');
+          term.textContent = m.name;
+          value.textContent = m.val + ' ';
+          unit.textContent = 'g';
+          value.appendChild(unit);
+          row.appendChild(term);
+          row.appendChild(value);
           macrosEl.appendChild(row);
         });
 
-        var rutaEl = document.getElementById('ruta');
-        rutaEl.innerHTML = '';
-        var totalSesiones = 0;
-        ruta.forEach(function (id, i) {
-          var b = BLOQUE_INFO[id];
-          var n = datos.sexo === 'Mujer' ? b.mujer : b.all;
-          totalSesiones += n;
-          var item = document.createElement('div');
-          item.className = 'ruta-item' + (i === 0 ? ' primero' : '');
-          item.innerHTML =
-            '<div class="ruta-info">' +
-              '<p class="ruta-name">' + b.name + (i === 0 ? ' — empieza aquí' : '') + '</p>' +
-              '<p class="ruta-why">' + b.why[datos.objetivo] + '</p>' +
-            '</div>' +
-            '<span class="ruta-count">' + n + (n === 1 ? ' sesión' : ' sesiones') + '</span>';
-          rutaEl.appendChild(item);
-        });
-        document.getElementById('ruta-n').textContent = totalSesiones + ' sesiones';
+        var signalInfo = SENAL_INFO[datos.senal];
+        document.getElementById('signal-label').textContent = '“' + signalInfo.label + '”';
+        document.getElementById('signal-guidance').textContent = signalInfo.guidance;
+        document.getElementById('signal-priority').textContent = signalInfo.priority;
+        document.getElementById('medical-disclaimer').hidden = false;
 
-        // CTA de vuelta a las sesiones, arrastrando identidad + atribución completa
+        // CTA a la ruta privada: conserva identidad y atribución, nunca la señal elegida.
         var base = new URL('/biblioteca/videos/', window.location.origin);
         var p = new URLSearchParams();
         if (lead.nombre) p.set('nombre', lead.nombre);
@@ -1330,7 +1505,6 @@
 
         Object.keys(steps).forEach(function (k) { steps[k].classList.remove('active'); });
         steps.resultado.classList.add('active');
-        document.getElementById('stamp').classList.add('stamp-in');
 
         // El número se "escribe": count-up respetando reduced motion
         var kcalEl = document.getElementById('kcal-num');

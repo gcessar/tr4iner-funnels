@@ -1218,6 +1218,35 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 
 ---
 
+## 2026-07-28 — Recorrido GENESIS completo y señal principal privada
+
+### Qué cambió
+- `/biblioteca/inicio/`, `/biblioteca/confirma/`, `/biblioteca/plan/` y `/biblioteca/videos/` adoptan la propuesta editorial aprobada: expediente privado, punto de partida y orientaciones, sin presentarse como curso ni exhibir cantidades de módulos o lecciones.
+- El test conserva objetivo, edad, altura, peso, porcentaje de grasa y actividad, pero reemplaza el multiselect anterior por una sola pregunta obligatoria: la señal que más preocupa hoy.
+- El resultado mantiene el cálculo de calorías y macronutrientes, contextualiza el primer foco sin diagnosticar y muestra el descargo educativo/médico.
+- La ruta privada prioriza la siguiente orientación, resume señal/base/foco, conserva catálogo CMS, YouTube público, progreso y la bisagra a Flor o Dashiel.
+- Los títulos visibles del catálogo embebido y del CMS reciben una capa editorial que elimina promesas agresivas o estéticas sin cambiar IDs, videos ni administración.
+- `/biblioteca/verificar/` conserva cualquier `utm_*` y los identificadores de atribución conocidos al recuperar o continuar el acceso; nunca reenvía el token mágico.
+- `attribution.js` reconoce también `fbc`, `fbp`, `ttclid`, `msclkid`, `wbraid`, `gbraid` y `ctwa_clid`, para que el test, la ruta y los casos de estudio no pierdan identificadores al avanzar.
+
+### Privacidad y compatibilidad
+- La señal viaja únicamente en el `POST /api/genesis/plan` privado como `senal` y `situacion` string compatible.
+- La señal no se añade a URL, UTMs, `dataLayer`, Meta ni `TR4Track`; el CTA posterior conserva identidad funcional y atribución, no la respuesta sensible.
+- Se mantienen sesión HttpOnly, acceso mágico, `?video=`, rutas por sexo, progreso, anuncios y scoring en sombra.
+
+### SEO / GEO
+- Todas las rutas operativas mantienen `noindex, nofollow` y canonical bajo `https://metodo.tr4iner.com`.
+- El contenido identifica a GENESIS como orientación educativa en nutrición y entrenamiento y evita promesas de diagnóstico, tratamiento o curación.
+
+### Verificación
+- Scripts inline compilados y `git diff --check` sin errores.
+- Test completo validado en 375, 768 y 1280 px: cálculo, POST privado, evento sin señal, CTA sin señal, cero overflow y disclaimer visible.
+- Ruta privada validada con sesión, plan, catálogo y progreso simulados: señal visible solo dentro del expediente, títulos editoriales, CTA Flor con UTMs y cero errores JavaScript.
+- Recorrido de navegador repetido en 375, 768 y 1280 px: enlaces legales reales, `EMPIEZA AQUÍ` estable, `1.760 kcal` con formato editorial y atribución ampliada preservada sin filtrar la señal.
+- Pendiente en esta entrada: Preview, promoción a `main` y verificación pública de Producción.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

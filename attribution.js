@@ -9,7 +9,8 @@
   var UTM_KEYS = [
     'utm_source', 'utm_medium', 'utm_campaign',
     'utm_term', 'utm_content', 'utm_id',
-    'fbclid', 'gclid', 'fbc_id', 'h_ad_id'
+    'fbclid', 'gclid', 'fbc', 'fbp', 'fbc_id', 'h_ad_id',
+    'ttclid', 'msclkid', 'wbraid', 'gbraid', 'ctwa_clid'
   ];
 
   function isAttributionKey(key) {
