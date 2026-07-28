@@ -1212,7 +1212,9 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 - La URL protegida se validó con acceso temporal: copy, rutas Mujer/Hombre, portadas, formulario y UTMs corresponden al commit.
 - Bunny quedó autorizado para `metodo.tr4iner.com`: los siete embeds de la librería `658343` respondieron `200` con Referer de Producción.
 - El alias estable de Preview todavía responde `403`; queda como pendiente de la whitelist de Bunny, pero no bloquea Producción porque el dominio público ya está validado.
-- Producción quedó habilitada para integrar el mismo commit aprobado en `main`.
+- Producción `dpl_4QFjtLA7RvFwwypMVs491mnNvAsE`, commit `0162502`, target `production`, estado `READY`, build sin errores y alias `https://metodo.tr4iner.com`.
+- Verificación pública con Chrome: Mayra en Mujer y Carlos en Hombre, seis historias secundarias por ruta, cero overflow, UTMs preservadas, iframe eliminado al cerrar y respuesta Bunny `200` en ambos reproductores. No se enviaron formularios ni correos.
+- No hubo errores de página. El único recurso ausente observado fue el `favicon.ico` histórico (`404`), fuera del alcance de este cambio y sin impacto en el recorrido.
 
 ---
 
