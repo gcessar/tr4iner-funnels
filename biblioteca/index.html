@@ -16,12 +16,12 @@
   <meta name="theme-color" content="#F4EFE6" />
   <meta name="robots" content="noindex, nofollow" />
   <title>GENESIS · TR4INER</title>
-  <meta name="description" content="Reserva gratis tu plaza en GENESIS y recibe una ruta de alimentación y entrenamiento adaptada a tu objetivo." />
+  <meta name="description" content="Abre gratis una ruta privada para ordenar tu alimentación, entrenamiento y próximos pasos según tu realidad." />
   <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="preconnect" href="https://player.mediadelivery.net" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
@@ -32,753 +32,1534 @@
       --ink: #16130E;
       --ink-soft: #46402F;
       --muted: #7C7461;
-      --rule: rgba(22, 19, 14, 0.14);
-      --rule-strong: rgba(22, 19, 14, 0.32);
       --mark: #F5C518;
       --mark-soft: rgba(245, 197, 24, 0.32);
+      --rule: rgba(22, 19, 14, 0.14);
+      --rule-strong: rgba(22, 19, 14, 0.32);
       --error: #A83A22;
-      --max: 1080px;
-      --gutter: clamp(18px, 4vw, 32px);
-      --serif: "Fraunces", Georgia, serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
+      --display: "Fraunces", Georgia, serif;
+      --body: "Instrument Sans", -apple-system, sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-
-    body {
-      min-height: 100dvh;
+    html {
       background: var(--paper);
       color: var(--ink);
-      font-family: var(--sans);
+      font-family: var(--body);
       font-size: 17px;
       line-height: 1.55;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    html.dialog-open {
+      overflow: hidden;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100dvh;
+      margin: 0;
+      overflow-x: hidden;
+      background-color: var(--paper);
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 31px,
+          rgba(22, 19, 14, 0.035) 32px
+        );
+      color: var(--ink);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
     }
 
-    /* Grano de papel, igual que el resto del funnel */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 90;
-      pointer-events: none;
-      opacity: 0.035;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-size: 240px 240px;
+    button,
+    input,
+    select {
+      font: inherit;
     }
 
-    a, button, select, input, label { touch-action: manipulation; }
-    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
-      outline: 2px solid var(--ink);
+    a,
+    button,
+    input,
+    select,
+    label {
+      -webkit-tap-highlight-color: rgba(245, 197, 24, 0.28);
+      touch-action: manipulation;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    label:has(input:focus-visible) {
+      outline: 3px solid var(--mark);
       outline-offset: 3px;
-      border-radius: 4px;
     }
 
-    .page {
-      width: min(100%, var(--max));
+    [hidden] {
+      display: none !important;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 20;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 13px;
+      text-decoration: none;
+      transform: translateY(-160%);
+    }
+
+    .skip-link:focus-visible {
+      transform: translateY(0);
+    }
+
+    .page-frame {
+      width: min(100% - 64px, 1180px);
       margin: 0 auto;
-      padding: calc(30px + env(safe-area-inset-top)) var(--gutter) calc(60px + env(safe-area-inset-bottom));
-      position: relative;
     }
 
-    /* Hoja de programación: líneas de cuaderno detrás del hero */
-    .hero {
-      position: relative;
-      padding: 14px 0 40px;
-      text-align: center;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: -30px;
-      bottom: 0;
-      left: calc(50% - 50vw);
-      right: calc(50% - 50vw);
-      z-index: -2;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 43px,
-        rgba(22, 19, 14, 0.055) 43px,
-        rgba(22, 19, 14, 0.055) 44px
-      );
-      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
-              mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
-    }
-
-    .eyebrow {
+    .site-header {
+      height: 82px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 14px;
-      margin-bottom: 22px;
-      color: var(--muted);
+      justify-content: space-between;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+
+    .brand,
+    .header-status,
+    .section-code,
+    .eyebrow,
+    .file-tab,
+    .professional-line span,
+    .testimonial-row__copy small,
+    .testimonial-row__action,
+    .testimonial-dialog__status {
       font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.2em;
+      font-weight: 600;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
     }
-    .eyebrow::before, .eyebrow::after {
-      content: "";
-      width: clamp(20px, 8vw, 52px);
-      height: 1px;
-      background: var(--rule-strong);
+
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-decoration: none;
+    }
+
+    .brand span {
+      color: var(--muted);
+    }
+
+    .header-status,
+    .eyebrow,
+    .section-code {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .view {
+      padding: 84px 0 100px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--display);
+      font-weight: 560;
+      font-variation-settings: "opsz" 100;
+      letter-spacing: -0.035em;
     }
 
     h1 {
-      max-width: 820px;
-      margin: 0 auto 18px;
-      font-family: var(--serif);
-      font-size: clamp(34px, 6.4vw, 62px);
-      font-weight: 560;
-      font-variation-settings: "opsz" 100;
-      letter-spacing: -0.03em;
-      line-height: 1.06;
+      margin-bottom: 26px;
+      font-size: clamp(52px, 6.4vw, 78px);
+      line-height: 1.01;
       text-wrap: balance;
     }
-    h1 em {
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: clamp(34px, 4vw, 48px);
+      line-height: 1.08;
+      text-wrap: balance;
+    }
+
+    h1 em,
+    h2 em {
       font-style: italic;
       font-weight: 500;
     }
 
-    /* La firma: plumón amarillo del coach */
-    .mk {
-      position: relative;
-      z-index: 0;
-      white-space: nowrap;
+    .eyebrow {
+      margin-bottom: 18px;
     }
-    .mk::before {
-      content: "";
-      position: absolute;
-      left: -0.14em;
-      right: -0.1em;
-      top: 50%;
-      bottom: -4%;
-      z-index: -1;
-      background: var(--mark);
-      border-radius: 3px 7px 2px 6px;
-      transform: rotate(-0.7deg) scaleX(0);
-      transform-origin: left center;
-      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s;
-    }
-    .is-in .mk::before, .mk.is-in::before { transform: rotate(-0.7deg) scaleX(1); }
 
-    .dek {
-      max-width: 620px;
-      margin: 0 auto 20px;
+    .lede {
+      max-width: 760px;
+      margin-bottom: 0;
       color: var(--ink-soft);
-      font-size: clamp(16px, 2.1vw, 18.5px);
+      font-size: 19px;
       line-height: 1.55;
-      text-wrap: pretty;
     }
-    .dek strong { color: var(--ink); font-weight: 600; }
 
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 8px 22px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .section-code {
+      margin-bottom: 13px;
     }
-    .hero-meta span { display: flex; align-items: center; gap: 8px; }
-    .hero-meta svg { width: 13px; height: 13px; flex: none; }
 
-    /* ── Cuerpo: índice de bloques + ficha de registro ── */
-    .body-grid {
+    .registration-hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-      gap: clamp(24px, 4vw, 48px);
-      align-items: start;
-      margin-top: 8px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.55fr);
+      align-items: end;
+      gap: 70px;
+      margin-bottom: 70px;
     }
 
-    .catalog {
+    .registration-hero h1 {
+      max-width: 850px;
+    }
+
+    .definition-note {
       position: relative;
-    }
-    .catalog-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--rule-strong);
-    }
-    .catalog-head h2 {
-      font-family: var(--serif);
-      font-size: clamp(21px, 2.6vw, 26px);
-      font-weight: 560;
-      letter-spacing: -0.02em;
-    }
-    .catalog-head .count {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      white-space: nowrap;
+      padding: 20px 0 5px 28px;
+      border-left: 4px solid var(--mark);
     }
 
-    .bloque {
-      display: grid;
-      grid-template-columns: 44px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding: 16px 2px;
-      border-bottom: 1px solid var(--rule);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: calc(var(--i, 0) * 90ms);
+    .definition-note::before {
+      position: absolute;
+      top: 0;
+      left: -4px;
+      width: 4px;
+      height: 34%;
+      background: var(--ink);
+      content: "";
     }
-    .bloque.is-in { opacity: 1; transform: none; }
 
-    .bloque-num {
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: var(--ink);
-      border: 1px solid var(--rule-strong);
-      border-radius: 6px;
-      padding: 7px 0;
-      text-align: center;
-      background: var(--card);
-    }
-    .bloque-info { min-width: 0; }
-    .bloque-name {
-      font-weight: 600;
-      font-size: 16px;
-      letter-spacing: -0.01em;
-      line-height: 1.25;
-    }
-    .bloque-sub {
-      margin-top: 2px;
+    .definition-note > span {
+      display: block;
+      margin-bottom: 10px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.16em;
     }
-    .bloque-thumbs {
-      display: flex;
-      align-items: center;
-    }
-    .bloque-thumbs img {
-      width: 58px;
-      height: 34px;
-      object-fit: cover;
-      border-radius: 5px;
-      border: 2px solid var(--paper);
-      filter: grayscale(0.85) sepia(0.14) contrast(0.94);
-      box-shadow: 0 1px 4px rgba(22, 19, 14, 0.18);
-    }
-    .bloque-thumbs img + img { margin-left: -22px; }
 
-    .catalog-lock {
-      display: flex;
+    .definition-note p {
+      margin-bottom: 0;
+      font-family: var(--display);
+      font-size: 20px;
+      line-height: 1.38;
+    }
+
+    .registration-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(390px, 0.88fr);
+      align-items: start;
+      gap: 72px;
+    }
+
+    .argument-column {
+      min-width: 0;
+    }
+
+    .awareness-copy {
+      padding-bottom: 46px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+
+    .awareness-copy h2 {
+      max-width: 620px;
+      margin-bottom: 24px;
+    }
+
+    .awareness-copy > p:not(.section-code):not(.marked-sentence) {
+      max-width: 680px;
+      color: var(--ink-soft);
+    }
+
+    .marked-sentence {
+      margin: 30px 0 0;
+      font-family: var(--display);
+      font-size: 24px;
+      font-style: italic;
+    }
+
+    .marked-sentence span {
+      background-image: linear-gradient(transparent 58%, var(--mark) 58%, var(--mark) 90%, transparent 90%);
+    }
+
+    .value-list {
+      padding: 18px 0 44px;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+
+    .value-list > div {
+      display: grid;
+      grid-template-columns: 40px 0.7fr 1fr;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .value-list > div:last-child {
+      border-bottom: 0;
+    }
+
+    .value-list > div > span {
+      padding-top: 4px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    .value-list h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .value-list p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+
+    .proof-story {
+      display: grid;
+      grid-template-columns: 184px 1fr;
+      align-items: center;
+      gap: 32px;
+      padding: 48px 0 0;
+    }
+
+    .proof-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--rule-strong);
+      background: var(--paper-deep);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .proof-media::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10, 8, 4, 0.58), transparent 44%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .proof-media img,
+    .testimonial-row > img,
+    .testimonial-dialog__player > img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .proof-media img,
+    .testimonial-row > img {
+      transition: transform 180ms ease;
+    }
+
+    .proof-media:hover img,
+    .testimonial-row:hover > img {
+      transform: scale(1.025);
+    }
+
+    .proof-media__play,
+    .testimonial-dialog__play {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      padding-left: 3px;
+      background: var(--mark);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+      font-size: 15px;
+      transform: translate(-50%, -50%);
+    }
+
+    .proof-media__duration {
+      position: absolute;
+      z-index: 2;
+      right: 12px;
+      bottom: 11px;
+      color: var(--card);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .proof-copy h2 {
+      margin-bottom: 10px;
+      font-size: 31px;
+    }
+
+    .proof-copy > p:not(.section-code) {
+      margin-bottom: 14px;
+      font-family: var(--display);
+      font-size: 19px;
+      line-height: 1.42;
+    }
+
+    .proof-watch {
+      display: inline-flex;
       align-items: center;
       gap: 10px;
-      margin-top: 16px;
-      color: var(--ink-soft);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-    .catalog-lock svg { width: 14px; height: 14px; flex: none; }
-
-    /* Ficha de registro */
-    .ficha {
-      position: relative;
-      background: var(--card);
-      border: 1px solid var(--rule-strong);
-      border-radius: 14px;
-      padding: clamp(22px, 3.4vw, 34px);
-      box-shadow: 0 1px 2px rgba(22, 19, 14, 0.05), 0 14px 40px -18px rgba(22, 19, 14, 0.22);
-    }
-    .ficha::before {
-      content: "FICHA DE INSCRIPCIÓN · 00";
-      position: absolute;
-      top: -9px;
-      left: 24px;
-      padding: 2px 10px;
-      background: var(--ink);
-      color: var(--paper);
-      border-radius: 4px;
-      font-family: var(--mono);
-      font-size: 9.5px;
-      font-weight: 500;
-      letter-spacing: 0.18em;
+      margin: 4px 0 16px;
+      padding: 0 0 5px;
+      border: 0;
+      border-bottom: 1px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .ficha h2 {
-      font-family: var(--serif);
-      font-size: clamp(22px, 3vw, 28px);
-      font-weight: 560;
-      letter-spacing: -0.02em;
-      line-height: 1.12;
-      margin-bottom: 6px;
+    .proof-watch i {
+      font-style: normal;
     }
-    .ficha-dek {
+
+    .proof-watch:hover {
+      border-bottom-color: transparent;
+    }
+
+    .results-note {
+      display: block;
       color: var(--muted);
-      font-size: 15px;
-      margin-bottom: 22px;
+      font-size: 12px;
+      line-height: 1.45;
     }
+
+    .file-sheet {
+      position: relative;
+      border: 1px solid var(--rule-strong);
+      background: var(--card);
+      box-shadow: 7px 7px 0 var(--paper-deep), 0 24px 60px -42px rgba(22, 19, 14, 0.5);
+    }
+
+    .file-tab {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 18px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 8.5px;
+    }
+
+    .file-tab b {
+      color: var(--mark);
+      font-weight: 600;
+    }
+
+    .form-sheet > :not(.file-tab) {
+      margin-right: 36px;
+      margin-left: 36px;
+    }
+
     .profile-switch {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      margin-bottom: 14px;
+      margin-top: 24px;
+      margin-bottom: 32px;
       color: var(--muted);
-      font-family: var(--mono);
-      font-size: 9.5px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-decoration: none;
-      text-transform: uppercase;
+      font-size: 13px;
+      text-underline-offset: 3px;
     }
-    .profile-switch:hover { color: var(--ink); }
-    .profile-switch svg { width: 12px; height: 12px; }
-    #f-sexo[hidden], [data-profile-only][hidden] { display: none !important; }
 
-    .field { margin-bottom: 16px; }
+    .profile-switch svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .profile-switch:hover {
+      color: var(--ink);
+    }
+
+    .form-sheet h2 {
+      margin-bottom: 12px;
+      font-size: 37px;
+    }
+
+    .form-sheet > p:not(.section-code):not(.form-legal) {
+      color: var(--ink-soft);
+    }
+
+    .lead-form {
+      margin-top: 30px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
     .field > label {
       display: block;
-      margin-bottom: 6px;
-      font-size: 13.5px;
+      margin-bottom: 7px;
+      font-family: var(--mono);
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
-    .field > label .opt { color: var(--muted); font-weight: 400; }
 
     .control {
       width: 100%;
-      padding: 13px 14px;
-      background: #FFFFFF;
+      height: 54px;
+      padding: 0 15px;
       border: 1px solid var(--rule-strong);
       border-radius: 9px;
+      background: #FFFFFF;
       color: var(--ink);
-      font-family: var(--sans);
-      font-size: 16px;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease;
       appearance: none;
     }
-    .control::placeholder { color: #A79E8C; }
+
     .control:focus {
-      outline: none;
       border-color: var(--ink);
+      outline: none;
       box-shadow: 0 0 0 3px var(--mark-soft);
     }
-    .field.has-error .control { border-color: var(--error); }
 
-    .phone-row { display: flex; gap: 8px; }
+    .control::placeholder {
+      color: #8D8573;
+    }
+
+    .field.has-error .control {
+      border-color: var(--error);
+    }
+
+    .phone-row {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+    }
+
     .phone-row select.control {
-      flex: 0 0 108px;
       padding-right: 26px;
+      border-radius: 9px 0 0 9px;
+      background-color: var(--paper-deep);
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%2316130E' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
       background-repeat: no-repeat;
       background-position: right 10px center;
       cursor: pointer;
+      font-size: 14px;
       font-variant-numeric: tabular-nums;
     }
-    .phone-row input { flex: 1; min-width: 0; }
+
+    .phone-row input {
+      min-width: 0;
+      border-left: 0;
+      border-radius: 0 9px 9px 0;
+    }
 
     .err {
       display: none;
-      margin-top: 6px;
+      margin: 6px 0 0;
       color: var(--error);
       font-size: 13px;
       font-weight: 500;
     }
-    .field.has-error .err { display: block; }
 
-    /* Selector de sexo: dos fichas */
-    .sexo-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+    .field.has-error .err {
+      display: block;
     }
-    .sexo-card {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 13px 10px;
-      background: #FFFFFF;
-      border: 1px solid var(--rule-strong);
-      border-radius: 9px;
-      font-size: 15.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
-      user-select: none;
-    }
-    .sexo-card input {
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .sexo-card .tick {
-      width: 16px;
-      height: 16px;
-      flex: none;
-      border: 1.5px solid var(--rule-strong);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      transition: border-color 0.16s ease, background 0.16s ease;
-    }
-    .sexo-card .tick svg {
-      width: 9px; height: 9px;
-      stroke: var(--ink);
-      opacity: 0;
-      transition: opacity 0.16s ease;
-    }
-    .sexo-card:hover { border-color: var(--ink-soft); }
-    .sexo-card.selected {
-      border-color: var(--ink);
-      background: var(--card);
-      box-shadow: 0 0 0 3px var(--mark-soft);
-    }
-    .sexo-card.selected .tick { border-color: var(--ink); background: var(--mark); }
-    .sexo-card.selected .tick svg { opacity: 1; }
-    .sexo-card:has(input:focus-visible) {
-      outline: 2px solid var(--ink);
-      outline-offset: 3px;
-    }
-    .sexo-hint {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 12.5px;
+
+    #f-sexo[hidden] {
+      display: none !important;
     }
 
     .submit {
+      width: 100%;
+      min-height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      width: 100%;
-      margin-top: 20px;
-      padding: 16px 20px;
-      background: var(--ink);
-      color: var(--paper);
-      border: none;
+      margin-top: 8px;
+      padding: 14px 20px;
+      border: 1px solid var(--ink);
       border-radius: 10px;
-      font-family: var(--sans);
-      font-size: 16.5px;
-      font-weight: 600;
-      letter-spacing: 0.005em;
+      background: var(--ink);
+      color: var(--card);
       cursor: pointer;
-      transition: background 0.18s ease, transform 0.12s ease;
+      font-weight: 600;
+      transition: background 180ms ease, transform 120ms ease;
     }
-    .submit:hover { background: #2B2519; }
-    .submit:active { transform: scale(0.985); }
-    .submit svg { width: 16px; height: 16px; transition: transform 0.18s ease; }
-    .submit:hover svg { transform: translateX(3px); }
-    .submit[disabled] { opacity: 0.75; cursor: default; }
+
+    .submit:hover {
+      background: #2A251D;
+    }
+
+    .submit:active {
+      transform: scale(0.985);
+    }
+
+    .submit[disabled] {
+      cursor: default;
+      opacity: 0.75;
+    }
+
+    .submit svg {
+      width: 16px;
+      height: 16px;
+    }
+
     .submit .spinner {
+      width: 16px;
+      height: 16px;
       display: none;
-      width: 16px; height: 16px;
       border: 2px solid rgba(244, 239, 230, 0.35);
       border-top-color: var(--paper);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
-    .submit.loading .spinner { display: block; }
-    .submit.loading .arrow { display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .legal {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.5;
-      text-align: center;
+    .submit.loading .spinner {
+      display: block;
     }
-    .legal a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
 
-    footer {
-      margin-top: 64px;
+    .submit.loading .arrow {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .trust-row {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 10px;
+      margin-top: 24px;
       padding-top: 22px;
       border-top: 1px solid var(--rule);
+    }
+
+    .trust-mark {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .trust-row p,
+    .form-legal {
+      margin-bottom: 0;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .form-legal {
+      margin-top: 12px;
+    }
+
+    .form-legal a {
+      text-underline-offset: 2px;
+    }
+
+    .professional-line {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px 20px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      gap: 15px;
+      margin-top: 26px;
+      margin-bottom: 34px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--rule);
     }
-    footer .brand { color: var(--ink); font-weight: 600; }
-    footer nav { display: flex; gap: 18px; }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--ink); }
 
-    /* Reveal genérico */
-    .rv {
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: calc(var(--i, 0) * 90ms);
+    .professional-line span {
+      color: var(--muted);
+      font-size: 9px;
     }
-    .rv.is-in { opacity: 1; transform: none; }
+
+    .professional-line strong {
+      max-width: 190px;
+      font-size: 13px;
+      line-height: 1.35;
+      text-align: right;
+    }
+
+    .proof-catalog {
+      margin-top: 108px;
+      padding-top: 54px;
+      border-top: 1px solid var(--rule-strong);
+    }
+
+    .proof-catalog__intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+      align-items: end;
+      gap: 72px;
+      margin-bottom: 42px;
+    }
+
+    .proof-catalog__intro h2 {
+      max-width: 790px;
+      margin-bottom: 0;
+    }
+
+    .proof-catalog__intro > p {
+      margin: 0 0 5px;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+
+    .proof-catalog__list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 44px;
+      border-top: 1px solid var(--rule-strong);
+    }
+
+    .testimonial-row {
+      min-width: 0;
+      min-height: 156px;
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr) 50px;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 0;
+      border: 0;
+      border-bottom: 1px solid var(--rule-strong);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .testimonial-row > img {
+      width: 76px;
+      height: 118px;
+      border: 1px solid var(--rule);
+    }
+
+    .testimonial-row[data-testimonial="victoria"] > img {
+      object-position: center 12%;
+    }
+
+    .testimonial-row__copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .testimonial-row__copy small {
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .testimonial-row__copy strong {
+      margin-bottom: 6px;
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 560;
+      line-height: 1.12;
+    }
+
+    .testimonial-row__copy > span {
+      color: var(--ink-soft);
+      font-size: 12.5px;
+      line-height: 1.42;
+    }
+
+    .testimonial-row__action {
+      display: flex;
+      align-items: flex-end;
+      align-self: stretch;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .testimonial-row__action b {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .testimonial-row__action i {
+      padding-bottom: 2px;
+      border-bottom: 1px solid var(--ink);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .proof-catalog__note {
+      max-width: 770px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .site-footer {
+      min-height: 88px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+      border-top: 1px solid var(--rule-strong);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .site-footer > span {
+      color: var(--ink);
+      font-family: var(--mono);
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+
+    .site-footer p {
+      margin: 0;
+    }
+
+    .site-footer nav {
+      display: flex;
+      gap: 18px;
+    }
+
+    .testimonial-dialog {
+      width: min(calc(100% - 40px), 780px);
+      max-height: min(94dvh, 760px);
+      padding: 0;
+      overflow: auto;
+      overscroll-behavior: contain;
+      border: 1px solid rgba(255, 253, 246, 0.34);
+      background: var(--ink);
+      color: var(--card);
+      box-shadow: 0 34px 110px rgba(0, 0, 0, 0.56);
+    }
+
+    .testimonial-dialog::backdrop {
+      background: rgba(16, 13, 8, 0.76);
+    }
+
+    .testimonial-dialog__panel {
+      position: relative;
+      min-height: 640px;
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) 1fr;
+    }
+
+    .testimonial-dialog__close {
+      position: absolute;
+      z-index: 5;
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 1px solid rgba(255, 253, 246, 0.48);
+      background: rgba(22, 19, 14, 0.82);
+      color: var(--card);
+      cursor: pointer;
+      font-size: 27px;
+      line-height: 1;
+    }
+
+    .testimonial-dialog__close:hover {
+      background: var(--mark);
+      color: var(--ink);
+    }
+
+    .testimonial-dialog__player {
+      position: relative;
+      min-height: 0;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      background: #080705;
+    }
+
+    .testimonial-dialog__player::after {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 38%);
+      content: "";
+      pointer-events: none;
+    }
+
+    .testimonial-dialog__player iframe {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .testimonial-dialog__play {
+      z-index: 2;
+      width: 58px;
+      height: 58px;
+      color: var(--ink);
+    }
+
+    .testimonial-dialog__status {
+      position: absolute;
+      z-index: 2;
+      bottom: 20px;
+      left: 20px;
+      color: var(--card);
+      font-size: 8px;
+    }
+
+    .testimonial-dialog__caption {
+      align-self: end;
+      padding: 42px 34px 38px;
+    }
+
+    .testimonial-dialog__caption .section-code {
+      color: #BCB19D;
+    }
+
+    .testimonial-dialog__caption h2 {
+      margin-bottom: 14px;
+      color: var(--card);
+      font-size: 35px;
+    }
+
+    .testimonial-dialog__caption > p:not(.section-code) {
+      color: #DED6C9;
+      font-family: var(--display);
+      font-size: 18px;
+      line-height: 1.48;
+    }
+
+    .testimonial-dialog__caption > small {
+      display: block;
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 253, 246, 0.2);
+      color: #A79D8A;
+      font-size: 10px;
+      line-height: 1.5;
+    }
 
     @media (max-width: 860px) {
-      .body-grid { grid-template-columns: 1fr; }
-      .catalog { order: 2; }
-      .ficha { order: 1; }
-      .hero { padding-bottom: 30px; }
+      .page-frame {
+        width: min(100% - 40px, 690px);
+      }
+
+      .site-header {
+        height: 68px;
+      }
+
+      .view {
+        padding: 56px 0 72px;
+      }
+
+      h1 {
+        font-size: clamp(41px, 10vw, 56px);
+      }
+
+      .registration-hero,
+      .registration-grid,
+      .proof-catalog__intro {
+        grid-template-columns: 1fr;
+      }
+
+      .registration-hero {
+        gap: 36px;
+        margin-bottom: 52px;
+      }
+
+      .registration-grid {
+        gap: 54px;
+      }
+
+      .proof-catalog__intro {
+        gap: 16px;
+      }
+
+      .proof-catalog__intro > p {
+        max-width: 610px;
+      }
+
+      .value-list > div {
+        grid-template-columns: 32px 0.8fr 1fr;
+      }
     }
 
-    @media (max-width: 420px) {
-      .bloque { grid-template-columns: 38px minmax(0, 1fr); }
-      .bloque-thumbs { display: none; }
-      .phone-row select.control { flex-basis: 96px; }
+    @media (max-width: 560px) {
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        background-image:
+          repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 27px,
+            rgba(22, 19, 14, 0.033) 28px
+          );
+      }
+
+      .page-frame {
+        width: calc(100% - 36px);
+      }
+
+      .site-header {
+        height: 62px;
+      }
+
+      .brand,
+      .header-status {
+        font-size: 8.5px;
+      }
+
+      .brand {
+        letter-spacing: 0.12em;
+      }
+
+      .header-status {
+        letter-spacing: 0.09em;
+      }
+
+      .view {
+        padding: 48px 0 60px;
+      }
+
+      h1 {
+        margin-bottom: 22px;
+        font-size: 41px;
+        line-height: 1.04;
+      }
+
+      h2 {
+        font-size: 31px;
+      }
+
+      .lede {
+        font-size: 17px;
+      }
+
+      .eyebrow {
+        margin-bottom: 16px;
+        font-size: 9px;
+      }
+
+      .registration-hero {
+        margin-bottom: 46px;
+      }
+
+      .definition-note {
+        padding-left: 20px;
+      }
+
+      .definition-note p {
+        font-size: 18px;
+      }
+
+      .awareness-copy {
+        padding-bottom: 34px;
+      }
+
+      .awareness-copy h2 {
+        font-size: 31px;
+      }
+
+      .marked-sentence {
+        font-size: 21px;
+      }
+
+      .value-list {
+        padding-bottom: 32px;
+      }
+
+      .value-list > div {
+        grid-template-columns: 28px 1fr;
+        gap: 6px 10px;
+        padding: 20px 0;
+      }
+
+      .value-list h3 {
+        font-size: 20px;
+      }
+
+      .value-list p {
+        grid-column: 2;
+        font-size: 14px;
+      }
+
+      .proof-story {
+        grid-template-columns: 116px 1fr;
+        align-items: start;
+        gap: 18px;
+        padding-top: 36px;
+      }
+
+      .proof-media {
+        width: 116px;
+      }
+
+      .proof-media__play {
+        width: 42px;
+        height: 42px;
+        font-size: 12px;
+      }
+
+      .proof-copy h2 {
+        font-size: 25px;
+      }
+
+      .proof-copy > p:not(.section-code) {
+        font-size: 16px;
+      }
+
+      .results-note {
+        font-size: 10px;
+      }
+
+      .file-sheet {
+        box-shadow: 6px 6px 0 var(--paper-deep);
+      }
+
+      .file-tab {
+        min-height: 38px;
+        gap: 8px;
+        padding: 9px 12px;
+        font-size: 7.6px;
+        letter-spacing: 0.08em;
+      }
+
+      .form-sheet > :not(.file-tab) {
+        margin-right: 22px;
+        margin-left: 22px;
+      }
+
+      .form-sheet h2 {
+        font-size: 32px;
+      }
+
+      .phone-row {
+        grid-template-columns: 96px 1fr;
+      }
+
+      .professional-line {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .professional-line strong {
+        max-width: none;
+        text-align: left;
+      }
+
+      .proof-catalog {
+        margin-top: 76px;
+        padding-top: 40px;
+      }
+
+      .proof-catalog__intro {
+        margin-bottom: 30px;
+      }
+
+      .proof-catalog__intro h2 {
+        font-size: 31px;
+      }
+
+      .proof-catalog__intro > p {
+        font-size: 14px;
+      }
+
+      .proof-catalog__list {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .testimonial-row {
+        min-height: 140px;
+        grid-template-columns: 68px minmax(0, 1fr) 42px;
+        gap: 13px;
+        padding: 14px 0;
+      }
+
+      .testimonial-row > img {
+        width: 68px;
+        height: 108px;
+      }
+
+      .testimonial-row__copy small {
+        font-size: 7px;
+      }
+
+      .testimonial-row__copy strong {
+        font-size: 20px;
+      }
+
+      .testimonial-row__copy > span {
+        font-size: 11.5px;
+      }
+
+      .site-footer {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 18px 0;
+      }
+
+      .site-footer p {
+        grid-row: 2;
+        grid-column: 1 / -1;
+      }
+
+      .testimonial-dialog {
+        width: 100%;
+        max-width: none;
+        height: 100dvh;
+        max-height: 100dvh;
+        margin: 0;
+        border: 0;
+      }
+
+      .testimonial-dialog__panel {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .testimonial-dialog__player {
+        width: min(100%, 34.875dvh);
+        height: 62dvh;
+        min-height: 0;
+        flex: 0 0 62dvh;
+        margin: 0 auto;
+      }
+
+      .testimonial-dialog__caption {
+        width: 100%;
+        margin-top: 0;
+        padding: 26px 22px max(30px, env(safe-area-inset-bottom));
+      }
+
+      .testimonial-dialog__close {
+        top: max(12px, env(safe-area-inset-top));
+        right: max(12px, env(safe-area-inset-right));
+      }
+
+      .testimonial-dialog__caption h2 {
+        font-size: 29px;
+      }
+
+      .testimonial-dialog__caption > p:not(.section-code) {
+        margin-bottom: 12px;
+        font-size: 15px;
+      }
+
+      .testimonial-dialog__caption > small {
+        margin-top: 16px;
+        padding-top: 13px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .rv, .bloque { opacity: 1; transform: none; transition: none; }
-      .mk::before { transform: rotate(-0.7deg) scaleX(1); transition: none; }
-      .submit, .submit svg { transition: none; }
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
     }
   </style>
 </head>
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <div class="page">
 
-    <header class="hero" id="hero">
-      <p class="eyebrow" id="hero-eyebrow">TR4INER · GENESIS</p>
-      <h1 class="rv" id="hero-title" style="--i:0">
-        Pierde grasa y gana músculo <span class="mk">con un plan</span>, <em>no con el algoritmo.</em>
-      </h1>
-      <p class="dek rv" id="hero-dek" style="--i:1">
-        <strong>GENESIS</strong> es el método de Anthoni Montalván condensado en
-        <strong><span id="hero-block-count">6</span> bloques y <span id="hero-session-count">32</span> sesiones</strong>: qué comer, cómo entrenar y en qué orden hacerlo
-        <strong>según tu fisiología</strong>. Te inscribes gratis y tu coach te guía sesión a sesión.
-      </p>
-      <p class="hero-meta rv" style="--i:2">
-        <span>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 4.5h12v8H2z"/><path d="M6.8 7l3 1.5-3 1.5z" fill="currentColor" stroke="none"/></svg>
-          <span id="meta-session-count">32</span> sesiones
-        </span>
-        <span>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3h10M3 8h10M3 13h6"/></svg>
-          <span id="meta-block-count">6</span> bloques
-        </span>
-        <span>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5.2V8l2 1.4"/></svg>
-          Plaza gratis · empiezas hoy
-        </span>
-      </p>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <div class="page-frame">
+    <header class="site-header">
+      <a class="brand" href="/biblioteca/inicio/">TR4INER <span>· GENESIS</span></a>
+      <span class="header-status" id="header-status">RUTA PRIVADA</span>
     </header>
 
-    <main class="body-grid">
-
-      <section class="catalog" aria-label="Contenido del programa">
-        <div class="catalog-head rv" style="--i:0">
-          <h2>El plan de bloques</h2>
-          <span class="count" id="catalog-count">Semana 0 · 32 sesiones</span>
+    <main class="view" id="contenido">
+      <section class="registration-hero">
+        <div>
+          <p class="eyebrow" id="hero-eyebrow">GENESIS · RUTA PRIVADA</p>
+          <h1>No se trata solo de la grasa que ves. <em>También importa cómo te estás sintiendo.</em></h1>
+          <p class="lede">Si tienes menos energía, te cuesta moverte como antes o tu peso sigue aumentando, no necesitas otro consejo suelto. Necesitas un punto de partida claro.</p>
         </div>
-
-        <div class="bloque" style="--i:1">
-          <span class="bloque-num" aria-hidden="true">B1</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Cómo comer</p>
-            <p class="bloque-sub" id="eating-count">11 sesiones · dieta, ansiedad, ayuno, carbohidratos</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/fJ3q8QXFb0I/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/sY3z2CGhGLY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/bY6sAaBeGgk/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <div class="bloque" style="--i:2">
-          <span class="bloque-num" aria-hidden="true">B2</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Cómo entrenar</p>
-            <p class="bloque-sub" id="training-count">7 sesiones · según tu edad, tu tiempo y tu caso</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img id="training-thumb-1" src="https://i.ytimg.com/vi/RtWY67YnsAY/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img id="training-thumb-2" src="https://i.ytimg.com/vi/dECDDxJTz1M/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img id="training-thumb-3" src="https://i.ytimg.com/vi/sOZyt7RTDAU/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <div class="bloque" style="--i:3">
-          <span class="bloque-num" aria-hidden="true">B3</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Perder grasa</p>
-            <p class="bloque-sub" id="fat-count">5 sesiones · sin rebote y sin pasar hambre</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/SFvwRz-q6lw/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/brR2OZEfepQ/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/QgT3uXfUOm4/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <div class="bloque" style="--i:4">
-          <span class="bloque-num" aria-hidden="true">B4</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Ganar músculo</p>
-            <p class="bloque-sub">3 sesiones · fuerza y recomposición</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/ljgAlXZAQ1A/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/uRUchKIchJw/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/XT227ZlIreM/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <div class="bloque" id="female-block" data-profile-only="mujer" style="--i:5">
-          <span class="bloque-num" aria-hidden="true">B5</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Hormonas y ciclo</p>
-            <p class="bloque-sub">1 sesión · entrenar según tu ciclo menstrual</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/T66O90E8Bkg/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <div class="bloque" id="female-mindset-block" data-profile-only="mujer" style="--i:6">
-          <span class="bloque-num" aria-hidden="true">B6</span>
-          <div class="bloque-info">
-            <p class="bloque-name">Empezar y sostener</p>
-            <p class="bloque-sub">5 sesiones · constancia, confianza y dejar de abandonar</p>
-          </div>
-          <div class="bloque-thumbs" aria-hidden="true">
-            <img src="https://i.ytimg.com/vi/E8g2A30-FJU/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/v8_-EAFcVvg/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-            <img src="https://i.ytimg.com/vi/yn8fDkpbm2E/mqdefault.jpg" alt="" loading="lazy" width="58" height="34" />
-          </div>
-        </div>
-
-        <p class="catalog-lock rv" style="--i:7">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6.5" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2"/></svg>
-          Se desbloquea al inscribirte · gratis, sin tarjeta
-        </p>
+        <aside class="definition-note">
+          <span>DEFINICIÓN</span>
+          <p><strong>GENESIS</strong> es tu ruta privada para ordenar alimentación, entrenamiento y próximos pasos según tu realidad.</p>
+        </aside>
       </section>
 
-      <section class="ficha rv" id="registro" style="--i:2" aria-label="Formulario de inscripción">
-        <a class="profile-switch" id="profile-switch" href="/biblioteca/inicio/">
-          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8.5 2L4 6l4.5 4"/></svg>
-          <span id="profile-switch-label">Cambiar ruta</span>
-        </a>
-        <h2 id="form-title">Reserva tu plaza</h2>
-        <p class="ficha-dek" id="form-dek">La inscripción es gratis y tu programa se abre al instante.</p>
+      <div class="registration-grid">
+        <div class="argument-column">
+          <section class="awareness-copy">
+            <p class="section-code">LO QUE PUEDE ESTAR CAMBIANDO</p>
+            <h2>Hay señales que merecen atención, incluso antes de tocar fondo.</h2>
+            <p>Algunas personas llegan después de recibir un diagnóstico como resistencia a la insulina, prediabetes, hígado graso o colesterol alto. Otras llegan porque notan menos energía, menor movilidad o cambios sostenidos en su peso.</p>
+            <p>En ambos casos, el primer paso es entender el punto de partida y dejar de improvisar. GENESIS no diagnostica: organiza una base educativa de nutrición y entrenamiento.</p>
+            <p class="marked-sentence">Si esto ya afecta tu día a día, merece <span>un siguiente paso claro.</span></p>
+          </section>
 
-        <form id="lead-form" novalidate>
-          <!-- Honeypot anti-bots: si se llena, se descarta el envío -->
-          <input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off"
-                 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap"
-                 aria-hidden="true" />
-
-          <div class="field" id="f-nombre">
-            <label for="nombre">Nombre</label>
-            <input class="control" type="text" id="nombre" name="nombre"
-                   placeholder="Ej. Veronika…" autocomplete="given-name" data-name-placeholder />
-            <p class="err" id="err-nombre" aria-live="polite">Escribe tu nombre</p>
-          </div>
-
-          <div class="field" id="f-whatsapp">
-            <label for="whatsapp">WhatsApp</label>
-            <div class="phone-row">
-              <select class="control" id="prefijo" aria-label="Código de país">
-                <option value="+51" selected>+51 PE</option>
-                <option value="+34">+34 ES</option>
-                <option value="+52">+52 MX</option>
-                <option value="+57">+57 CO</option>
-                <option value="+54">+54 AR</option>
-                <option value="+56">+56 CL</option>
-                <option value="+593">+593 EC</option>
-                <option value="+591">+591 BO</option>
-                <option value="+58">+58 VE</option>
-                <option value="+598">+598 UY</option>
-                <option value="+595">+595 PY</option>
-                <option value="+507">+507 PA</option>
-                <option value="+506">+506 CR</option>
-                <option value="+502">+502 GT</option>
-                <option value="+1">+1 US</option>
-              </select>
-              <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="numeric"
-                     placeholder="Ej. 987 654 321…" autocomplete="tel-national" />
+          <section class="value-list" aria-label="Qué recibirás al abrir GENESIS">
+            <div>
+              <span>01</span>
+              <h3>Un punto de partida, por escrito</h3>
+              <p>Tus datos, tu objetivo y la señal que más te preocupa quedan reunidos en un mismo expediente.</p>
             </div>
-            <p class="err" id="err-whatsapp" aria-live="polite">Ingresa un número válido (solo dígitos)</p>
-          </div>
-
-          <div class="field" id="f-email">
-            <label for="email">Correo</label>
-            <input class="control" type="email" id="email" name="email"
-                   placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" />
-            <p class="err" id="err-email" aria-live="polite">Ingresa un correo válido</p>
-          </div>
-
-          <div class="field" id="f-sexo" hidden>
-            <label id="sexo-label">Sexo</label>
-            <div class="sexo-row" role="radiogroup" aria-labelledby="sexo-label">
-              <label class="sexo-card" for="sexo-mujer">
-                <input type="radio" name="sexo" value="Mujer" id="sexo-mujer" />
-                <span class="tick" aria-hidden="true"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1.5 5.5l2.3 2.3L8.5 2.5"/></svg></span>
-                Mujer
-              </label>
-              <label class="sexo-card" for="sexo-hombre">
-                <input type="radio" name="sexo" value="Hombre" id="sexo-hombre" />
-                <span class="tick" aria-hidden="true"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><path d="M1.5 5.5l2.3 2.3L8.5 2.5"/></svg></span>
-                Hombre
-              </label>
+            <div>
+              <span>02</span>
+              <h3>Una prioridad a la vez</h3>
+              <p>Verás qué revisar primero en alimentación y entrenamiento, sin saltar de consejo en consejo.</p>
             </div>
-            <p class="sexo-hint">Tu programa cambia según tu fisiología: no se entrena ni se come igual.</p>
-            <p class="err" id="err-sexo" aria-live="polite">Selecciona una opción para armar tu programa</p>
-          </div>
+            <div>
+              <span>03</span>
+              <h3>Una ruta que conserva tu avance</h3>
+              <p>Podrás retomar donde lo dejaste y volver a tus números cuando tu realidad cambie.</p>
+            </div>
+          </section>
 
-          <button class="submit" type="submit" id="submit-btn">
-            <span id="submit-label">Abrir mi GENESIS</span>
-            <span class="spinner" aria-hidden="true"></span>
-            <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+          <section class="proof-story" data-route-feature="mujer">
+            <button class="proof-media" type="button" data-video-id="420619a6-8b95-4438-8096-d6c2fe189f49" data-testimonial="mayra" data-name="Mayra Razo" data-duration="00:31" data-poster="/biblioteca/assets/testimonios/mayra-razo.jpg" data-summary="Entre el trabajo y cuatro hijos, el cansancio ya no era un detalle. Cuenta cómo una alerta en sus análisis la llevó a dejar de postergar el cambio." aria-label="Ver la historia de Mayra Razo">
+              <img src="/biblioteca/assets/testimonios/mayra-razo.jpg" alt="" width="1080" height="1920" loading="lazy" />
+              <span class="proof-media__play" aria-hidden="true">▶</span>
+              <span class="proof-media__duration">00:31</span>
+            </button>
+            <div class="proof-copy">
+              <p class="section-code">HISTORIA REAL · 31 SEGUNDOS</p>
+              <h2>Mayra Razo</h2>
+              <p>Entre el trabajo y cuatro hijos, el cansancio ya no era un detalle. Cuenta cómo una alerta en sus análisis la llevó a dejar de postergar el cambio.</p>
+              <button class="proof-watch" type="button" data-video-id="420619a6-8b95-4438-8096-d6c2fe189f49" data-testimonial="mayra" data-name="Mayra Razo" data-duration="00:31" data-poster="/biblioteca/assets/testimonios/mayra-razo.jpg" data-summary="Entre el trabajo y cuatro hijos, el cansancio ya no era un detalle. Cuenta cómo una alerta en sus análisis la llevó a dejar de postergar el cambio.">Escuchar a Mayra <i>→</i></button>
+              <small class="results-note">Experiencia personal. Cada resultado depende del punto de partida, el contexto y la constancia.</small>
+            </div>
+          </section>
+
+          <section class="proof-story" data-route-feature="hombre" hidden>
+            <button class="proof-media" type="button" data-video-id="71554740-2a7e-4bb6-9e92-3a1778871360" data-testimonial="carlos" data-name="Carlos Márquez" data-duration="00:58" data-poster="/biblioteca/assets/testimonios/carlos-marquez.jpg" data-summary="Cuenta por qué una alerta sobre azúcar y colesterol cambió su prioridad: recuperar energía para su hijo y para su trabajo." aria-label="Ver la historia de Carlos Márquez">
+              <img src="/biblioteca/assets/testimonios/carlos-marquez.jpg" alt="" width="1080" height="1920" loading="lazy" />
+              <span class="proof-media__play" aria-hidden="true">▶</span>
+              <span class="proof-media__duration">00:58</span>
+            </button>
+            <div class="proof-copy">
+              <p class="section-code">HISTORIA REAL · 58 SEGUNDOS</p>
+              <h2>Carlos Márquez</h2>
+              <p>Cuenta por qué una alerta sobre azúcar y colesterol cambió su prioridad: recuperar energía para su hijo y para su trabajo.</p>
+              <button class="proof-watch" type="button" data-video-id="71554740-2a7e-4bb6-9e92-3a1778871360" data-testimonial="carlos" data-name="Carlos Márquez" data-duration="00:58" data-poster="/biblioteca/assets/testimonios/carlos-marquez.jpg" data-summary="Cuenta por qué una alerta sobre azúcar y colesterol cambió su prioridad: recuperar energía para su hijo y para su trabajo.">Escuchar a Carlos <i>→</i></button>
+              <small class="results-note">Experiencia personal. Cada resultado depende del punto de partida, el contexto y la constancia.</small>
+            </div>
+          </section>
+        </div>
+
+        <section class="file-sheet form-sheet" id="registro" aria-label="Formulario de registro">
+          <div class="file-tab">
+            <span>EXPEDIENTE PRIVADO · GENESIS</span>
+            <b>ESTADO · POR ABRIR</b>
+          </div>
+          <a class="profile-switch" id="profile-switch" href="/biblioteca/inicio/">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M8.5 2L4 6l4.5 4"/></svg>
+            <span id="profile-switch-label">Cambiar ruta</span>
+          </a>
+          <p class="section-code">APERTURA DE ACCESO</p>
+          <h2 id="form-title">Abre tu ruta privada.</h2>
+          <p id="form-dek">Déjanos tus datos para crear tu acceso y guardar tu avance.</p>
+
+          <form class="lead-form" id="lead-form" novalidate>
+            <!-- Honeypot anti-bots: si se llena, se descarta el envío. -->
+            <input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off"
+                   style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap"
+                   aria-label="No completar este campo" aria-hidden="true" />
+
+            <div class="field" id="f-nombre">
+              <label for="nombre">Nombre</label>
+              <input class="control" type="text" id="nombre" name="nombre"
+                     placeholder="Ej. Veronika…" autocomplete="given-name" data-name-placeholder />
+              <p class="err" id="err-nombre" aria-live="polite">Escribe tu nombre</p>
+            </div>
+
+            <div class="field" id="f-whatsapp">
+              <label for="whatsapp">WhatsApp</label>
+              <div class="phone-row">
+                <select class="control" id="prefijo" aria-label="Código de país">
+                  <option value="+51" selected>+51 PE</option>
+                  <option value="+34">+34 ES</option>
+                  <option value="+52">+52 MX</option>
+                  <option value="+57">+57 CO</option>
+                  <option value="+54">+54 AR</option>
+                  <option value="+56">+56 CL</option>
+                  <option value="+593">+593 EC</option>
+                  <option value="+591">+591 BO</option>
+                  <option value="+58">+58 VE</option>
+                  <option value="+598">+598 UY</option>
+                  <option value="+595">+595 PY</option>
+                  <option value="+507">+507 PA</option>
+                  <option value="+506">+506 CR</option>
+                  <option value="+502">+502 GT</option>
+                  <option value="+1">+1 US</option>
+                </select>
+                <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="numeric"
+                       placeholder="Ej. 987 654 321…" autocomplete="tel-national" />
+              </div>
+              <p class="err" id="err-whatsapp" aria-live="polite">Ingresa un número válido (solo dígitos)</p>
+            </div>
+
+            <div class="field" id="f-email">
+              <label for="email">Correo</label>
+              <input class="control" type="email" id="email" name="email"
+                     placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" />
+              <p class="err" id="err-email" aria-live="polite">Ingresa un correo válido</p>
+            </div>
+
+            <div class="field" id="f-sexo" hidden>
+              <input type="radio" name="sexo" value="Mujer" id="sexo-mujer" />
+              <input type="radio" name="sexo" value="Hombre" id="sexo-hombre" />
+              <p class="err" id="err-sexo" aria-live="polite">Selecciona una ruta</p>
+            </div>
+
+            <button class="submit" type="submit" id="submit-btn">
+              <span id="submit-label">Crear mi acceso a GENESIS</span>
+              <span class="spinner" aria-hidden="true"></span>
+              <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+            </button>
+          </form>
+
+          <div class="trust-row">
+            <span class="trust-mark" aria-hidden="true">✓</span>
+            <p>Usaremos tus datos para proteger tu acceso, guardar tu avance y enviarte información relacionada con GENESIS.</p>
+          </div>
+          <p class="form-legal">Al continuar aceptas la <a href="#">Política de Privacidad</a>. No pedimos datos de pago en esta etapa.</p>
+          <div class="professional-line">
+            <span>CRITERIO PROFESIONAL</span>
+            <strong>Nutricionista + entrenadores certificados</strong>
+          </div>
+        </section>
+      </div>
+
+      <section class="proof-catalog" aria-labelledby="proof-catalog-title">
+        <div class="proof-catalog__intro">
+          <div>
+            <p class="section-code">OTRAS HISTORIAS · CONTADAS EN PRIMERA PERSONA</p>
+            <h2 id="proof-catalog-title">No llegaron buscando verse perfectos. <em>Llegaron porque algo de su día a día ya estaba cambiando.</em></h2>
+          </div>
+          <p>Escucha la experiencia que más se parezca a la tuya. Son relatos personales sobre el punto en que decidieron dejar de postergar su bienestar.</p>
+        </div>
+
+        <div class="proof-catalog__list">
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="mayra" data-video-id="420619a6-8b95-4438-8096-d6c2fe189f49" data-name="Mayra Razo" data-duration="00:31" data-poster="/biblioteca/assets/testimonios/mayra-razo.jpg" data-summary="Entre el trabajo y cuatro hijos, el cansancio ya no era un detalle. Cuenta cómo una alerta en sus análisis la llevó a dejar de postergar el cambio.">
+            <img src="/biblioteca/assets/testimonios/mayra-razo.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>MADRE DE CUATRO · TRABAJO</small><strong>Mayra Razo</strong><span>El cansancio y una alerta en sus análisis cambiaron su prioridad.</span></span>
+            <span class="testimonial-row__action"><b>00:31</b><i>VER →</i></span>
           </button>
 
-          <p class="legal">
-            Al inscribirte aceptas la <a href="#">Política de Privacidad</a>.
-            Solo te escribimos para guiarte el programa, nada más.
-          </p>
-        </form>
-      </section>
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="victoria" data-video-id="0b65b700-cabd-470c-b0d0-8eb94ab28b33" data-name="Victoria Sifuentes" data-duration="00:47" data-poster="/biblioteca/assets/testimonios/victoria-sifuentes.jpg" data-summary="Después del estrés y el cansancio, quería recuperar energía, descanso y presencia con su familia.">
+            <img src="/biblioteca/assets/testimonios/victoria-sifuentes.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>ENERGÍA · DESCANSO · FAMILIA</small><strong>Victoria Sifuentes</strong><span>Después del estrés y el cansancio, quería volver a sentirse presente.</span></span>
+            <span class="testimonial-row__action"><b>00:47</b><i>VER →</i></span>
+          </button>
 
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="teodolinda" data-video-id="5b5830ba-32f9-41ca-837f-5bd5d760d701" data-name="Teodolinda Cuipal" data-duration="01:19" data-poster="/biblioteca/assets/testimonios/teodolinda-cuipal.jpg" data-summary="Subir escaleras y pasar el día de pie en el trabajo ya le costaban más de lo normal.">
+            <img src="/biblioteca/assets/testimonios/teodolinda-cuipal.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>MOVILIDAD · JORNADA DE TRABAJO</small><strong>Teodolinda Cuipal</strong><span>Las escaleras y pasar el día de pie ya le costaban demasiado.</span></span>
+            <span class="testimonial-row__action"><b>01:19</b><i>VER →</i></span>
+          </button>
+
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="andrea" data-video-id="785f6b5f-62ba-4e85-a5f8-09774016b4cd" data-name="Andrea Loaiza" data-duration="00:59" data-poster="/biblioteca/assets/testimonios/andrea-loaiza.jpg" data-summary="Su cuerpo empezó a limitarla incluso al agacharse para atender su propio negocio.">
+            <img src="/biblioteca/assets/testimonios/andrea-loaiza.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>MOVILIDAD · NEGOCIO PROPIO</small><strong>Andrea Loaiza</strong><span>Su cuerpo empezó a limitarla incluso dentro de su propio negocio.</span></span>
+            <span class="testimonial-row__action"><b>00:59</b><i>VER →</i></span>
+          </button>
+
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="carlos" data-video-id="71554740-2a7e-4bb6-9e92-3a1778871360" data-name="Carlos Márquez" data-duration="00:58" data-poster="/biblioteca/assets/testimonios/carlos-marquez.jpg" data-summary="Cuenta por qué una alerta sobre azúcar y colesterol cambió su prioridad: recuperar energía para su hijo y para su trabajo.">
+            <img src="/biblioteca/assets/testimonios/carlos-marquez.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>SALUD · ENERGÍA · PATERNIDAD</small><strong>Carlos Márquez</strong><span>Una alerta de salud puso a su hijo y su energía por delante.</span></span>
+            <span class="testimonial-row__action"><b>00:58</b><i>VER →</i></span>
+          </button>
+
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="sebastian" data-video-id="3c758de7-b22c-4eae-9934-3abcb02fdf3a" data-name="Sebastián Campos" data-duration="00:55" data-poster="/biblioteca/assets/testimonios/sebastian-campos.jpg" data-summary="Dormía mal, vivía cansado y quería volver a estar presente para sus dos hijas.">
+            <img src="/biblioteca/assets/testimonios/sebastian-campos.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>DESCANSO · ENERGÍA · FAMILIA</small><strong>Sebastián Campos</strong><span>Dormía mal, vivía cansado y quería estar presente para sus hijas.</span></span>
+            <span class="testimonial-row__action"><b>00:55</b><i>VER →</i></span>
+          </button>
+
+          <button class="testimonial-row" type="button" data-testimonial-row data-testimonial="mauricio" data-video-id="d643bde9-95f3-40c5-a01c-351c8b0890cd" data-name="Mauricio Custode" data-duration="00:44" data-poster="/biblioteca/assets/testimonios/mauricio-custode.jpg" data-summary="Necesitaba un proceso que pudiera entender y sostener, no otra solución rápida.">
+            <img src="/biblioteca/assets/testimonios/mauricio-custode.jpg" alt="" width="1080" height="1920" loading="lazy" />
+            <span class="testimonial-row__copy"><small>PROCESO · CLARIDAD · CONSTANCIA</small><strong>Mauricio Custode</strong><span>Buscaba una ruta comprensible y sostenible, no otra solución rápida.</span></span>
+            <span class="testimonial-row__action"><b>00:44</b><i>VER →</i></span>
+          </button>
+        </div>
+
+        <p class="proof-catalog__note">Estas historias describen experiencias personales. No implican que todas las personas obtengan los mismos resultados ni sustituyen atención profesional.</p>
+      </section>
     </main>
 
-    <footer>
-      <span class="brand">TR4INER</span>
-      <nav aria-label="Legal">
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-      </nav>
+    <footer class="site-footer">
+      <span>TR4INER</span>
+      <p>GENESIS · Orientación educativa en nutrición y entrenamiento</p>
+      <nav aria-label="Legal"><a href="#">Privacidad</a><a href="#">Términos</a></nav>
     </footer>
   </div>
+
+  <dialog class="testimonial-dialog" id="testimonial-dialog" aria-labelledby="testimonial-dialog-title">
+    <div class="testimonial-dialog__panel">
+      <button class="testimonial-dialog__close" type="button" id="testimonial-close" aria-label="Cerrar video">×</button>
+      <div class="testimonial-dialog__player" id="testimonial-player">
+        <img src="/biblioteca/assets/testimonios/mayra-razo.jpg" alt="" width="1080" height="1920" id="testimonial-poster" />
+        <span class="testimonial-dialog__play" aria-hidden="true">▶</span>
+        <span class="testimonial-dialog__status">HISTORIA REAL · TR4INER</span>
+      </div>
+      <div class="testimonial-dialog__caption">
+        <p class="section-code">EXPERIENCIA PERSONAL · <span id="testimonial-duration">00:31</span></p>
+        <h2 id="testimonial-dialog-title">Mayra Razo</h2>
+        <p id="testimonial-summary">Entre el trabajo y cuatro hijos, el cansancio ya no era un detalle.</p>
+        <small>Los resultados dependen del punto de partida, el contexto y la constancia de cada persona.</small>
+      </div>
+    </div>
+  </dialog>
 
   <script src="/attribution.js"></script>
   <script>
@@ -794,6 +1575,7 @@
         if (value === 'hombre' || value === 'h' || value === 'male') return 'Hombre';
         return null;
       }
+
       var entrySexo = normalizeSexo(entryParams.get('sexo'));
       if (!entrySexo) {
         var entryUrl = new URL('/biblioteca/inicio/', window.location.origin);
@@ -805,93 +1587,124 @@
 
       var PROFILES = {
         Mujer: {
-          sessions: 32,
-          blocks: 6,
-          eating: 11,
-          eatingLabel: 'dieta, ansiedad, ayuno, carbohidratos',
-          training: 7,
-          fat: 5,
-          title: 'Pierde grasa y construye piernas y glúteos <span class="mk">con estructura</span>, <em>no con otra dieta rígida.</em>',
-          dek: '<strong>GENESIS para mujeres</strong> ordena tu alimentación y tu entrenamiento sin cinco comidas al día ni horarios que compitan con tu trabajo o tu familia. Incluye <strong>32 sesiones</strong> de Anthoni y Veronika sobre grasa, ansiedad por comer, piernas, glúteos, ciclo y constancia.',
-          formTitle: 'Activa tu ruta para mujer',
-          formDek: 'Déjanos tus datos y abre al instante las sesiones que corresponden a tu fisiología.',
-          submit: 'Abrir mi GENESIS para mujeres',
+          eyebrow: 'GENESIS · RUTA PRIVADA PARA MUJER',
+          status: 'RUTA MUJER',
+          formTitle: 'Abre tu ruta privada para mujer.',
+          formDek: 'Déjanos tus datos para crear tu acceso y guardar tu avance.',
+          submit: 'Crear mi acceso a GENESIS',
           namePlaceholder: 'Ej. Veronika…',
-          thumbs: ['bccwq7GYtAY', 'n52msKtyabg', '0MN_rqhuVUU']
+          switchLabel: 'Cambiar a ruta para hombre',
+          switchSexo: 'Hombre',
+          featured: 'mayra',
+          order: ['victoria', 'teodolinda', 'andrea', 'carlos', 'sebastian', 'mauricio', 'mayra']
         },
         Hombre: {
-          sessions: 15,
-          blocks: 4,
-          eating: 6,
-          eatingLabel: 'dieta, ayuno, carbohidratos',
-          training: 2,
-          fat: 4,
-          title: 'Baja la grasa que se quedó y recupera fuerza <span class="mk">con estructura</span>, <em>no improvisando.</em>',
-          dek: '<strong>GENESIS para hombres</strong> ordena tu dieta y tu entrenamiento para salir del sobrepeso o la grasa rebelde sin perder músculo. Son <strong>15 sesiones</strong> sobre alimentación, fuerza, definición y recomposición.',
-          formTitle: 'Activa tu ruta para hombre',
-          formDek: 'Déjanos tus datos y abre al instante una ruta centrada en grasa, fuerza y músculo.',
-          submit: 'Abrir mi GENESIS para hombres',
+          eyebrow: 'GENESIS · RUTA PRIVADA PARA HOMBRE',
+          status: 'RUTA HOMBRE',
+          formTitle: 'Abre tu ruta privada para hombre.',
+          formDek: 'Déjanos tus datos para crear tu acceso y guardar tu avance.',
+          submit: 'Crear mi acceso a GENESIS',
           namePlaceholder: 'Ej. Anthoni…',
-          thumbs: ['iv038ZlizMs', 'gKV5At5iPz4']
+          switchLabel: 'Cambiar a ruta para mujer',
+          switchSexo: 'Mujer',
+          featured: 'carlos',
+          order: ['sebastian', 'mauricio', 'mayra', 'victoria', 'teodolinda', 'andrea', 'carlos']
         }
       };
+
       var profile = PROFILES[entrySexo];
       document.documentElement.dataset.sexo = entrySexo.toLowerCase();
       document.title = 'GENESIS para ' + (entrySexo === 'Mujer' ? 'mujeres' : 'hombres') + ' · TR4INER';
-      document.getElementById('hero-title').innerHTML = profile.title;
-      document.getElementById('hero-dek').innerHTML = profile.dek;
-      document.getElementById('meta-session-count').textContent = profile.sessions;
-      document.getElementById('meta-block-count').textContent = profile.blocks;
-      document.getElementById('catalog-count').textContent = 'Semana 0 · ' + profile.sessions + ' sesiones';
-      document.getElementById('eating-count').textContent = profile.eating + ' sesiones · ' + profile.eatingLabel;
-      document.getElementById('training-count').textContent = profile.training + ' sesiones · según tu edad, tu tiempo y tu caso';
-      document.getElementById('fat-count').textContent = profile.fat + ' sesiones · sin rebote y sin pasar hambre';
-      document.getElementById('female-block').hidden = entrySexo !== 'Mujer';
-      document.getElementById('female-mindset-block').hidden = entrySexo !== 'Mujer';
-      [1, 2, 3].forEach(function (position, index) {
-        var thumb = document.getElementById('training-thumb-' + position);
-        var id = profile.thumbs[index];
-        thumb.hidden = !id;
-        if (id) thumb.src = 'https://i.ytimg.com/vi/' + id + '/mqdefault.jpg';
-      });
+      document.getElementById('hero-eyebrow').textContent = profile.eyebrow;
+      document.getElementById('header-status').textContent = profile.status;
       document.getElementById('form-title').textContent = profile.formTitle;
       document.getElementById('form-dek').textContent = profile.formDek;
       document.querySelector('[data-name-placeholder]').placeholder = profile.namePlaceholder;
       document.getElementById('submit-label').textContent = profile.submit;
-      document.getElementById('profile-switch-label').textContent = entrySexo + ' · cambiar ruta';
-      var switchUrl = new URL('/biblioteca/inicio/', window.location.origin);
-      entryParams.delete('sexo');
+      document.getElementById('profile-switch-label').textContent = profile.switchLabel;
+
+      var switchUrl = new URL('/biblioteca/', window.location.origin);
+      entryParams.set('sexo', profile.switchSexo);
       entryParams.forEach(function (value, key) { switchUrl.searchParams.set(key, value); });
       document.getElementById('profile-switch').href = switchUrl.toString();
+
       var selectedInput = document.querySelector('input[name="sexo"][value="' + entrySexo + '"]');
       selectedInput.checked = true;
-      selectedInput.closest('.sexo-card').classList.add('selected');
 
-      // ── Entradas: se revelan al entrar en el viewport ──
-      function checkReveals() {
-        var vh = window.innerHeight || document.documentElement.clientHeight;
-        document.querySelectorAll('.rv:not(.is-in), .bloque:not(.is-in)').forEach(function (el) {
-          var r = el.getBoundingClientRect();
-          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-in');
+      document.querySelectorAll('[data-route-feature]').forEach(function (feature) {
+        feature.hidden = feature.getAttribute('data-route-feature') !== entrySexo.toLowerCase();
+      });
+
+      var catalog = document.querySelector('.proof-catalog__list');
+      profile.order.forEach(function (name) {
+        var row = catalog.querySelector('[data-testimonial="' + name + '"]');
+        row.hidden = name === profile.featured;
+        catalog.appendChild(row);
+      });
+
+      // Un solo iframe se crea después del clic y se elimina al cerrar.
+      var testimonialDialog = document.getElementById('testimonial-dialog');
+      var testimonialPlayer = document.getElementById('testimonial-player');
+      var testimonialClose = document.getElementById('testimonial-close');
+      var lastTestimonialTrigger = null;
+
+      function removeTestimonialFrame() {
+        var frame = testimonialPlayer.querySelector('iframe');
+        if (frame) frame.remove();
+      }
+
+      function openTestimonial(trigger) {
+        lastTestimonialTrigger = trigger;
+        removeTestimonialFrame();
+
+        var testimonialId = trigger.getAttribute('data-testimonial');
+        var videoId = trigger.getAttribute('data-video-id');
+        var name = trigger.getAttribute('data-name');
+        document.getElementById('testimonial-poster').src = trigger.getAttribute('data-poster');
+        document.getElementById('testimonial-dialog-title').textContent = name;
+        document.getElementById('testimonial-duration').textContent = trigger.getAttribute('data-duration');
+        document.getElementById('testimonial-summary').textContent = trigger.getAttribute('data-summary');
+
+        var frame = document.createElement('iframe');
+        frame.src = 'https://player.mediadelivery.net/embed/658343/' + videoId + '?autoplay=true&muted=false&loop=false&preload=false&playsinline=true';
+        frame.title = 'Historia de ' + name;
+        frame.allow = 'accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen';
+        frame.allowFullscreen = true;
+        testimonialPlayer.appendChild(frame);
+
+        document.documentElement.classList.add('dialog-open');
+        testimonialDialog.showModal();
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'biblioteca_testimonial_open',
+          testimonial_id: testimonialId,
+          route: entrySexo.toLowerCase()
         });
       }
-      window.addEventListener('scroll', checkReveals, { passive: true });
-      window.addEventListener('resize', checkReveals, { passive: true });
-      document.getElementById('hero').classList.add('is-in');
-      requestAnimationFrame(checkReveals);
-      setTimeout(checkReveals, 250);
 
-      // ── Selector de sexo ──
-      var sexoCards = document.querySelectorAll('.sexo-card');
-      sexoCards.forEach(function (card) {
-        card.querySelector('input').addEventListener('change', function () {
-          sexoCards.forEach(function (c) { c.classList.remove('selected'); });
-          card.classList.add('selected');
-          setFieldError('f-sexo', false);
+      function closeTestimonial() {
+        removeTestimonialFrame();
+        document.documentElement.classList.remove('dialog-open');
+        if (testimonialDialog.open) testimonialDialog.close();
+        if (lastTestimonialTrigger) lastTestimonialTrigger.focus();
+      }
+
+      document.querySelectorAll('[data-video-id]').forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          openTestimonial(trigger);
         });
       });
 
-      // ── Validación + envío (mismo patrón que el funnel de casos de estudio) ──
+      testimonialClose.addEventListener('click', closeTestimonial);
+      testimonialDialog.addEventListener('click', function (event) {
+        if (event.target === testimonialDialog) closeTestimonial();
+      });
+      testimonialDialog.addEventListener('cancel', function (event) {
+        event.preventDefault();
+        closeTestimonial();
+      });
+
+      // Validación + envío: se conserva el contrato productivo de Biblioteca.
       var utmData = window.TR4Track ? window.TR4Track.getUTMs() : {};
       var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
       if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
@@ -910,10 +1723,12 @@
       function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       }
+
       function isDomainSuspect(email) {
         var domain = (email.split('@')[1] || '').toLowerCase();
         return dominiosFalsos.indexOf(domain) !== -1;
       }
+
       function setFieldError(fieldId, show, msg) {
         var field = document.getElementById(fieldId);
         field.classList.toggle('has-error', !!show);
@@ -922,8 +1737,10 @@
           if (err) err.textContent = msg;
         }
       }
+
       function saveLead(lead) {
-        try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); } catch (e) { /* incógnito */ }
+        try { window.localStorage.setItem('tr4_lead', JSON.stringify(lead)); }
+        catch (e) { /* modo incógnito */ }
       }
 
       document.getElementById('email').addEventListener('blur', function () {
@@ -942,12 +1759,12 @@
         e.preventDefault();
         if (document.getElementById('honeypot').value !== '') return;
 
-        var nombre   = document.getElementById('nombre').value.trim();
+        var nombre = document.getElementById('nombre').value.trim();
         var telefono = document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
-        var prefijo  = document.getElementById('prefijo').value;
-        var email    = document.getElementById('email').value.trim();
-        var sexoEl   = document.querySelector('input[name="sexo"]:checked');
-        var valid    = true;
+        var prefijo = document.getElementById('prefijo').value;
+        var email = document.getElementById('email').value.trim();
+        var sexoEl = document.querySelector('input[name="sexo"]:checked');
+        var valid = true;
 
         setFieldError('f-nombre', !nombre);
         if (!nombre) valid = false;
@@ -957,18 +1774,21 @@
         if (!telOk) valid = false;
 
         var emailBad = !validateEmail(email) || isDomainSuspect(email);
-        setFieldError('f-email', emailBad,
-          !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega el acceso');
+        setFieldError(
+          'f-email',
+          emailBad,
+          !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega el acceso'
+        );
         if (emailBad) valid = false;
 
         setFieldError('f-sexo', !sexoEl);
         if (!sexoEl) valid = false;
 
         if (!valid) {
-          var firstError = document.querySelector('.field.has-error .control, .field.has-error .sexo-row');
+          var firstError = document.querySelector('.field.has-error .control');
           if (firstError) {
             firstError.scrollIntoView({ block: 'center', behavior: 'smooth' });
-            if (firstError.focus) firstError.focus({ preventScroll: true });
+            firstError.focus({ preventScroll: true });
           }
           return;
         }
@@ -980,14 +1800,14 @@
 
         var sexo = sexoEl.value;
         var payload = {
-          funnel:    'biblioteca',
-          nombre:    nombre,
-          whatsapp:  prefijo + telefono,
-          email:     email,
-          sexo:      sexo,
-          video:     videoId,
-          utm:       utmData,
-          page_url:  window.location.href,
+          funnel: 'biblioteca',
+          nombre: nombre,
+          whatsapp: prefijo + telefono,
+          email: email,
+          sexo: sexo,
+          video: videoId,
+          utm: utmData,
+          page_url: window.location.href,
           timestamp: new Date().toISOString()
         };
         // El CRM emite el enlace mágico real. n8n conserva automatizaciones y
@@ -995,7 +1815,7 @@
         payload.suppress_access_email = true;
 
         saveLead({ nombre: nombre, email: email, sexo: sexo });
-        // El whatsapp viaja en props: el CRM lo necesita para que el setter contacte al SQL
+        // El whatsapp viaja en props: el CRM lo necesita para que el setter contacte al SQL.
         if (window.TR4Track && TR4Track.track) TR4Track.track('registro', { whatsapp: prefijo + telefono });
 
         function next() {
@@ -1022,6 +1842,7 @@
           video: videoId
         };
         Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });
+
         fetch('/api/genesis/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
