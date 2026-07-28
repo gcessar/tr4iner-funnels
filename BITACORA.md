@@ -1192,11 +1192,17 @@ la falla ruidosa.
 El `event_source_url` apuntaba a un dominio de terceros; el Typeform está **embebido** en
 las páginas propias, así que la URL de origen real es `metodo.tr4iner.com`.
 
-### Dato relevante encontrado
-`QualifiedLead | Typeform` dispara ~248 eventos/semana (427 ejecuciones, ~58% pasa el
-filtro) ≈ **1.050/mes**, no los 128/mes que se asumía. El evento es "adulto que terminó el
-Typeform", no "lead calificado" en el sentido del negocio. Decisión pendiente de si se
-ajusta el filtro o se renombra.
+### Dato relevante encontrado (medido el 28-jul, corrige una estimación previa)
+Contando filas reales en `meta_capi_stripe_events` (`payment_stage='qualified_lead'`):
+**393 envíos entre el 24-jul 04:01 y el 28-jul 19:26** = 4,64 días → **~85/día ≈ 2.540/mes**.
+Sobre 435 ejecuciones en la misma ventana, el filtro deja pasar el **90%**.
+
+`QualifiedLead | Typeform` no es un lead calificado: es "completó el Typeform y no es menor
+de edad", medido del lado servidor. Supera en volumen al `TypeformSubmit` de navegador
+(61/día) porque el evento de browser pierde ~30% por bloqueadores y salidas tempranas.
+
+Los 128 leads calificados/mes del negocio son otra cosa: ~20x menos. Decisión pendiente de
+si se ajusta el filtro o se renombra la conversión.
 
 ### Resultado esperado
 EMQ del evento Lead de 6.6 hacia ~8 una vez que existan los hidden fields `fbc`/`fbp` en
