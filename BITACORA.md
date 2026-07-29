@@ -1333,6 +1333,48 @@ un `fbclid` simulado, sin abrir la página para no inyectar un PageView falso al
 
 ---
 
+## 2026-07-29 — Renovación privada de exclientes por WhatsApp
+
+### Qué cambió
+
+- Nueva ruta `/renueva`, construida en `work/renueva`, para una campaña de Meta Ads
+  dirigida a un público personalizado de exclientes.
+- Usa el logo y la foto de equipo oficiales. En móvil prioriza el plan anual; en desktop
+  compara 3 meses, anual y 6 meses en una sola vista.
+- Los tres planes ofrecen 20%: 6 meses suma 15 días gratis y anual suma un mes gratis más
+  una videollamada con nutricionista.
+- Cada CTA abre `+51 922 551 745` con un mensaje específico para el plan elegido. No se
+  publican precios porque el asesor calcula la condición desde la última membresía.
+- La promoción vence el 1-ago-2026 a las 23:59:59 de Lima. El contador corrige el reloj
+  local con la cabecera `Date` del servidor; al vencer elimina los tres `href` de WhatsApp.
+- GTM recibe `renueva_whatsapp_click` con el plan y la atribución de `attribution.js`.
+- Decisión SEO/GEO: `noindex, nofollow, noarchive`; es una ventana comercial temporal y
+  no debe entrar al sitemap.
+
+### Por qué
+
+La página muestra todas las condiciones antes del chat para que el vendedor reciba
+exclientes que ya eligieron horizonte de renovación, no consultas de curiosidad. El plan
+anual funciona como ancla sin esconder las alternativas.
+
+### Resultado esperado
+
+- Mayor proporción de conversaciones de WhatsApp con intención explícita de renovar.
+- Menos tiempo del vendedor explicando la promoción desde cero.
+- Más selección del plan anual por jerarquía y bonos, sin obligar esa elección.
+
+### Resultado medido
+
+- Chrome real sin overflow documental en 375, 768 y 1280 px.
+- Los tres enlaces resolvieron al número y mensaje correctos.
+- Prueba temporal posterior al vencimiento: 0 enlaces con `href`, 0 CTAs visibles y
+  3 estados “Promoción cerrada”.
+- UTMs sintéticas y `fbclid` conservaron `utm_source`, `utm_medium`, `utm_campaign`,
+  `fbclid` y el `fbc` derivado.
+- Preview y Producción: pendientes de publicación.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
