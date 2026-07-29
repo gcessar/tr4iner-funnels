@@ -6,12 +6,19 @@
   'use strict';
 
   var VIDEO_STORAGE_KEY = 'tr4_video';
+  var FBC_STORAGE_KEY = 'tr4_fbc';
   var UTM_KEYS = [
     'utm_source', 'utm_medium', 'utm_campaign',
     'utm_term', 'utm_content', 'utm_id',
     'fbclid', 'gclid', 'fbc', 'fbp', 'fbc_id', 'h_ad_id',
     'ttclid', 'msclkid', 'wbraid', 'gbraid', 'ctwa_clid'
   ];
+
+  // Índice de subdominio del formato fbc de Meta: 0=.com, 1=tr4iner.com,
+  // 2=metodo.tr4iner.com. El Pixel escribe la cookie sobre el dominio
+  // registrable, así que el fbc que construimos a mano debe usar el mismo
+  // índice o Meta no lo empareja con el del navegador.
+  var FBC_SUBDOMAIN_INDEX = 1;
 
   function isAttributionKey(key) {
     return key.indexOf('utm_') === 0 || UTM_KEYS.indexOf(key) !== -1;
@@ -63,6 +70,56 @@
     return safeGetStored(VIDEO_STORAGE_KEY) || null;
   }
 
+  function readCookie(name) {
+    try {
+      var match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
+      return match ? decodeURIComponent(match[2]) : '';
+    } catch (e) { return ''; }
+  }
+
+  /**
+   * _fbp — cookie de navegador que escribe el Pixel. No se hashea ni se
+   * inventa: si el Pixel no cargó (bloqueador, consentimiento), va vacío.
+   */
+  function getFbp() {
+    return readCookie('_fbp');
+  }
+
+  /**
+   * _fbc — identificador de clic. Meta documenta construirlo desde ?fbclid
+   * cuando la cookie no existe; esperar solo la cookie pierde todos los casos
+   * donde el Pixel no cargó a tiempo. El timestamp debe ser el del primer
+   * aterrizaje, por eso se persiste: si se regenerara en cada página, cada
+   * salto del funnel mandaría un fbc distinto para el mismo clic.
+   */
+  function getFbc() {
+    var fromCookie = readCookie('_fbc');
+    if (fromCookie) return fromCookie;
+
+    var stored = safeGetStored(FBC_STORAGE_KEY);
+    var fbclid = params().get('fbclid');
+    if (fbclid) {
+      // Un fbclid nuevo (otro clic) reemplaza al guardado; el mismo lo conserva
+      // con su timestamp original.
+      if (!stored || stored.indexOf('.' + fbclid) === -1) {
+        stored = 'fb.' + FBC_SUBDOMAIN_INDEX + '.' + Date.now() + '.' + fbclid;
+        safeSetStored(FBC_STORAGE_KEY, stored);
+      }
+      return stored;
+    }
+    return stored || '';
+  }
+
+  /** Identificadores de Meta listos para viajar como hidden fields. */
+  function getMetaIds() {
+    var out = {};
+    var fbc = getFbc();
+    var fbp = getFbp();
+    if (fbc) out.fbc = fbc;
+    if (fbp) out.fbp = fbp;
+    return out;
+  }
+
   function getUTMs(keys) {
     var p = params();
     var out = {};
@@ -83,6 +140,8 @@
     var attribution = getUTMs();
     var video = getVideo();
     if (video) attribution.video = video;
+    var metaIds = getMetaIds();
+    Object.keys(metaIds).forEach(function (key) { attribution[key] = metaIds[key]; });
     return attribution;
   }
 
@@ -134,6 +193,9 @@
     getCanonicalParams: getCanonicalParams,
     getVideo: getVideo,
     getUTMs: getUTMs,
+    getFbp: getFbp,
+    getFbc: getFbc,
+    getMetaIds: getMetaIds,
     getAttribution: getAttribution,
     getLead: getLead,
     track: track

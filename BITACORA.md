@@ -1250,6 +1250,64 @@ El campo era el único texto de la ficha que no se personalizaba por sexo: en la
 
 ---
 
+## 2026-07-28 — Meta CAPI: fbc/fbp en el funnel y evento Schedule unificado
+
+### Qué cambió
+
+**Funnel (este repo, rama `work/meta-capi-schedule`)**
+- `attribution.js` captura los identificadores de Meta: lee la cookie `_fbp` y construye
+  `fbc` desde `?fbclid` cuando la cookie `_fbc` no existe, persistiendo el timestamp del
+  primer aterrizaje en `localStorage` (`tr4_fbc`).
+- Las tres páginas de Typeform (`registro-typeform-flor`, `-flor-va`, `-optimizado`) no
+  cargaban `attribution.js`: `window.TR4Track` no existía en ellas. Se agregó el script y
+  `fbc`/`fbp` viajan ahora como hidden fields.
+
+**n8n**
+- `TR4INER Qualified Lead → Meta CAPI` (`dPHG5G4OrpYOplo8`, versión activa
+  `d462947a`): envía `fbc`/`fbp` sin hashear, corrige `event_source_url` de
+  `form.typeform.com` al dominio propio, y lanza error si las refs de edad/presupuesto
+  del Typeform desaparecen.
+- Nuevo `TR4INER Schedule → Meta CAPI` (`NzshDBl2sb13DrmQ`, **inactivo**): unifica
+  Calendly directo (webhook `invitee.created`) y agendas setteadas (webhook desde el CRM)
+  en el evento estándar `Schedule`. Data table `meta_capi_schedule_events`.
+
+### Por qué
+Meta reportaba EMQ 6.6/10 sobre el evento `Cliente potencial`, cobertura de eventos 0% y
+deduplicación sin configurar, señalando explícitamente que el servidor no manda `fbc`.
+Sin `fbc`/`fbp` el evento solo se empareja por email/teléfono hasheados.
+
+Además, el filtro de `QualifiedLead | Typeform` compara strings exactos en español y UUIDs
+de campo hardcodeados: si alguien edita el Typeform, todo se descarta en silencio. Por eso
+la falla ruidosa.
+
+El `event_source_url` apuntaba a un dominio de terceros; el Typeform está **embebido** en
+las páginas propias, así que la URL de origen real es `metodo.tr4iner.com`.
+
+### Dato relevante encontrado (medido el 28-jul, corrige una estimación previa)
+Contando filas reales en `meta_capi_stripe_events` (`payment_stage='qualified_lead'`):
+**393 envíos entre el 24-jul 04:01 y el 28-jul 19:26** = 4,64 días → **~85/día ≈ 2.540/mes**.
+Sobre 435 ejecuciones en la misma ventana, el filtro deja pasar el **90%**.
+
+`QualifiedLead | Typeform` no es un lead calificado: es "completó el Typeform y no es menor
+de edad", medido del lado servidor. Supera en volumen al `TypeformSubmit` de navegador
+(61/día) porque el evento de browser pierde ~30% por bloqueadores y salidas tempranas.
+
+Los 128 leads calificados/mes del negocio son otra cosa: ~20x menos. Decisión pendiente de
+si se ajusta el filtro o se renombra la conversión.
+
+### Resultado esperado
+EMQ del evento Lead de 6.6 hacia ~8 una vez que existan los hidden fields `fbc`/`fbp` en
+Typeform. `Schedule` habilita las conversiones `Agenda | All / Calendly / Setter`.
+
+### Resultado medido (completar después)
+- Verificado en local: `fbc` se construye, persiste el timestamp entre landing y página de
+  Typeform, y llega al `data-tf-hidden` del embed. Un `fbclid` nuevo genera un `fbc` nuevo.
+- Verificado en n8n: la versión activa `d462947a` contiene los tres cambios.
+- Pendiente: hidden fields `fbc`/`fbp` en Typeform, conversiones personalizadas en Meta,
+  activación del workflow de Schedule, y confirmar el EMQ a los 7 días.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

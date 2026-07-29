@@ -702,6 +702,7 @@
     })(window, document, "Vidalytics", "vidalytics_embed_5dtuyrV6J4QIqcbI", "https://fast.vidalytics.com/embeds/IoH8SL8U/5dtuyrV6J4QIqcbI/");
   </script>
 
+  <script src="/attribution.js"></script>
   <script>
     (function () {
       /*
@@ -743,6 +744,17 @@
           var encoded = encodeURIComponent(value).replace(/%40/gi, "@");
           hiddenFields.push(key + "=" + encoded);
         });
+
+        // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
+        // se construye desde el fbclid del primer aterrizaje. Sin ellos Meta no
+        // puede emparejar el Lead del servidor con el clic del anuncio.
+        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
+          ? window.TR4Track.getMetaIds()
+          : {};
+        Object.keys(metaIds).forEach(function (key) {
+          hiddenFields.push(key + "=" + encodeURIComponent(metaIds[key]));
+        });
+
         var hidden = hiddenFields.join(",");
 
         // Typeform lee data-tf-hidden cuando carga su embed.js.
