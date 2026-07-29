@@ -1299,12 +1299,37 @@ si se ajusta el filtro o se renombra la conversión.
 EMQ del evento Lead de 6.6 hacia ~8 una vez que existan los hidden fields `fbc`/`fbp` en
 Typeform. `Schedule` habilita las conversiones `Agenda | All / Calendly / Setter`.
 
-### Resultado medido (completar después)
-- Verificado en local: `fbc` se construye, persiste el timestamp entre landing y página de
-  Typeform, y llega al `data-tf-hidden` del embed. Un `fbclid` nuevo genera un `fbc` nuevo.
-- Verificado en n8n: la versión activa `d462947a` contiene los tres cambios.
-- Pendiente: hidden fields `fbc`/`fbp` en Typeform, conversiones personalizadas en Meta,
-  activación del workflow de Schedule, y confirmar el EMQ a los 7 días.
+### Publicación (29-jul-2026)
+
+- `main` = `fd600c2`. Deployment Vercel `CvaW4L18tBEsve4DZikaPFQL6zM7`: **success**.
+- El merge llegó con la rama 10+ commits atrás de `main`. `attribution.js` había sido
+  modificado por `322152e` (genesis), que sumó `fbc`, `fbp` y cinco click IDs nuevos
+  (`ttclid`, `msclkid`, `wbraid`, `gbraid`, `ctwa_clid`) a `UTM_KEYS`. El auto-merge
+  conservó esa lista completa **y** la lógica de cookies. Diff contra `main`: 156
+  inserciones, 0 borrados.
+
+### Resultado medido
+
+Ejecutando el `attribution.js` **servido por producción** (6334 bytes, antes 4149) con
+un `fbclid` simulado, sin abrir la página para no inyectar un PageView falso al píxel:
+
+- `?fbclid` sin cookie `_fbc` → construye `fb.1.<ts>.<fbclid>` y lo persiste en
+  `tr4_fbc`.
+- Segundo salto del funnel → **mismo `fbc`, mismo timestamp**. Es lo que evita que
+  cada página mande un identificador distinto para el mismo clic.
+- Cookie `_fbp` presente → se lee tal cual, sin hashear.
+- Sin `fbclid` ni cookies → devuelve `{}`; no inventa identificadores.
+- Las tres rutas (`/testimonio-flor`, `-flor-va`, `-dashiel`) cargan el script y usan
+  `getMetaIds()` en producción.
+
+### Pendiente
+
+- Confirmar con tráfico real que los hidden fields `fbc`/`fbp` llegan a Typeform y de
+  ahí a n8n: lo verificado es la construcción del identificador, no el viaje completo.
+- Conversiones personalizadas `Agenda | All / Calendly / Setter` en Meta: requieren que
+  primero aterrice un evento `Schedule` real.
+- Confirmar el EMQ a los 7 días.
+- Decidir qué hacer con `QualifiedLead | Typeform`, que dispara ~2.540 eventos/mes.
 
 ---
 
