@@ -1371,7 +1371,8 @@ anual funciona como ancla sin esconder las alternativas.
   3 estados “Promoción cerrada”.
 - UTMs sintéticas y `fbclid` conservaron `utm_source`, `utm_medium`, `utm_campaign`,
   `fbclid` y el `fbc` derivado.
-- Preview y Producción: pendientes de publicación.
+- Preview del commit `3a1cc25`: Vercel `dpl_2CBzMUxU5jrSPUJXu74fp3w62re6`, **READY**.
+- Producción: pendiente de aprobación visual del Preview.
 
 ---
 
