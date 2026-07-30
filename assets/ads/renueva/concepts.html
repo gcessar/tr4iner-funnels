@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conceptos Meta Ads · Renueva TR4INER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..800;1,9..144,500..800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #11120f;
+      --paper: #fffdf7;
+      --yellow: #f5c518;
+      --muted: #63655d;
+      --serif: "Fraunces", Georgia, serif;
+      --sans: "Instrument Sans", Arial, sans-serif;
+      --mono: "JetBrains Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: grid;
+      gap: 64px;
+      justify-content: center;
+      padding: 64px;
+      background: #292a27;
+      color: var(--ink);
+      font-family: var(--sans);
+    }
+
+    .creative {
+      position: relative;
+      width: 1080px;
+      height: 1350px;
+      overflow: hidden;
+      isolation: isolate;
+      background: var(--paper);
+    }
+
+    .background {
+      position: absolute;
+      z-index: -3;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-dark {
+      position: absolute;
+      width: 220px;
+      height: auto;
+      mix-blend-mode: multiply;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .headline {
+      font-family: var(--serif);
+      font-weight: 620;
+      letter-spacing: -0.055em;
+      text-wrap: balance;
+    }
+
+    .team {
+      position: absolute;
+      height: auto;
+      object-fit: contain;
+      object-position: center bottom;
+    }
+
+    /* Concepto 1: reactivación emocional. */
+    #concept-01 .logo-dark {
+      top: 50px;
+      left: 64px;
+    }
+
+    #concept-01 .label {
+      top: 155px;
+      left: 68px;
+      position: absolute;
+      color: #8b6a00;
+    }
+
+    #concept-01 .headline {
+      position: absolute;
+      top: 200px;
+      left: 62px;
+      width: 880px;
+      font-size: 92px;
+      line-height: 0.92;
+    }
+
+    #concept-01 .support {
+      position: absolute;
+      top: 397px;
+      left: 68px;
+      width: 690px;
+      color: #43453e;
+      font-size: 31px;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    #concept-01 .offer-chip {
+      position: absolute;
+      z-index: 4;
+      top: 496px;
+      left: 66px;
+      display: flex;
+      align-items: baseline;
+      gap: 17px;
+      padding: 17px 24px 18px;
+      border: 2px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #concept-01 .offer-chip strong {
+      color: var(--yellow);
+      font-family: var(--serif);
+      font-size: 58px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.05em;
+      line-height: 0.8;
+    }
+
+    #concept-01 .offer-chip span {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    #concept-01 .team {
+      z-index: 2;
+      top: 568px;
+      left: 74px;
+      width: 930px;
+    }
+
+    #concept-01 .deadline {
+      position: absolute;
+      z-index: 5;
+      right: 48px;
+      bottom: 40px;
+      padding: 13px 18px;
+      border: 2px solid var(--ink);
+      background: var(--yellow);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Concepto 2: autoridad + oferta directa. */
+    #concept-02 .logo-dark {
+      top: 52px;
+      left: 62px;
+      width: 214px;
+    }
+
+    #concept-02 .label {
+      position: absolute;
+      top: 163px;
+      left: 66px;
+      color: #8b6a00;
+    }
+
+    #concept-02 .headline {
+      position: absolute;
+      top: 215px;
+      left: 62px;
+      width: 560px;
+      font-size: 82px;
+      line-height: 0.94;
+    }
+
+    #concept-02 .discount {
+      position: absolute;
+      top: 555px;
+      left: 58px;
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+    }
+
+    #concept-02 .discount strong {
+      font-family: var(--serif);
+      font-size: 196px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      letter-spacing: -0.09em;
+      line-height: 0.75;
+    }
+
+    #concept-02 .discount span {
+      width: 138px;
+      padding-bottom: 7px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.02;
+      text-transform: uppercase;
+    }
+
+    #concept-02 .cta-copy {
+      position: absolute;
+      z-index: 5;
+      top: 825px;
+      left: 63px;
+      width: 470px;
+      padding-top: 23px;
+      border-top: 3px solid var(--yellow);
+    }
+
+    #concept-02 .cta-copy strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1.12;
+    }
+
+    #concept-02 .cta-copy span {
+      display: block;
+      margin-top: 10px;
+      color: #55574f;
+      font-size: 21px;
+      line-height: 1.3;
+    }
+
+    #concept-02 .anthoni {
+      position: absolute;
+      z-index: 4;
+      right: 24px;
+      bottom: 57px;
+      width: 440px;
+      height: auto;
+    }
+
+    #concept-02 .deadline {
+      position: absolute;
+      z-index: 5;
+      left: 0;
+      bottom: 0;
+      width: 665px;
+      padding: 25px 64px 28px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    #concept-02 .deadline strong {
+      color: var(--yellow);
+    }
+
+    /* Concepto 3: arquitectura de elección. */
+    #concept-03 .logo-dark {
+      top: 32px;
+      left: 48px;
+      width: 188px;
+    }
+
+    #concept-03 .label {
+      position: absolute;
+      top: 42px;
+      right: 48px;
+    }
+
+    #concept-03 .headline {
+      position: absolute;
+      top: 95px;
+      left: 46px;
+      width: 980px;
+      font-size: 65px;
+      line-height: 0.98;
+    }
+
+    #concept-03 .plans {
+      position: absolute;
+      z-index: 2;
+      top: 241px;
+      left: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      height: 755px;
+    }
+
+    #concept-03 .plan {
+      position: relative;
+      padding: 62px 38px 38px;
+      text-align: center;
+    }
+
+    #concept-03 .plan.featured {
+      margin: 18px 16px 26px;
+      padding: 72px 28px 28px;
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 8px 8px 0 var(--yellow);
+    }
+
+    #concept-03 .recommended {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      padding: 8px 12px;
+      background: var(--yellow);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    #concept-03 .plan-kicker {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    #concept-03 .plan h3 {
+      margin-top: 14px;
+      font-size: 43px;
+      line-height: 0.98;
+      text-transform: uppercase;
+    }
+
+    #concept-03 .percent {
+      display: block;
+      margin-top: 55px;
+      font-family: var(--serif);
+      font-size: 112px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      letter-spacing: -0.08em;
+      line-height: 0.8;
+    }
+
+    #concept-03 .discount-label {
+      display: block;
+      margin-top: 17px;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    #concept-03 .bonus {
+      margin-top: 58px;
+      padding-top: 28px;
+      border-top: 2px solid currentColor;
+      font-size: 21px;
+      font-weight: 600;
+      line-height: 1.28;
+    }
+
+    #concept-03 .plan.featured .bonus {
+      border-color: rgba(255, 255, 255, 0.35);
+      color: var(--yellow);
+    }
+
+    #concept-03 .team {
+      z-index: 4;
+      right: 20px;
+      bottom: -32px;
+      width: 535px;
+    }
+
+    #concept-03 .bottom-copy {
+      position: absolute;
+      z-index: 5;
+      left: 53px;
+      bottom: 88px;
+      width: 470px;
+      color: var(--paper);
+    }
+
+    #concept-03 .bottom-copy strong {
+      display: block;
+      color: var(--yellow);
+      font-family: var(--serif);
+      font-size: 45px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.02;
+    }
+
+    #concept-03 .bottom-copy span {
+      display: block;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    /* Concepto 4: continuidad y experiencia acumulada. */
+    #concept-04 {
+      color: var(--paper);
+    }
+
+    #concept-04 .logo-light {
+      position: absolute;
+      top: 48px;
+      left: 62px;
+      width: 220px;
+      height: auto;
+    }
+
+    #concept-04 .label {
+      position: absolute;
+      top: 163px;
+      left: 66px;
+      color: var(--yellow);
+    }
+
+    #concept-04 .headline {
+      position: absolute;
+      top: 218px;
+      left: 61px;
+      width: 650px;
+      font-size: 96px;
+      line-height: 0.92;
+    }
+
+    #concept-04 .support {
+      position: absolute;
+      top: 455px;
+      left: 66px;
+      width: 620px;
+      color: #d5d6cf;
+      font-size: 29px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    #concept-04 .continuity-offer {
+      position: absolute;
+      z-index: 5;
+      top: 590px;
+      left: 65px;
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 21px;
+      border: 2px solid var(--yellow);
+      color: var(--paper);
+    }
+
+    #concept-04 .continuity-offer strong {
+      color: var(--yellow);
+      font-family: var(--serif);
+      font-size: 55px;
+      letter-spacing: -0.05em;
+      line-height: 0.8;
+    }
+
+    #concept-04 .continuity-offer span {
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    #concept-04 .team {
+      z-index: 3;
+      right: -10px;
+      bottom: 18px;
+      width: 850px;
+    }
+
+    #concept-04 .deadline {
+      position: absolute;
+      z-index: 6;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      padding: 28px 65px 30px;
+      border-top: 2px solid var(--ink);
+      background: rgba(255, 253, 247, 0.94);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    /* Concepto 5: valor acumulado del plan anual. */
+    #concept-05 .logo-dark {
+      top: 46px;
+      left: 58px;
+      width: 205px;
+    }
+
+    #concept-05 .label {
+      position: absolute;
+      top: 148px;
+      left: 62px;
+    }
+
+    #concept-05 .headline {
+      position: absolute;
+      top: 195px;
+      left: 58px;
+      width: 870px;
+      font-size: 76px;
+      line-height: 0.94;
+    }
+
+    #concept-05 .month-math {
+      position: absolute;
+      z-index: 3;
+      left: 42px;
+      bottom: 145px;
+      color: var(--paper);
+    }
+
+    #concept-05 .month-math strong {
+      display: block;
+      font-family: var(--serif);
+      font-size: 196px;
+      font-weight: 700;
+      letter-spacing: -0.09em;
+      line-height: 0.76;
+    }
+
+    #concept-05 .month-math strong span {
+      color: var(--yellow);
+    }
+
+    #concept-05 .month-math > span {
+      display: block;
+      margin-top: 22px;
+      font-family: var(--mono);
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #concept-05 .annual-stack {
+      position: absolute;
+      z-index: 5;
+      top: 430px;
+      right: 58px;
+      width: 420px;
+      color: var(--ink);
+    }
+
+    #concept-05 .annual-stack .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: var(--ink);
+      color: var(--yellow);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    #concept-05 .annual-stack h2 {
+      margin-top: 28px;
+      font-family: var(--serif);
+      font-size: 79px;
+      font-weight: 680;
+      letter-spacing: -0.055em;
+      line-height: 0.88;
+    }
+
+    #concept-05 .annual-stack h2 span {
+      display: block;
+      margin-top: 15px;
+      font-family: var(--sans);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    #concept-05 .annual-benefits {
+      display: grid;
+      gap: 12px;
+      margin-top: 30px;
+      padding-top: 25px;
+      border-top: 2px solid var(--ink);
+      list-style: none;
+      font-size: 20px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+
+    #concept-05 .annual-benefits li::before {
+      margin-right: 9px;
+      color: #9b7600;
+      content: "✓";
+      font-weight: 800;
+    }
+
+    #concept-05 .anthoni {
+      position: absolute;
+      z-index: 4;
+      right: 58px;
+      bottom: 45px;
+      width: 350px;
+      height: auto;
+    }
+
+    #concept-05 .deadline {
+      position: absolute;
+      z-index: 6;
+      left: 42px;
+      bottom: 48px;
+      width: 380px;
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      line-height: 1.35;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    /* Concepto 6: cierre concreto de la ventana. */
+    #concept-06 .logo-dark {
+      z-index: 3;
+      top: 91px;
+      left: 50%;
+      width: 205px;
+      transform: translateX(-50%);
+    }
+
+    #concept-06 .calendar-content {
+      position: absolute;
+      z-index: 3;
+      top: 233px;
+      left: 153px;
+      width: 774px;
+      text-align: center;
+    }
+
+    #concept-06 .calendar-content .label {
+      color: #8b6a00;
+    }
+
+    #concept-06 .calendar-date {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 42px;
+    }
+
+    #concept-06 .calendar-date strong {
+      font-family: var(--serif);
+      font-size: 300px;
+      font-variant-numeric: tabular-nums;
+      font-weight: 720;
+      letter-spacing: -0.1em;
+      line-height: 0.67;
+    }
+
+    #concept-06 .calendar-date span {
+      padding-bottom: 19px;
+      font-family: var(--mono);
+      font-size: 58px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    #concept-06 .calendar-rule {
+      width: 100%;
+      height: 2px;
+      margin: 58px 0 33px;
+      background: var(--ink);
+    }
+
+    #concept-06 .calendar-content h1 {
+      font-family: var(--serif);
+      font-size: 69px;
+      font-weight: 640;
+      letter-spacing: -0.045em;
+      line-height: 0.96;
+    }
+
+    #concept-06 .close-time {
+      margin-top: 36px;
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      line-height: 1.45;
+      text-transform: uppercase;
+    }
+
+    #concept-06 .close-time strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 37px;
+    }
+
+    #concept-06 .close-offer {
+      display: inline-block;
+      margin-top: 34px;
+      padding: 13px 18px;
+      background: var(--yellow);
+      font-size: 22px;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    #concept-06 .team {
+      z-index: 5;
+      right: -12px;
+      bottom: -36px;
+      width: 420px;
+    }
+
+    #concept-06 .bottom-copy {
+      position: absolute;
+      z-index: 6;
+      left: 58px;
+      bottom: 46px;
+      width: 550px;
+      color: var(--paper);
+    }
+
+    #concept-06 .bottom-copy strong {
+      color: var(--yellow);
+      font-family: var(--serif);
+      font-size: 43px;
+      font-weight: 620;
+      letter-spacing: -0.035em;
+      line-height: 1;
+    }
+
+    #concept-06 .bottom-copy span {
+      display: block;
+      margin-top: 13px;
+      font-family: var(--mono);
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <section class="creative" id="concept-01" aria-label="Concepto 1: volver con experiencia">
+    <img class="background" src="backgrounds/01-regreso-editorial.png" alt="">
+    <img class="logo-dark" src="../../../renueva/assets/logo-tr4iner-negro.jpg" alt="TR4INER">
+    <p class="label">Promoción privada de renovación</p>
+    <h1 class="headline">Volver no es<br>empezar de cero.</h1>
+    <p class="support">Es retomar con más experiencia y un equipo que ya conoce el camino.</p>
+    <div class="offer-chip">
+      <strong>20%</strong>
+      <span>de descuento</span>
+    </div>
+    <img class="team" src="../../../renueva/assets/equipo-tr4iner.webp" alt="Equipo TR4INER">
+    <p class="deadline">Hasta el 1 de agosto</p>
+  </section>
+
+  <section class="creative" id="concept-02" aria-label="Concepto 2: oferta con Anthoni">
+    <img class="background" src="backgrounds/02-anthoni-oferta.png" alt="">
+    <img class="logo-dark" src="../../../renueva/assets/logo-tr4iner-negro.jpg" alt="TR4INER">
+    <p class="label">Renovación para exclientes</p>
+    <h1 class="headline">Ahora vuelve con ventaja.</h1>
+    <div class="discount">
+      <strong>20%</strong>
+      <span>de descuento</span>
+    </div>
+    <div class="cta-copy">
+      <strong>Elige tu plan antes de escribir.</strong>
+      <span>Tu asesor confirma el monto exacto en WhatsApp.</span>
+    </div>
+    <img class="anthoni" src="../../../10-platos/assets/anthoni-montalvan.webp" alt="Anthoni Montalván">
+    <p class="deadline">Disponible <strong>hasta el 1 de agosto</strong></p>
+  </section>
+
+  <section class="creative" id="concept-03" aria-label="Concepto 3: comparación de planes">
+    <img class="background" src="backgrounds/03-planes-grid.png" alt="">
+    <img class="logo-dark" src="../../../renueva/assets/logo-tr4iner-negro.jpg" alt="TR4INER">
+    <p class="label">Promoción de renovación</p>
+    <h1 class="headline">Elige cómo quieres volver.</h1>
+
+    <div class="plans">
+      <article class="plan">
+        <p class="plan-kicker">Membresía</p>
+        <h3>3 meses</h3>
+        <span class="percent">20%</span>
+        <span class="discount-label">de descuento</span>
+        <p class="bonus">Una opción directa para retomar.</p>
+      </article>
+
+      <article class="plan featured">
+        <span class="recommended">RECOMENDADO</span>
+        <p class="plan-kicker">Plan</p>
+        <h3>Anual</h3>
+        <span class="percent">20%</span>
+        <span class="discount-label">de descuento</span>
+        <p class="bonus">+1 mes gratis<br>+1 videollamada con la nutricionista</p>
+      </article>
+
+      <article class="plan">
+        <p class="plan-kicker">Membresía</p>
+        <h3>6 meses</h3>
+        <span class="percent">20%</span>
+        <span class="discount-label">de descuento</span>
+        <p class="bonus">+15 días gratis</p>
+      </article>
+    </div>
+
+    <div class="bottom-copy">
+      <strong>Compara. Elige. Renueva.</strong>
+      <span>Tu asesor confirma el monto por WhatsApp · Hasta el 1 de agosto</span>
+    </div>
+    <img class="team" src="../../../renueva/assets/equipo-tr4iner.webp" alt="Equipo TR4INER">
+  </section>
+
+  <section class="creative" id="concept-04" aria-label="Concepto 4: continuidad y experiencia">
+    <img class="background" src="backgrounds/04-continuidad.png" alt="">
+    <img class="logo-light" src="../../../renueva/assets/logo-tr4iner.png" alt="TR4INER">
+    <p class="label">Tu experiencia sigue contando</p>
+    <h1 class="headline">No vuelves<br>al inicio.</h1>
+    <p class="support">Vuelves sabiendo más de ti, del proceso y de lo que eres capaz.</p>
+    <div class="continuity-offer">
+      <strong>20%</strong>
+      <span>de descuento<br>para retomar</span>
+    </div>
+    <img class="team" src="../../../renueva/assets/equipo-tr4iner.webp" alt="Equipo TR4INER">
+    <p class="deadline">Promoción privada de renovación · Hasta el 1 de agosto</p>
+  </section>
+
+  <section class="creative" id="concept-05" aria-label="Concepto 5: valor del plan anual">
+    <img class="background" src="backgrounds/05-anual-12-mas-1.png" alt="">
+    <img class="logo-dark" src="../../../renueva/assets/logo-tr4iner-negro.jpg" alt="TR4INER">
+    <p class="label">La condición más completa</p>
+    <h1 class="headline">Haz que tu regreso rinda más.</h1>
+    <div class="month-math">
+      <strong>12<span>+1</span></strong>
+      <span>meses de acompañamiento</span>
+    </div>
+    <div class="annual-stack">
+      <span class="badge">Plan anual · Recomendado</span>
+      <h2>20%<span>de descuento</span></h2>
+      <ul class="annual-benefits">
+        <li>1 mes adicional gratis</li>
+        <li>1 videollamada con la nutricionista</li>
+      </ul>
+    </div>
+    <p class="deadline">Disponible hasta el 1 de agosto</p>
+    <img class="anthoni" src="../../../10-platos/assets/anthoni-montalvan.webp" alt="Anthoni Montalván">
+  </section>
+
+  <section class="creative" id="concept-06" aria-label="Concepto 6: cierre de promoción">
+    <img class="background" src="backgrounds/06-cierre-agosto.png" alt="">
+    <img class="logo-dark" src="../../../renueva/assets/logo-tr4iner-negro.jpg" alt="TR4INER">
+    <div class="calendar-content">
+      <p class="label">Cierre de promoción</p>
+      <div class="calendar-date">
+        <strong>01</strong>
+        <span>AGO</span>
+      </div>
+      <div class="calendar-rule"></div>
+      <h1>La ventana de renovación termina.</h1>
+      <p class="close-time">Hora de Lima<strong>11:59 P. M.</strong></p>
+      <p class="close-offer">20% de descuento</p>
+    </div>
+    <div class="bottom-copy">
+      <strong>Elige tu plan antes del cierre.</strong>
+      <span>Tu asesor confirma el monto exacto por WhatsApp</span>
+    </div>
+    <img class="team" src="../../../renueva/assets/equipo-tr4iner.webp" alt="Equipo TR4INER">
+  </section>
+</body>
+</html>
