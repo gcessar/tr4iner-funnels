@@ -1466,6 +1466,60 @@ un footer sticky que tape contenido o agregue una segunda mecánica de navegaci�
 
 ---
 
+## 2026-07-30 — Funnel VA de Rosita
+
+### Qué cambió
+
+- Se creó `/testimonio-rosita-va` como prerregistro exclusivo para mujeres. El
+  formulario conserva nombre, email, atribución y `sexo=Mujer`, envía al webhook
+  vigente de Caso de Estudio y continúa en el mismo origen hacia
+  `/testimonio-rosita-va/video`.
+- Se creó `/testimonio-rosita-va/video` con el Vidalytics
+  `RymSJVDkKpFH17Z7` y, debajo, la misma evaluación de Typeform usada por el
+  Caso de Estudio VA.
+- El token live de Typeform `01KHA5RZHGV02HW971F4227939` resolvía al formulario
+  real `CGxeptJu` y forzaba `shareGaInstance=true`. La nueva página usa el ID
+  real mediante el widget oficial para mantener la evaluación sin depender de
+  una instancia GA global; GA4 sigue centralizado en GTM.
+- Ambas páginas usan la identidad de Rosita: fondo ciruela, contraste marfil y
+  acento fucsia/naranja, con Anton, Outfit y JetBrains Mono. La portada real del
+  VSL se extrajo del prototipo y se optimizó de PNG a JPEG de 155 KB.
+- Las variantes descargadas de FIT4 y Tr4iner no se copiaron ni modificaron.
+- SEO/GEO queda explícitamente en `noindex, nofollow` con canonical propio para
+  cada paso: son páginas operativas de tráfico VA, no contenido para posicionar.
+
+### Por qué
+
+Rosita necesita una ruta medible y aislada que conserve su lenguaje visual sin
+mezclar los leads ni las métricas del Caso de Estudio VA vigente. La separación
+de rutas permite comparar el prerregistro, consumo del VSL y avance a evaluación
+sin reemplazar ni rediseñar los funnels que ya funcionan.
+
+### Resultado esperado
+
+- Más registros de mujeres que se identifican con el problema de bajar grasa
+  sin perder piernas ni glúteos.
+- Continuidad visual entre anuncio, prerregistro, VSL y evaluación.
+- Atribución completa hasta Typeform sin exponer `fbc`/`fbp` derivados en la URL.
+
+### Resultado medido
+
+- Los scripts inline compilaron y `git diff --check` pasó.
+- Chrome real cargó las tres familias tipográficas y no presentó overflow
+  documental en 375, 768 ni 1280 px.
+- El prerregistro mostró un CTA de 56 px en móvil, validación inline con foco en
+  el primer error y modal navegable por teclado.
+- El VSL correcto cargó sus controles. Typeform cargó recién al llegar a la
+  sección y mostró la pregunta inicial “¿Cómo describirías tu cuerpo hoy?”.
+- Los hidden fields conservaron nombre, email con `@` literal, `sexo`, `video`,
+  UTMs, `fbclid`, `funnel`, `funnel_variant` y el `fbc` derivado por
+  `attribution.js`.
+- El embed final no emitió errores de consola. El Pixel sí mostró en localhost
+  el aviso esperado de permisos de tráfico; no afecta la lógica de la página.
+- Preview de la rama: pendiente de commit y push.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
