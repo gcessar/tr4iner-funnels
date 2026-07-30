@@ -154,8 +154,9 @@
         params.forEach(function (value, key) {
           var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
           if (!allowed || !value) return;
-          var encoded = encodeURIComponent(value).replace(/%40/gi, "@");
-          hiddenFields.push(key + "=" + encoded);
+          // Typeform codifica estos valores al construir el iframe. Precodificarlos
+          // acá convierte espacios, tildes y emojis en texto literal con porcentajes.
+          hiddenFields.push(key + "=" + value);
         });
 
         // fbc/fbp se toman del dominio actual; no se inventan ni se sustituyen por IDs externos.
@@ -163,7 +164,7 @@
           ? window.TR4Track.getMetaIds()
           : {};
         Object.keys(metaIds).forEach(function (key) {
-          if (metaIds[key]) hiddenFields.push(key + "=" + encodeURIComponent(metaIds[key]));
+          if (metaIds[key]) hiddenFields.push(key + "=" + metaIds[key]);
         });
 
         if (tf && hiddenFields.length) {

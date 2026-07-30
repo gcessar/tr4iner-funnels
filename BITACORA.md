@@ -1560,6 +1560,36 @@ aunque la regla pareciera correcta.
 
 ---
 
+## 2026-07-30 — Nombre legible en el Typeform de Rosita
+
+### Qué cambió
+
+- `/testimonio-rosita-va/video` entrega los hidden fields al SDK de Typeform
+  como valores legibles, sin aplicar `encodeURIComponent` previamente.
+- Se mantiene el mismo formulario `CGxeptJu` y no cambian preguntas, salidas,
+  atribución ni automatizaciones.
+
+### Por qué
+
+`URLSearchParams` ya había decodificado el nombre al entrar al VSL. La página
+lo codificaba de nuevo antes de pasarlo a Typeform y el SDK hacía una segunda
+codificación al construir el iframe. Por eso “Estrellita 🤍” se almacenaba
+como `Estrellita%20%F0%9F%A4%8D`.
+
+### Resultado esperado
+
+- Typeform, n8n y CRM reciben el nombre original con espacios, tildes y emojis.
+
+### Resultado medido
+
+- Caso probado: `first_name=Estrellita 🤍` y
+  `email=estrella+va@example.com`.
+- `data-tf-hidden` conservó ambos valores legibles y el iframe los codificó una
+  sola vez, sin secuencias `%25`.
+- `fbc` y `fbp` continuaron presentes en la URL interna de Typeform.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
