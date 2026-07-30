@@ -1392,9 +1392,9 @@ anual funciona como ancla sin esconder las alternativas.
 
 ### Qué cambió
 
-- Se crearon tres anuncios verticales `1080 × 1350` bajo `assets/ads/renueva/`:
-  reactivación emocional con el equipo, oferta directa con Anthoni y comparación de
-  los tres planes.
+- Se crearon seis anuncios verticales `1080 × 1350` bajo `assets/ads/renueva/`:
+  reactivación emocional con el equipo, oferta directa con Anthoni, comparación de
+  planes, continuidad de la experiencia, valor del plan anual y cierre de promoción.
 - Los fondos editoriales fueron generados como bases sin texto, personas ni logos. La
   composición final usa el logo, la foto de Anthoni y la foto del equipo oficiales.
 - `concepts.html` conserva el montaje editable y renderiza los textos de forma
@@ -1402,13 +1402,14 @@ anual funciona como ancla sin esconder las alternativas.
 
 ### Por qué
 
-Las tres rutas prueban intenciones distintas: identificación emocional, respuesta directa
-a la oferta y selección informada del plan. La tercera prioriza calidad de conversación
-por encima de CTR al mostrar las opciones antes del clic.
+Las seis rutas prueban intenciones distintas: identificación emocional, respuesta directa,
+selección informada, continuidad, valor acumulado y urgencia concreta. La comparación de
+planes prioriza calidad de conversación por encima de CTR al mostrar las opciones antes
+del clic.
 
 ### Resultado medido
 
-- Los tres PNG finales miden exactamente `1080 × 1350`.
+- Los seis PNG finales miden exactamente `1080 × 1350`.
 - Chrome cargó todos los recursos sin excepciones; los únicos desbordes detectados son
   recortes inferiores intencionales de la foto del equipo.
 - No se modificó ni desplegó la landing `/renueva`.
