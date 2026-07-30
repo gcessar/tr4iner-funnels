@@ -1388,6 +1388,33 @@ anual funciona como ancla sin esconder las alternativas.
 
 ---
 
+## 2026-07-29 — Conceptos Meta Ads para renovación
+
+### Qué cambió
+
+- Se crearon tres anuncios verticales `1080 × 1350` bajo `assets/ads/renueva/`:
+  reactivación emocional con el equipo, oferta directa con Anthoni y comparación de
+  los tres planes.
+- Los fondos editoriales fueron generados como bases sin texto, personas ni logos. La
+  composición final usa el logo, la foto de Anthoni y la foto del equipo oficiales.
+- `concepts.html` conserva el montaje editable y renderiza los textos de forma
+  determinista para evitar errores tipográficos o rostros reinterpretados por IA.
+
+### Por qué
+
+Las tres rutas prueban intenciones distintas: identificación emocional, respuesta directa
+a la oferta y selección informada del plan. La tercera prioriza calidad de conversación
+por encima de CTR al mostrar las opciones antes del clic.
+
+### Resultado medido
+
+- Los tres PNG finales miden exactamente `1080 × 1350`.
+- Chrome cargó todos los recursos sin excepciones; los únicos desbordes detectados son
+  recortes inferiores intencionales de la foto del equipo.
+- No se modificó ni desplegó la landing `/renueva`.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
