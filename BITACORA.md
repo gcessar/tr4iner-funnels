@@ -1416,6 +1416,50 @@ del clic.
 
 ---
 
+## 2026-07-30 — Selector móvil de ruta GENESIS
+
+### Qué cambió
+
+- `/biblioteca/inicio/` adelanta la decisión Mujer/Hombre y elimina el bloque editorial
+  duplicado que escondía ambas rutas debajo del primer viewport móvil.
+- Las dos rutas pasan a ser controles oscuros de igual jerarquía, con texto de acción,
+  flecha amarilla, foco visible y targets táctiles de 98 px en móvil.
+- Se mantienen sin cambios `data-sexo`, `biblioteca_sexo_view`,
+  `biblioteca_sexo_select`, la entrada de miembros y la propagación completa de la query.
+- SEO/GEO se mantiene explícitamente como `noindex, nofollow` con canonical productivo:
+  es un paso operativo del funnel, no una página que deba competir en buscadores.
+
+### Por qué
+
+El feedback móvil fue correcto: las filas anteriores tenían área clicable grande, pero
+visualmente parecían contenido editorial. Además, el primer control empezaba debajo de un
+viewport de 390 × 844. El rediseño convierte la selección en la acción dominante sin usar
+un footer sticky que tape contenido o agregue una segunda mecánica de navegación.
+
+### Resultado esperado
+
+- Más selecciones de ruta por visita a `/biblioteca/inicio/`.
+- Menor abandono antes de abrir Mujer/Hombre.
+- Cero sesgo visual entre ambas rutas.
+
+### Resultado medido
+
+- En 375 × 844, Mujer ocupa `y=391–489` y Hombre `y=501–599`: ambas decisiones aparecen
+  completas en el primer viewport.
+- Sin overflow documental en 375, 768 y 1280 px; targets de 98 px en móvil y 130 px en
+  tablet/desktop.
+- Una query sintética con `utm_source`, `utm_medium`, `utm_campaign`, `video` y `fbclid`
+  llegó completa a Mujer, Hombre y “Ya tengo acceso”; cada ruta agregó solo su `sexo`.
+- Los dos scripts inline parsearon correctamente y `git diff --check` pasó.
+- Preview final: commit `2a949a1`, Vercel `dpl_CtK6Vbp87uVjrnjHUz24JRrk83LU`,
+  target `preview`, estado **READY**.
+- Producción: merge `0a559bc`, Vercel `dpl_qgjVtv1o6BLevzzjRgGotDtmwmna`,
+  target `production`, estado **READY** y alias `https://metodo.tr4iner.com`.
+- El dominio canónico repitió las posiciones móviles `y=391–489` y `y=501–599`,
+  preservó los UTMs en las tres salidas y no emitió errores de consola.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
