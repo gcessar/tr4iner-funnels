@@ -1333,6 +1333,59 @@ un `fbclid` simulado, sin abrir la página para no inyectar un PageView falso al
 
 ---
 
+## 2026-07-29 — Renovación privada de exclientes por WhatsApp
+
+### Qué cambió
+
+- Nueva ruta `/renueva`, construida en `work/renueva`, para una campaña de Meta Ads
+  dirigida a un público personalizado de exclientes.
+- El primer Preview fue descartado visualmente. El rediseño aprobado como dirección usa
+  fondo blanco, jerarquía más comercial y solo el logo y la foto de equipo oficiales.
+- El plan anual domina la primera decisión con el copy “Ya conoces el método. Ahora
+  vuelve con ventaja.”; 6 y 3 meses quedan como alternativas compactas.
+- En móvil y tablet la propuesta anual aparece antes del contador para adelantar el CTA.
+  En desktop, copy/contador y anual comparten el primer bloque.
+- Los tres planes ofrecen 20%: 6 meses suma 15 días gratis y anual suma un mes gratis más
+  una videollamada con nutricionista.
+- Cada CTA abre `+51 922 551 745` con un mensaje específico para el plan elegido. No se
+  publican precios porque el asesor calcula la condición desde la última membresía.
+- La promoción vence el 1-ago-2026 a las 23:59:59 de Lima. El contador corrige el reloj
+  local con la cabecera `Date` del servidor; al vencer elimina los tres `href` de WhatsApp.
+- GTM recibe `renueva_whatsapp_click` con el plan y la atribución de `attribution.js`.
+- Decisión SEO/GEO: `noindex, nofollow, noarchive`; es una ventana comercial temporal y
+  no debe entrar al sitemap.
+
+### Por qué
+
+La página muestra todas las condiciones antes del chat para que el vendedor reciba
+exclientes que ya eligieron horizonte de renovación, no consultas de curiosidad. El plan
+anual funciona como ancla sin esconder las alternativas.
+
+### Resultado esperado
+
+- Mayor proporción de conversaciones de WhatsApp con intención explícita de renovar.
+- Menos tiempo del vendedor explicando la promoción desde cero.
+- Más selección del plan anual por jerarquía, bonos y CTA “Quiero activar”, sin esconder
+  ni bloquear las alternativas.
+
+### Resultado medido
+
+- Chrome real sin overflow documental en 375, 768 y 1280 px.
+- Los tres enlaces resolvieron al número y mensaje correctos.
+- Prueba temporal posterior al vencimiento: la oferta completa queda oculta, se muestra
+  un único cierre claro y quedan 0 enlaces de WhatsApp con `href`.
+- UTMs sintéticas y `fbclid` conservaron `utm_source`, `utm_medium`, `utm_campaign`,
+  `fbclid` y el `fbc` derivado.
+- La foto oficial del equipo usa carga diferida y se verificó con dimensiones naturales
+  `919 × 824`; el CTA anual aparece a 881 px desde el inicio en viewport móvil de 375 px.
+- El Preview anterior (`dpl_8Ny8j6TjvotK3ZLvK14RdwEis8n5`) queda reemplazado por el
+  rediseño del commit `c5943ae`.
+- Nuevo Preview del rediseño: Vercel `dpl_C5AXHeU5goVHFrULM8Kof4rTFHfz`, commit
+  `b4d0453`, target `preview`, estado **READY**.
+- Producción: pendiente de aprobación visual del Preview.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
