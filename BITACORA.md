@@ -1516,7 +1516,10 @@ sin reemplazar ni rediseñar los funnels que ya funcionan.
   `attribution.js`.
 - El embed final no emitió errores de consola. El Pixel sí mostró en localhost
   el aviso esperado de permisos de tráfico; no afecta la lógica de la página.
-- Preview de la rama: pendiente de commit y push.
+- Preview del commit `470a8f6`: Vercel
+  `dpl_GkCYoixmguq6qWvgpKs5v7hKrcXR`, target `preview`, estado **READY**.
+  El deployment está protegido por Vercel Authentication y no se promovió a
+  Producción.
 
 ---
 
