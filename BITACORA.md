@@ -1528,6 +1528,35 @@ sin reemplazar ni rediseñar los funnels que ya funcionan.
 
 ---
 
+## 2026-07-30 — Centrado del play en el prerregistro de Rosita
+
+### Qué cambió
+
+- `.media-frame` ahora usa `display: block`, para que el play absoluto tome
+  como referencia toda la portada 16:9 y no una caja inline fragmentada.
+- El versionado del CSS compartido subió a `20260730-2` en prerregistro y VSL,
+  evitando que el navegador conserve la geometría anterior en caché.
+- No cambiaron el tamaño, color, animación ni comportamiento del botón.
+
+### Por qué
+
+El play usaba `top: 50%`, `left: 50%`, pero su contenedor era un `<span>`
+inline. En escritorio eso desplazaba el centro visual 175 px hacia la derecha
+aunque la regla pareciera correcta.
+
+### Resultado esperado
+
+- El círculo de play queda exactamente centrado sobre la portada en cualquier
+  ancho.
+
+### Resultado medido
+
+- Antes del cambio: desfase horizontal de `+175 px` en 1280 px.
+- Después del cambio: desfase `0 × 0 px` en viewports reales de 375, 768 y
+  1280 px, sin overflow horizontal.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

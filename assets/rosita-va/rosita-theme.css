@@ -247,6 +247,7 @@ button.media-shell:hover {
 
 .media-frame {
   position: relative;
+  display: block;
   overflow: hidden;
   aspect-ratio: 16 / 9;
   border-radius: var(--rosita-radius);
