@@ -1587,6 +1587,9 @@ como `Estrellita%20%F0%9F%A4%8D`.
 - `data-tf-hidden` conservó ambos valores legibles y el iframe los codificó una
   sola vez, sin secuencias `%25`.
 - `fbc` y `fbp` continuaron presentes en la URL interna de Typeform.
+- Preview del commit `07dda29`: Vercel
+  `dpl_5s7bZRSHxGixFeh8oWP1shXH63Cr`, target `preview`, estado **READY**.
+  Producción queda pendiente junto con el ajuste del play.
 
 ---
 
