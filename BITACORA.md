@@ -1512,8 +1512,11 @@ sin reemplazar ni rediseñar los funnels que ya funcionan.
 - El VSL correcto cargó sus controles. Typeform cargó recién al llegar a la
   sección y mostró la pregunta inicial “¿Cómo describirías tu cuerpo hoy?”.
 - Los hidden fields conservaron nombre, email con `@` literal, `sexo`, `video`,
-  UTMs, `fbclid`, `funnel`, `funnel_variant` y el `fbc` derivado por
-  `attribution.js`.
+  UTMs, `fbclid`, `funnel`, `funnel_variant`, `fbc` y `fbp`.
+- Una prueba específica con `fbclid` sintético y cookie `_fbp` confirmó ambos
+  valores tanto en `data-tf-hidden` como en la URL interna del iframe de
+  Typeform. Se reutiliza exactamente `TR4Track.getMetaIds()`, el contrato
+  incorporado previamente al Caso de Estudio con Claude.
 - El embed final no emitió errores de consola. El Pixel sí mostró en localhost
   el aviso esperado de permisos de tráfico; no afecta la lógica de la página.
 - Preview del commit `470a8f6`: Vercel
