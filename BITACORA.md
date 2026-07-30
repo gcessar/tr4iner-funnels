@@ -1382,7 +1382,9 @@ anual funciona como ancla sin esconder las alternativas.
   rediseño del commit `c5943ae`.
 - Nuevo Preview del rediseño: Vercel `dpl_C5AXHeU5goVHFrULM8Kof4rTFHfz`, commit
   `b4d0453`, target `preview`, estado **READY**.
-- Producción: pendiente de aprobación visual del Preview.
+- Producción aprobada: merge `c2ab129` en `main`; Vercel
+  `dpl_6ifBohXDivoQt56gc4EVrXcHqcka`, target `production`, estado **READY** y alias
+  canónico `https://metodo.tr4iner.com`.
 
 ---
 
