@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0d0e0c">
+  <meta name="theme-color" content="#ffffff">
 
   <script>
     document.documentElement.classList.remove('no-js');
@@ -20,7 +20,7 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Renueva tu membresía con 20% de descuento | TR4INER</title>
+  <title>Renueva con 20% de descuento | TR4INER</title>
   <meta name="description" content="Promoción privada de renovación para exclientes de TR4INER. Disponible hasta el 1 de agosto de 2026 a las 11:59 p. m.">
   <link rel="canonical" href="https://metodo.tr4iner.com/renueva">
   <link rel="icon" href="/renueva/assets/favicon-tr4iner.jpg" type="image/jpeg">
@@ -29,8 +29,8 @@
   <meta property="og:locale" content="es_LA">
   <meta property="og:site_name" content="TR4INER">
   <meta property="og:url" content="https://metodo.tr4iner.com/renueva">
-  <meta property="og:title" content="Ventana privada de renovación | TR4INER">
-  <meta property="og:description" content="20% de descuento en cualquiera de los tres planes. Condiciones exclusivas para exclientes.">
+  <meta property="og:title" content="Vuelve con ventaja | TR4INER">
+  <meta property="og:description" content="20% de descuento en tu renovación. Elige tu plan antes del 1 de agosto.">
   <meta property="og:image" content="https://metodo.tr4iner.com/renueva/assets/equipo-tr4iner.webp">
   <meta property="og:image:width" content="919">
   <meta property="og:image:height" content="824">
@@ -40,33 +40,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
-  <link rel="preload" href="/renueva/assets/equipo-tr4iner.webp" as="image" type="image/webp" fetchpriority="high">
 
   <style>
     :root {
-      --ink: #0d0e0c;
-      --ink-soft: #171816;
-      --paper: #f3efe3;
-      --paper-deep: #e8e1d0;
-      --white: #fffdf7;
-      --muted: #6b675f;
-      --muted-dark: #b6b4ac;
-      --rule: rgba(13, 14, 12, 0.18);
-      --rule-dark: rgba(255, 253, 247, 0.2);
+      --ink: #11120f;
+      --muted: #66685f;
+      --paper: #ffffff;
+      --soft: #f5f5ef;
+      --warm: #fff8d5;
       --accent: #f5c518;
+      --accent-dark: #8b6a00;
       --whatsapp: #25d366;
-      --whatsapp-hover: #42df7d;
+      --whatsapp-hover: #1fbd59;
+      --line: #dcded5;
       --serif: "Fraunces", Georgia, serif;
       --sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-      --max: 1180px;
-      --radius: 8px;
-      --space-1: 8px;
-      --space-2: 16px;
-      --space-3: 24px;
-      --space-4: 32px;
-      --space-5: 48px;
-      --space-6: 64px;
+      --max: 1160px;
+      --radius: 18px;
     }
 
     * {
@@ -76,8 +67,8 @@
     }
 
     html {
-      background: var(--ink);
-      color-scheme: dark;
+      background: var(--paper);
+      color-scheme: light;
       scroll-behavior: smooth;
       -webkit-text-size-adjust: 100%;
     }
@@ -87,24 +78,23 @@
       min-height: 100dvh;
       padding-bottom: env(safe-area-inset-bottom);
       overflow-x: hidden;
-      background: var(--ink);
-      color: var(--white);
+      background: var(--paper);
+      color: var(--ink);
       font-family: var(--sans);
       font-size: 17px;
       line-height: 1.55;
       text-rendering: optimizeLegibility;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     a {
       color: inherit;
       touch-action: manipulation;
-      -webkit-tap-highlight-color: rgba(245, 197, 24, 0.25);
+      -webkit-tap-highlight-color: rgba(37, 211, 102, 0.22);
     }
 
     a:focus-visible {
-      outline: 3px solid var(--accent);
+      outline: 3px solid var(--ink);
       outline-offset: 4px;
     }
 
@@ -113,9 +103,18 @@
       color: var(--ink);
     }
 
-    img {
+    img,
+    svg {
       display: block;
+    }
+
+    img {
       max-width: 100%;
+    }
+
+    .shell {
+      width: min(calc(100% - 32px), var(--max));
+      margin-inline: auto;
     }
 
     .skip-link {
@@ -124,11 +123,10 @@
       top: 12px;
       left: 12px;
       padding: 10px 14px;
-      background: var(--accent);
-      color: var(--ink);
+      background: var(--ink);
+      color: var(--paper);
       font-family: var(--mono);
       font-size: 12px;
-      font-weight: 600;
       text-decoration: none;
       transform: translateY(-160%);
       transition: transform 160ms ease;
@@ -138,367 +136,239 @@
       transform: none;
     }
 
-    .shell {
-      width: min(calc(100% - 32px), var(--max));
-      margin-inline: auto;
+    .urgency-bar {
+      padding: 9px 16px;
+      background: var(--accent);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.35;
+      text-align: center;
+      text-transform: uppercase;
     }
 
     .masthead {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 86px;
+      min-height: 76px;
       padding-top: env(safe-area-inset-top);
-      border-bottom: 1px solid var(--rule-dark);
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
     }
 
     .masthead img {
-      width: 176px;
+      width: 174px;
       height: auto;
+    }
+
+    .offer-content {
+      padding: clamp(38px, 6vw, 76px) 0 72px;
     }
 
     .hero {
       display: grid;
-      overflow: hidden;
-      border-radius: var(--radius) var(--radius) 0 0;
-      background: var(--paper);
-      color: var(--ink);
-    }
-
-    .hero-copy {
-      padding: clamp(36px, 6vw, 72px) clamp(24px, 6vw, 72px);
+      grid-template-columns: minmax(0, 0.9fr) minmax(440px, 1.1fr);
+      gap: clamp(40px, 7vw, 92px);
+      align-items: center;
     }
 
     .eyebrow {
-      margin-bottom: var(--space-2);
-      color: #9d7900;
+      margin-bottom: 15px;
+      color: var(--accent-dark);
       font-family: var(--mono);
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
     }
 
-    h1 {
-      max-width: 14ch;
+    h1,
+    h2,
+    .team-quote {
       font-family: var(--serif);
-      font-size: clamp(42px, 7vw, 76px);
-      font-variation-settings: "opsz" 100;
-      font-weight: 560;
-      line-height: 0.98;
-      letter-spacing: -0.045em;
+      font-optical-sizing: auto;
       text-wrap: balance;
     }
 
-    .hero-rule {
-      width: 104px;
-      height: 3px;
-      margin: 26px 0 18px;
-      border: 0;
-      background: var(--accent);
-    }
-
-    .hero-offer {
-      max-width: 34ch;
-      font-size: clamp(20px, 2vw, 26px);
-      line-height: 1.3;
-    }
-
-    .hero-offer strong {
-      font-weight: 700;
-    }
-
-    .advisor-note {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      max-width: 46ch;
-      margin-top: var(--space-3);
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    .advisor-note svg {
-      flex: 0 0 28px;
-      width: 28px;
-      height: 28px;
-      margin-top: 1px;
-      stroke: currentColor;
-    }
-
-    .advisor-note span,
-    .renewal-cta span {
-      min-width: 0;
-      overflow-wrap: break-word;
-    }
-
-    .team-panel {
-      position: relative;
-      min-height: 360px;
-      overflow: hidden;
-      background: var(--ink-soft);
-    }
-
-    .team-panel::after {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 3px;
-      content: "";
-      background: var(--accent);
-    }
-
-    .team-panel img {
-      position: absolute;
-      right: 50%;
-      bottom: 0;
-      width: min(114%, 560px);
-      max-width: none;
-      height: 96%;
-      object-fit: contain;
-      object-position: center bottom;
-      transform: translateX(50%);
-      filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.22));
-    }
-
-    .deadline-panel {
-      padding: clamp(28px, 4vw, 42px) clamp(24px, 5vw, 56px);
-      border-top: 1px solid var(--rule-dark);
-      border-bottom: 1px solid var(--rule-dark);
-      background: var(--ink-soft);
-    }
-
-    .deadline-active {
-      display: grid;
-      gap: var(--space-4);
-      align-items: center;
-    }
-
-    .deadline-label {
-      margin-bottom: 12px;
-      color: var(--muted-dark);
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .timer {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(54px, 1fr));
-      gap: 10px;
-      width: min(100%, 530px);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .timer-part {
-      min-width: 0;
-    }
-
-    .timer-value {
-      display: flex;
-      align-items: baseline;
-      justify-content: flex-start;
-      color: var(--white);
-      font-family: var(--mono);
-      font-size: clamp(34px, 5vw, 52px);
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      white-space: nowrap;
-    }
-
-    .timer-part:not(:last-child) .timer-value::after {
-      margin-left: auto;
-      padding-left: 6px;
-      color: var(--muted);
-      content: ":";
-    }
-
-    .timer-unit {
-      margin-top: 10px;
-      color: var(--muted-dark);
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .deadline-meta {
-      padding-top: 4px;
-    }
-
-    .progress {
-      height: 3px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.14);
-    }
-
-    .progress span {
-      display: block;
-      width: 76%;
-      height: 100%;
-      background: var(--accent);
-    }
-
-    .deadline-date {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 24px;
-      color: var(--white);
-      font-size: 15px;
-    }
-
-    .deadline-date svg {
-      flex: 0 0 23px;
-      width: 23px;
-      height: 23px;
-      stroke: var(--accent);
-    }
-
-    .deadline-expired {
-      display: none;
-      max-width: 760px;
-      margin-inline: auto;
-      text-align: center;
-    }
-
-    .deadline-expired .eyebrow {
-      margin-bottom: 10px;
-    }
-
-    .deadline-expired h2 {
-      font-family: var(--serif);
-      font-size: clamp(34px, 6vw, 54px);
-      font-weight: 560;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
-    }
-
-    .deadline-expired p {
-      margin-top: 12px;
-      color: var(--muted-dark);
-    }
-
-    .plans {
-      padding: clamp(32px, 5vw, 56px) 0 0;
+    [id] {
       scroll-margin-top: 24px;
     }
 
-    .plans-title {
-      margin-bottom: var(--space-4);
-      text-align: center;
-    }
-
-    .plans-title h2 {
-      font-family: var(--serif);
-      font-size: clamp(34px, 5vw, 48px);
+    h1 {
+      max-width: 680px;
+      font-size: clamp(43px, 5.3vw, 72px);
       font-weight: 560;
-      line-height: 1.05;
-      letter-spacing: -0.035em;
+      letter-spacing: -0.045em;
+      line-height: 0.98;
     }
 
-    .plans-title p {
-      max-width: 56ch;
-      margin: 10px auto 0;
-      color: var(--muted-dark);
-      font-size: 15px;
+    .hero-lead {
+      max-width: 600px;
+      margin-top: 22px;
+      color: #44463f;
+      font-size: clamp(17px, 1.7vw, 20px);
+      line-height: 1.55;
     }
 
-    .plan-grid {
-      display: grid;
-      gap: var(--space-2);
-    }
-
-    .plan {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      min-height: 350px;
-      padding: 30px 26px 24px;
-      border: 1px solid var(--rule);
-      border-radius: var(--radius);
-      background: var(--paper);
+    .hero-lead strong {
       color: var(--ink);
+      font-weight: 700;
     }
 
-    .plan-annual {
-      order: 1;
-      min-height: 420px;
-      border-color: var(--accent);
-      background: var(--ink-soft);
-      color: var(--white);
+    .countdown-wrap {
+      max-width: 500px;
+      margin-top: 30px;
+      padding-top: 21px;
+      border-top: 1px solid var(--line);
     }
 
-    .plan-six {
-      order: 2;
-    }
-
-    .plan-three {
-      order: 3;
-    }
-
-    .recommended {
-      align-self: flex-start;
-      margin: -43px 0 22px;
-      padding: 7px 13px;
-      background: var(--accent);
-      color: var(--ink);
+    .countdown-label {
+      margin-bottom: 11px;
       font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .plan-heading {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .plan-annual .plan-heading {
-      border-color: var(--rule-dark);
-    }
-
-    .plan-heading svg {
-      flex: 0 0 38px;
-      width: 38px;
-      height: 38px;
-      stroke: currentColor;
-    }
-
-    .plan-annual .plan-heading svg {
-      stroke: var(--accent);
-    }
-
-    .plan h3 {
-      font-family: var(--serif);
-      font-size: clamp(32px, 4vw, 42px);
-      font-weight: 560;
-      line-height: 1;
-      letter-spacing: -0.035em;
-    }
-
-    .discount {
-      margin: 24px 0 20px;
-      font-family: var(--mono);
-      font-size: 14px;
+      font-size: 10.5px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
+    .countdown-live {
+      transition: opacity 160ms ease;
+    }
+
+    .countdown-pending .countdown-live {
+      opacity: 0;
+    }
+
+    .countdown-ready .countdown-live {
+      opacity: 1;
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 74px));
+      gap: 8px;
+    }
+
+    .timer-unit {
+      padding: 10px 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--soft);
+      text-align: center;
+    }
+
+    .timer-value {
+      display: block;
+      font-family: var(--mono);
+      font-size: clamp(20px, 2.3vw, 26px);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .timer-name {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 8.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .deadline-fallback,
+    .deadline-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .js .deadline-fallback {
+      display: none;
+    }
+
+    .annual-card {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(28px, 4vw, 44px);
+      border: 2px solid var(--ink);
+      border-radius: var(--radius);
+      background: var(--warm);
+      box-shadow: 8px 8px 0 var(--accent);
+    }
+
+    .annual-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 26px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .annual-badge svg {
+      color: var(--accent);
+    }
+
+    .plan-name {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .discount {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      margin-top: 7px;
+    }
+
+    .discount strong {
+      font-family: var(--serif);
+      font-size: clamp(76px, 9vw, 112px);
+      font-variant-numeric: tabular-nums;
+      font-weight: 650;
+      letter-spacing: -0.07em;
+      line-height: 0.86;
+    }
+
+    .discount span {
+      max-width: 115px;
+      padding-bottom: 7px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .annual-separator {
+      height: 1px;
+      margin: 26px 0 20px;
+      background: rgba(17, 18, 15, 0.22);
+    }
+
+    .extras-label {
+      margin-bottom: 11px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .benefits {
       display: grid;
       gap: 11px;
-      margin-bottom: var(--space-4);
       list-style: none;
     }
 
@@ -506,49 +376,32 @@
       display: flex;
       gap: 10px;
       align-items: flex-start;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.45;
-      letter-spacing: 0.035em;
-      text-transform: uppercase;
+      font-weight: 650;
     }
 
     .benefits svg {
-      flex: 0 0 18px;
-      width: 18px;
-      height: 18px;
-      margin-top: 1px;
-      stroke: #997400;
+      flex: 0 0 auto;
+      margin-top: 2px;
+      color: var(--ink);
     }
 
-    .plan-annual .benefits svg {
-      stroke: var(--accent);
-    }
-
-    .renewal-cta,
-    .closed-cta {
+    .renewal-cta {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       min-height: 58px;
-      margin-top: auto;
+      margin-top: 26px;
       padding: 14px 18px;
-      border: 0;
-      border-radius: 5px;
-      font-family: var(--mono);
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 1.35;
-      letter-spacing: 0.06em;
+      border: 2px solid #0d6d31;
+      border-radius: 10px;
+      background: var(--whatsapp);
+      color: #071c0e;
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.25;
       text-align: center;
       text-decoration: none;
-      text-transform: uppercase;
-    }
-
-    .renewal-cta {
-      background: var(--whatsapp);
-      color: #07170d;
       transition: background-color 160ms ease, transform 160ms ease;
     }
 
@@ -558,227 +411,384 @@
     }
 
     .renewal-cta:active {
+      background: var(--whatsapp-hover);
       transform: translateY(0);
     }
 
-    .renewal-cta svg,
-    .closed-cta svg {
-      flex: 0 0 24px;
-      width: 24px;
-      height: 24px;
+    .renewal-cta svg {
+      flex: 0 0 auto;
     }
 
-    .closed-cta {
-      display: none;
-      background: rgba(107, 103, 95, 0.22);
+    .cta-note {
+      margin-top: 11px;
+      color: #52554c;
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .alternatives {
+      margin-top: clamp(70px, 9vw, 108px);
+      padding-top: clamp(46px, 6vw, 68px);
+      border-top: 1px solid var(--line);
+    }
+
+    .section-heading {
+      max-width: 640px;
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 560;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+    }
+
+    .section-heading p {
+      margin-top: 10px;
       color: var(--muted);
     }
 
-    .plan-annual .closed-cta {
-      color: var(--muted-dark);
-      background: rgba(255, 255, 255, 0.08);
+    .alternative-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
     }
 
-    .countdown-pending .renewal-cta,
-    .countdown-pending .closed-cta {
-      visibility: hidden;
+    .alternative-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
     }
 
-    .no-js .renewal-cta {
+    .alternative-card h3 {
+      margin-top: 5px;
+      font-size: clamp(28px, 3vw, 36px);
+      line-height: 1;
+    }
+
+    .alternative-card .plan-name {
+      color: var(--muted);
+      font-size: 9.5px;
+    }
+
+    .alternative-benefit {
+      margin-top: 10px;
+      color: #383a34;
+      font-size: 14px;
+    }
+
+    .alternative-benefit strong {
+      color: var(--ink);
+    }
+
+    .alternative-card .renewal-cta {
+      width: 220px;
+      margin-top: 0;
+      font-size: 12px;
+    }
+
+    .how-it-works {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(28px, 6vw, 70px);
+      align-items: start;
+      margin-top: 42px;
+      padding: clamp(28px, 5vw, 48px);
+      border-radius: var(--radius);
+      background: var(--soft);
+    }
+
+    .how-it-works h2 {
+      font-size: clamp(27px, 3.2vw, 38px);
+      font-weight: 560;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .how-it-works > div > p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+      list-style: none;
+    }
+
+    .steps li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .steps strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .steps p {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .expired-state {
       display: none;
-    }
-
-    .no-js-note {
-      display: none;
-      margin-top: var(--space-3);
-      color: var(--muted-dark);
+      padding: clamp(70px, 11vw, 130px) 0;
       text-align: center;
     }
 
-    .no-js .no-js-note {
+    .expired-state h1 {
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .expired-state p {
+      max-width: 570px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .is-expired .offer-content {
+      display: none;
+    }
+
+    .is-expired .expired-state {
       display: block;
     }
 
-    .reassurance {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      padding: 30px 18px 34px;
-      color: var(--muted-dark);
-      font-size: 14px;
-      text-align: center;
+    .is-expired .urgency-bar {
+      background: var(--soft);
+      color: var(--muted);
     }
 
-    .reassurance svg {
-      flex: 0 0 26px;
-      width: 26px;
-      height: 26px;
-      stroke: var(--accent);
+    .team-section {
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--paper);
     }
 
-    .footer {
-      padding: 18px 0 28px;
-      border-top: 1px solid var(--rule-dark);
-      color: var(--muted-dark);
+    .team-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(420px, 1.15fr);
+      gap: clamp(20px, 5vw, 68px);
+      align-items: end;
+      min-height: 520px;
+    }
+
+    .team-copy {
+      align-self: center;
+      padding: 64px 0;
+    }
+
+    .team-copy .eyebrow {
+      color: var(--accent);
+    }
+
+    .team-quote {
+      max-width: 600px;
+      font-size: clamp(35px, 4.7vw, 60px);
+      font-weight: 520;
+      letter-spacing: -0.04em;
+      line-height: 1.04;
+    }
+
+    .team-copy > p:last-child {
+      max-width: 500px;
+      margin-top: 21px;
+      color: #c7c9c1;
+    }
+
+    .team-figure {
+      align-self: end;
+    }
+
+    .team-figure img {
+      width: 100%;
+      height: auto;
+      max-height: 560px;
+      object-fit: contain;
+      object-position: center bottom;
+    }
+
+    footer {
+      padding: 26px 0;
+      border-top: 1px solid #2e302b;
+      background: var(--ink);
+      color: #8f9288;
       font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.1em;
+      font-size: 9.5px;
+      letter-spacing: 0.06em;
       text-align: center;
       text-transform: uppercase;
     }
 
-    .is-expired .deadline-active {
-      display: none;
-    }
-
-    .is-expired .deadline-expired {
-      display: block;
-    }
-
-    .is-expired .renewal-cta {
-      display: none;
-    }
-
-    .is-expired .closed-cta {
-      display: flex;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (min-width: 760px) {
+    @media (max-width: 920px) {
       .hero {
-        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.82fr);
+        grid-template-columns: 1fr;
+        gap: 40px;
       }
 
-      .team-panel {
-        min-height: 510px;
+      .hero-copy {
+        display: contents;
       }
 
-      .deadline-active {
-        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-      }
-
-      .deadline-meta {
-        padding-left: var(--space-4);
-        border-left: 1px solid var(--rule-dark);
-      }
-
-      .plan-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        align-items: stretch;
-      }
-
-      .plan-three {
+      .intro-copy {
         order: 1;
+        max-width: 720px;
       }
 
-      .plan-annual {
+      .annual-card {
         order: 2;
+        max-width: 720px;
       }
 
-      .plan-six {
+      .countdown-wrap {
         order: 3;
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .alternative-card {
+        grid-template-columns: 1fr;
+      }
+
+      .alternative-card .renewal-cta {
+        width: 100%;
+      }
+
+      .team-inner {
+        grid-template-columns: 1fr;
+        min-height: 0;
+      }
+
+      .team-copy {
+        padding: 64px 0 10px;
+      }
+
+      .team-figure {
+        width: min(100%, 720px);
+        margin-inline: auto;
       }
     }
 
-    @media (max-width: 759px) {
+    @media (max-width: 680px) {
       .shell {
-        width: min(calc(100% - 20px), var(--max));
+        width: min(calc(100% - 28px), var(--max));
+      }
+
+      .urgency-bar {
+        padding-inline: 12px;
       }
 
       .masthead {
-        min-height: 72px;
+        min-height: 66px;
       }
 
       .masthead img {
-        width: 150px;
+        width: 151px;
       }
 
-      .hero-copy {
-        padding: 34px 22px 28px;
+      .offer-content {
+        padding-top: 34px;
+        padding-bottom: 56px;
       }
 
-      h1 {
-        font-size: clamp(39px, 12vw, 58px);
-      }
-
-      .hero-offer {
-        font-size: 19px;
-      }
-
-      .team-panel {
-        min-height: 255px;
-      }
-
-      .team-panel img {
-        width: min(112%, 470px);
-        height: 98%;
-      }
-
-      .deadline-panel {
-        padding: 26px 20px;
-      }
-
-      .timer-value {
-        font-size: clamp(30px, 9vw, 42px);
-      }
-
-      .deadline-date {
-        align-items: flex-start;
-        font-size: 13px;
-      }
-
-      .plans {
-        padding-top: 40px;
-      }
-
-      .plans-title {
-        padding-inline: 16px;
-      }
-
-      .plan {
-        min-height: 320px;
-      }
-
-      .plan-annual {
-        min-height: 390px;
-        margin-top: 11px;
-      }
-    }
-
-    @media (max-width: 390px) {
-      .hero-copy {
-        padding-inline: 18px;
+      .hero {
+        gap: 30px;
       }
 
       h1 {
-        font-size: 39px;
+        font-size: clamp(41px, 12vw, 56px);
+      }
+
+      .hero-lead {
+        margin-top: 18px;
+        font-size: 17px;
+      }
+
+      .countdown-wrap {
+        margin-top: 24px;
       }
 
       .timer {
-        gap: 7px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
 
-      .timer-value {
-        font-size: 29px;
+      .annual-card {
+        padding: 26px 20px;
+        border-radius: 14px;
+        box-shadow: 5px 5px 0 var(--accent);
       }
 
-      .timer-unit {
-        letter-spacing: 0.08em;
+      .annual-badge {
+        margin-bottom: 22px;
       }
 
-      .plan {
-        padding-inline: 22px;
+      .discount {
+        gap: 9px;
+      }
+
+      .discount strong {
+        font-size: clamp(70px, 23vw, 92px);
+      }
+
+      .discount span {
+        max-width: 94px;
+        font-size: 13px;
+      }
+
+      .renewal-cta {
+        min-height: 60px;
+        padding-inline: 12px;
+      }
+
+      .alternatives {
+        margin-top: 66px;
+      }
+
+      .alternative-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .alternative-card {
+        padding: 22px 18px;
+      }
+
+      .how-it-works {
+        grid-template-columns: 1fr;
+        padding: 26px 20px;
+      }
+
+      .team-copy {
+        padding-top: 54px;
+      }
+
+      .team-quote {
+        font-size: clamp(36px, 10vw, 48px);
       }
     }
 
@@ -792,8 +802,13 @@
       *::after {
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+      }
+    }
+
+    @media (prefers-contrast: more) {
+      :root {
+        --line: #777a70;
+        --muted: #41433d;
       }
     }
   </style>
@@ -803,172 +818,180 @@
     <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe>
   </noscript>
 
-  <a class="skip-link" href="#planes">Ir a los planes</a>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
 
-  <header class="masthead shell" aria-label="TR4INER" translate="no">
-    <img src="/renueva/assets/logo-tr4iner.png" alt="TR4INER" width="546" height="138">
+  <div class="urgency-bar" id="urgency-copy">Promoción privada para exclientes · Cierra el 1 de agosto</div>
+
+  <header class="masthead" aria-label="TR4INER">
+    <img src="/renueva/assets/logo-tr4iner-negro.jpg" width="447" height="140" fetchpriority="high" alt="TR4INER" translate="no">
   </header>
 
   <main id="contenido">
-    <section class="hero shell" aria-labelledby="renueva-title">
-      <div class="hero-copy">
-        <p class="eyebrow">Ventana privada de renovación</p>
-        <h1 id="renueva-title">Vuelve con una condición especial reservada para exclientes.</h1>
-        <hr class="hero-rule">
-        <p class="hero-offer"><strong>20% de descuento</strong> en cualquiera de los 3 planes.</p>
-        <p class="advisor-note">
-          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19v-1.2a4.8 4.8 0 0 1 4.8-4.8h6.4a4.8 4.8 0 0 1 4.8 4.8V19"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-          <span>Tu asesor calculará el precio promocional según tu última membresía.</span>
-        </p>
-      </div>
-
-      <figure class="team-panel">
-        <img src="/renueva/assets/equipo-tr4iner.webp" alt="Equipo de entrenamiento y nutrición de TR4INER" width="919" height="824" fetchpriority="high">
-      </figure>
-    </section>
-
-    <section class="deadline-panel shell" aria-labelledby="deadline-title">
-      <div class="deadline-active" id="deadline-active">
-        <div>
-          <p class="deadline-label" id="deadline-title">La promoción cierra en</p>
-          <div class="timer" aria-hidden="true">
-            <div class="timer-part">
-              <span class="timer-value" id="days">00</span>
-              <p class="timer-unit">Días</p>
-            </div>
-            <div class="timer-part">
-              <span class="timer-value" id="hours">00</span>
-              <p class="timer-unit">Horas</p>
-            </div>
-            <div class="timer-part">
-              <span class="timer-value" id="minutes">00</span>
-              <p class="timer-unit">Min</p>
-            </div>
-            <div class="timer-part">
-              <span class="timer-value" id="seconds">00</span>
-              <p class="timer-unit">Seg</p>
-            </div>
+    <div class="offer-content">
+      <section class="hero shell" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="intro-copy">
+            <p class="eyebrow">Solo para exclientes <span translate="no">TR4INER</span></p>
+            <h1 id="hero-title">Ya conoces el método. Ahora vuelve con ventaja.</h1>
+            <p class="hero-lead"><strong>Renueva con 20% de descuento</strong> antes del 1 de agosto. Elige tu plan y tu asesor revisará tu última membresía para enviarte el monto exacto por WhatsApp.</p>
           </div>
-          <p class="sr-only" id="accessible-countdown">Verificando vigencia de la promoción.</p>
+
+          <div class="countdown-wrap" aria-label="Tiempo restante de la promoción">
+            <p class="countdown-label">Tu beneficio termina en</p>
+            <div class="countdown-live" role="timer" aria-live="off">
+              <div class="timer">
+                <div class="timer-unit">
+                  <span class="timer-value" id="days">00</span>
+                  <span class="timer-name">Días</span>
+                </div>
+                <div class="timer-unit">
+                  <span class="timer-value" id="hours">00</span>
+                  <span class="timer-name">Horas</span>
+                </div>
+                <div class="timer-unit">
+                  <span class="timer-value" id="minutes">00</span>
+                  <span class="timer-name">Min</span>
+                </div>
+                <div class="timer-unit">
+                  <span class="timer-value" id="seconds">00</span>
+                  <span class="timer-name">Seg</span>
+                </div>
+              </div>
+              <p class="deadline-note">Cierra el <time datetime="2026-08-01T23:59:59-05:00">1 de agosto a las 11:59 p. m.</time> · Hora de Lima</p>
+            </div>
+            <p class="deadline-fallback">Disponible hasta el 1 de agosto de 2026 a las 11:59 p. m., hora de Lima.</p>
+          </div>
         </div>
 
-        <div class="deadline-meta">
-          <div class="progress" aria-hidden="true"><span></span></div>
-          <p class="deadline-date">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="5" width="18" height="16" rx="2"/>
-              <path d="M16 3v4M8 3v4M3 10h18"/>
+        <article class="annual-card" aria-labelledby="annual-title">
+          <p class="annual-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="m12 2.8 2.72 5.51 6.08.88-4.4 4.29 1.04 6.06L12 16.68l-5.44 2.86 1.04-6.06-4.4-4.29 6.08-.88L12 2.8Z"/>
             </svg>
-            <time datetime="2026-08-01T23:59:59-05:00">Hasta el 1 de agosto de 2026 · 11:59 p. m. · Lima</time>
+            La condición más completa
           </p>
-        </div>
-      </div>
-
-      <div class="deadline-expired" id="deadline-expired" role="status">
-        <p class="eyebrow">Promoción finalizada</p>
-        <h2>Esta ventana de renovación ya cerró.</h2>
-        <p>Los beneficios mostrados en esta página ya no están disponibles.</p>
-      </div>
-    </section>
-
-    <section class="plans shell" id="planes" aria-labelledby="plans-title">
-      <header class="plans-title">
-        <h2 id="plans-title">Elige cómo quieres volver.</h2>
-        <p>Al tocar el botón, WhatsApp se abrirá con el plan seleccionado.</p>
-      </header>
-
-      <div class="plan-grid">
-        <article class="plan plan-annual">
-          <p class="recommended">Recomendado</p>
-          <div class="plan-heading">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m3 6 4.5 4L12 4l4.5 6L21 6l-2 12H5L3 6Z"/>
-              <path d="M5 21h14"/>
-            </svg>
-            <h3>Plan anual</h3>
+          <h2 class="plan-name" id="annual-title">Plan anual</h2>
+          <div class="discount">
+            <strong>20%</strong>
+            <span>de descuento</span>
           </div>
-          <p class="discount">20% de descuento</p>
+          <div class="annual-separator"></div>
+          <p class="extras-label">Además, vuelves con:</p>
           <ul class="benefits">
             <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
-              <span>+1 mes gratis</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+              1 mes adicional gratis
             </li>
             <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
-              <span>+1 videollamada con nutricionista</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                <path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14M5 6h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/>
+              </svg>
+              1 videollamada con la nutricionista
             </li>
           </ul>
           <a class="renewal-cta" data-plan="anual" href="https://wa.me/51922551745?text=Quiero%20renovar%20con%20la%20promoci%C3%B3n%20del%20plan%20anual." target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 32 32" fill="currentColor">
-              <path d="M16 3a12.8 12.8 0 0 0-10.9 19.5L3.4 29l6.7-1.7A12.9 12.9 0 1 0 16 3Zm0 23.4c-2 0-3.9-.5-5.5-1.5l-.4-.2-4 .9 1-3.8-.3-.4a10.4 10.4 0 1 1 9.2 5Zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.7.1-1.8-.9-3-1.6-4.2-3.7-.3-.6.3-.5.9-1.7.1-.2.1-.5 0-.7l-1-2.5c-.3-.6-.6-.5-.9-.5h-.7c-.2 0-.7.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.5 4 1.7 4.3c.2.3 2.9 4.4 7 6.2 1 .4 1.7.7 2.3.9 1 .3 1.9.3 2.6.2.8-.1 2.5-1 2.8-2 .4-1 .4-1.9.3-2.1-.1-.2-.3-.3-.6-.5Z"/>
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .19 5.33.19 11.89c0 2.09.55 4.13 1.59 5.93L.09 24l6.32-1.66a11.9 11.9 0 0 0 5.67 1.44h.01c6.55 0 11.88-5.34 11.88-11.9 0-3.17-1.22-6.15-3.45-8.4ZM12.09 21.77h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.75.99 1-3.65-.24-.38a9.88 9.88 0 0 1-1.51-5.25c0-5.46 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 7c0 5.45-4.44 9.88-9.88 9.88Zm5.42-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.9 8.9 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.09 3.19 5.06 4.47.71.3 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.09 1.76-.72 2.01-1.42.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/>
             </svg>
-            <span>Renovar plan anual por WhatsApp</span>
+            QUIERO ACTIVAR EL PLAN ANUAL
           </a>
-          <span class="closed-cta" aria-hidden="true">Promoción cerrada</span>
+          <p class="cta-note">WhatsApp abrirá con este plan seleccionado. Ahí confirmas tu monto personalizado.</p>
         </article>
+      </section>
 
-        <article class="plan plan-six">
-          <div class="plan-heading">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="5" width="18" height="16" rx="2"/>
-              <path d="M16 3v4M8 3v4M3 10h18"/>
-            </svg>
-            <h3>6 meses</h3>
+      <section class="alternatives shell" aria-labelledby="alternatives-title">
+        <header class="section-heading">
+          <p class="eyebrow">También puedes elegir</p>
+          <h2 id="alternatives-title">¿Prefieres renovar por menos tiempo?</h2>
+          <p>Conservas el 20% de descuento. Selecciona la opción que mejor encaje contigo.</p>
+        </header>
+
+        <div class="alternative-grid">
+          <article class="alternative-card">
+            <div>
+              <p class="plan-name">Membresía</p>
+              <h3>6 meses</h3>
+              <p class="alternative-benefit"><strong>20% de descuento</strong> + 15 días gratis</p>
+            </div>
+            <a class="renewal-cta" data-plan="6-meses" href="https://wa.me/51922551745?text=Quiero%20renovar%20con%20la%20promoci%C3%B3n%20de%206%20meses." target="_blank" rel="noopener">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .19 5.33.19 11.89c0 2.09.55 4.13 1.59 5.93L.09 24l6.32-1.66a11.9 11.9 0 0 0 5.67 1.44h.01c6.55 0 11.88-5.34 11.88-11.9 0-3.17-1.22-6.15-3.45-8.4ZM12.09 21.77h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.75.99 1-3.65-.24-.38a9.88 9.88 0 0 1-1.51-5.25c0-5.46 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 7c0 5.45-4.44 9.88-9.88 9.88Zm5.42-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.9 8.9 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.09 3.19 5.06 4.47.71.3 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.09 1.76-.72 2.01-1.42.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/>
+              </svg>
+              QUIERO ACTIVAR 6 MESES
+            </a>
+          </article>
+
+          <article class="alternative-card">
+            <div>
+              <p class="plan-name">Membresía</p>
+              <h3>3 meses</h3>
+              <p class="alternative-benefit"><strong>20% de descuento</strong></p>
+            </div>
+            <a class="renewal-cta" data-plan="3-meses" href="https://wa.me/51922551745?text=Quiero%20renovar%20con%20la%20promoci%C3%B3n%20de%203%20meses." target="_blank" rel="noopener">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.52 0 .19 5.33.19 11.89c0 2.09.55 4.13 1.59 5.93L.09 24l6.32-1.66a11.9 11.9 0 0 0 5.67 1.44h.01c6.55 0 11.88-5.34 11.88-11.9 0-3.17-1.22-6.15-3.45-8.4ZM12.09 21.77h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.75.99 1-3.65-.24-.38a9.88 9.88 0 0 1-1.51-5.25c0-5.46 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.89 7c0 5.45-4.44 9.88-9.88 9.88Zm5.42-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.9 8.9 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.66-1.61-.91-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.08-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.09 3.19 5.06 4.47.71.3 1.26.49 1.69.63.71.23 1.35.2 1.86.12.57-.09 1.76-.72 2.01-1.42.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/>
+              </svg>
+              QUIERO ACTIVAR 3 MESES
+            </a>
+          </article>
+        </div>
+
+        <aside class="how-it-works" aria-labelledby="how-title">
+          <div>
+            <h2 id="how-title">Tu precio se confirma en WhatsApp.</h2>
+            <p>No mostramos un monto genérico porque tu asesor revisa el último precio que pagaste y calcula tu condición de renovación.</p>
           </div>
-          <p class="discount">20% de descuento</p>
-          <ul class="benefits">
+          <ol class="steps">
             <li>
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
-              <span>+15 días gratis</span>
+              <span class="step-number">1</span>
+              <div>
+                <strong>Elige tu plan.</strong>
+                <p>Así el vendedor recibe tu intención exacta.</p>
+              </div>
             </li>
-          </ul>
-          <a class="renewal-cta" data-plan="6-meses" href="https://wa.me/51922551745?text=Quiero%20renovar%20con%20la%20promoci%C3%B3n%20de%206%20meses." target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 32 32" fill="currentColor">
-              <path d="M16 3a12.8 12.8 0 0 0-10.9 19.5L3.4 29l6.7-1.7A12.9 12.9 0 1 0 16 3Zm0 23.4c-2 0-3.9-.5-5.5-1.5l-.4-.2-4 .9 1-3.8-.3-.4a10.4 10.4 0 1 1 9.2 5Zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.7.1-1.8-.9-3-1.6-4.2-3.7-.3-.6.3-.5.9-1.7.1-.2.1-.5 0-.7l-1-2.5c-.3-.6-.6-.5-.9-.5h-.7c-.2 0-.7.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.5 4 1.7 4.3c.2.3 2.9 4.4 7 6.2 1 .4 1.7.7 2.3.9 1 .3 1.9.3 2.6.2.8-.1 2.5-1 2.8-2 .4-1 .4-1.9.3-2.1-.1-.2-.3-.3-.6-.5Z"/>
-            </svg>
-            <span>Renovar 6 meses por WhatsApp</span>
-          </a>
-          <span class="closed-cta" aria-hidden="true">Promoción cerrada</span>
-        </article>
+            <li>
+              <span class="step-number">2</span>
+              <div>
+                <strong>Se abre WhatsApp.</strong>
+                <p>El mensaje ya incluye la renovación que elegiste.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-number">3</span>
+              <div>
+                <strong>Confirma tu monto.</strong>
+                <p>Tu asesor revisa tu membresía anterior y te ayuda a activarla.</p>
+              </div>
+            </li>
+          </ol>
+        </aside>
+      </section>
+    </div>
 
-        <article class="plan plan-three">
-          <div class="plan-heading">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="5" width="18" height="16" rx="2"/>
-              <path d="M16 3v4M8 3v4M3 10h18"/>
-            </svg>
-            <h3>3 meses</h3>
-          </div>
-          <p class="discount">20% de descuento</p>
-          <a class="renewal-cta" data-plan="3-meses" href="https://wa.me/51922551745?text=Quiero%20renovar%20con%20la%20promoci%C3%B3n%20de%203%20meses." target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 32 32" fill="currentColor">
-              <path d="M16 3a12.8 12.8 0 0 0-10.9 19.5L3.4 29l6.7-1.7A12.9 12.9 0 1 0 16 3Zm0 23.4c-2 0-3.9-.5-5.5-1.5l-.4-.2-4 .9 1-3.8-.3-.4a10.4 10.4 0 1 1 9.2 5Zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.7.1-1.8-.9-3-1.6-4.2-3.7-.3-.6.3-.5.9-1.7.1-.2.1-.5 0-.7l-1-2.5c-.3-.6-.6-.5-.9-.5h-.7c-.2 0-.7.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.5 4 1.7 4.3c.2.3 2.9 4.4 7 6.2 1 .4 1.7.7 2.3.9 1 .3 1.9.3 2.6.2.8-.1 2.5-1 2.8-2 .4-1 .4-1.9.3-2.1-.1-.2-.3-.3-.6-.5Z"/>
-            </svg>
-            <span>Renovar 3 meses por WhatsApp</span>
-          </a>
-          <span class="closed-cta" aria-hidden="true">Promoción cerrada</span>
-        </article>
+    <section class="expired-state shell" id="expired-state" aria-labelledby="expired-title" role="status">
+      <p class="eyebrow">Ventana finalizada</p>
+      <h1 id="expired-title">Esta promoción de renovación ya cerró.</h1>
+      <p>Los beneficios especiales de esta página dejaron de estar disponibles el 1 de agosto a las 11:59 p. m.</p>
+    </section>
+
+    <section class="team-section" aria-labelledby="team-title">
+      <div class="team-inner shell">
+        <div class="team-copy">
+          <p class="eyebrow">Tu equipo sigue aquí</p>
+          <h2 class="team-quote" id="team-title">Volver no es empezar de cero. Es retomar con más experiencia.</h2>
+          <p>El equipo <span translate="no">TR4INER</span> está listo para acompañarte otra vez, desde el punto en el que hoy te encuentras.</p>
+        </div>
+        <figure class="team-figure">
+          <img src="/renueva/assets/equipo-tr4iner.webp" width="919" height="824" loading="lazy" decoding="async" alt="Equipo de entrenamiento y nutrición de TR4INER">
+        </figure>
       </div>
-
-      <noscript>
-        <p class="no-js-note">Activa JavaScript para verificar si la promoción continúa vigente.</p>
-      </noscript>
-
-      <aside class="reassurance">
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
-          <path d="m9 12 2 2 4-4"/>
-        </svg>
-        <p>Un asesor revisará tu última membresía y te dará el monto exacto.</p>
-      </aside>
     </section>
   </main>
 
-  <footer class="footer shell" translate="no">
-    <p>TR4INER · Renovación privada para exclientes</p>
+  <footer>
+    <div class="shell">Promoción privada de renovación · <span translate="no">TR4INER</span></div>
   </footer>
 
   <script src="/attribution.js"></script>
@@ -976,109 +999,112 @@
     (function () {
       'use strict';
 
-      var DEADLINE = Date.parse('2026-08-01T23:59:59-05:00');
-      var serverOffset = 0;
-      var expired = false;
+      var PROMO_END = Date.parse('2026-08-01T23:59:59-05:00');
       var root = document.documentElement;
-      var links = Array.prototype.slice.call(document.querySelectorAll('[data-plan]'));
-      var parts = {
-        days: document.getElementById('days'),
-        hours: document.getElementById('hours'),
-        minutes: document.getElementById('minutes'),
-        seconds: document.getElementById('seconds')
-      };
+      var urgencyCopy = document.getElementById('urgency-copy');
+      var days = document.getElementById('days');
+      var hours = document.getElementById('hours');
+      var minutes = document.getElementById('minutes');
+      var seconds = document.getElementById('seconds');
+      var ctas = Array.prototype.slice.call(document.querySelectorAll('.renewal-cta'));
+      var clockOffset = 0;
+      var timerId = null;
+      var expired = false;
 
       function pad(value) {
         return String(value).padStart(2, '0');
       }
 
-      function closePromotion() {
+      function now() {
+        return Date.now() + clockOffset;
+      }
+
+      function pushDataLayer(payload) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(payload);
+      }
+
+      function expirePromotion() {
         if (expired) return;
         expired = true;
-        root.classList.add('is-expired');
-        links.forEach(function (link) {
-          link.removeAttribute('href');
-          link.removeAttribute('target');
-          link.setAttribute('aria-disabled', 'true');
-          link.setAttribute('tabindex', '-1');
+        root.classList.remove('countdown-pending');
+        root.classList.add('countdown-ready', 'is-expired');
+        urgencyCopy.textContent = 'Promoción de renovación finalizada';
+
+        ctas.forEach(function (cta) {
+          cta.removeAttribute('href');
+          cta.removeAttribute('target');
+          cta.setAttribute('aria-disabled', 'true');
+          cta.setAttribute('tabindex', '-1');
         });
-        document.getElementById('accessible-countdown').textContent =
-          'La promoción finalizó el 1 de agosto de 2026 a las 11:59 de la noche, hora de Lima.';
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
+
+        if (timerId) window.clearInterval(timerId);
+        pushDataLayer({
           event: 'renueva_promo_expired_view',
           funnel: 'renueva'
         });
       }
 
-      function renderCountdown() {
-        var remaining = DEADLINE - (Date.now() + serverOffset);
+      function updateCountdown() {
+        var distance = PROMO_END - now();
 
-        if (remaining <= 0) {
-          closePromotion();
-          root.classList.remove('countdown-pending');
+        if (distance <= 0) {
+          expirePromotion();
           return;
         }
 
-        var totalSeconds = Math.floor(remaining / 1000);
-        var days = Math.floor(totalSeconds / 86400);
-        var hours = Math.floor((totalSeconds % 86400) / 3600);
-        var minutes = Math.floor((totalSeconds % 3600) / 60);
-        var seconds = totalSeconds % 60;
-
-        parts.days.textContent = pad(days);
-        parts.hours.textContent = pad(hours);
-        parts.minutes.textContent = pad(minutes);
-        parts.seconds.textContent = pad(seconds);
-        document.getElementById('accessible-countdown').textContent =
-          'Promoción activa hasta el 1 de agosto de 2026 a las 11:59 de la noche, hora de Lima.';
+        var totalSeconds = Math.floor(distance / 1000);
+        days.textContent = pad(Math.floor(totalSeconds / 86400));
+        hours.textContent = pad(Math.floor((totalSeconds % 86400) / 3600));
+        minutes.textContent = pad(Math.floor((totalSeconds % 3600) / 60));
+        seconds.textContent = pad(totalSeconds % 60);
         root.classList.remove('countdown-pending');
+        root.classList.add('countdown-ready');
       }
 
-      function trackClick(event) {
-        if (expired || !event.currentTarget.getAttribute('href')) {
-          event.preventDefault();
-          return;
-        }
-
-        var attribution = window.TR4Track && window.TR4Track.getAttribution
-          ? window.TR4Track.getAttribution()
-          : {};
-
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'renueva_whatsapp_click',
-          funnel: 'renueva',
-          renewal_plan: event.currentTarget.getAttribute('data-plan'),
-          traffic_attribution: attribution
+      function syncServerClock() {
+        return fetch(window.location.href, {
+          method: 'HEAD',
+          cache: 'no-store'
+        }).then(function (response) {
+          var serverDate = response.headers.get('date');
+          if (serverDate) clockOffset = Date.parse(serverDate) - Date.now();
+        }).catch(function () {
+          // El reloj local mantiene el contador operativo si la cabecera no está disponible.
         });
       }
 
-      links.forEach(function (link) {
-        link.addEventListener('click', trackClick);
+      ctas.forEach(function (cta) {
+        cta.addEventListener('click', function (event) {
+          if (expired || !event.currentTarget.getAttribute('href')) {
+            event.preventDefault();
+            return;
+          }
+
+          var attribution = window.TR4Track && window.TR4Track.getAttribution
+            ? window.TR4Track.getAttribution()
+            : {};
+
+          pushDataLayer({
+            event: 'renueva_whatsapp_click',
+            funnel: 'renueva',
+            renewal_plan: event.currentTarget.getAttribute('data-plan'),
+            traffic_attribution: attribution
+          });
+        });
       });
 
-      renderCountdown();
-      window.setInterval(renderCountdown, 1000);
+      syncServerClock().finally(function () {
+        updateCountdown();
+        if (!expired) timerId = window.setInterval(updateCountdown, 1000);
 
-      // La hora del deployment evita que un reloj local adelantado o atrasado
-      // abra/cierre la promoción fuera del plazo real. Si falla, usa el reloj del dispositivo.
-      var requestStarted = Date.now();
-      fetch(window.location.href, {
-        method: 'HEAD',
-        cache: 'no-store',
-        credentials: 'same-origin'
-      }).then(function (response) {
-        var serverDate = response.headers.get('date');
-        if (!serverDate) return;
-        var requestFinished = Date.now();
-        var midpoint = requestStarted + ((requestFinished - requestStarted) / 2);
-        serverOffset = Date.parse(serverDate) - midpoint;
-        renderCountdown();
-      }).catch(function () {
-        // La promoción sigue operativa con el reloj local si no hay red.
+        pushDataLayer({
+          event: 'renueva_page_view',
+          funnel: 'renueva',
+          promotion_status: expired ? 'expired' : 'active'
+        });
       });
-    })();
+    }());
   </script>
 </body>
 </html>
