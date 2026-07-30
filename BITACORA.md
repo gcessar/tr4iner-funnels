@@ -1380,6 +1380,8 @@ anual funciona como ancla sin esconder las alternativas.
   `919 × 824`; el CTA anual aparece a 881 px desde el inicio en viewport móvil de 375 px.
 - El Preview anterior (`dpl_8Ny8j6TjvotK3ZLvK14RdwEis8n5`) queda reemplazado por el
   rediseño del commit `c5943ae`.
+- Nuevo Preview del rediseño: Vercel `dpl_C5AXHeU5goVHFrULM8Kof4rTFHfz`, commit
+  `b4d0453`, target `preview`, estado **READY**.
 - Producción: pendiente de aprobación visual del Preview.
 
 ---
