@@ -1554,6 +1554,9 @@ aunque la regla pareciera correcta.
 - Antes del cambio: desfase horizontal de `+175 px` en 1280 px.
 - Después del cambio: desfase `0 × 0 px` en viewports reales de 375, 768 y
   1280 px, sin overflow horizontal.
+- Preview del commit `9511fac`: Vercel
+  `dpl_HvnAWPunL3iaqRcvfCYw7w359dMf`, target `preview`, estado **READY**.
+  Producción queda pendiente de aprobación.
 
 ---
 
