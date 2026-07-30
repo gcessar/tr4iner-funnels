@@ -26,7 +26,6 @@
   <style>
     :root {
       --paper: #F4EFE6;
-      --paper-deep: #ECE5D7;
       --card: #FFFDF6;
       --ink: #16130E;
       --ink-soft: #46402F;
@@ -34,7 +33,6 @@
       --mark: #F5C518;
       --rule: rgba(22, 19, 14, 0.14);
       --rule-strong: rgba(22, 19, 14, 0.32);
-      --shadow: 0 20px 52px -36px rgba(22, 19, 14, 0.56);
       --display: "Fraunces", Georgia, serif;
       --body: "Instrument Sans", Arial, sans-serif;
       --mono: "JetBrains Mono", "SFMono-Regular", monospace;
@@ -102,8 +100,6 @@
     .brand,
     .header-status,
     .eyebrow,
-    .section-code,
-    .file-tab,
     .scope-line {
       font-family: var(--mono);
       font-size: 10px;
@@ -120,7 +116,7 @@
     .header-status { color: var(--muted); }
 
     main { min-height: calc(100vh - 170px); }
-    .view { padding: 84px 0 96px; }
+    .view { padding: 72px 0 92px; }
     h1, h2, p { margin-top: 0; }
     h1, h2 {
       font-family: var(--display);
@@ -132,15 +128,16 @@
       text-wrap: balance;
     }
     h1 {
-      margin-bottom: 28px;
-      font-size: clamp(50px, 5.4vw, 68px);
+      max-width: 840px;
+      margin: 0 auto 24px;
+      font-size: clamp(54px, 6.8vw, 82px);
     }
     h2 { font-size: clamp(30px, 3.1vw, 42px); }
     h1 em,
     h2 em { font-weight: 500; }
     p { text-wrap: pretty; }
     .centered {
-      max-width: 910px;
+      max-width: 860px;
       margin-inline: auto;
       text-align: center;
     }
@@ -149,15 +146,16 @@
       color: var(--muted);
     }
     .lede {
-      max-width: 750px;
+      max-width: 640px;
       margin: 0 auto;
       color: var(--ink-soft);
       font-size: 19px;
       line-height: 1.58;
     }
     .coach-note {
-      display: inline-block;
-      margin: 28px 0 0;
+      width: fit-content;
+      display: block;
+      margin: 34px auto 0;
       font-family: var(--display);
       font-size: 21px;
       font-style: italic;
@@ -178,104 +176,60 @@
       transform: rotate(-1deg);
     }
 
-    .file-sheet {
-      position: relative;
-      border: 1px solid var(--rule-strong);
-      background: var(--card);
-      box-shadow: var(--shadow);
-    }
-    .file-sheet::after {
-      position: absolute;
-      z-index: -1;
-      inset: 10px -10px -10px 10px;
-      border: 1px solid var(--rule);
-      background: var(--paper-deep);
-      content: "";
-    }
-    .file-tab {
-      min-height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 10px 20px;
-      background: var(--ink);
-      color: var(--card);
-    }
-    .file-tab b {
-      color: var(--mark);
-      font-weight: 600;
-    }
-    .route-sheet {
-      max-width: 850px;
-      margin: 64px auto 0;
-    }
-    .route-head {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 48px 52px 34px;
-      text-align: center;
-    }
-    .section-code {
-      margin-bottom: 12px;
-      color: var(--muted);
-    }
-    .route-head h2 { margin-bottom: 18px; }
-    .route-head p:last-child {
-      margin-bottom: 0;
-      color: var(--ink-soft);
-    }
     .route-options {
-      border-top: 1px solid var(--rule-strong);
-      border-bottom: 1px solid var(--rule-strong);
+      max-width: 780px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 42px auto 0;
     }
     .route-option {
-      min-height: 132px;
+      min-height: 130px;
       display: grid;
-      grid-template-columns: 56px 1fr auto;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      gap: 24px;
-      padding: 26px 34px;
+      gap: 20px;
+      padding: 24px 26px;
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      background: var(--ink);
+      color: var(--card);
       text-decoration: none;
-      transition: background 180ms ease;
+      text-align: left;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
     }
-    .route-option + .route-option { border-top: 1px solid var(--rule); }
-    .route-option:hover { background: rgba(245, 197, 24, 0.09); }
-    .route-option:active { background: rgba(245, 197, 24, 0.16); }
-    .route-index {
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 11px;
+    .route-option:hover {
+      border-color: #2F2A20;
+      background: #2F2A20;
     }
+    .route-option:active { transform: translateY(1px); }
     .route-copy {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 7px;
     }
     .route-copy strong {
       font-family: var(--display);
-      font-size: 27px;
-      font-weight: 560;
-      line-height: 1.15;
+      font-size: 32px;
+      font-weight: 650;
+      letter-spacing: -0.015em;
+      line-height: 1;
+      text-transform: uppercase;
     }
     .route-copy small {
-      color: var(--ink-soft);
+      color: rgba(255, 253, 246, 0.78);
       font-size: 15px;
     }
     .route-action {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .route-action i {
-      margin-left: 8px;
-      font-style: normal;
+      color: var(--mark);
+      font-family: var(--body);
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1;
     }
     .text-link {
       display: inline-flex;
-      margin: 22px 28px 26px;
+      margin: 26px 0 0;
       color: var(--ink-soft);
       font-size: 14px;
       font-weight: 600;
@@ -284,7 +238,7 @@
     .text-link:hover,
     .site-footer a:hover { color: var(--ink); }
     .scope-line {
-      margin: 42px auto 0;
+      margin: 48px auto 0;
       color: var(--muted);
       text-align: center;
     }
@@ -313,8 +267,12 @@
     @media (max-width: 860px) {
       .page-frame { width: min(100% - 40px, 690px); }
       .site-header { height: 68px; }
-      .view { padding: 56px 0 72px; }
-      h1 { font-size: clamp(41px, 10vw, 56px); }
+      .view { padding: 52px 0 72px; }
+      h1 { font-size: clamp(46px, 10vw, 60px); }
+      .route-options {
+        grid-template-columns: 1fr;
+        max-width: 560px;
+      }
     }
     @media (max-width: 560px) {
       html { font-size: 16px; }
@@ -332,46 +290,43 @@
       .header-status { font-size: 8.5px; }
       .brand { letter-spacing: 0.12em; }
       .header-status { letter-spacing: 0.09em; }
-      .view { padding: 48px 0 60px; }
+      .view { padding: 34px 0 54px; }
       h1 {
-        margin-bottom: 22px;
-        font-size: 41px;
-        line-height: 1.04;
+        max-width: 350px;
+        margin-bottom: 18px;
+        font-size: clamp(39px, 11.3vw, 44px);
+        line-height: 1.02;
       }
-      h2 { font-size: 31px; }
-      .lede { font-size: 17px; }
+      .lede {
+        max-width: 345px;
+        font-size: 16px;
+        line-height: 1.5;
+      }
       .eyebrow {
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         font-size: 9px;
       }
-      .coach-note { font-size: 18px; }
-      .route-sheet { margin-top: 46px; }
-      .file-sheet::after { inset: 7px -7px -7px 7px; }
-      .file-tab {
-        min-height: 38px;
-        gap: 8px;
-        padding: 9px 12px;
-        font-size: 7.6px;
-        letter-spacing: 0.08em;
+      .coach-note {
+        max-width: 340px;
+        margin-top: 30px;
+        font-size: 18px;
+        line-height: 1.4;
       }
-      .route-head { padding: 34px 22px 26px; }
-      .route-head h2 { font-size: 30px; }
-      .route-head p:last-child { font-size: 14px; }
+      .route-options {
+        gap: 12px;
+        margin-top: 28px;
+      }
       .route-option {
-        min-height: 144px;
-        grid-template-columns: 28px 1fr;
-        gap: 8px 12px;
-        padding: 23px 18px;
+        min-height: 98px;
+        grid-template-columns: 1fr auto;
+        gap: 14px;
+        padding: 18px 20px;
       }
-      .route-copy strong { font-size: 23px; }
+      .route-copy strong { font-size: 27px; }
       .route-copy small { font-size: 13px; }
-      .route-action {
-        grid-column: 2;
-        font-size: 8.5px;
-      }
+      .route-action { font-size: 36px; }
       .text-link {
-        margin-right: 18px;
-        margin-left: 18px;
+        margin-top: 22px;
         font-size: 13px;
       }
       .scope-line {
@@ -390,7 +345,10 @@
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .route-option { transition: none; }
+      .route-option {
+        transition: none;
+        transform: none;
+      }
     }
   </style>
 </head>
@@ -409,40 +367,26 @@
       <article class="view">
         <section class="centered">
           <p class="eyebrow">Antes de abrir tu ruta</p>
-          <h1>Tu objetivo puede empezar por el peso. <em>Pero no termina ahí.</em></h1>
-          <p class="lede">GENESIS te ayuda a ordenar tu alimentación y entrenamiento para recuperar dirección, constancia y bienestar, con una ruta ajustada a tu realidad.</p>
-          <p class="coach-note"><span>No hace falta sentirte peor</span> para empezar a ordenar tus hábitos.</p>
-        </section>
-
-        <section class="file-sheet route-sheet" aria-label="Selector de ruta">
-          <div class="file-tab">
-            <span>Expediente privado · GENESIS</span>
-            <b>Estado · Por abrir</b>
-          </div>
-          <div class="route-head">
-            <p class="section-code">Punto de partida</p>
-            <h2>Tu cuerpo cambia la ruta. <em>Empecemos por ahí.</em></h2>
-            <p>Elige la opción que corresponde a tu fisiología. Esto ajusta la experiencia inicial; no es una evaluación médica.</p>
-          </div>
+          <h1>Tu cuerpo cambia la ruta. <em>Empecemos por ahí.</em></h1>
+          <p class="lede">Elige la opción que corresponde a tu fisiología. Esto ajusta tu experiencia inicial.</p>
           <div class="route-options" aria-label="Elige tu sexo">
             <a class="route-option" data-sexo="Mujer" href="/biblioteca/?sexo=Mujer">
-              <span class="route-index">01</span>
               <span class="route-copy">
-                <strong>Ruta para mujer</strong>
-                <small>Alimentación y entrenamiento ajustados a la fisiología femenina.</small>
+                <strong>Soy mujer</strong>
+                <small>Abrir mi ruta personalizada</small>
               </span>
-              <span class="route-action">Elegir esta ruta <i>→</i></span>
+              <span class="route-action" aria-hidden="true">→</span>
             </a>
             <a class="route-option" data-sexo="Hombre" href="/biblioteca/?sexo=Hombre">
-              <span class="route-index">02</span>
               <span class="route-copy">
-                <strong>Ruta para hombre</strong>
-                <small>Alimentación y entrenamiento ajustados a la fisiología masculina.</small>
+                <strong>Soy hombre</strong>
+                <small>Abrir mi ruta personalizada</small>
               </span>
-              <span class="route-action">Elegir esta ruta <i>→</i></span>
+              <span class="route-action" aria-hidden="true">→</span>
             </a>
           </div>
           <a class="text-link" id="member-entry" href="/biblioteca/acceso/">Ya tengo acceso a GENESIS →</a>
+          <p class="coach-note"><span>No hace falta sentirte peor</span> para empezar.</p>
         </section>
 
         <p class="scope-line">Orientación educativa en nutrición y entrenamiento · Equipo con nutricionista y entrenadores certificados</p>
