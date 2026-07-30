@@ -1521,8 +1521,10 @@ sin reemplazar ni rediseñar los funnels que ya funcionan.
   el aviso esperado de permisos de tráfico; no afecta la lógica de la página.
 - Preview del commit `470a8f6`: Vercel
   `dpl_GkCYoixmguq6qWvgpKs5v7hKrcXR`, target `preview`, estado **READY**.
-  El deployment está protegido por Vercel Authentication y no se promovió a
-  Producción.
+  El deployment quedó protegido por Vercel Authentication.
+- Producción aprobada: merge `1611da5` y verificación `2da1125`; Vercel
+  `dpl_8UJz2Gv1am1UdfyMxcogA6NDHrWL`, target `production`, estado **READY** y
+  alias canónico `https://metodo.tr4iner.com`.
 
 ---
 
