@@ -1412,7 +1412,13 @@ del clic.
 - Los seis PNG finales miden exactamente `1080 × 1350`.
 - Chrome cargó todos los recursos sin excepciones; los únicos desbordes detectados son
   recortes inferiores intencionales de la foto del equipo.
-- No se modificó ni desplegó la landing `/renueva`.
+- La landing `/renueva` no fue modificada; el cambio publicado incorpora únicamente los
+  anuncios, sus fondos y el montaje editable.
+- Preview final después de integrar el `main` vigente: commit `0bd05fa`, Vercel
+  `dpl_9wANHHFV1wWncjey52nnivjmtw14`, target `preview`, estado **READY**.
+- Producción aprobada: merge `0569646` en `main`; Vercel
+  `dpl_AmWbBUchVYTorCvD9fBhhcQpGGMC`, target `production`, estado **READY** y alias
+  canónico `https://metodo.tr4iner.com`.
 
 ---
 
