@@ -1339,8 +1339,12 @@ un `fbclid` simulado, sin abrir la página para no inyectar un PageView falso al
 
 - Nueva ruta `/renueva`, construida en `work/renueva`, para una campaña de Meta Ads
   dirigida a un público personalizado de exclientes.
-- Usa el logo y la foto de equipo oficiales. En móvil prioriza el plan anual; en desktop
-  compara 3 meses, anual y 6 meses en una sola vista.
+- El primer Preview fue descartado visualmente. El rediseño aprobado como dirección usa
+  fondo blanco, jerarquía más comercial y solo el logo y la foto de equipo oficiales.
+- El plan anual domina la primera decisión con el copy “Ya conoces el método. Ahora
+  vuelve con ventaja.”; 6 y 3 meses quedan como alternativas compactas.
+- En móvil y tablet la propuesta anual aparece antes del contador para adelantar el CTA.
+  En desktop, copy/contador y anual comparten el primer bloque.
 - Los tres planes ofrecen 20%: 6 meses suma 15 días gratis y anual suma un mes gratis más
   una videollamada con nutricionista.
 - Cada CTA abre `+51 922 551 745` con un mensaje específico para el plan elegido. No se
@@ -1361,17 +1365,21 @@ anual funciona como ancla sin esconder las alternativas.
 
 - Mayor proporción de conversaciones de WhatsApp con intención explícita de renovar.
 - Menos tiempo del vendedor explicando la promoción desde cero.
-- Más selección del plan anual por jerarquía y bonos, sin obligar esa elección.
+- Más selección del plan anual por jerarquía, bonos y CTA “Quiero activar”, sin esconder
+  ni bloquear las alternativas.
 
 ### Resultado medido
 
 - Chrome real sin overflow documental en 375, 768 y 1280 px.
 - Los tres enlaces resolvieron al número y mensaje correctos.
-- Prueba temporal posterior al vencimiento: 0 enlaces con `href`, 0 CTAs visibles y
-  3 estados “Promoción cerrada”.
+- Prueba temporal posterior al vencimiento: la oferta completa queda oculta, se muestra
+  un único cierre claro y quedan 0 enlaces de WhatsApp con `href`.
 - UTMs sintéticas y `fbclid` conservaron `utm_source`, `utm_medium`, `utm_campaign`,
   `fbclid` y el `fbc` derivado.
-- Preview del commit `3a1cc25`: Vercel `dpl_2CBzMUxU5jrSPUJXu74fp3w62re6`, **READY**.
+- La foto oficial del equipo usa carga diferida y se verificó con dimensiones naturales
+  `919 × 824`; el CTA anual aparece a 881 px desde el inicio en viewport móvil de 375 px.
+- El Preview anterior (`dpl_8Ny8j6TjvotK3ZLvK14RdwEis8n5`) queda reemplazado por el
+  rediseño del commit `c5943ae`.
 - Producción: pendiente de aprobación visual del Preview.
 
 ---
