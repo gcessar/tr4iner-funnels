@@ -1423,7 +1423,12 @@ un footer sticky que tape contenido o agregue una segunda mecánica de navegaci�
 - Una query sintética con `utm_source`, `utm_medium`, `utm_campaign`, `video` y `fbclid`
   llegó completa a Mujer, Hombre y “Ya tengo acceso”; cada ruta agregó solo su `sexo`.
 - Los dos scripts inline parsearon correctamente y `git diff --check` pasó.
-- Preview y Production Vercel: pendientes de esta publicación.
+- Preview final: commit `2a949a1`, Vercel `dpl_CtK6Vbp87uVjrnjHUz24JRrk83LU`,
+  target `preview`, estado **READY**.
+- Producción: merge `0a559bc`, Vercel `dpl_qgjVtv1o6BLevzzjRgGotDtmwmna`,
+  target `production`, estado **READY** y alias `https://metodo.tr4iner.com`.
+- El dominio canónico repitió las posiciones móviles `y=391–489` y `y=501–599`,
+  preservó los UTMs en las tres salidas y no emitió errores de consola.
 
 ---
 
