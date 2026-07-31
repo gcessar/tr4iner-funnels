@@ -1614,7 +1614,11 @@ Se retiró la mención visible a Calendly del botón por pedido editorial.
 
 ### Resultado medido
 
-- Pendiente de verificación en Producción.
+- Producción publicada en el merge `c375391`; Vercel
+  `dpl_8ypmtzSj48yg7Z7Le49x6Lmf5VPR`, target `production`, estado **READY** y
+  alias canónico `https://metodo.tr4iner.com`.
+- El HTML servido en `/calendly-an` muestra `Elegir horario` tanto en el CTA
+  principal como en el móvil, y ambos conservan la clase `open-calendly`.
 
 ---
 
