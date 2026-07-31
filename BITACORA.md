@@ -1596,6 +1596,28 @@ como `Estrellita%20%F0%9F%A4%8D`.
 
 ---
 
+## 2026-07-31 — Texto del CTA de agenda AN
+
+### Qué cambió
+
+- En `/calendly-an`, el CTA principal ahora dice `Elegir horario` en lugar de
+  `Elegir horario en Calendly`.
+- No cambió el enlace, la apertura del calendario, el diseño ni la atribución.
+
+### Por qué
+
+Se retiró la mención visible a Calendly del botón por pedido editorial.
+
+### Resultado esperado
+
+- El CTA conserva su función y muestra únicamente `Elegir horario`.
+
+### Resultado medido
+
+- Pendiente de verificación en Producción.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
