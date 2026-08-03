@@ -1711,6 +1711,15 @@ demasiado al 15% y no representaba la definición esperable para ese rango.
   sus siete posiciones.
 - La configuración masculina sigue usando `10, 15, 20, 25, 30, 35 y 40%`.
 
+### Publicación conjunta
+
+- La rama `work/genesis-release-unidades-youtube-grasa` reunió los tres cambios
+  sobre `main` y pasó el Preview `dpl_Gkszo5a1uphgR4NhEMWJj4Uwm7cM`, target
+  `preview`, estado **READY**.
+- El merge productivo `957f859` quedó sincronizado con GitHub y generó Vercel
+  `dpl_FwZHV21RHAc9m4arXT8mkUjXtoUn`, target `production`, estado **READY** y
+  alias canónico `https://metodo.tr4iner.com`.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
