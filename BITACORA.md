@@ -1622,6 +1622,40 @@ Se retiró la mención visible a Calendly del botón por pedido editorial.
 
 ---
 
+## 2026-08-03 — GENESIS: unidades imperiales en el test de macros
+
+### Qué cambió
+
+- `/biblioteca/plan/` permite ingresar el peso en `kg` o `lb` y la altura en
+  `cm` o `ft/in` mediante selectores independientes.
+- En móvil, altura y peso ocupan filas completas cuando se activa `ft/in` para
+  mantener legibles los campos de pies y pulgadas.
+- Las unidades elegidas solo afectan la entrada visible: el expediente, la API,
+  la analítica y el cálculo continúan recibiendo kilogramos y centímetros.
+
+### Por qué
+
+El equipo de entrenadores detectó fricción en personas acostumbradas al sistema
+imperial. Pedir una conversión externa antes de calcular el plan introducía un
+error evitable y una razón para abandonar el test.
+
+### Resultado esperado
+
+- Quien usa libras o pies completa el test sin convertir medidas por su cuenta.
+- Los planes anteriores y las fórmulas de macros mantienen el mismo contrato en
+  kg/cm.
+
+### Resultado medido
+
+- Conversión verificada: `72 kg → 158.7 lb → 71.985 kg` y
+  `168 cm → 5 ft 6.1 in → 167.89 cm`.
+- La fórmula original no fue modificada; el caso imperial probado produjo
+  `1936 kcal · 155 g proteína · 183 g carbohidratos · 60 g grasas`.
+- Sin overflow horizontal en viewports de 375, 768 y 1280 px; los campos
+  imperiales permanecen visibles y legibles en móvil.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

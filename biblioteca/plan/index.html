@@ -378,13 +378,71 @@
       gap: 10px;
     }
     .field { margin-bottom: 4px; }
-    .field > label {
+    .field > label,
+    .field-head > label {
       display: block;
       margin-bottom: 6px;
       font-size: 13px;
       font-weight: 600;
     }
-    .field > label .u { color: var(--muted); font-weight: 400; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; }
+    .field > label .u,
+    .field-head > label .u { color: var(--muted); font-weight: 400; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; }
+    .field-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .field-head > label { margin-bottom: 0; }
+    .unit-toggle {
+      display: inline-grid;
+      grid-auto-flow: column;
+      padding: 2px;
+      background: var(--paper-deep);
+      border: 1px solid var(--rule);
+      border-radius: 7px;
+    }
+    .unit-option {
+      min-width: 36px;
+      min-height: 28px;
+      padding: 4px 7px;
+      background: transparent;
+      border: 0;
+      border-radius: 5px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .unit-option[aria-pressed="true"] {
+      background: var(--card);
+      color: var(--ink);
+      box-shadow: 0 0 0 1px var(--rule-strong);
+    }
+    .unit-option:hover { color: var(--ink); }
+    .unit-option:focus-visible { outline-offset: 1px; }
+    .measure-inputs[hidden] { display: none !important; }
+    .measure-inputs.imperial {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .measure-part { position: relative; }
+    .measure-part .control { padding-right: 29px; }
+    .measure-suffix {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      pointer-events: none;
+    }
     .control {
       width: 100%;
       padding: 13px 12px;
@@ -740,6 +798,9 @@
       .privacy-note { margin-top: 8px; padding: 14px; }
       .num-grid { grid-template-columns: 1fr 1fr; }
       .num-grid .field:first-child { grid-column: 1 / -1; }
+      .num-grid.height-imperial #f-altura,
+      .num-grid.height-imperial #f-peso { grid-column: 1 / -1; }
+      .unit-option { min-width: 34px; padding-right: 6px; padding-left: 6px; }
       .grasa-selector { grid-template-columns: 1fr; }
       .grasa-visual { width: min(68vw, 220px); margin: 0 auto; }
       .result-top { grid-template-columns: 1fr; gap: 18px; }
@@ -873,18 +934,42 @@
         <p class="q-label">Tus números</p>
         <h2 class="q">Los datos que necesitamos para una referencia inicial.</h2>
         <p class="q-hint">Con esto calculamos un gasto energético estimado.</p>
-        <div class="num-grid">
+        <div class="num-grid" id="num-grid">
           <div class="field" id="f-edad">
             <label for="edad">Edad <span class="u">AÑOS</span></label>
             <input class="control" id="edad" name="edad" type="number" inputmode="numeric" autocomplete="off" min="16" max="80" placeholder="34" />
           </div>
           <div class="field" id="f-altura">
-            <label for="altura">Altura <span class="u">CM</span></label>
-            <input class="control" id="altura" name="altura" type="number" inputmode="numeric" autocomplete="off" min="130" max="220" placeholder="168" />
+            <div class="field-head">
+              <label for="altura">Altura</label>
+              <div class="unit-toggle" role="group" aria-label="Unidad de altura">
+                <button class="unit-option" type="button" data-height-unit="cm" aria-pressed="true">cm</button>
+                <button class="unit-option" type="button" data-height-unit="imperial" aria-pressed="false">ft/in</button>
+              </div>
+            </div>
+            <div class="measure-inputs" id="altura-cm-wrap">
+              <input class="control" id="altura" name="altura" type="number" inputmode="decimal" autocomplete="off" min="130" max="220" step="0.1" placeholder="168" aria-label="Altura en centímetros" />
+            </div>
+            <div class="measure-inputs imperial" id="altura-imperial-wrap" hidden>
+              <div class="measure-part">
+                <input class="control" id="altura-pies" name="altura_pies" type="number" inputmode="numeric" autocomplete="off" min="4" max="7" step="1" placeholder="5" aria-label="Pies" />
+                <span class="measure-suffix" aria-hidden="true">ft</span>
+              </div>
+              <div class="measure-part">
+                <input class="control" id="altura-pulgadas" name="altura_pulgadas" type="number" inputmode="decimal" autocomplete="off" min="0" max="11.9" step="0.1" placeholder="6" aria-label="Pulgadas" />
+                <span class="measure-suffix" aria-hidden="true">in</span>
+              </div>
+            </div>
           </div>
           <div class="field" id="f-peso">
-            <label for="peso">Peso <span class="u">KG</span></label>
-            <input class="control" id="peso" name="peso" type="number" inputmode="decimal" autocomplete="off" min="35" max="200" step="0.1" placeholder="72" />
+            <div class="field-head">
+              <label for="peso">Peso</label>
+              <div class="unit-toggle" role="group" aria-label="Unidad de peso">
+                <button class="unit-option" type="button" data-weight-unit="kg" aria-pressed="true">kg</button>
+                <button class="unit-option" type="button" data-weight-unit="lb" aria-pressed="false">lb</button>
+              </div>
+            </div>
+            <input class="control" id="peso" name="peso" type="number" inputmode="decimal" autocomplete="off" min="35" max="200" step="0.1" placeholder="72" aria-label="Peso en kilogramos" />
           </div>
         </div>
         <div class="grasa-selector" id="grasa-selector">
@@ -1276,12 +1361,93 @@
       });
       configureGrasa();
 
+      // Las unidades imperiales son solo una capa de entrada. El expediente,
+      // la API y la fórmula conservan siempre centímetros y kilogramos.
+      var CM_PER_INCH = 2.54;
+      var LB_PER_KG = 2.2046226218;
+      var heightUnit = 'cm';
+      var weightUnit = 'kg';
+      var alturaInput = document.getElementById('altura');
+      var alturaPiesInput = document.getElementById('altura-pies');
+      var alturaPulgadasInput = document.getElementById('altura-pulgadas');
+      var pesoInput = document.getElementById('peso');
+
+      function roundOne(value) {
+        return Math.round(value * 10) / 10;
+      }
+
+      function readHeightCm() {
+        if (heightUnit === 'cm') return parseFloat(alturaInput.value);
+        var feet = parseFloat(alturaPiesInput.value);
+        var inches = parseFloat(alturaPulgadasInput.value);
+        if (!Number.isFinite(feet) || !Number.isFinite(inches)) return NaN;
+        return (feet * 12 + inches) * CM_PER_INCH;
+      }
+
+      function readWeightKg() {
+        var value = parseFloat(pesoInput.value);
+        if (!Number.isFinite(value)) return NaN;
+        return weightUnit === 'lb' ? value / LB_PER_KG : value;
+      }
+
+      function setHeightUnit(unit) {
+        if (unit === heightUnit) return;
+        if (unit === 'imperial') {
+          var cm = parseFloat(alturaInput.value);
+          if (Number.isFinite(cm)) {
+            var totalInches = cm / CM_PER_INCH;
+            var feet = Math.floor(totalInches / 12);
+            alturaPiesInput.value = String(feet);
+            alturaPulgadasInput.value = String(roundOne(totalInches - feet * 12));
+          }
+        } else {
+          var convertedCm = readHeightCm();
+          if (Number.isFinite(convertedCm)) alturaInput.value = String(roundOne(convertedCm));
+        }
+        heightUnit = unit;
+        document.getElementById('altura-cm-wrap').hidden = unit !== 'cm';
+        document.getElementById('altura-imperial-wrap').hidden = unit !== 'imperial';
+        document.getElementById('num-grid').classList.toggle('height-imperial', unit === 'imperial');
+        document.querySelectorAll('[data-height-unit]').forEach(function (button) {
+          button.setAttribute('aria-pressed', String(button.getAttribute('data-height-unit') === unit));
+        });
+        document.getElementById('f-altura').classList.remove('has-error');
+        document.getElementById('err-datos').classList.remove('visible');
+        marcarInicio();
+      }
+
+      function setWeightUnit(unit) {
+        if (unit === weightUnit) return;
+        var current = parseFloat(pesoInput.value);
+        if (Number.isFinite(current)) {
+          pesoInput.value = String(roundOne(unit === 'lb' ? current * LB_PER_KG : current / LB_PER_KG));
+        }
+        weightUnit = unit;
+        pesoInput.min = unit === 'lb' ? '77.2' : '35';
+        pesoInput.max = unit === 'lb' ? '440.9' : '200';
+        pesoInput.placeholder = unit === 'lb' ? '159' : '72';
+        pesoInput.setAttribute('aria-label', unit === 'lb' ? 'Peso en libras' : 'Peso en kilogramos');
+        document.querySelectorAll('[data-weight-unit]').forEach(function (button) {
+          button.setAttribute('aria-pressed', String(button.getAttribute('data-weight-unit') === unit));
+        });
+        document.getElementById('f-peso').classList.remove('has-error');
+        document.getElementById('err-datos').classList.remove('visible');
+        marcarInicio();
+      }
+
+      document.querySelectorAll('[data-height-unit]').forEach(function (button) {
+        button.addEventListener('click', function () { setHeightUnit(button.getAttribute('data-height-unit')); });
+      });
+      document.querySelectorAll('[data-weight-unit]').forEach(function (button) {
+        button.addEventListener('click', function () { setWeightUnit(button.getAttribute('data-weight-unit')); });
+      });
+
       // Paso de datos numéricos
       document.getElementById('datos-next').addEventListener('click', function () {
         marcarInicio();
         var edad = parseFloat(document.getElementById('edad').value);
-        var altura = parseFloat(document.getElementById('altura').value);
-        var peso = parseFloat(document.getElementById('peso').value);
+        var altura = readHeightCm();
+        var peso = readWeightKg();
         var cfg = GRASA_CONFIG[datos.sexo];
         var grasaOk = datos.grasa >= cfg.min && datos.grasa <= cfg.max;
         var ok = edad >= 16 && edad <= 80 && altura >= 130 && altura <= 220 && peso >= 35 && peso <= 200 && grasaOk;
