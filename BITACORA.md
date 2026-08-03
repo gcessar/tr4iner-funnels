@@ -1683,6 +1683,36 @@ abandonar la ruta, el seguimiento de progreso y el contexto del contenido.
 
 ---
 
+## 2026-08-03 — GENESIS: corregir referencia masculina del 10% de grasa
+
+### Qué cambió
+
+- En el sprite masculino de `/biblioteca/plan/`, únicamente la primera referencia
+  visual —asignada al 10%— muestra ahora abdomen, oblicuos, pecho y hombros más
+  definidos.
+- Las referencias del 15% al 40%, el orden, los porcentajes y la configuración
+  del selector permanecen iguales.
+
+### Por qué
+
+El equipo de entrenadores detectó que el cuerpo anterior del 10% se parecía
+demasiado al 15% y no representaba la definición esperable para ese rango.
+
+### Resultado esperado
+
+- La progresión visual entre 10% y 15% es clara sin presentar el 10% como una
+  condición extrema de competencia.
+- El cálculo continúa usando el porcentaje exacto elegido; la imagen solo sirve
+  como referencia visual.
+
+### Resultado medido
+
+- El sprite conserva sus dimensiones de `1536 × 1024`, su cuadrícula `4 × 2` y
+  sus siete posiciones.
+- La configuración masculina sigue usando `10, 15, 20, 25, 30, 35 y 40%`.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
