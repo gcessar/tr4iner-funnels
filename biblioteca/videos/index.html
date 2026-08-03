@@ -752,15 +752,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .player-bar a {
-      flex: none;
-      color: var(--mark);
-      font-size: 13px;
-      font-weight: 600;
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-    }
-    .player-bar a:hover { border-bottom-color: var(--mark); }
     .player-close {
       flex: none;
       width: 34px; height: 34px;
@@ -1581,7 +1572,6 @@
         <p class="pm-bloque" id="player-bloque"></p>
         <p class="pm-title" id="player-title"></p>
       </div>
-      <a id="player-yt" href="#" target="_blank" rel="noopener">Ver en YouTube ↗</a>
       <button class="player-close" id="player-close" type="button" aria-label="Cerrar reproductor">
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
       </button>
@@ -2286,7 +2276,6 @@
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
-        document.getElementById('player-yt').href = 'https://www.youtube.com/watch?v=' + v.id;
         playerFrame.innerHTML = '<div id="yt-target"></div>';
         player.showModal();
         loadYT(function (ok) {

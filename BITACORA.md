@@ -1656,6 +1656,33 @@ error evitable y una razón para abandonar el test.
 
 ---
 
+## 2026-08-03 — GENESIS: retirar salida externa a YouTube
+
+### Qué cambió
+
+- El reproductor de `/biblioteca/videos/` ya no muestra el enlace amarillo
+  `Ver en YouTube ↗` debajo de los videos.
+- Se retiraron también el estilo exclusivo del enlace y la asignación dinámica
+  de su URL.
+
+### Por qué
+
+La salida externa interrumpía la experiencia privada de GENESIS y permitía
+abandonar la ruta, el seguimiento de progreso y el contexto del contenido.
+
+### Resultado esperado
+
+- Los videos continúan reproduciéndose dentro de GENESIS sin ofrecer un CTA
+  directo hacia YouTube.
+- El cierre del reproductor, la telemetría y el autocompletado al 85% no cambian.
+
+### Resultado medido
+
+- No quedan referencias a `player-yt` ni al texto `Ver en YouTube` en la página.
+- La sintaxis de los scripts inline continúa siendo válida.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
