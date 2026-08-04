@@ -1722,6 +1722,46 @@ demasiado al 15% y no representaba la definición esperable para ese rango.
 
 ---
 
+## 2026-08-03 — La bisagra de GENESIS recupera la atribución desde el CRM
+
+### Qué cambió
+
+`biblioteca/videos/index.html`: el link de la bisagra hacia `/testimonio-flor` o
+`/testimonio-dashiel` ahora completa la atribución con la que el CRM guardó en el registro
+(`memberSession.attribution`, nuevo en `GET /api/genesis/me`). El navegador solo pisa lo que traiga
+fresco, porque eso es un clic más nuevo que el del alta.
+
+### Por qué
+
+La única agenda generada por GENESIS llegó al CRM **sin UTMs y sin `fbc`/`fbp`**, así que no se
+pudo atribuir ni mandar a Meta con identificadores de clic.
+
+La causa no era el link —ese ya propagaba lo que tuviera, desde el fix de `buildRedirectUrl()` de
+julio— sino que **no tenía nada que propagar**: `TR4Track.getUTMs()` lee solo la query del momento
+(únicamente `video` y `fbc` se persisten en localStorage), y a GENESIS se entra por el enlace
+mágico del correo, que es una URL sin UTMs y muchas veces en otro dispositivo. O sea que la
+atribución se perdía en el paso que es **normal** del producto, no en un caso raro.
+
+Es la misma familia del incidente de julio, un nivel más abajo: allá el link no reenviaba los UTMs;
+acá el navegador ya no los tiene. Por eso ahora la copia viva vive en el servidor.
+
+### Resultado esperado
+
+Que un lead que cruza la bisagra llegue al Typeform con su origen real (campaña, source, medium,
+term, content) y con `fbc`/`fbp`, para que Meta pueda emparejar la agenda con el anuncio que la
+pagó y el CRM deje de recibirlo como "sin atribución".
+
+Del lado del CRM esto ya está en producción (migración + `register` + `session`), incluida la regla
+de que un toque retransmitido **no** se queda con el last touch de una campaña vieja: se detecta
+por `utm_medium=GENESIS` y en un lead que ya existía queda como `GENESIS`/`Other`, que no compite.
+
+### Resultado medido (completar después)
+
+Verificar sobre las próximas agendas de GENESIS que lleguen con `utm_medium=GENESIS` y con
+`fbc`/`fbp` presentes en el `Lead` del CRM.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

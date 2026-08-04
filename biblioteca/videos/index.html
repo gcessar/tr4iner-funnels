@@ -2558,7 +2558,14 @@
         if (lead.nombre || nombre) p.set('first_name', lead.nombre || nombre);
         if (lead.email || email) p.set('email', lead.email || email);
         if (state.sexo) p.set('sexo', state.sexo);
+        // A la bisagra se llega casi siempre desde el enlace mágico del correo:
+        // una URL sin UTMs y a veces en otro dispositivo. Ahí TR4Track no tiene
+        // nada, y la única copia viva de la atribución es la que el CRM guardó
+        // al registrarse. El navegador solo pisa lo que traiga fresco, porque
+        // eso es un clic más nuevo que el del alta.
+        var storedAttr = (memberSession && memberSession.attribution) || {};
         var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
+        Object.keys(storedAttr).forEach(function (k) { if (!attr[k]) attr[k] = storedAttr[k]; });
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
         var q = p.toString().replace(/%40/g, '@');
         base.search = q;
