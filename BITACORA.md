@@ -1833,6 +1833,38 @@ dura tu proceso** — que es justo lo que la clienta no logra sostener ("siempre
 
 Contraste verificado: el par más bajo queda en 5.15:1 (AA). Foco de teclado visible en ámbar.
 
+### Tercera pasada — peso de carga
+
+Medido con `performance.getEntriesByType('resource')`: la página pesaba **1507 KB**, y **1284 KB
+eran dos PNG**. El resto era ruido al lado de eso.
+
+| | Antes | Después |
+|---|---|---|
+| Total | 1507 KB | **189 KB** |
+| Assets propios | ~1350 KB | **62 KB** |
+| `fit4-va-poster` | 880 KB | **14,5 KB** |
+| `fit4-mockup-caja-app` | 404 KB | **41 KB** |
+| Recursos que bloquean el render | 1 | **0** |
+
+- **Los dos PNG pasan a WebP.** El póster es solo el fondo del marco mientras carga Vidalytics —
+  880 KB por un telón que el reproductor tapa a los pocos cientos de ms. Va a 720px de ancho, sin
+  canal alfa (era una foto, el alfa no servía de nada) y con calidad baja: se ve igual detrás del
+  player. El mockup mantiene su alfa y su tamaño; a q82 el texto del teléfono sigue legible.
+  Los PNG se borran del repo: quedaban sin referencia y se subían a Vercel en cada deploy.
+- **La hoja de Google Fonts sale del camino crítico.** Era el único recurso que bloqueaba el
+  render: obligaba a un handshake con otro origen antes del primer pintado. Ahora carga con
+  `preload as=style` + `onload`, con `<noscript>` de respaldo. Como ya tenía `display=swap`, el
+  texto salía igual en la fuente de respaldo — lo único que se gana es no esperarla para pintar.
+- **Se caen los pesos 500** de Barlow y Barlow Semi Condensed: ninguna regla los usaba. Verificado
+  contra `document.fonts`: cargan exactamente los 7 que quedan declarados.
+- **`will-change` queda dentro de `min-width: 641px`**, que es donde corre el parallax. En móvil
+  pedía capas de composición a cambio de nada.
+- Se agrega `preload` del póster, que antes se descubría recién al parsear el CSS estando sobre el
+  pliegue. Verificado que no duplica la descarga.
+
+Lo que queda pesando es de terceros: **`fbevents.js` (104 KB)**, el píxel de Meta que entra por
+GTM. Es la medición de las campañas, así que no se toca.
+
 ### Resultado esperado
 
 Más clics a checkout por visita al desaparecer el muro, y una decisión más rápida entre planes al

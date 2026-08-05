@@ -22,7 +22,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Fondo del marco del video: se descubre recién al parsear el CSS y está sobre el pliegue. -->
+  <link rel="preload" as="image" href="/assets/fit4/fit4-va-poster.webp" fetchpriority="high" />
+  <!-- Solo los pesos que alguna regla usa de verdad; el 500 no se usaba en ninguna.
+       Se carga sin bloquear el render: era el único recurso en el camino crítico y
+       obligaba a esperar un handshake con otro origen antes del primer pintado.
+       Con display=swap el texto ya salía en la fuente de respaldo igual. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;600&family=Barlow+Semi+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;600&family=Barlow+Semi+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" /></noscript>
 
   <style>
     /* ══ Tokens ═══════════════════════════════════════════════
@@ -191,7 +198,6 @@
         radial-gradient(48% 44% at 12% 22%, rgba(255, 184, 0, .07), transparent 64%),
         repeating-linear-gradient(115deg, transparent 0 38px, rgba(255, 255, 255, .02) 38px 39px);
       transform: translate3d(0, var(--par, 0px), 0);
-      will-change: transform;
     }
     .hero .wrap { position: relative; z-index: 1; text-align: center; }
 
@@ -233,7 +239,7 @@
       border: 1px solid var(--line-warm);
       border-radius: 16px;
       overflow: hidden;
-      background: #0d0d0b url("/assets/fit4/fit4-va-poster.png") center / cover no-repeat;
+      background: #0d0d0b url("/assets/fit4/fit4-va-poster.webp") center / cover no-repeat;
       box-shadow: 0 40px 90px -50px rgba(255, 229, 0, .45);
     }
     .video-frame > div { width: 100%; }
@@ -296,7 +302,6 @@
       margin: 0 auto 18px;
       mix-blend-mode: lighten;
       transform: translate3d(0, var(--par, 0px), 0);
-      will-change: transform;
     }
     .brand-title {
       margin: 0;
@@ -645,7 +650,6 @@
       z-index: 0;
       background: radial-gradient(50% 58% at 50% 52%, rgba(255, 229, 0, .17), transparent 62%);
       transform: translate3d(0, var(--par, 0px), 0);
-      will-change: transform;
     }
     .final .wrap { position: relative; z-index: 1; }
     .final p { max-width: 580px; margin: 22px auto 0; color: var(--dim); font-size: 1rem; }
@@ -710,6 +714,12 @@
 
     /* ══ Responsive ═══════════════════════════════════════════ */
     .br-m { display: none; }
+
+    /* El parallax solo corre acá, así que las capas de composición
+       solo se piden acá: en móvil serían memoria a cambio de nada. */
+    @media (min-width: 641px) {
+      .hero::before, .final::before, .mockup { will-change: transform; }
+    }
 
     @media (max-width: 860px) {
       .feat-grid { border-radius: 14px; }
@@ -809,7 +819,7 @@
     <section class="reveal-sec">
       <div class="wrap" data-reveal>
         <p class="reveal-lead">Si te identificas con al menos uno, esto es exactamente lo que resolvemos con:</p>
-        <img class="mockup" data-par="0.06" src="/assets/fit4/fit4-mockup-caja-app.png" width="732" height="574" loading="lazy" decoding="async" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
+        <img class="mockup" data-par="0.06" src="/assets/fit4/fit4-mockup-caja-app.webp" width="732" height="574" loading="lazy" decoding="async" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
         <h2 class="brand-title" translate="no">FIT<span>4</span>&nbsp;CHALLENGE</h2>
         <p class="reveal-copy">Un programa que combina entrenamiento, alimentación y mentalidad para ayudarte a construir el cuerpo que buscas. <b>No es una rutina genérica en PDF que terminas dejando a la mitad.</b></p>
       </div>
