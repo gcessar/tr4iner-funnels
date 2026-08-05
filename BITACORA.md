@@ -1902,10 +1902,14 @@ Su hermana `/redirectionutmstr4iner2` usa la **misma condición de VA** pero rep
 
 Mandar el tráfico VA de `/redirectionutmstr4iner` a **`/fit4-va`** en vez de al WhatsApp de Veronika, para decidir qué rinde más con el mismo tráfico.
 
-### Lo que hay que arreglar antes de encender la prueba
+### Estado de la atribución (aclarado el 05-ago-2026)
 
-1. **El redirect a WhatsApp no reenvía nada.** Solo arma `phone` + `text`; los UTMs, `fbclid` y demás se pierden ahí (a WhatsApp no se le pueden pasar de todos modos). Pero si se apunta a `/fit4-va` **hay que concatenar el querystring**, como ya hace `redirectionutmstr4iner2` con `+ queryString`. Si no, `/fit4-va` aplica su propio respaldo (`utm_source=FIT4-VA-DIRECTO`, `utm_campaign=FIT4-VA`) y **toda la prueba llega marcada como tráfico directo**, indistinguible del resto: no se podría atribuir a la campaña que la generó.
-2. **Tomar la línea base antes de tocar nada.** Sin el número previo del brazo WhatsApp no hay contra qué comparar.
+La atribución llega por Typeform, que sí reenvía los parámetros. Del lado de `/fit4-va` lo único
+que hacía falta era que esos parámetros pasen a los botones y viajen al checkout de Hotmart, y eso
+**ya está resuelto y verificado**: ver el contrato de parámetros más abajo.
+
+Único recaudo operativo: **tomar la línea base del brazo WhatsApp antes de encender la prueba**.
+Sin el número previo no hay contra qué comparar.
 
 ### Cómo decidir (importante: no comparar tasas de conversión)
 
@@ -1922,7 +1926,7 @@ La métrica que decide es **ingreso por cada 100 visitantes VA**, en la misma ve
 Dos cosas a tener en cuenta al leer los números:
 
 - **La venta high-ticket tarda.** Una conversación de WhatsApp puede cerrar semanas después; `/fit4-va` cobra en el momento. Cerrar la ventana muy temprano favorece artificialmente a `/fit4-va`. Dejar correr el rezago del brazo WhatsApp antes de comparar.
-- **`/gracias-fit4-challenge` no emite `Purchase`** — la confirmación de pago sigue dependiendo de Hotmart. Para el conteo de compras del brazo `/fit4-va` usar `fit4_thankyou_view` en GA4, o los pagos aprobados directo de Hotmart, no el píxel de Meta.
+- **La compra se confirma por backend, no por la página.** `/gracias-fit4-challenge` solo le muestra al comprador cómo seguir su plan; no emite `Purchase` a propósito. El conteo de ventas del brazo `/fit4-va` sale del backend/Hotmart, que es la fuente de verdad. `fit4_thankyou_view` sirve solo como señal de que la persona llegó a ver las indicaciones.
 
 ### Qué anotar cuando termine
 
@@ -1932,6 +1936,66 @@ Dos cosas a tener en cuenta al leer los números:
 - Ingreso por 100 visitantes de cada brazo → la decisión.
 
 ### Resultado medido (completar después)
+
+---
+
+## 2026-08-05 — `/fit4-va` a producción · contrato de datos para CRM y n8n
+
+Se integra `work/fit4-va-rediseno` en `main`. **Esta sección es la referencia para el resto de los
+proyectos** (`crm-ventas`, workflows de n8n, GA4): define qué manda `/fit4-va` y con qué nombres.
+Si cambia algo de acá, hay que avisar antes de tocarlo.
+
+### 1. Ofertas de Hotmart ↔ producto y precio
+
+El dato que hace falta para atribuir ingreso: el checkout es el mismo producto (`K104111098X`) y lo
+que distingue el plan es el parámetro **`off`**.
+
+| `off` | Plan | Precio | Equivale a |
+|---|---|---|---|
+| `avsq480z` | 3 meses (12 semanas) | **$87 USD** | $29 / mes |
+| `9lmw8r6b` | 6 meses (24 semanas) | **$127 USD** | $21 / mes |
+
+Los dos son **pago único, sin renovación automática**: no son suscripciones. Cualquier lógica de
+renovación/reincorporación que exista para otros productos no aplica acá.
+
+> Ojo con el histórico: `9lmw8r6b` es el código que venía en la URL original y durante el rediseño
+> se asumió que era un plan mensual de $22. **No lo es** — es el bloque de 6 meses. Si algún
+> workflow o dashboard quedó mapeando `9lmw8r6b` a $22 mensual, está mal.
+
+### 2. Parámetros que llegan al checkout
+
+`buildCheckoutUrl()` reenvía **todo lo que traiga la URL**, no una lista fija que se quede vieja con
+la próxima campaña. Verificado el 05-ago-2026 con 11 parámetros sintéticos: **ninguno se pierde**.
+
+- **Todo lo entrante:** cualquier `utm_*` (`utm_source`, `utm_campaign`, `utm_medium`,
+  `utm_content`, `utm_term`, …), `video`, `fbclid`, `gclid`, `h_ad_id`, `first_name`, `email`.
+- **Lo que agrega la página:** `off`, `checkoutMode=10`, `funnel=VA`, `funnel_variant=fit4-va`.
+- **Lo que agrega TR4Track** (`attribution.js`): la atribución persistida de first-touch, incluido
+  el `fbc` derivado de `fbclid`. Solo rellena claves que no vengan ya en la URL.
+- **Respaldo:** si no llega ningún `utm_source`/`utm_campaign`, la página pone
+  `utm_source=FIT4-VA-DIRECTO` y `utm_campaign=FIT4-VA`. **Ver ese par significa que el tráfico
+  llegó sin atribución**, no que exista una campaña con ese nombre.
+
+### 3. Eventos a `dataLayer`
+
+| Evento | Cuándo | Parámetros propios |
+|---|---|---|
+| `fit4_vsl_loaded` | Carga de la página | `fit4_variant=VA`, `funnel_variant=fit4-va` |
+| `fit4_plan_toggle` | Cambia de bloque en el selector | `fit4_plan` = `3-meses` \| `6-meses` |
+| `fit4_checkout_click` | Clic a Hotmart | `fit4_plan`, `fit4_cta` = `card` \| `buybar` |
+
+`fit4_offer_unlocked` **ya no existe**: se eliminó con el muro de 3 minutos. Cualquier informe o
+workflow que lo espere se quedó sin datos desde este deploy.
+
+### 4. Confirmación de compra
+
+La compra se confirma **por backend**, no por la página. `/gracias-fit4-challenge` solo le muestra
+al comprador las indicaciones para seguir su plan y no emite `Purchase` a propósito, para no
+duplicar por recarga. La fuente de verdad del ingreso es Hotmart/backend.
+
+### Deploy
+
+Integrado a `main` el 05-ago-2026. Ver el ID del deployment de Vercel al final de esta entrada.
 
 ---
 
