@@ -1801,13 +1801,18 @@ Los precios del prototipo ($22/mes, $199/año) eran de relleno; los reales son b
 3 y 6 meses. Eso cambió la tesis de la página: **los planes no son tiers de features, son cuánto
 dura tu proceso** — que es justo lo que la clienta no logra sostener ("siempre vuelves a empezar").
 
-- **La tabla de precios pasa a ser una tira de mesociclo.** Seis casillas de mes: el bloque de 3
-  llena la mitad, el de 6 la llena entera. La comparación se ve antes de leerse.
+- **La tabla de precios pasa a ser un toggle con una sola tarjeta.** Un selector de duración
+  (3 / 6 meses) sobre una tira de mesociclo de seis casillas: al cambiar de bloque la tira **se
+  estira o se contrae**. El valor se ve en movimiento en vez de compararse en estático, y en móvil
+  deja de haber dos tarjetas largas que scrollear. Por defecto arranca en 6 meses, con
+  `autocomplete="off"` en los radios para que el navegador no restaure una selección previa.
+  Los dos paneles comparten celda de grid, así cambiar de plan no salta el layout (verificado: 0px).
 - **Se dejan de repetir las dos listas idénticas.** Las dos tarjetas listaban los mismos 6 items:
   eso obliga a buscar una diferencia que no existe y frena la decisión. Ahora las inclusiones van
   una sola vez, debajo, y las tarjetas solo cargan lo que difiere: duración, precio y la cuenta.
-- **Anclaje explícito:** $29/mes vs $21/mes, y en el de 6 meses "comprar dos bloques de 3 te
-  costaría ~~$174~~ — ahorras $47".
+- **Anclaje explícito y cruzado:** $29/mes vs $21/mes; en el de 6 meses "comprar dos bloques de 3
+  te costaría ~~$174~~ — ahorras $47", y en el de 3 meses el recordatorio de que con 6 bajaría a
+  $21. La barra fija y su `off` siguen al toggle.
 - **Garantía de 7 días junto a cada botón**, no enterrada en el FAQ.
 - **Barra fija de compra en móvil** que entra al pasar los planes.
 - Se quita la numeración 01–06 de las features: no son una secuencia, y el grid pasa a leerse como
@@ -1832,7 +1837,8 @@ compra no caiga por mostrar precio antes del video.
 ### Resultado medido (completar después)
 
 Comparar contra la versión con muro: `fit4_checkout_click` / `fit4_vsl_loaded`, el reparto
-3 vs 6 meses, y cuánto aporta la barra fija (`fit4_cta=buybar`).
+3 vs 6 meses, cuánto aporta la barra fija (`fit4_cta=buybar`) y cuántas cambian de bloque antes de
+comprar (`fit4_plan_toggle`).
 
 ---
 
