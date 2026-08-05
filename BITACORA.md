@@ -1762,6 +1762,243 @@ Verificar sobre las próximas agendas de GENESIS que lleguen con `utm_medium=GEN
 
 ---
 
+## 2026-08-04 — `/fit4-va` pasa de VSL con muro a landing de venta completa
+
+**Rama:** `work/fit4-va-rediseno` · **Estado:** preview, pendiente de aprobación del usuario.
+
+### Qué cambió
+
+`fit4-va/index.html` se rehízo sobre el prototipo aprobado (tema oscuro FIT4: Archivo Black,
+Barlow Semi Condensed, Inter y Space Mono sobre `#0A0A0A` con acento `#FFE500`). La página deja
+de ser una VSL con muro y pasa a ser una landing de venta larga: hero con el video, bloques de
+dolor, presentación del programa, seis features, dos planes, FAQ y cierre.
+
+Cambios de mecánica, no solo de estética:
+
+- **Se elimina el muro de 3 minutos.** Antes el CTA aparecía recién al llegar el reproductor a
+  `CTA_AT_SECONDS = 180`; ahora los planes están visibles desde el inicio y los CTA del hero y del
+  cierre son anclas a `#planes`. Se cae con esto el evento `fit4_offer_unlocked`.
+- **Dos ofertas en vez de una.** 3 meses $87 USD (`off=avsq480z`) y 6 meses $127 USD
+  (`off=9lmw8r6b`). `fit4_checkout_click` viaja con `fit4_plan` (`3-meses` | `6-meses`) y
+  `fit4_cta` (`card` | `buybar`) para separarlas en GA4.
+- **Se quita `va-theme.css`** de esta página: fija fondo crema y redefine `--yellow` a `#e8a943`,
+  incompatible con el tema oscuro. El resto de páginas VA lo siguen usando.
+- Assets nuevos en `assets/fit4/`: `fit4-mockup-caja-app.png` y `fit4-va-poster.png` (este último
+  como fondo del marco mientras carga Vidalytics).
+
+Se conserva sin tocar lo que sostiene la medición: GTM `GTM-T88G63P`, el `noscript` de Meta,
+`attribution.js`/TR4Track, el `noindex` (sigue siendo paso de funnel, no página indexable), el
+canonical y el embed fijo de Veronika `Rl_cXuqDVuhtabtp`.
+
+### Por qué
+
+El muro asumía que la decisión se toma dentro del video. El prototipo apuesta por lo contrario:
+dar la oferta completa por escrito y dejar que el video empuje, no que bloquee.
+
+### Segunda pasada — diseño y CRO
+
+Los precios del prototipo ($22/mes, $199/año) eran de relleno; los reales son bloques prepagos de
+3 y 6 meses. Eso cambió la tesis de la página: **los planes no son tiers de features, son cuánto
+dura tu proceso** — que es justo lo que la clienta no logra sostener ("siempre vuelves a empezar").
+
+- **La tabla de precios pasa a ser un toggle con una sola tarjeta.** Un selector de duración
+  (3 / 6 meses) sobre una tira de mesociclo de seis casillas: al cambiar de bloque la tira **se
+  estira o se contrae**. El valor se ve en movimiento en vez de compararse en estático, y en móvil
+  deja de haber dos tarjetas largas que scrollear. Por defecto arranca en 6 meses, con
+  `autocomplete="off"` en los radios para que el navegador no restaure una selección previa.
+  Los dos paneles comparten celda de grid, así cambiar de plan no salta el layout (verificado: 0px).
+- **Se dejan de repetir las dos listas idénticas.** Las dos tarjetas listaban los mismos 6 items:
+  eso obliga a buscar una diferencia que no existe y frena la decisión. Ahora las inclusiones van
+  una sola vez, debajo, y las tarjetas solo cargan lo que difiere: duración, precio y la cuenta.
+- **Anclaje de precio visible, no en letra chica.** El bloque de 6 muestra **$174 tachado encima
+  del $127**, en tamaño display y con la línea de tachado en ámbar (antes iba en gris opaco dentro
+  de un párrafo, donde no anclaba nada). La línea **se dibuja** cuando la tarjeta entra en vista y
+  se vuelve a dibujar en cada retorno al bloque de 6, seguida del chip "ahorras $47".
+  El $174 va etiquetado "en dos bloques de 3": no es un precio anterior y no se presenta como tal.
+- **Anclaje cruzado:** el bloque de 3 muestra su tasa "$29 al mes" en el mismo lugar y recuerda que
+  con 6 bajaría a $21. Los dos paneles quedan a la misma altura (verificado: 404px cada uno).
+  La barra fija y su `off` siguen al toggle.
+- **Garantía de 7 días junto a cada botón**, no enterrada en el FAQ.
+- **Barra fija de compra en móvil** que entra al pasar los planes.
+- Se quita la numeración 01–06 de las features: no son una secuencia, y el grid pasa a leerse como
+  una sola tabla con divisores de 1px.
+- **Tipografía unificada:** se cae Inter y entra Barlow como cuerpo, quedando una sola familia
+  atlética (Archivo Black display / Barlow Semi Condensed títulos / Barlow cuerpo / Space Mono
+  metadatos).
+- **Movimiento orquestado** en vez de un solo fade: entradas escalonadas por `--i`, parallax de las
+  capas de atmósfera y del mockup (rAF, solo `transform`), y la tira de meses que se llena casilla
+  por casilla al entrar en vista. Todo bajo `prefers-reduced-motion` y con `<noscript>` que fuerza
+  la página visible si el JS no corre.
+- Se saca el wordmark FIT4 CHALLENGE del footer.
+
+Contraste verificado: el par más bajo queda en 5.15:1 (AA). Foco de teclado visible en ámbar.
+
+### Tercera pasada — peso de carga
+
+Medido con `performance.getEntriesByType('resource')`: la página pesaba **1507 KB**, y **1284 KB
+eran dos PNG**. El resto era ruido al lado de eso.
+
+| | Antes | Después |
+|---|---|---|
+| Total | 1507 KB | **189 KB** |
+| Assets propios | ~1350 KB | **62 KB** |
+| `fit4-va-poster` | 880 KB | **14,5 KB** |
+| `fit4-mockup-caja-app` | 404 KB | **41 KB** |
+| Recursos que bloquean el render | 1 | **0** |
+
+- **Los dos PNG pasan a WebP.** El póster es solo el fondo del marco mientras carga Vidalytics —
+  880 KB por un telón que el reproductor tapa a los pocos cientos de ms. Va a 720px de ancho, sin
+  canal alfa (era una foto, el alfa no servía de nada) y con calidad baja: se ve igual detrás del
+  player. El mockup mantiene su alfa y su tamaño; a q82 el texto del teléfono sigue legible.
+  Los PNG se borran del repo: quedaban sin referencia y se subían a Vercel en cada deploy.
+- **La hoja de Google Fonts sale del camino crítico.** Era el único recurso que bloqueaba el
+  render: obligaba a un handshake con otro origen antes del primer pintado. Ahora carga con
+  `preload as=style` + `onload`, con `<noscript>` de respaldo. Como ya tenía `display=swap`, el
+  texto salía igual en la fuente de respaldo — lo único que se gana es no esperarla para pintar.
+- **Se caen los pesos 500** de Barlow y Barlow Semi Condensed: ninguna regla los usaba. Verificado
+  contra `document.fonts`: cargan exactamente los 7 que quedan declarados.
+- **`will-change` queda dentro de `min-width: 641px`**, que es donde corre el parallax. En móvil
+  pedía capas de composición a cambio de nada.
+- Se agrega `preload` del póster, que antes se descubría recién al parsear el CSS estando sobre el
+  pliegue. Verificado que no duplica la descarga.
+
+Lo que queda pesando es de terceros: **`fbevents.js` (104 KB)**, el píxel de Meta que entra por
+GTM. Es la medición de las campañas, así que no se toca.
+
+### Resultado esperado
+
+Más clics a checkout por visita al desaparecer el muro, y una decisión más rápida entre planes al
+volverla una sola variable (duración) en vez de dos listas iguales. A vigilar: que la conversión a
+compra no caiga por mostrar precio antes del video.
+
+### Resultado medido (completar después)
+
+Comparar contra la versión con muro: `fit4_checkout_click` / `fit4_vsl_loaded`, el reparto
+3 vs 6 meses, cuánto aporta la barra fija (`fit4_cta=buybar`) y cuántas cambian de bloque antes de
+comprar (`fit4_plan_toggle`).
+
+---
+
+## 2026-08-05 — Prueba de agosto: tráfico VA a WhatsApp vs. `/fit4-va`
+
+**Estado:** definida, sin ejecutar. Requiere que `work/fit4-va-rediseno` esté en producción.
+
+### Cómo funciona hoy `/redirectionutmstr4iner`
+
+Página puente que manda todo el tráfico a WhatsApp. Detecta VA por **`utm_campaign`** y solo por eso:
+
+```js
+const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+const phone = isVa ? "15677024560" : "17439014239";
+```
+
+- **VA → `+1 567 702 4560`** (la cuenta de Veronika en ManyChat).
+- Resto → `+1 743 901 4239`.
+- El mensaje precargado cambia solo en el caso AN de Meta (`utm_source=MetaAds` + `utm_medium=Caso_Estudio`), que recibe "¡Hola! Quiero más información."; todos los demás reciben el texto largo de transformación física.
+
+Su hermana `/redirectionutmstr4iner2` usa la **misma condición de VA** pero reparte entre `/calendly-va` y `/calendly-an`, y esa sí reenvía el querystring completo.
+
+### Qué se va a probar en agosto de 2026
+
+Mandar el tráfico VA de `/redirectionutmstr4iner` a **`/fit4-va`** en vez de al WhatsApp de Veronika, para decidir qué rinde más con el mismo tráfico.
+
+### Estado de la atribución (aclarado el 05-ago-2026)
+
+La atribución llega por Typeform, que sí reenvía los parámetros. Del lado de `/fit4-va` lo único
+que hacía falta era que esos parámetros pasen a los botones y viajen al checkout de Hotmart, y eso
+**ya está resuelto y verificado**: ver el contrato de parámetros más abajo.
+
+Único recaudo operativo: **tomar la línea base del brazo WhatsApp antes de encender la prueba**.
+Sin el número previo no hay contra qué comparar.
+
+### Cómo decidir (importante: no comparar tasas de conversión)
+
+Los dos brazos **venden cosas distintas a precios distintos**, así que la tasa de conversión no es comparable:
+
+| | WhatsApp / ManyChat | `/fit4-va` |
+|---|---|---|
+| Qué vende | Programa high-ticket vía conversación y llamada | Bloque prepago de $87 / $127 |
+| Quién cierra | Setter / llamada | Autoservicio en Hotmart |
+| Dónde se mide | ManyChat + CRM (`crm-ventas`) | GA4: `fit4_vsl_loaded` → `fit4_checkout_click` → `fit4_thankyou_view` en `/gracias-fit4-challenge` |
+
+La métrica que decide es **ingreso por cada 100 visitantes VA**, en la misma ventana de fechas para los dos brazos. Un brazo puede convertir 10× más y aun así facturar menos.
+
+Dos cosas a tener en cuenta al leer los números:
+
+- **La venta high-ticket tarda.** Una conversación de WhatsApp puede cerrar semanas después; `/fit4-va` cobra en el momento. Cerrar la ventana muy temprano favorece artificialmente a `/fit4-va`. Dejar correr el rezago del brazo WhatsApp antes de comparar.
+- **La compra se confirma por backend, no por la página.** `/gracias-fit4-challenge` solo le muestra al comprador cómo seguir su plan; no emite `Purchase` a propósito. El conteo de ventas del brazo `/fit4-va` sale del backend/Hotmart, que es la fuente de verdad. `fit4_thankyou_view` sirve solo como señal de que la persona llegó a ver las indicaciones.
+
+### Qué anotar cuando termine
+
+- Visitantes VA a cada brazo y la ventana exacta de fechas.
+- Brazo WhatsApp: conversaciones iniciadas, agendas, ventas cerradas e ingreso.
+- Brazo `/fit4-va`: `fit4_vsl_loaded`, `fit4_checkout_click` (con el reparto 3 vs 6 meses y `fit4_cta`), `fit4_thankyou_view` e ingreso.
+- Ingreso por 100 visitantes de cada brazo → la decisión.
+
+### Resultado medido (completar después)
+
+---
+
+## 2026-08-05 — `/fit4-va` a producción · contrato de datos para CRM y n8n
+
+Se integra `work/fit4-va-rediseno` en `main`. **Esta sección es la referencia para el resto de los
+proyectos** (`crm-ventas`, workflows de n8n, GA4): define qué manda `/fit4-va` y con qué nombres.
+Si cambia algo de acá, hay que avisar antes de tocarlo.
+
+### 1. Ofertas de Hotmart ↔ producto y precio
+
+El dato que hace falta para atribuir ingreso: el checkout es el mismo producto (`K104111098X`) y lo
+que distingue el plan es el parámetro **`off`**.
+
+| `off` | Plan | Precio | Equivale a |
+|---|---|---|---|
+| `avsq480z` | 3 meses (12 semanas) | **$87 USD** | $29 / mes |
+| `9lmw8r6b` | 6 meses (24 semanas) | **$127 USD** | $21 / mes |
+
+Los dos son **pago único, sin renovación automática**: no son suscripciones. Cualquier lógica de
+renovación/reincorporación que exista para otros productos no aplica acá.
+
+> Ojo con el histórico: `9lmw8r6b` es el código que venía en la URL original y durante el rediseño
+> se asumió que era un plan mensual de $22. **No lo es** — es el bloque de 6 meses. Si algún
+> workflow o dashboard quedó mapeando `9lmw8r6b` a $22 mensual, está mal.
+
+### 2. Parámetros que llegan al checkout
+
+`buildCheckoutUrl()` reenvía **todo lo que traiga la URL**, no una lista fija que se quede vieja con
+la próxima campaña. Verificado el 05-ago-2026 con 11 parámetros sintéticos: **ninguno se pierde**.
+
+- **Todo lo entrante:** cualquier `utm_*` (`utm_source`, `utm_campaign`, `utm_medium`,
+  `utm_content`, `utm_term`, …), `video`, `fbclid`, `gclid`, `h_ad_id`, `first_name`, `email`.
+- **Lo que agrega la página:** `off`, `checkoutMode=10`, `funnel=VA`, `funnel_variant=fit4-va`.
+- **Lo que agrega TR4Track** (`attribution.js`): la atribución persistida de first-touch, incluido
+  el `fbc` derivado de `fbclid`. Solo rellena claves que no vengan ya en la URL.
+- **Respaldo:** si no llega ningún `utm_source`/`utm_campaign`, la página pone
+  `utm_source=FIT4-VA-DIRECTO` y `utm_campaign=FIT4-VA`. **Ver ese par significa que el tráfico
+  llegó sin atribución**, no que exista una campaña con ese nombre.
+
+### 3. Eventos a `dataLayer`
+
+| Evento | Cuándo | Parámetros propios |
+|---|---|---|
+| `fit4_vsl_loaded` | Carga de la página | `fit4_variant=VA`, `funnel_variant=fit4-va` |
+| `fit4_plan_toggle` | Cambia de bloque en el selector | `fit4_plan` = `3-meses` \| `6-meses` |
+| `fit4_checkout_click` | Clic a Hotmart | `fit4_plan`, `fit4_cta` = `card` \| `buybar` |
+
+`fit4_offer_unlocked` **ya no existe**: se eliminó con el muro de 3 minutos. Cualquier informe o
+workflow que lo espere se quedó sin datos desde este deploy.
+
+### 4. Confirmación de compra
+
+La compra se confirma **por backend**, no por la página. `/gracias-fit4-challenge` solo le muestra
+al comprador las indicaciones para seguir su plan y no emite `Purchase` a propósito, para no
+duplicar por recarga. La fuente de verdad del ingreso es Hotmart/backend.
+
+### Deploy
+
+Integrado a `main` el 05-ago-2026. Ver el ID del deployment de Vercel al final de esta entrada.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

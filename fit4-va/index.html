@@ -14,333 +14,1007 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#FAF7F2" />
+  <meta name="theme-color" content="#0A0A0A" />
   <title>FIT4CHALLENGE para mujeres · Veronika Alvarado</title>
-  <meta name="description" content="Mira la presentación de FIT4CHALLENGE con Veronika Alvarado y descubre si este programa para mujeres encaja contigo." />
+  <meta name="description" content="Mira la presentación de FIT4CHALLENGE con Veronika Alvarado y elige tu bloque: 3 o 6 meses de entrenamiento y alimentación con seguimiento." />
   <link rel="canonical" href="https://metodo.tr4iner.com/fit4-va" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;500;900&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <!-- Fondo del marco del video: se descubre recién al parsear el CSS y está sobre el pliegue. -->
+  <link rel="preload" as="image" href="/assets/fit4/fit4-va-poster.webp" fetchpriority="high" />
+  <!-- Solo los pesos que alguna regla usa de verdad; el 500 no se usaba en ninguna.
+       Se carga sin bloquear el render: era el único recurso en el camino crítico y
+       obligaba a esperar un handshake con otro origen antes del primer pintado.
+       Con display=swap el texto ya salía en la fuente de respaldo igual. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;600&family=Barlow+Semi+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow:wght@400;600&family=Barlow+Semi+Condensed:wght@600;700&family=Space+Mono:wght@400;700&display=swap" /></noscript>
 
   <style>
+    /* ══ Tokens ═══════════════════════════════════════════════
+       El negro y el amarillo no son decisión de diseño: son la
+       caja del producto. El ámbar entra como color estructural
+       para que la página no sea un bloque monocromo de ácido. */
     :root {
-      --bg: #F2EEE2;
-      --bg-deeper: #EBE6D6;
-      --ink: #0A0A0A;
-      --ink-soft: #2B2826;
-      --muted: #6B6660;
-      --rule: rgba(10, 10, 10, 0.14);
-      --rule-strong: rgba(10, 10, 10, 0.28);
-      --accent: #F5C518;
-      --cream: #F5F1E5;
-      --serif: "Poppins", "Montserrat", Arial, sans-serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
-      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --void: #0A0A0A;
+      --surface: #16150F;
+      --surface-hi: #1D1B13;
+      --line: rgba(255, 255, 255, .09);
+      --line-warm: rgba(255, 229, 0, .26);
+      --yellow: #FFE500;
+      --ember: #FFB800;
+      --bone: #F2F0E8;
+      --dim: #B9B7AD;
+      --grey: #8B887C;
+      --maxw: 1120px;
+
+      --display: "Archivo Black", sans-serif;
+      --cond: "Barlow Semi Condensed", sans-serif;
+      --sans: "Barlow", system-ui, sans-serif;
+      --mono: "Space Mono", ui-monospace, monospace;
+
+      --ease: cubic-bezier(.2, .7, .2, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { -webkit-text-size-adjust: 100%; }
+    html {
+      color-scheme: dark;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
 
     body {
-      min-height: 100dvh;
-      overflow-x: hidden;
-      background: var(--bg);
-      color: var(--ink);
+      background: var(--void);
+      color: var(--bone);
       font-family: var(--sans);
-      font-size: 17px;
-      line-height: 1.55;
-      text-rendering: optimizeLegibility;
+      font-size: clamp(16px, 1vw, 17.5px);
+      line-height: 1.62;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0.045;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-size: 240px 240px;
+    a {
+      color: inherit;
+      text-decoration: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(255, 229, 0, .24);
     }
-
-    a { touch-action: manipulation; -webkit-tap-highlight-color: rgba(245, 197, 24, .28); }
-    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
-    ::selection { background: var(--accent); color: var(--ink); }
+    img { display: block; max-width: 100%; }
+    ::selection { background: var(--yellow); color: var(--void); }
+    :focus-visible { outline: 3px solid var(--ember); outline-offset: 3px; }
 
     .skip-link {
       position: fixed;
       top: 12px;
       left: 12px;
-      z-index: 100;
+      z-index: 200;
       padding: 9px 12px;
-      background: var(--ink);
-      color: var(--cream);
+      background: var(--yellow);
+      color: var(--void);
+      font-family: var(--mono);
+      font-size: 12px;
       transform: translateY(-160%);
-      transition: transform .16s ease;
+      transition: transform .16s var(--ease);
     }
-
     .skip-link:focus { transform: none; }
 
-    .page {
-      width: min(100%, 760px);
-      margin: 0 auto;
-      padding: calc(22px + env(safe-area-inset-top)) clamp(14px, 4vw, 28px) calc(48px + env(safe-area-inset-bottom));
-    }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(18px, 5vw, 24px); }
 
-    .masthead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: clamp(34px, 7vw, 62px);
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--rule-strong);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
+    /* ══ Tipografía ═══════════════════════════════════════════ */
+    .h2 {
+      margin: 0;
+      font-family: var(--cond);
+      font-size: clamp(1.55rem, 3.4vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: .005em;
       text-transform: uppercase;
-    }
-
-    .masthead-meta { color: var(--muted); }
-
-    .intro { max-width: 620px; margin-bottom: 24px; }
-
-    .kicker {
-      margin-bottom: 12px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    h1 {
-      max-width: 15ch;
-      font-family: var(--serif);
-      font-size: clamp(36px, 8vw, 58px);
-      font-weight: 500;
-      line-height: 1.03;
-      letter-spacing: -0.035em;
       text-wrap: balance;
     }
+    .h2 .y { color: var(--yellow); }
 
-    h1 em { font-weight: 500; }
-
-    .player-shell {
-      overflow: hidden;
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--ember);
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .24em;
+      text-transform: uppercase;
     }
 
-    #f4c-player > div { width: 100%; }
+    .sec { padding: clamp(56px, 9vw, 92px) 0; scroll-margin-top: 20px; }
+    .sec-head { max-width: 760px; margin: 0 auto; text-align: center; }
+    .lead { margin-top: 16px; color: var(--dim); font-size: 1rem; }
 
-    .gate {
+    /* ══ Botones ══════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 19px 34px;
+      border-radius: 10px;
+      font-family: var(--cond);
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .btn-solid {
       position: relative;
-      margin-top: 18px;
-      padding: clamp(20px, 5vw, 30px);
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+      overflow: hidden;
+      background: var(--yellow);
+      color: var(--void);
+      box-shadow: 0 14px 38px -12px rgba(255, 229, 0, .6);
+      transition: transform .24s var(--ease), box-shadow .24s var(--ease), background .24s var(--ease);
     }
-
-    .gate::before {
+    /* El brillo recorre el botón cada tanto, no en loop continuo: llama sin marear. */
+    .btn-solid::after {
       content: "";
       position: absolute;
-      inset: 0 0 auto;
-      height: 2px;
-      background: var(--ink);
+      inset: 0 auto 0 0;
+      width: 42%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .6), transparent);
+      transform: translate3d(-160%, 0, 0) skewX(-18deg);
+      animation: shine 4.6s var(--ease) infinite;
+      pointer-events: none;
     }
+    .btn-solid:hover {
+      transform: translate3d(0, -3px, 0);
+      background: #FFF;
+      box-shadow: 0 22px 50px -12px rgba(255, 229, 0, .85);
+    }
+    .btn-solid:active { transform: translate3d(0, -1px, 0) scale(.99); }
 
-    .gate-kicker {
-      margin-bottom: 13px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid rgba(255, 229, 0, .55);
+      color: var(--yellow);
+      transition: transform .24s var(--ease), background .24s var(--ease), color .24s var(--ease), border-color .24s var(--ease);
+    }
+    .btn-ghost:hover {
+      background: var(--yellow);
+      border-color: var(--yellow);
+      color: var(--void);
+      transform: translate3d(0, -3px, 0);
+    }
+    .btn-ghost:active { transform: translate3d(0, -1px, 0) scale(.99); }
+
+    /* ══ Hero ═════════════════════════════════════════════════ */
+    .hero { position: relative; padding: 26px 0 clamp(48px, 8vw, 78px); overflow: hidden; }
+    /* Capa de atmósfera: se mueve más lento que el contenido (parallax). */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -12% 0 0;
+      z-index: 0;
+      background:
+        radial-gradient(58% 52% at 78% 2%, rgba(255, 229, 0, .16), transparent 62%),
+        radial-gradient(48% 44% at 12% 22%, rgba(255, 184, 0, .07), transparent 64%),
+        repeating-linear-gradient(115deg, transparent 0 38px, rgba(255, 255, 255, .02) 38px 39px);
+      transform: translate3d(0, var(--par, 0px), 0);
+    }
+    .hero .wrap { position: relative; z-index: 1; text-align: center; }
+
+    .hero-h1 {
+      margin: 14px 0 0;
+      font-family: var(--display);
+      font-size: clamp(1.72rem, 4.3vw, 2.75rem);
+      font-weight: 400;
+      line-height: 1.14;
+      letter-spacing: -.015em;
       text-transform: uppercase;
-    }
-
-    .waiting-grid {
-      display: grid;
-      grid-template-columns: minmax(130px, .72fr) minmax(220px, 1.28fr);
-      align-items: center;
-      gap: 24px;
-    }
-
-    #f4c-countdown {
-      font-family: var(--mono);
-      font-size: clamp(36px, 9vw, 52px);
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .progress {
-      height: 2px;
-      margin-top: 12px;
-      overflow: hidden;
-      background: var(--rule);
-    }
-
-    #f4c-progress-fill {
-      display: block;
-      width: 0;
-      height: 100%;
-      background: var(--accent);
-      transition: width .3s linear;
-    }
-
-    .copy {
-      max-width: 52ch;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .offer-title {
-      max-width: 15ch;
-      font-family: var(--serif);
-      font-size: clamp(30px, 7vw, 42px);
-      font-weight: 500;
-      line-height: 1.08;
-      letter-spacing: -0.03em;
       text-wrap: balance;
     }
 
-    .offer-copy { margin: 12px 0 24px; color: var(--ink-soft); }
-
-    .cta {
+    /* Resaltado detrás del texto: el amarillo es el fondo, nunca la tinta. */
+    .hl {
       position: relative;
+      z-index: 0;
+      color: var(--void);
+      white-space: nowrap;
+    }
+    .h2 .hl { color: var(--void); }
+    .hl::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: .08em -.14em .06em;
+      background: var(--yellow);
+      border-radius: 2px;
+      transform: skewX(-9deg);
+    }
+
+    .hero-p { max-width: 660px; margin: 22px auto 0; color: var(--dim); font-size: 1.02rem; }
+
+    .video-frame {
+      position: relative;
+      max-width: 720px;
+      margin: 34px auto 0;
+      border: 1px solid var(--line-warm);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0d0d0b url("/assets/fit4/fit4-va-poster.webp") center / cover no-repeat;
+      box-shadow: 0 40px 90px -50px rgba(255, 229, 0, .45);
+    }
+    .video-frame > div { width: 100%; }
+
+    .hero-cta { margin-top: 30px; }
+
+    .hero-note {
+      margin-top: 14px;
+      color: var(--grey);
+      font-family: var(--mono);
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    /* ══ Bloques de dolor ═════════════════════════════════════ */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin-top: 40px;
+    }
+    .pain {
+      padding: 24px 22px;
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--line-warm);
+      border-radius: 4px 14px 14px 4px;
+      background: var(--surface);
+    }
+    .pain h3 {
+      margin: 0 0 10px;
+      font-family: var(--cond);
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+    }
+    .pain p { margin: 0; color: var(--dim); font-size: .99rem; }
+
+    /* ══ Presentación del programa ════════════════════════════ */
+    .reveal-sec { padding: clamp(20px, 4vw, 34px) 0 clamp(40px, 6vw, 60px); }
+    .reveal-sec .wrap { max-width: 880px; text-align: center; }
+    .reveal-lead {
+      max-width: 660px;
+      margin: 0 auto 24px;
+      font-family: var(--cond);
+      font-size: clamp(1.08rem, 2.4vw, 1.4rem);
+      font-weight: 600;
+      line-height: 1.22;
+      text-transform: uppercase;
+      letter-spacing: .01em;
+    }
+    /* lighten recorta el fondo negro del render contra el lienzo. */
+    .mockup {
+      width: min(540px, 92%);
+      /* Sin height:auto el atributo height gana sobre el ancho fluido y deforma el render. */
+      height: auto;
+      aspect-ratio: 732 / 574;
+      margin: 0 auto 18px;
+      mix-blend-mode: lighten;
+      transform: translate3d(0, var(--par, 0px), 0);
+    }
+    .brand-title {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 4.2vw, 3rem);
+      font-weight: 400;
+      line-height: .96;
+      letter-spacing: -.015em;
+      text-transform: uppercase;
+    }
+    .brand-title span { color: var(--yellow); }
+    .reveal-copy { max-width: 660px; margin: 20px auto 0; color: var(--dim); font-size: 1rem; }
+    .reveal-copy b { color: var(--bone); font-weight: 600; }
+
+    /* ══ Qué incluye ══════════════════════════════════════════ */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      margin-top: 44px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--line);
+    }
+    .feat {
+      display: flex;
+      gap: 16px;
+      padding: 26px 24px;
+      background: var(--surface);
+      transition: background .3s var(--ease);
+    }
+    .feat:hover { background: var(--surface-hi); }
+    .feat-ico {
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line-warm);
+      border-radius: 10px;
+      background: rgba(255, 229, 0, .09);
+    }
+    .feat-ico svg {
+      width: 21px;
+      height: 21px;
+      fill: none;
+      stroke: var(--yellow);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .feat h3 {
+      margin: 0 0 5px;
+      font-family: var(--cond);
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: .01em;
+    }
+    .feat p { margin: 0; color: var(--dim); font-size: .95rem; line-height: 1.5; }
+
+    /* ══ Planes ═══════════════════════════════════════════════
+       Los dos bloques traen lo mismo: lo único que cambia es
+       cuánto dura. Por eso hay un solo selector y una sola
+       tarjeta — la tira de meses se estira al cambiar de plan
+       y ahí se ve el valor, en movimiento y no en comparación. */
+    .plan-toggle {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      max-width: 460px;
+      margin: 40px auto 0;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+    .plan-toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .plan-toggle label {
+      display: grid;
+      place-items: center;
+      gap: 1px;
+      padding: 11px 8px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-family: var(--cond);
+      font-size: 1.06rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: background .26s var(--ease), color .26s var(--ease);
+    }
+    .plan-toggle label small {
+      font-family: var(--mono);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--ember);
+      transition: color .26s var(--ease);
+    }
+    .plan-toggle label:hover { color: var(--bone); }
+    .plan-toggle input:checked + label { background: var(--yellow); color: var(--void); }
+    .plan-toggle input:checked + label small { color: var(--void); }
+    .plan-toggle input:focus-visible + label { outline: 3px solid var(--ember); outline-offset: 2px; }
+
+    .plan-card {
+      position: relative;
+      max-width: 560px;
+      margin: 18px auto 0;
+      padding: 32px 30px;
+      border: 1.5px solid var(--yellow);
+      border-radius: 18px;
+      background: linear-gradient(168deg, #221F10, #141309 70%);
+      box-shadow: 0 30px 70px -34px rgba(255, 229, 0, .55);
+    }
+
+    /* ── La tira de mesociclo: la firma de la página ────────── */
+    .strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+    .blk {
+      position: relative;
+      height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .blk::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 3px;
+      background: linear-gradient(180deg, var(--yellow), var(--ember));
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .4s var(--ease);
+      transition-delay: calc(var(--i) * 70ms);
+    }
+    .blk.on::after { transform: scaleX(1); }
+
+    .strip-legend {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0 24px;
+      color: var(--grey);
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .strip-legend b { color: var(--bone); font-weight: 700; }
+
+    /* Los dos paneles comparten celda: la tarjeta toma la altura
+       del más alto y cambiar de plan no salta el layout. */
+    .panels { display: grid; }
+    .panel {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate3d(0, 8px, 0);
+      transition: opacity .28s var(--ease), transform .28s var(--ease), visibility .28s;
+    }
+    .panel.on { opacity: 1; visibility: visible; transform: none; }
+
+    .plan-goal { margin: 0 0 20px; color: var(--dim); font-size: .98rem; }
+
+    /* ── Anclaje de precio ───────────────────────────────────
+       El $174 no es un precio anterior sino lo que costaría
+       comprar dos bloques de 3: va resaltado, pero etiquetado
+       como lo que es. La línea de tachado se dibuja al entrar
+       la tarjeta en vista y en cada vuelta al bloque de 6. */
+    .plan-anchor {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+      min-height: 30px;
+    }
+    .was {
+      position: relative;
+      font-family: var(--display);
+      font-size: 1.62rem;
+      line-height: 1;
+      color: var(--bone);
+      text-decoration: none;
+    }
+    .was::after {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: 52%;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--ember);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .5s var(--ease);
+    }
+    .plan-card.is-in .panel.on .was::after { transform: scaleX(1); transition-delay: .45s; }
+
+    .anchor-label {
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .anchor-rate {
+      font-family: var(--mono);
+      font-size: .84rem;
+      letter-spacing: .06em;
+      color: var(--ember);
+    }
+
+    /* El chip cae a su propia línea antes que partir "USD · pago único". */
+    .plan-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 9px; }
+    .plan-price > span { white-space: nowrap; }
+    .plan-price b {
+      font-family: var(--display);
+      font-size: 3.1rem;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -.02em;
+    }
+    .plan-price span { color: var(--grey); font-family: var(--mono); font-size: .8rem; letter-spacing: .06em; }
+
+    .save-chip {
+      display: inline-block;
+      margin-left: 2px;
+      padding: 4px 10px;
+      border: 1px solid var(--line-warm);
+      border-radius: 99px;
+      background: rgba(255, 184, 0, .1);
+      color: var(--ember);
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+      transition: opacity .34s var(--ease), transform .34s var(--ease);
+    }
+    .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; transition-delay: .85s; }
+
+    .plan-math {
+      margin: 12px 0 24px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--dim);
+    }
+    .plan-math b { color: var(--yellow); font-weight: 700; }
+
+    .panel .btn { width: 100%; }
+
+    .plan-guarantee {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 12px;
+      color: var(--grey);
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .plan-guarantee svg { width: 13px; height: 13px; fill: none; stroke: var(--ember); stroke-width: 2; }
+
+    /* ── Lo que traen los dos (una sola vez, no dos listas) ── */
+    .shared {
+      max-width: 560px;
+      margin: 18px auto 0;
+      padding: 26px 28px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+    }
+    .shared-title {
+      margin-bottom: 18px;
+      color: var(--bone);
+      font-family: var(--mono);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .shared ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 11px 26px;
+      list-style: none;
+    }
+    .shared li { display: flex; align-items: flex-start; gap: 10px; color: var(--dim); font-size: .96rem; }
+    .tick {
+      flex: 0 0 19px;
+      display: inline-grid;
+      place-items: center;
+      width: 19px;
+      height: 19px;
+      margin-top: 3px;
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+    .tick svg { width: 12px; height: 12px; fill: none; stroke: var(--void); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ══ FAQ ══════════════════════════════════════════════════ */
+    .faq { max-width: 800px; margin: 40px auto 0; }
+    .faq details { border-bottom: 1px solid var(--line); }
+    .faq summary {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      width: 100%;
-      padding: 21px 24px;
-      overflow: hidden;
-      background: var(--ink);
-      color: var(--cream);
-      font-family: var(--mono);
-      font-size: 12px;
+      padding: 19px 2px;
+      cursor: pointer;
+      list-style: none;
+      font-family: var(--cond);
+      font-size: 1.14rem;
       font-weight: 600;
-      letter-spacing: 0.08em;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color .35s ease;
+      transition: color .2s var(--ease);
     }
+    .faq summary:hover { color: var(--yellow); }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::marker { content: ""; }
+    .faq-pm {
+      flex: 0 0 auto;
+      color: var(--yellow);
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: transform .3s var(--ease);
+    }
+    .faq details[open] .faq-pm { transform: rotate(45deg); }
+    .faq p { padding: 0 2px 22px; color: var(--dim); font-size: .99rem; }
 
-    .cta::before {
+    /* ══ Cierre ═══════════════════════════════════════════════ */
+    .final { position: relative; overflow: hidden; text-align: center; }
+    .final::before {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 0;
-      background: var(--accent);
-      transform: translateX(-100%);
-      transition: transform .45s cubic-bezier(.7, 0, .3, 1);
+      background: radial-gradient(50% 58% at 50% 52%, rgba(255, 229, 0, .17), transparent 62%);
+      transform: translate3d(0, var(--par, 0px), 0);
     }
+    .final .wrap { position: relative; z-index: 1; }
+    .final p { max-width: 580px; margin: 22px auto 0; color: var(--dim); font-size: 1rem; }
+    .final .btn { margin-top: 32px; }
 
-    .cta:hover::before { transform: translateX(0); }
-    .cta:hover { color: var(--ink); }
-    .cta span { position: relative; z-index: 1; }
-    .cta-action::after { content: " →"; }
-
-    .microcopy {
-      margin-top: 12px;
-      color: var(--muted);
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--line);
+      color: var(--grey);
+      text-align: center;
       font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: .06em;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    footer p { margin: 5px 0; }
+
+    /* ══ Barra fija de compra (móvil) ═════════════════════════
+       Aparece cuando los planes salen de vista: el precio deja
+       de estar a un scroll de distancia en el momento de dudar. */
+    .buybar {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px calc(11px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line-warm);
+      background: rgba(10, 10, 10, .93);
+      backdrop-filter: blur(12px);
+      transform: translate3d(0, 110%, 0);
+      transition: transform .34s var(--ease);
+    }
+    .buybar.is-up { transform: none; }
+    .buybar-info { flex: 1 1 auto; line-height: 1.15; }
+    .buybar-info b { font-family: var(--cond); font-size: 1.24rem; font-weight: 700; }
+    .buybar-info span {
+      display: block;
+      color: var(--grey);
+      font-family: var(--mono);
+      font-size: .62rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .buybar .btn { flex: 0 0 auto; padding: 13px 20px; font-size: .96rem; }
+    .buybar .btn-solid::after { animation: none; }
+
+    /* ══ Movimiento ═══════════════════════════════════════════ */
+    [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 22px, 0);
+      transition: opacity .62s var(--ease), transform .62s var(--ease);
+      transition-delay: calc(var(--i, 0) * 75ms);
+    }
+    [data-reveal].is-in { opacity: 1; transform: none; }
+
+    @keyframes shine {
+      0%, 62% { transform: translate3d(-160%, 0, 0) skewX(-18deg); }
+      100% { transform: translate3d(320%, 0, 0) skewX(-18deg); }
     }
 
-    .sep { display: inline-block; margin: 0 8px; }
-    #f4c-ready.reveal { animation: reveal .5s cubic-bezier(.2, .7, .2, 1) both; }
+    /* ══ Responsive ═══════════════════════════════════════════ */
+    .br-m { display: none; }
 
-    @keyframes reveal {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: none; }
+    /* El parallax solo corre acá, así que las capas de composición
+       solo se piden acá: en móvil serían memoria a cambio de nada. */
+    @media (min-width: 641px) {
+      .hero::before, .final::before, .mockup { will-change: transform; }
     }
 
-    @media (max-width: 600px) {
-      .masthead { margin-bottom: 32px; }
-      .intro { margin-bottom: 18px; }
-      .gate { margin-top: 12px; padding: 18px; }
-      .waiting-grid { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }
-      #f4c-countdown { font-size: 32px; }
-      .copy { font-size: 14px; line-height: 1.5; }
-      .cta { padding: 18px; font-size: 10.5px; }
+    @media (max-width: 860px) {
+      .feat-grid { border-radius: 14px; }
+    }
+
+    @media (max-width: 640px) {
+      .br-d { display: none; }
+      .br-m { display: inline; }
+      body { padding-bottom: 74px; }
+      .buybar { display: flex; }
+      .hero-h1 { font-size: 1.5rem; }
+      .btn { padding: 15px 26px; font-size: 1rem; }
+      .plan-card { padding: 26px 20px; }
+      .plan-toggle label { font-size: .98rem; padding: 10px 6px; }
+      /* Sin skew el resaltado corta mal al saltar de línea. */
+      .hl::before { display: none; }
+      .hl {
+        padding: .02em .14em;
+        border-radius: 2px;
+        background: var(--yellow);
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
+        animation: none !important;
         transition-duration: .01ms !important;
       }
+      [data-reveal] { opacity: 1; transform: none; }
+      .blk.on::after { transform: scaleX(1); }
+      .panel { transform: none; }
+      .plan-card.is-in .panel.on .was::after { transform: scaleX(1); }
+      .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; }
+      .hero::before, .final::before, .mockup { transform: none !important; }
     }
   </style>
-  <link rel="stylesheet" href="/assets/va/va-theme.css?v=20260723-2" />
+  <!-- Sin JS las entradas nunca se disparan y el toggle no cambia de panel:
+       la página no puede quedar en blanco ni esconder un plan. -->
+  <noscript>
+    <style>
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .plan-toggle { display: none; }
+      .strip, .strip-legend { display: none; }
+      .panels { display: block; }
+      .panel { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+      .panel + .panel { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+      .was::after { transform: scaleX(1) !important; }
+      .save-chip { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
 </head>
-<body class="va-theme">
+<body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <a class="skip-link" href="#planes">Saltar a los planes</a>
 
-  <main class="page" id="contenido">
-    <header class="masthead">
-      <span>VERONIKA ALVARADO / FIT4</span>
-      <span class="masthead-meta">Presentación privada</span>
-    </header>
+  <header class="hero">
+    <div class="wrap">
+      <h1 class="hero-h1" data-reveal>Sientes que te esfuerzas mucho<br class="br-d"> pero no sabes si te<br class="br-m"> acercas<br class="br-d"> <span class="hl">Al cuerpo que<br class="br-m"> quieres?</span></h1>
+      <p class="hero-p" data-reveal style="--i:1">Aprende a organizar tus entrenamientos y tu alimentación para empezar a ver los cambios que estás buscando.</p>
 
-    <section class="intro" aria-labelledby="page-title">
-      <p class="kicker">FIT4CHALLENGE · Solo para mujeres</p>
-      <h1 id="page-title">Mira esto completo. Luego decides.</h1>
-    </section>
+      <div class="video-frame" id="f4c-player" data-reveal style="--i:2" aria-label="Presentación de FIT4CHALLENGE con Veronika Alvarado"></div>
 
-    <div class="player-shell" id="f4c-player" aria-label="Presentación de FIT4CHALLENGE con Veronika Alvarado"></div>
+      <a href="#planes" class="btn btn-solid hero-cta" data-reveal style="--i:3">¡Quiero unirme hoy!</a>
+      <p class="hero-note" data-reveal style="--i:4">Pago único · Sin renovación automática</p>
+    </div>
+  </header>
 
-    <section class="gate" aria-live="polite">
-      <div id="f4c-waiting">
-        <p class="gate-kicker">Tu acceso se activa en</p>
-        <div class="waiting-grid">
-          <div>
-            <div id="f4c-countdown">03:00</div>
-            <div class="progress" id="f4c-progress" role="progressbar" aria-label="Progreso hasta desbloquear el acceso" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0">
-              <span id="f4c-progress-fill"></span>
-            </div>
-          </div>
-          <p class="copy">Mira el video con atención. Cuando termine el contador, podrás acceder con toda la información clara.</p>
+  <main id="contenido">
+    <section class="sec" style="padding-top:clamp(30px,5vw,52px)">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">¿Llevas tiempo <span class="y">intentándolo?</span></h2>
+          <p class="lead">No estás sola. La mayoría de las mujeres que llegan a nosotros están atrapadas en:</p>
+        </div>
+
+        <div class="pain-grid">
+          <article class="pain" data-reveal>
+            <h3>Siempre vuelves a empezar</h3>
+            <p>Entre semana haces todo «bien», pero cuando sales a comer o se complica un día sientes que ya dañaste todo.</p>
+          </article>
+          <article class="pain" data-reveal style="--i:1">
+            <h3>No sabes qué ajustar</h3>
+            <p>Entrenas, comes saludable y aún así no sabes qué te está faltando para reducir cintura, definirte o construir el cuerpo que buscas.</p>
+          </article>
+          <article class="pain" data-reveal style="--i:2">
+            <h3>No sabes si lo haces bien</h3>
+            <p>Un día haces más cardio, otro comes menos, otro pruebas una dieta diferente. Al final te esfuerzas, pero no sabes si de verdad está funcionando.</p>
+          </article>
         </div>
       </div>
+    </section>
 
-      <div id="f4c-ready" hidden>
-        <p class="gate-kicker">Acceso desbloqueado</p>
-        <h2 class="offer-title">¿Este enfoque encaja contigo?</h2>
-        <p class="copy offer-copy">Si la respuesta es sí, puedes empezar ahora con un plan pensado para mujeres y adaptado a ti.</p>
-        <a class="cta" id="f4c-cta" href="#" rel="noopener">
-          <span>Empezar FIT4CHALLENGE</span>
-          <span class="cta-action">Ahora</span>
-        </a>
-        <p class="microcopy">Acceso inmediato<span class="sep">·</span>Pago seguro vía Hotmart</p>
+    <section class="reveal-sec">
+      <div class="wrap" data-reveal>
+        <p class="reveal-lead">Si te identificas con al menos uno, esto es exactamente lo que resolvemos con:</p>
+        <img class="mockup" data-par="0.06" src="/assets/fit4/fit4-mockup-caja-app.webp" width="732" height="574" loading="lazy" decoding="async" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
+        <h2 class="brand-title" translate="no">FIT<span>4</span>&nbsp;CHALLENGE</h2>
+        <p class="reveal-copy">Un programa que combina entrenamiento, alimentación y mentalidad para ayudarte a construir el cuerpo que buscas. <b>No es una rutina genérica en PDF que terminas dejando a la mitad.</b></p>
+      </div>
+    </section>
+
+    <section class="sec" style="padding-top:clamp(20px,3vw,32px)">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="eyebrow">Qué incluye</span>
+          <h2 class="h2">Todo lo que hay <span class="y">dentro</span></h2>
+        </div>
+
+        <div class="feat-grid">
+          <div class="feat" data-reveal>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V4m5 16v-7m5 7V8"></path></svg></div>
+            <div>
+              <h3>Evaluación inicial y mensual</h3>
+              <p>Cada mes revisamos tus avances y te decimos qué ajustar para que sigas viendo resultados.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal style="--i:1">
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2m12 0h2M6 9v6m12-6v6M8 12h8M9 10.5h6v3H9z"></path></svg></div>
+            <div>
+              <h3>Plan de entrenamiento personalizado</h3>
+              <p>Armamos tu rutina en casa o gym desde 30 min. Si un ejercicio te molesta o no tienes el equipo, te mostramos con cuál reemplazarlo.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal style="--i:2">
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 1-2 3-2 5s.5 3 2 4v9"></path></svg></div>
+            <div>
+              <h3>Alimentación sin restricciones</h3>
+              <p>Aprende cuánto comer según tu objetivo y cómo adaptar tus comidas sin dejar el arroz, pan o lo que más te gusta.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal style="--i:3">
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg></div>
+            <div>
+              <h3>Respuestas directas de expertos</h3>
+              <p>¿Dudas con un ejercicio o alimentación? Escríbenos y un entrenador te ayudará a responderlas.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal style="--i:4">
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M11 18h2"></path></svg></div>
+            <div>
+              <h3>Área de miembros + video tutoriales</h3>
+              <p>Cada ejercicio tiene un video para que sepas exactamente cómo hacerlo y entrenes con seguridad.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal style="--i:5">
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5zM9 18h6m-5 3h4"></path></svg></div>
+            <div>
+              <h3>Audios semanales de motivación</h3>
+              <p>Cada semana recibirás un audio para ayudarte a ser constante y dejar de volver a empezar cada vez que algo se salga del plan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="planes" style="padding-top:clamp(20px,3vw,32px)">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="eyebrow">Elige tu bloque</span>
+          <h2 class="h2">Elige el plan que más <span class="y">te convenga</span></h2>
+          <p class="lead">Los dos incluyen exactamente lo mismo. Lo único que cambia es cuánto dura tu proceso.</p>
+        </div>
+
+        <div class="plan-toggle" role="radiogroup" aria-label="Duración del bloque" data-reveal>
+          <!-- autocomplete=off: si no, el navegador restaura la selección previa
+               y la clienta puede volver con el bloque corto ya elegido. -->
+          <input type="radio" name="bloque" id="bloque-3" value="3-meses" autocomplete="off" />
+          <label for="bloque-3">3 meses<small>$87</small></label>
+          <input type="radio" name="bloque" id="bloque-6" value="6-meses" autocomplete="off" checked />
+          <label for="bloque-6">6 meses<small>Ahorras&nbsp;$47</small></label>
+        </div>
+
+        <div class="plan-card" id="plan-card" data-reveal style="--i:1">
+          <div class="strip" id="strip" aria-hidden="true">
+            <span class="blk" style="--i:0"></span>
+            <span class="blk" style="--i:1"></span>
+            <span class="blk" style="--i:2"></span>
+            <span class="blk" style="--i:3"></span>
+            <span class="blk" style="--i:4"></span>
+            <span class="blk" style="--i:5"></span>
+          </div>
+
+          <div class="panels">
+            <div class="panel" id="panel-3-meses" role="region" aria-label="Bloque de 3 meses">
+              <div class="strip-legend"><span><b>12</b>&nbsp;semanas</span><span>Bloque corto</span></div>
+              <p class="plan-goal">Para empezar con estructura y ver tus primeros cambios.</p>
+              <div class="plan-anchor"><span class="anchor-rate">$29 al mes</span></div>
+              <div class="plan-price"><b>$87</b><span>USD&nbsp;· pago único</span></div>
+              <p class="plan-math">Con el bloque de 6 meses bajarías a <b>$21 al mes</b> y ahorrarías $47.</p>
+              <a class="btn btn-solid" data-checkout="3-meses" href="#" rel="noopener">Empezar con 3 meses</a>
+              <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+            </div>
+
+            <div class="panel on" id="panel-6-meses" role="region" aria-label="Bloque de 6 meses">
+              <div class="strip-legend"><span><b>24</b>&nbsp;semanas</span><span>Proceso completo</span></div>
+              <p class="plan-goal">Para completar el proceso entero sin volver a empezar a mitad de camino.</p>
+              <div class="plan-anchor">
+                <del class="was">$174</del>
+                <span class="anchor-label">en dos bloques de 3</span>
+              </div>
+              <div class="plan-price">
+                <b>$127</b><span>USD&nbsp;· pago único</span>
+                <span class="save-chip">Ahorras&nbsp;$47</span>
+              </div>
+              <p class="plan-math">Te sale <b>$21 al mes</b> · 27% menos.</p>
+              <a class="btn btn-solid" data-checkout="6-meses" href="#" rel="noopener">Quiero los 6 meses</a>
+              <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shared" data-reveal style="--i:2">
+          <p class="shared-title">Los dos bloques incluyen</p>
+          <ul>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Evaluación inicial y mensual</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Plan de alimentación personalizado</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Entrenamientos adaptados (casa o gym)</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Área privada con video tutoriales</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Audios semanales de mentalidad</li>
+            <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Chat de soporte directo con expertos</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" style="padding-top:clamp(20px,3vw,32px)">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">¿Tienes dudas? <span class="y">Aquí las resolvemos</span></h2>
+        </div>
+
+        <div class="faq">
+          <details data-reveal>
+            <summary>¿Funciona si nunca he entrenado antes?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. El plan se adapta a tu nivel actual. No importa si eres principiante total o si llevas años sin moverte: nuestro equipo evalúa tu punto de partida y diseña una estrategia progresiva para ti.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Tengo que comer solo pollo y arroz?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Para nada. Recibirás un plan con 3 opciones variadas por cada comida del día, con las calorías ajustadas a tu objetivo. Sin pasar hambre y sin comer feo.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Sirve si quiero ganar masa muscular y no perder peso?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Completamente. Tu plan se ajusta según tu objetivo: perder grasa, tonificar o ganar masa muscular. Si buscas verte definida y construir músculo, diseñamos tus cargas y tu alimentación exactamente para ese resultado.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Realmente me responderá una persona real?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. En FIT4CHALLENGE hablas directamente con nuestro equipo de profesionales dentro del área de miembros para responder todo tipo de dudas.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Puedo cancelar cuando quiera?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. Sin letras pequeñas ni contratos escondidos. Tienes 7 días de garantía de reembolso completo: si no es para ti, te devolvemos tu dinero.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec final">
+      <div class="wrap" data-reveal>
+        <h2 class="h2">Dentro de unos meses vas a<br>agradecer haber <span class="hl">empezado hoy</span></h2>
+        <p>Cada semana que pasa sin un plan es otra semana preguntándote si lo que haces realmente está funcionando. Empieza a seguir un plan diseñado para ayudarte a construir el cuerpo que buscas.</p>
+        <a href="#planes" class="btn btn-solid">Quiero empezar hoy</a>
       </div>
     </section>
   </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Entrenamiento y nutrición online · Miembros en +14 países</p>
+      <p>Acceso inmediato · Pago seguro vía Hotmart</p>
+    </div>
+  </footer>
+
+  <div class="buybar" id="buybar" aria-hidden="true">
+    <div class="buybar-info">
+      <b>6 meses · $127</b>
+      <span>Pago único · $21/mes</span>
+    </div>
+    <a class="btn btn-solid" data-checkout="6-meses" data-src="buybar" href="#" rel="noopener">Empezar</a>
+  </div>
 
   <script src="/attribution.js"></script>
   <script>
     (function () {
       'use strict';
 
-      var CTA_AT_SECONDS = 180;
-      var HOTMART_URL = 'https://pay.hotmart.com/K104111098X?off=9lmw8r6b&checkoutMode=10';
+      var HOTMART_BASE = 'https://pay.hotmart.com/K104111098X';
+      var OFFERS = {
+        '3-meses': 'avsq480z',
+        '6-meses': '9lmw8r6b'
+      };
+
       var params = new URLSearchParams(window.location.search);
       if (!params.has('utm_source')) params.set('utm_source', 'FIT4-VA-DIRECTO');
       if (!params.has('utm_campaign')) params.set('utm_campaign', 'FIT4-VA');
@@ -362,80 +1036,160 @@
       window.dataLayer.push({ event: 'fit4_vsl_loaded', fit4_variant: variant, funnel_variant: 'fit4-va' });
 
       // Hotmart recibe todos los parámetros presentes, no una lista que quede vieja con la próxima campaña.
-      var checkoutUrl = new URL(HOTMART_URL);
-      params.forEach(function (value, key) {
-        if (value) checkoutUrl.searchParams.set(key, value);
-      });
+      function buildCheckoutUrl(plan) {
+        var url = new URL(HOTMART_BASE);
+        url.searchParams.set('off', OFFERS[plan]);
+        url.searchParams.set('checkoutMode', '10');
 
-      if (window.TR4Track) {
-        var persistedAttribution = window.TR4Track.getAttribution();
-        Object.keys(persistedAttribution).forEach(function (key) {
-          if (!checkoutUrl.searchParams.has(key)) checkoutUrl.searchParams.set(key, persistedAttribution[key]);
+        params.forEach(function (value, key) {
+          if (value) url.searchParams.set(key, value);
         });
+
+        if (window.TR4Track) {
+          var persisted = window.TR4Track.getAttribution();
+          Object.keys(persisted).forEach(function (key) {
+            if (!url.searchParams.has(key)) url.searchParams.set(key, persisted[key]);
+          });
+        }
+
+        return url.toString();
       }
 
-      var cta = document.getElementById('f4c-cta');
-      cta.href = checkoutUrl.toString();
-      cta.addEventListener('click', function () {
-        window.dataLayer.push({ event: 'fit4_checkout_click', fit4_variant: variant, funnel_variant: 'fit4-va' });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-checkout]'), function (cta) {
+        cta.href = buildCheckoutUrl(cta.getAttribute('data-checkout'));
+        cta.addEventListener('click', function () {
+          // El plan se lee al hacer clic: el de la barra fija cambia con el toggle.
+          window.dataLayer.push({
+            event: 'fit4_checkout_click',
+            fit4_variant: variant,
+            fit4_plan: cta.getAttribute('data-checkout'),
+            fit4_cta: cta.getAttribute('data-src') || 'card',
+            funnel_variant: 'fit4-va'
+          });
+        });
       });
 
+      // ── Selector de bloque ────────────────────────────────
+      // Una sola tarjeta: la tira se estira al pasar de 3 a 6 meses.
+      var MONTHS = { '3-meses': 3, '6-meses': 6 };
+      var planCard = document.getElementById('plan-card');
+      var blocks = Array.prototype.slice.call(document.querySelectorAll('#strip .blk'));
+      var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="bloque"]'));
+      var buybar = document.getElementById('buybar');
+      var buybarCta = buybar && buybar.querySelector('[data-checkout]');
+      var buybarInfo = buybar && buybar.querySelector('.buybar-info');
+      var currentPlan = '6-meses';
+
+      var BUYBAR_COPY = {
+        '3-meses': { title: '3 meses · $87', note: 'Pago único · $29/mes' },
+        '6-meses': { title: '6 meses · $127', note: 'Pago único · $21/mes' }
+      };
+
+      function paintStrip() {
+        // La tira solo se llena cuando la tarjeta ya entró en vista, si no
+        // la animación se gasta detrás de un elemento invisible.
+        var filled = planCard.classList.contains('is-in') ? MONTHS[currentPlan] : 0;
+        blocks.forEach(function (blk, i) { blk.classList.toggle('on', i < filled); });
+      }
+
+      function selectPlan(plan) {
+        currentPlan = plan;
+        Object.keys(MONTHS).forEach(function (key) {
+          var panel = document.getElementById('panel-' + key);
+          if (panel) panel.classList.toggle('on', key === plan);
+        });
+        paintStrip();
+
+        if (buybarCta) {
+          buybarCta.href = buildCheckoutUrl(plan);
+          buybarCta.setAttribute('data-checkout', plan);
+          buybarInfo.querySelector('b').textContent = BUYBAR_COPY[plan].title;
+          buybarInfo.querySelector('span').textContent = BUYBAR_COPY[plan].note;
+        }
+      }
+
+      radios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+          if (!radio.checked) return;
+          selectPlan(radio.value);
+          window.dataLayer.push({
+            event: 'fit4_plan_toggle',
+            fit4_variant: variant,
+            fit4_plan: radio.value,
+            funnel_variant: 'fit4-va'
+          });
+        });
+      });
+
+      var checkedRadio = radios.filter(function (r) { return r.checked; })[0];
+      selectPlan(checkedRadio ? checkedRadio.value : '6-meses');
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ── Entradas escalonadas ──────────────────────────────
+      var revealables = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+      var markIn = function (el) {
+        el.classList.add('is-in');
+        // La tira arranca su llenado recién cuando la tarjeta es visible.
+        if (el === planCard) paintStrip();
+      };
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        revealables.forEach(markIn);
+      } else {
+        var revealObserver = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) { markIn(entry.target); obs.unobserve(entry.target); }
+          });
+        }, { threshold: .15, rootMargin: '0px 0px -8% 0px' });
+        revealables.forEach(function (el) { revealObserver.observe(el); });
+        // Red de seguridad: si el observer no dispara, nada queda invisible.
+        setTimeout(function () { revealables.forEach(markIn); }, 2500);
+      }
+
+      // ── Barra fija: entra cuando los planes salen de vista ──
+      var planes = document.getElementById('planes');
+      if ('IntersectionObserver' in window && buybar && planes) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            // Solo después de haber pasado los planes, no mientras la clienta sigue arriba.
+            var passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+            buybar.classList.toggle('is-up', passed);
+            buybar.setAttribute('aria-hidden', passed ? 'false' : 'true');
+          });
+        }, { threshold: 0 }).observe(planes);
+      }
+
+      // ── Parallax: capas de fondo más lentas que el contenido ──
+      if (!reduceMotion && window.matchMedia('(min-width: 641px)').matches) {
+        var layers = Array.prototype.slice.call(document.querySelectorAll('.hero, .final, [data-par]'));
+        var ticking = false;
+
+        var paint = function () {
+          ticking = false;
+          var mid = window.innerHeight / 2;
+          layers.forEach(function (el) {
+            var rect = el.getBoundingClientRect();
+            if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
+            var speed = parseFloat(el.getAttribute('data-par')) || 0.12;
+            var offset = (rect.top + rect.height / 2 - mid) * speed;
+            el.style.setProperty('--par', offset.toFixed(1) + 'px');
+          });
+        };
+
+        window.addEventListener('scroll', function () {
+          if (!ticking) { ticking = true; window.requestAnimationFrame(paint); }
+        }, { passive: true });
+        paint();
+      }
+
+      // ── VSL ────────────────────────────────────────────────
       var embed = document.createElement('div');
       embed.id = video.id;
       embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
       document.getElementById('f4c-player').appendChild(embed);
 
-      // Helper oficial: resuelve el reproductor recién cuando Vidalytics expone la API.
-      !function (v, a, p, i) {
-        v.getVidalyticsPlayer = function (n) {
-          v[a] = v[a] || {}; v[a][p] = v[a][p] || {};
-          var d = v[a][p][n] = v[a][p][n] || {};
-          return new Promise(function (resolve) {
-            if (d[i]) return void resolve(d[i]);
-            var player;
-            Object.defineProperty(d, i, {
-              get: function () { return player; },
-              set: function (value) { player = value; resolve(value); }
-            });
-          });
-        };
-      }(window, '_vidalytics', 'embeds', 'player');
-
       loadVidalytics(video.id, video.url);
-
-      getVidalyticsPlayer(video.id).then(function (player) {
-        if (!player) return;
-
-        var countdown = document.getElementById('f4c-countdown');
-        var progress = document.getElementById('f4c-progress');
-        var fill = document.getElementById('f4c-progress-fill');
-        var waiting = document.getElementById('f4c-waiting');
-        var ready = document.getElementById('f4c-ready');
-        var revealed = false;
-
-        function render() {
-          var elapsed = Math.max(0, Number(player.currentTime()) || 0);
-          var remaining = Math.max(0, Math.ceil(CTA_AT_SECONDS - elapsed));
-          var percentage = Math.min(100, (elapsed / CTA_AT_SECONDS) * 100);
-
-          countdown.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' +
-            String(remaining % 60).padStart(2, '0');
-          progress.setAttribute('aria-valuenow', String(Math.min(CTA_AT_SECONDS, Math.floor(elapsed))));
-          fill.style.width = percentage + '%';
-
-          if (!revealed && elapsed >= CTA_AT_SECONDS) {
-            revealed = true;
-            waiting.hidden = true;
-            ready.hidden = false;
-            ready.classList.add('reveal');
-            window.dataLayer.push({ event: 'fit4_offer_unlocked', fit4_variant: variant, funnel_variant: 'fit4-va' });
-          }
-        }
-
-        player.on('timeupdate', render);
-        player.on('ratechange', render);
-        render();
-      });
 
       function loadVidalytics(embedId, embedUrl) {
         (function (v, i, d, a, l, y, t, c, s) {
