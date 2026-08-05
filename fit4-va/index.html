@@ -463,7 +463,58 @@
 
     .plan-goal { margin: 0 0 20px; color: var(--dim); font-size: .98rem; }
 
-    .plan-price { display: flex; align-items: baseline; gap: 9px; }
+    /* ── Anclaje de precio ───────────────────────────────────
+       El $174 no es un precio anterior sino lo que costaría
+       comprar dos bloques de 3: va resaltado, pero etiquetado
+       como lo que es. La línea de tachado se dibuja al entrar
+       la tarjeta en vista y en cada vuelta al bloque de 6. */
+    .plan-anchor {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 6px;
+      min-height: 30px;
+    }
+    .was {
+      position: relative;
+      font-family: var(--display);
+      font-size: 1.62rem;
+      line-height: 1;
+      color: var(--bone);
+      text-decoration: none;
+    }
+    .was::after {
+      content: "";
+      position: absolute;
+      left: -4px;
+      right: -4px;
+      top: 52%;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--ember);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .5s var(--ease);
+    }
+    .plan-card.is-in .panel.on .was::after { transform: scaleX(1); transition-delay: .45s; }
+
+    .anchor-label {
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: .7rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .anchor-rate {
+      font-family: var(--mono);
+      font-size: .84rem;
+      letter-spacing: .06em;
+      color: var(--ember);
+    }
+
+    /* El chip cae a su propia línea antes que partir "USD · pago único". */
+    .plan-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 9px; }
+    .plan-price > span { white-space: nowrap; }
     .plan-price b {
       font-family: var(--display);
       font-size: 3.1rem;
@@ -473,8 +524,27 @@
     }
     .plan-price span { color: var(--grey); font-family: var(--mono); font-size: .8rem; letter-spacing: .06em; }
 
+    .save-chip {
+      display: inline-block;
+      margin-left: 2px;
+      padding: 4px 10px;
+      border: 1px solid var(--line-warm);
+      border-radius: 99px;
+      background: rgba(255, 184, 0, .1);
+      color: var(--ember);
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+      transition: opacity .34s var(--ease), transform .34s var(--ease);
+    }
+    .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; transition-delay: .85s; }
+
     .plan-math {
-      margin: 10px 0 24px;
+      margin: 12px 0 24px;
       padding-top: 12px;
       border-top: 1px dashed var(--line);
       font-family: var(--mono);
@@ -482,8 +552,6 @@
       color: var(--dim);
     }
     .plan-math b { color: var(--yellow); font-weight: 700; }
-    .plan-math .save { display: block; margin-top: 5px; color: var(--ember); }
-    .plan-math del { color: var(--grey); text-decoration-thickness: 1px; }
 
     .panel .btn { width: 100%; }
 
@@ -676,6 +744,8 @@
       [data-reveal] { opacity: 1; transform: none; }
       .blk.on::after { transform: scaleX(1); }
       .panel { transform: none; }
+      .plan-card.is-in .panel.on .was::after { transform: scaleX(1); }
+      .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; }
       .hero::before, .final::before, .mockup { transform: none !important; }
     }
   </style>
@@ -689,6 +759,8 @@
       .panels { display: block; }
       .panel { opacity: 1 !important; visibility: visible !important; transform: none !important; }
       .panel + .panel { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line); }
+      .was::after { transform: scaleX(1) !important; }
+      .save-chip { opacity: 1 !important; transform: none !important; }
     </style>
   </noscript>
 </head>
@@ -828,11 +900,9 @@
             <div class="panel" id="panel-3-meses" role="region" aria-label="Bloque de 3 meses">
               <div class="strip-legend"><span><b>12</b>&nbsp;semanas</span><span>Bloque corto</span></div>
               <p class="plan-goal">Para empezar con estructura y ver tus primeros cambios.</p>
+              <div class="plan-anchor"><span class="anchor-rate">$29 al mes</span></div>
               <div class="plan-price"><b>$87</b><span>USD&nbsp;· pago único</span></div>
-              <p class="plan-math">
-                Te sale <b>$29 al mes</b>.
-                <span class="save">Con el bloque de 6 meses bajarías a $21 al mes y ahorrarías $47.</span>
-              </p>
+              <p class="plan-math">Con el bloque de 6 meses bajarías a <b>$21 al mes</b> y ahorrarías $47.</p>
               <a class="btn btn-solid" data-checkout="3-meses" href="#" rel="noopener">Empezar con 3 meses</a>
               <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
             </div>
@@ -840,11 +910,15 @@
             <div class="panel on" id="panel-6-meses" role="region" aria-label="Bloque de 6 meses">
               <div class="strip-legend"><span><b>24</b>&nbsp;semanas</span><span>Proceso completo</span></div>
               <p class="plan-goal">Para completar el proceso entero sin volver a empezar a mitad de camino.</p>
-              <div class="plan-price"><b>$127</b><span>USD&nbsp;· pago único</span></div>
-              <p class="plan-math">
-                Te sale <b>$21 al mes</b>.
-                <span class="save">Comprar dos bloques de 3 te costaría <del>$174</del> — ahorras $47.</span>
-              </p>
+              <div class="plan-anchor">
+                <del class="was">$174</del>
+                <span class="anchor-label">en dos bloques de 3</span>
+              </div>
+              <div class="plan-price">
+                <b>$127</b><span>USD&nbsp;· pago único</span>
+                <span class="save-chip">Ahorras&nbsp;$47</span>
+              </div>
+              <p class="plan-math">Te sale <b>$21 al mes</b> · 27% menos.</p>
               <a class="btn btn-solid" data-checkout="6-meses" href="#" rel="noopener">Quiero los 6 meses</a>
               <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
             </div>

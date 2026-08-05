@@ -1810,9 +1810,14 @@ dura tu proceso** — que es justo lo que la clienta no logra sostener ("siempre
 - **Se dejan de repetir las dos listas idénticas.** Las dos tarjetas listaban los mismos 6 items:
   eso obliga a buscar una diferencia que no existe y frena la decisión. Ahora las inclusiones van
   una sola vez, debajo, y las tarjetas solo cargan lo que difiere: duración, precio y la cuenta.
-- **Anclaje explícito y cruzado:** $29/mes vs $21/mes; en el de 6 meses "comprar dos bloques de 3
-  te costaría ~~$174~~ — ahorras $47", y en el de 3 meses el recordatorio de que con 6 bajaría a
-  $21. La barra fija y su `off` siguen al toggle.
+- **Anclaje de precio visible, no en letra chica.** El bloque de 6 muestra **$174 tachado encima
+  del $127**, en tamaño display y con la línea de tachado en ámbar (antes iba en gris opaco dentro
+  de un párrafo, donde no anclaba nada). La línea **se dibuja** cuando la tarjeta entra en vista y
+  se vuelve a dibujar en cada retorno al bloque de 6, seguida del chip "ahorras $47".
+  El $174 va etiquetado "en dos bloques de 3": no es un precio anterior y no se presenta como tal.
+- **Anclaje cruzado:** el bloque de 3 muestra su tasa "$29 al mes" en el mismo lugar y recuerda que
+  con 6 bajaría a $21. Los dos paneles quedan a la misma altura (verificado: 404px cada uno).
+  La barra fija y su `off` siguen al toggle.
 - **Garantía de 7 días junto a cada botón**, no enterrada en el FAQ.
 - **Barra fija de compra en móvil** que entra al pasar los planes.
 - Se quita la numeración 01–06 de las features: no son una secuencia, y el grid pasa a leerse como
