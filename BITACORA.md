@@ -1879,6 +1879,62 @@ comprar (`fit4_plan_toggle`).
 
 ---
 
+## 2026-08-05 — Prueba de agosto: tráfico VA a WhatsApp vs. `/fit4-va`
+
+**Estado:** definida, sin ejecutar. Requiere que `work/fit4-va-rediseno` esté en producción.
+
+### Cómo funciona hoy `/redirectionutmstr4iner`
+
+Página puente que manda todo el tráfico a WhatsApp. Detecta VA por **`utm_campaign`** y solo por eso:
+
+```js
+const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+const phone = isVa ? "15677024560" : "17439014239";
+```
+
+- **VA → `+1 567 702 4560`** (la cuenta de Veronika en ManyChat).
+- Resto → `+1 743 901 4239`.
+- El mensaje precargado cambia solo en el caso AN de Meta (`utm_source=MetaAds` + `utm_medium=Caso_Estudio`), que recibe "¡Hola! Quiero más información."; todos los demás reciben el texto largo de transformación física.
+
+Su hermana `/redirectionutmstr4iner2` usa la **misma condición de VA** pero reparte entre `/calendly-va` y `/calendly-an`, y esa sí reenvía el querystring completo.
+
+### Qué se va a probar en agosto de 2026
+
+Mandar el tráfico VA de `/redirectionutmstr4iner` a **`/fit4-va`** en vez de al WhatsApp de Veronika, para decidir qué rinde más con el mismo tráfico.
+
+### Lo que hay que arreglar antes de encender la prueba
+
+1. **El redirect a WhatsApp no reenvía nada.** Solo arma `phone` + `text`; los UTMs, `fbclid` y demás se pierden ahí (a WhatsApp no se le pueden pasar de todos modos). Pero si se apunta a `/fit4-va` **hay que concatenar el querystring**, como ya hace `redirectionutmstr4iner2` con `+ queryString`. Si no, `/fit4-va` aplica su propio respaldo (`utm_source=FIT4-VA-DIRECTO`, `utm_campaign=FIT4-VA`) y **toda la prueba llega marcada como tráfico directo**, indistinguible del resto: no se podría atribuir a la campaña que la generó.
+2. **Tomar la línea base antes de tocar nada.** Sin el número previo del brazo WhatsApp no hay contra qué comparar.
+
+### Cómo decidir (importante: no comparar tasas de conversión)
+
+Los dos brazos **venden cosas distintas a precios distintos**, así que la tasa de conversión no es comparable:
+
+| | WhatsApp / ManyChat | `/fit4-va` |
+|---|---|---|
+| Qué vende | Programa high-ticket vía conversación y llamada | Bloque prepago de $87 / $127 |
+| Quién cierra | Setter / llamada | Autoservicio en Hotmart |
+| Dónde se mide | ManyChat + CRM (`crm-ventas`) | GA4: `fit4_vsl_loaded` → `fit4_checkout_click` → `fit4_thankyou_view` en `/gracias-fit4-challenge` |
+
+La métrica que decide es **ingreso por cada 100 visitantes VA**, en la misma ventana de fechas para los dos brazos. Un brazo puede convertir 10× más y aun así facturar menos.
+
+Dos cosas a tener en cuenta al leer los números:
+
+- **La venta high-ticket tarda.** Una conversación de WhatsApp puede cerrar semanas después; `/fit4-va` cobra en el momento. Cerrar la ventana muy temprano favorece artificialmente a `/fit4-va`. Dejar correr el rezago del brazo WhatsApp antes de comparar.
+- **`/gracias-fit4-challenge` no emite `Purchase`** — la confirmación de pago sigue dependiendo de Hotmart. Para el conteo de compras del brazo `/fit4-va` usar `fit4_thankyou_view` en GA4, o los pagos aprobados directo de Hotmart, no el píxel de Meta.
+
+### Qué anotar cuando termine
+
+- Visitantes VA a cada brazo y la ventana exacta de fechas.
+- Brazo WhatsApp: conversaciones iniciadas, agendas, ventas cerradas e ingreso.
+- Brazo `/fit4-va`: `fit4_vsl_loaded`, `fit4_checkout_click` (con el reparto 3 vs 6 meses y `fit4_cta`), `fit4_thankyou_view` e ingreso.
+- Ingreso por 100 visitantes de cada brazo → la decisión.
+
+### Resultado medido (completar después)
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
