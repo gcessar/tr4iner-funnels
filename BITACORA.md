@@ -1778,8 +1778,9 @@ Cambios de mecánica, no solo de estética:
 - **Se elimina el muro de 3 minutos.** Antes el CTA aparecía recién al llegar el reproductor a
   `CTA_AT_SECONDS = 180`; ahora los planes están visibles desde el inicio y los CTA del hero y del
   cierre son anclas a `#planes`. Se cae con esto el evento `fit4_offer_unlocked`.
-- **Dos ofertas en vez de una.** Mensual $22 USD y anual $199 USD. `fit4_checkout_click` ahora
-  viaja con `fit4_plan` (`mensual` | `anual`) para poder separarlas en GA4.
+- **Dos ofertas en vez de una.** 3 meses $87 USD (`off=avsq480z`) y 6 meses $127 USD
+  (`off=9lmw8r6b`). `fit4_checkout_click` viaja con `fit4_plan` (`3-meses` | `6-meses`) y
+  `fit4_cta` (`card` | `buybar`) para separarlas en GA4.
 - **Se quita `va-theme.css`** de esta página: fija fondo crema y redefine `--yellow` a `#e8a943`,
   incompatible con el tema oscuro. El resto de páginas VA lo siguen usando.
 - Assets nuevos en `assets/fit4/`: `fit4-mockup-caja-app.png` y `fit4-va-poster.png` (este último
@@ -1794,21 +1795,44 @@ canonical y el embed fijo de Veronika `Rl_cXuqDVuhtabtp`.
 El muro asumía que la decisión se toma dentro del video. El prototipo apuesta por lo contrario:
 dar la oferta completa por escrito y dejar que el video empuje, no que bloquee.
 
-### Pendiente que bloquea el deploy
+### Segunda pasada — diseño y CRO
 
-**Falta el código `off` del plan anual.** Hoy `OFFERS.anual` apunta a `9lmw8r6b`, que es la oferta
-mensual verificada — se dejó así a propósito para no mandar tráfico a una URL inválida, pero
-publicar sin corregirlo cobraría mensual a quien elige anual.
+Los precios del prototipo ($22/mes, $199/año) eran de relleno; los reales son bloques prepagos de
+3 y 6 meses. Eso cambió la tesis de la página: **los planes no son tiers de features, son cuánto
+dura tu proceso** — que es justo lo que la clienta no logra sostener ("siempre vuelves a empezar").
+
+- **La tabla de precios pasa a ser una tira de mesociclo.** Seis casillas de mes: el bloque de 3
+  llena la mitad, el de 6 la llena entera. La comparación se ve antes de leerse.
+- **Se dejan de repetir las dos listas idénticas.** Las dos tarjetas listaban los mismos 6 items:
+  eso obliga a buscar una diferencia que no existe y frena la decisión. Ahora las inclusiones van
+  una sola vez, debajo, y las tarjetas solo cargan lo que difiere: duración, precio y la cuenta.
+- **Anclaje explícito:** $29/mes vs $21/mes, y en el de 6 meses "comprar dos bloques de 3 te
+  costaría ~~$174~~ — ahorras $47".
+- **Garantía de 7 días junto a cada botón**, no enterrada en el FAQ.
+- **Barra fija de compra en móvil** que entra al pasar los planes.
+- Se quita la numeración 01–06 de las features: no son una secuencia, y el grid pasa a leerse como
+  una sola tabla con divisores de 1px.
+- **Tipografía unificada:** se cae Inter y entra Barlow como cuerpo, quedando una sola familia
+  atlética (Archivo Black display / Barlow Semi Condensed títulos / Barlow cuerpo / Space Mono
+  metadatos).
+- **Movimiento orquestado** en vez de un solo fade: entradas escalonadas por `--i`, parallax de las
+  capas de atmósfera y del mockup (rAF, solo `transform`), y la tira de meses que se llena casilla
+  por casilla al entrar en vista. Todo bajo `prefers-reduced-motion` y con `<noscript>` que fuerza
+  la página visible si el JS no corre.
+- Se saca el wordmark FIT4 CHALLENGE del footer.
+
+Contraste verificado: el par más bajo queda en 5.15:1 (AA). Foco de teclado visible en ámbar.
 
 ### Resultado esperado
 
-Más clics a checkout por visita al desaparecer el muro, y visibilidad de qué plan elige cada
-lead. A vigilar: que la conversión a compra no caiga por mostrar precio antes del video.
+Más clics a checkout por visita al desaparecer el muro, y una decisión más rápida entre planes al
+volverla una sola variable (duración) en vez de dos listas iguales. A vigilar: que la conversión a
+compra no caiga por mostrar precio antes del video.
 
 ### Resultado medido (completar después)
 
-Comparar contra la versión con muro: `fit4_checkout_click` / `fit4_vsl_loaded`, y el reparto
-mensual vs anual.
+Comparar contra la versión con muro: `fit4_checkout_click` / `fit4_vsl_loaded`, el reparto
+3 vs 6 meses, y cuánto aporta la barra fija (`fit4_cta=buybar`).
 
 ---
 
