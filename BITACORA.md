@@ -1995,7 +1995,16 @@ duplicar por recarga. La fuente de verdad del ingreso es Hotmart/backend.
 
 ### Deploy
 
-Integrado a `main` el 05-ago-2026. Ver el ID del deployment de Vercel al final de esta entrada.
+**Publicado el 05-ago-2026.** `work/fit4-va-rediseno` integrado a `main` (merge `9c5a4ee`).
+
+- **Deployment Vercel:** `tr4iner-funnels-glt4u3e6x-metodotr4iners-projects.vercel.app` · Production · **Ready** · build 8s.
+- Verificado sobre `https://metodo.tr4iner.com/fit4-va` (HTTP 200):
+  - Los dos checkouts reenvían todos los parámetros entrantes, con `off=avsq480z` y `off=9lmw8r6b`.
+  - 0 recursos que bloqueen el render · 133 KB transferidos.
+  - Assets WebP sirviendo con `content-type: image/webp`.
+  - Sin residuos de la versión anterior: ni `fit4_offer_unlocked`, ni los PNG, ni `va-theme.css`.
+
+Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ---
 
