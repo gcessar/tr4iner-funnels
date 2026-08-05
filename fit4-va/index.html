@@ -14,64 +14,49 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#FAF7F2" />
+  <meta name="theme-color" content="#0A0A0A" />
   <title>FIT4CHALLENGE para mujeres · Veronika Alvarado</title>
-  <meta name="description" content="Mira la presentación de FIT4CHALLENGE con Veronika Alvarado y descubre si este programa para mujeres encaja contigo." />
+  <meta name="description" content="Mira la presentación de FIT4CHALLENGE con Veronika Alvarado y elige el plan que más te convenga: mensual o anual." />
   <link rel="canonical" href="https://metodo.tr4iner.com/fit4-va" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;500;900&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Semi+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #F2EEE2;
-      --bg-deeper: #EBE6D6;
-      --ink: #0A0A0A;
-      --ink-soft: #2B2826;
-      --muted: #6B6660;
-      --rule: rgba(10, 10, 10, 0.14);
-      --rule-strong: rgba(10, 10, 10, 0.28);
-      --accent: #F5C518;
-      --cream: #F5F1E5;
-      --serif: "Poppins", "Montserrat", Arial, sans-serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
-      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --void: #0A0A0A;
+      --card: #181815;
+      --line: rgba(255, 255, 255, .08);
+      --yellow: #FFE500;
+      --amber: #FFB800;
+      --bone: #F2F0E8;
+      --grey: #8F8F84;
+      --maxw: 1120px;
+      --display: "Archivo Black", sans-serif;
+      --cond: "Barlow Semi Condensed", sans-serif;
+      --sans: "Inter", system-ui, sans-serif;
+      --mono: "Space Mono", ui-monospace, monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { -webkit-text-size-adjust: 100%; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
     body {
-      min-height: 100dvh;
-      overflow-x: hidden;
-      background: var(--bg);
-      color: var(--ink);
+      background: var(--void);
+      color: var(--bone);
       font-family: var(--sans);
-      font-size: 17px;
-      line-height: 1.55;
-      text-rendering: optimizeLegibility;
+      font-size: clamp(15px, 1vw, 17px);
+      line-height: 1.7;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0.045;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-size: 240px 240px;
-    }
-
-    a { touch-action: manipulation; -webkit-tap-highlight-color: rgba(245, 197, 24, .28); }
-    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
-    ::selection { background: var(--accent); color: var(--ink); }
+    a { color: inherit; text-decoration: none; touch-action: manipulation; }
+    img { display: block; max-width: 100%; }
+    ::selection { background: rgba(255, 229, 0, .30); color: var(--void); }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
 
     .skip-link {
       position: fixed;
@@ -79,268 +64,660 @@
       left: 12px;
       z-index: 100;
       padding: 9px 12px;
-      background: var(--ink);
-      color: var(--cream);
+      background: var(--yellow);
+      color: var(--void);
+      font-family: var(--mono);
+      font-size: 12px;
       transform: translateY(-160%);
       transition: transform .16s ease;
     }
-
     .skip-link:focus { transform: none; }
 
-    .page {
-      width: min(100%, 760px);
-      margin: 0 auto;
-      padding: calc(22px + env(safe-area-inset-top)) clamp(14px, 4vw, 28px) calc(48px + env(safe-area-inset-bottom));
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    /* ── Tipografía compartida ───────────────────────────── */
+    .h2 {
+      margin: 0;
+      font-family: var(--cond);
+      font-size: clamp(1.4rem, 3.2vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: .005em;
+      text-transform: uppercase;
+    }
+    .h2 span { color: var(--yellow); }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 7px 18px;
+      border-radius: 99px;
+      background: var(--yellow);
+      color: var(--void);
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
     }
 
-    .masthead {
-      display: flex;
+    .sec-head { max-width: 760px; margin: 0 auto 12px; text-align: center; }
+    .lead { margin-top: 18px; color: #CFCDC3; font-size: .96rem; }
+
+    /* ── Botones ─────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: clamp(34px, 7vw, 62px);
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--rule-strong);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px 34px;
+      border-radius: 10px;
+      font-family: var(--cond);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .03em;
       text-transform: uppercase;
     }
 
-    .masthead-meta { color: var(--muted); }
-
-    .intro { max-width: 620px; margin-bottom: 24px; }
-
-    .kicker {
-      margin-bottom: 12px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    h1 {
-      max-width: 15ch;
-      font-family: var(--serif);
-      font-size: clamp(36px, 8vw, 58px);
-      font-weight: 500;
-      line-height: 1.03;
-      letter-spacing: -0.035em;
-      text-wrap: balance;
-    }
-
-    h1 em { font-weight: 500; }
-
-    .player-shell {
-      overflow: hidden;
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
-    }
-
-    #f4c-player > div { width: 100%; }
-
-    .gate {
+    .btn-solid {
       position: relative;
-      margin-top: 18px;
-      padding: clamp(20px, 5vw, 30px);
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+      overflow: hidden;
+      background: var(--yellow);
+      color: var(--void);
+      box-shadow: 0 12px 34px -10px rgba(255, 229, 0, .55);
+      transition: translate .22s, scale .22s, box-shadow .22s, background .22s;
+      animation: ctaGlow 2.4s ease-in-out infinite;
     }
-
-    .gate::before {
+    .btn-solid::after {
       content: "";
       position: absolute;
-      inset: 0 0 auto;
-      height: 2px;
-      background: var(--ink);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      width: 45%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55), transparent);
+      transform: translateX(-160%) skewX(-18deg);
+      animation: ctaShine 3.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .btn-solid:hover {
+      translate: 0 -3px;
+      scale: 1.03;
+      background: #FFFFFF;
+      box-shadow: 0 22px 52px -8px rgba(255, 229, 0, .95);
     }
 
-    .gate-kicker {
-      margin-bottom: 13px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .btn-ghost {
+      background: transparent;
+      border: 1.5px solid var(--yellow);
+      color: var(--yellow);
+      transition: color .22s, background .22s, box-shadow .22s, translate .22s;
+      animation: ctaGlowSoft 2.8s ease-in-out infinite;
+    }
+    .btn-ghost:hover {
+      background: var(--yellow);
+      color: var(--void);
+      translate: 0 -2px;
+      box-shadow: 0 10px 30px -10px rgba(255, 229, 0, .4);
     }
 
-    .waiting-grid {
-      display: grid;
-      grid-template-columns: minmax(130px, .72fr) minmax(220px, 1.28fr);
-      align-items: center;
-      gap: 24px;
-    }
-
-    #f4c-countdown {
-      font-family: var(--mono);
-      font-size: clamp(36px, 9vw, 52px);
-      font-weight: 500;
-      line-height: 1;
-      letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .progress {
-      height: 2px;
-      margin-top: 12px;
-      overflow: hidden;
-      background: var(--rule);
-    }
-
-    #f4c-progress-fill {
-      display: block;
-      width: 0;
-      height: 100%;
-      background: var(--accent);
-      transition: width .3s linear;
-    }
-
-    .copy {
-      max-width: 52ch;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .offer-title {
-      max-width: 15ch;
-      font-family: var(--serif);
-      font-size: clamp(30px, 7vw, 42px);
-      font-weight: 500;
-      line-height: 1.08;
-      letter-spacing: -0.03em;
-      text-wrap: balance;
-    }
-
-    .offer-copy { margin: 12px 0 24px; color: var(--ink-soft); }
-
-    .cta {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      width: 100%;
-      padding: 21px 24px;
-      overflow: hidden;
-      background: var(--ink);
-      color: var(--cream);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color .35s ease;
-    }
-
-    .cta::before {
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero { position: relative; padding: 28px 0 80px; overflow: hidden; }
+    .hero::before {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 0;
-      background: var(--accent);
-      transform: translateX(-100%);
-      transition: transform .45s cubic-bezier(.7, 0, .3, 1);
+      background:
+        radial-gradient(60% 55% at 80% 0%, rgba(255, 229, 0, .14), transparent 60%),
+        repeating-linear-gradient(115deg, transparent 0 38px, rgba(255, 255, 255, .018) 38px 39px);
+    }
+    .hero .wrap { position: relative; z-index: 1; text-align: center; }
+
+    .hero-h1 {
+      margin: 18px 0 0;
+      font-family: var(--display);
+      font-size: clamp(1.65rem, 4.2vw, 2.7rem);
+      font-weight: 400;
+      line-height: .94;
+      letter-spacing: -.015em;
+      text-transform: uppercase;
     }
 
-    .cta:hover::before { transform: translateX(0); }
-    .cta:hover { color: var(--ink); }
-    .cta span { position: relative; z-index: 1; }
-    .cta-action::after { content: " →"; }
+    /* Resaltado amarillo inclinado detrás del texto, no encima. */
+    .hl-span {
+      position: relative;
+      z-index: 0;
+      color: var(--void);
+      white-space: nowrap;
+    }
+    /* Gana a `.h2 span`, que si no pinta el texto amarillo sobre el resaltado amarillo. */
+    .h2 .hl-span { color: var(--void); }
+    .hl-span::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: .08em -.12em .06em;
+      background: var(--yellow);
+      border-radius: 2px;
+      transform: skewX(-9deg);
+    }
 
-    .microcopy {
-      margin-top: 12px;
-      color: var(--muted);
+    .hero-p { max-width: 720px; margin: 26px auto 0; color: #D3D1C7; font-size: .96rem; }
+
+    .video-frame {
+      position: relative;
+      max-width: 720px;
+      margin: 40px auto 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0d0d0b url("/assets/fit4/fit4-va-poster.png") center / cover no-repeat;
+    }
+    /* El wrapper de Vidalytics reserva el 16/9 mientras carga el reproductor. */
+    .video-frame > div { width: 100%; }
+
+    .hero-cta { margin-top: 34px; }
+
+    /* ── Bloques de dolor ────────────────────────────────── */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .pain {
+      padding: 20px;
+      border: 1px solid rgba(255, 229, 0, .28);
+      border-radius: 14px;
+      background: var(--card);
+    }
+    .pain h3 {
+      margin: 0 0 12px;
+      font-family: var(--cond);
+      font-size: 1.15rem;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+    .pain p { margin: 0; color: #C4C2B8; font-size: .96rem; }
+
+    /* ── Presentación del programa ───────────────────────── */
+    .reveal-sec { padding: 0 0 24px; }
+    .reveal-sec .wrap { max-width: 900px; text-align: center; }
+    .reveal-lead {
+      max-width: 680px;
+      margin: 0 auto 28px;
+      font-family: var(--cond);
+      font-size: clamp(1rem, 2.4vw, 1.35rem);
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    /* lighten recorta el fondo negro del mockup contra el lienzo oscuro. */
+    .mockup { width: min(560px, 92%); height: auto; margin: 0 auto 22px; mix-blend-mode: lighten; }
+    .brand-title {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(1.7rem, 4vw, 3rem);
+      font-weight: 400;
+      line-height: .94;
+      letter-spacing: -.015em;
+      text-transform: uppercase;
+    }
+    .brand-title span { color: var(--yellow); }
+    .reveal-copy { max-width: 680px; margin: 22px auto 0; color: #CFCDC3; font-size: .96rem; }
+    .reveal-copy b { color: var(--bone); font-weight: 600; }
+
+    /* ── Qué incluye ─────────────────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 52px;
+    }
+    .feat {
+      position: relative;
+      display: flex;
+      gap: 18px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+      transition: opacity .7s, transform .7s, translate .3s, border-color .3s, background .3s;
+    }
+    .feat:hover { translate: 0 -4px; border-color: rgba(255, 229, 0, .4); background: #1c1c18; }
+    .feat-num {
+      position: absolute;
+      top: 14px;
+      right: 20px;
+      font-family: var(--cond);
+      font-size: 2.6rem;
+      font-weight: 600;
+      line-height: 1;
+      color: rgba(255, 229, 0, .16);
+      pointer-events: none;
+    }
+    .feat-ico {
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255, 229, 0, .3);
+      border-radius: 11px;
+      background: rgba(255, 229, 0, .12);
+    }
+    .feat-ico svg {
+      width: 23px;
+      height: 23px;
+      fill: none;
+      stroke: var(--yellow);
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    /* El padding derecho reserva el hueco del número para que el título no se le monte. */
+    .feat h3 { margin: 0 0 6px; padding-right: 46px; font-family: var(--cond); font-size: 1.18rem; font-weight: 700; }
+    .feat p { margin: 0; color: #B9B7AD; font-size: .93rem; line-height: 1.55; }
+
+    /* ── Planes ──────────────────────────────────────────── */
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      align-items: stretch;
+      gap: 24px;
+      margin-top: 52px;
+    }
+    .plan {
+      display: flex;
+      flex-direction: column;
+      padding: 36px 32px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+    }
+    .plan-annual {
+      position: relative;
+      border: 1.5px solid var(--yellow);
+      background: linear-gradient(170deg, #211f12, #151510);
+      box-shadow: 0 24px 60px -26px rgba(255, 229, 0, .5);
+    }
+    .plan-tag {
+      position: absolute;
+      top: -14px;
+      left: 32px;
+      padding: 5px 14px;
+      border-radius: 7px;
+      background: var(--yellow);
+      color: var(--void);
+      font-family: var(--cond);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .plan-name {
+      font-family: var(--cond);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--grey);
+    }
+    .plan-desc { min-height: 44px; margin: 10px 0 22px; color: #B9B7AD; font-size: .92rem; }
+    .plan-price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .plan-price b { font-family: var(--display); font-size: 3rem; font-weight: 400; line-height: 1; }
+    .plan-price span { color: var(--grey); font-family: var(--mono); font-size: .85rem; }
+    .plan-note {
+      min-height: 1.4em;
+      margin-bottom: 22px;
+      color: var(--yellow);
       font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: .06em;
+      font-size: .8rem;
+    }
+    .plan-list { display: grid; gap: 12px; margin: 0 0 28px; padding: 0; list-style: none; }
+    .plan-list li { display: flex; align-items: flex-start; gap: 11px; color: #D3D1C7; font-size: .95rem; }
+    .tick {
+      flex: 0 0 20px;
+      display: inline-grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+    .tick svg {
+      width: 13px;
+      height: 13px;
+      fill: none;
+      stroke: var(--void);
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .plan .btn { width: 100%; margin-top: auto; }
+
+    /* ── FAQ ─────────────────────────────────────────────── */
+    .faq { display: grid; gap: 14px; max-width: 820px; margin: 48px auto 0; }
+    .faq details { border-bottom: 1px solid var(--line); }
+    .faq summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 2px;
+      cursor: pointer;
+      list-style: none;
+      font-family: var(--cond);
+      font-size: 1.12rem;
+      font-weight: 600;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::marker { content: ""; }
+    .faq-pm {
+      flex: 0 0 auto;
+      color: var(--yellow);
+      font-size: 1.6rem;
+      line-height: 1;
+      transition: transform .3s;
+    }
+    .faq details[open] .faq-pm { transform: rotate(45deg); }
+    .faq p { padding: 0 2px 20px; color: #C4C2B8; font-size: .97rem; }
+
+    /* ── Cierre ──────────────────────────────────────────── */
+    .final { position: relative; padding: 40px 0 92px; overflow: hidden; text-align: center; }
+    .final::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(50% 55% at 50% 55%, rgba(255, 229, 0, .16), transparent 60%);
+    }
+    .final .wrap { position: relative; z-index: 1; }
+    .final p { max-width: 600px; margin: 24px auto 0; color: #CFCDC3; font-size: .96rem; }
+    .final .btn { margin-top: 36px; }
+
+    footer {
+      padding: 44px 0;
+      border-top: 1px solid var(--line);
+      color: var(--grey);
+      text-align: center;
+    }
+    .foot-brand { margin-bottom: 10px; font-family: var(--display); font-size: 1.3rem; }
+    .foot-brand span { color: var(--yellow); }
+    footer p { margin: 6px 0; font-size: .86rem; }
+    footer a { border-bottom: 1px solid var(--line); }
+    footer a:hover { color: var(--yellow); }
+
+    /* ── Reveal on scroll ────────────────────────────────── */
+    [data-reveal] { opacity: 0; transform: translateY(24px); transition: opacity .7s, transform .7s; }
+    [data-reveal].is-visible { opacity: 1; transform: none; }
+
+    @keyframes ctaGlow {
+      0%, 100% { box-shadow: 0 12px 34px -10px rgba(255, 229, 0, .5); }
+      50% { box-shadow: 0 16px 50px -6px rgba(255, 229, 0, .95); }
+    }
+    @keyframes ctaGlowSoft {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 229, 0, 0); }
+      50% { box-shadow: 0 0 22px -2px rgba(255, 229, 0, .28); }
+    }
+    @keyframes ctaShine {
+      0% { transform: translateX(-160%) skewX(-18deg); }
+      55%, 100% { transform: translateX(320%) skewX(-18deg); }
     }
 
-    .sep { display: inline-block; margin: 0 8px; }
-    #f4c-ready.reveal { animation: reveal .5s cubic-bezier(.2, .7, .2, 1) both; }
+    .br-m { display: none; }
+    @media (min-width: 641px) { .hero-h1 { line-height: 1.2; } }
 
-    @keyframes reveal {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: none; }
-    }
-
-    @media (max-width: 600px) {
-      .masthead { margin-bottom: 32px; }
-      .intro { margin-bottom: 18px; }
-      .gate { margin-top: 12px; padding: 18px; }
-      .waiting-grid { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }
-      #f4c-countdown { font-size: 32px; }
-      .copy { font-size: 14px; line-height: 1.5; }
-      .cta { padding: 18px; font-size: 10.5px; }
+    @media (max-width: 640px) {
+      .br-d { display: none; }
+      .br-m { display: inline; }
+      .hero-h1 { font-size: 1.42rem; }
+      .hero-cta { margin-top: 22px; }
+      .btn { padding: 13px 24px; font-size: .98rem; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .feat-num { top: 12px; right: 16px; font-size: 1.35rem; }
+      /* En una sola columna el plan anual va primero: es el que queremos que vean. */
+      .plan-annual { order: -1; }
+      /* Sin skew el resaltado corta mal al saltar de línea; en móvil va plano y por fragmentos. */
+      .hl-span::before { display: none; }
+      .hl-span {
+        padding: .02em .14em;
+        border-radius: 2px;
+        background: var(--yellow);
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
+        animation: none !important;
         transition-duration: .01ms !important;
       }
     }
   </style>
-  <link rel="stylesheet" href="/assets/va/va-theme.css?v=20260723-2" />
+  <!-- Sin va-theme.css: fija fondo crema y redefine --yellow, incompatible con el tema oscuro de FIT4. -->
 </head>
-<body class="va-theme">
+<body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <a class="skip-link" href="#planes">Saltar a los planes</a>
 
-  <main class="page" id="contenido">
-    <header class="masthead">
-      <span>VERONIKA ALVARADO / FIT4</span>
-      <span class="masthead-meta">Presentación privada</span>
-    </header>
+  <header class="hero">
+    <div class="wrap">
+      <h1 class="hero-h1">Sientes que te esfuerzas mucho<br class="br-d"> pero no sabes si te<br class="br-m"> acercas<br class="br-d"> <span class="hl-span">Al cuerpo que<br class="br-m"> quieres?</span></h1>
+      <p class="hero-p">Aprende a organizar tus entrenamientos y tu alimentación para empezar a ver los cambios que estás buscando.</p>
 
-    <section class="intro" aria-labelledby="page-title">
-      <p class="kicker">FIT4CHALLENGE · Solo para mujeres</p>
-      <h1 id="page-title">Mira esto completo. Luego decides.</h1>
-    </section>
+      <div class="video-frame" id="f4c-player" data-reveal aria-label="Presentación de FIT4CHALLENGE con Veronika Alvarado"></div>
 
-    <div class="player-shell" id="f4c-player" aria-label="Presentación de FIT4CHALLENGE con Veronika Alvarado"></div>
+      <a href="#planes" class="btn btn-solid hero-cta">¡Quiero unirme hoy!</a>
+    </div>
+  </header>
 
-    <section class="gate" aria-live="polite">
-      <div id="f4c-waiting">
-        <p class="gate-kicker">Tu acceso se activa en</p>
-        <div class="waiting-grid">
-          <div>
-            <div id="f4c-countdown">03:00</div>
-            <div class="progress" id="f4c-progress" role="progressbar" aria-label="Progreso hasta desbloquear el acceso" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0">
-              <span id="f4c-progress-fill"></span>
-            </div>
-          </div>
-          <p class="copy">Mira el video con atención. Cuando termine el contador, podrás acceder con toda la información clara.</p>
+  <main id="contenido">
+    <section style="padding:0 0 52px">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">¿Llevas tiempo <span>intentándolo?</span></h2>
+          <p class="lead">No estás sola. La mayoría de las mujeres que llegan a nosotros están atrapadas en:</p>
+        </div>
+
+        <div class="pain-grid">
+          <article class="pain" data-reveal>
+            <h3>Siempre vuelves a empezar</h3>
+            <p>Entre semana haces todo "bien", pero cuando sales a comer o se complica un día sientes que ya dañaste todo.</p>
+          </article>
+          <article class="pain" data-reveal>
+            <h3>No sabes qué ajustar</h3>
+            <p>Entrenas, comes saludable y aún así no sabes qué te está faltando para reducir cintura, definirte o construir el cuerpo que buscas.</p>
+          </article>
+          <article class="pain" data-reveal>
+            <h3>No sabes si lo haces bien</h3>
+            <p>Un día haces más cardio, otro comes menos, otro pruebas una dieta diferente. Al final te esfuerzas, pero no sabes si de verdad está funcionando.</p>
+          </article>
         </div>
       </div>
+    </section>
 
-      <div id="f4c-ready" hidden>
-        <p class="gate-kicker">Acceso desbloqueado</p>
-        <h2 class="offer-title">¿Este enfoque encaja contigo?</h2>
-        <p class="copy offer-copy">Si la respuesta es sí, puedes empezar ahora con un plan pensado para mujeres y adaptado a ti.</p>
-        <a class="cta" id="f4c-cta" href="#" rel="noopener">
-          <span>Empezar FIT4CHALLENGE</span>
-          <span class="cta-action">Ahora</span>
-        </a>
-        <p class="microcopy">Acceso inmediato<span class="sep">·</span>Pago seguro vía Hotmart</p>
+    <section class="reveal-sec">
+      <div class="wrap" data-reveal>
+        <p class="reveal-lead">Si te identificas con al menos uno, esto es exactamente lo que resolvemos con:</p>
+        <img class="mockup" src="/assets/fit4/fit4-mockup-caja-app.png" width="748" height="562" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
+        <h2 class="brand-title">FIT<span>4</span> CHALLENGE</h2>
+        <p class="reveal-copy">Un programa que combina entrenamiento, alimentación y mentalidad para ayudarte a construir el cuerpo que buscas. <b>No es una rutina genérica en PDF que terminas dejando a la mitad.</b></p>
+      </div>
+    </section>
+
+    <section style="padding:28px 0 92px">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <span class="badge">Qué incluye</span>
+          <h2 class="h2">Todo lo que hay <span>dentro</span></h2>
+        </div>
+
+        <div class="feat-grid">
+          <div class="feat" data-reveal>
+            <div class="feat-num">01</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V4m5 16v-7m5 7V8"></path></svg></div>
+            <div>
+              <h3>Evaluación inicial y mensual</h3>
+              <p>Cada mes revisamos tus avances y te decimos qué ajustar para que sigas viendo resultados.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal>
+            <div class="feat-num">02</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2m12 0h2M6 9v6m12-6v6M8 12h8M9 10.5h6v3H9z"></path></svg></div>
+            <div>
+              <h3>Plan de entrenamiento personalizado</h3>
+              <p>Armamos tu rutina en casa o gym desde 30 min. Si un ejercicio te molesta o no tienes el equipo, te mostramos con cuál reemplazarlo.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal>
+            <div class="feat-num">03</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 1-2 3-2 5s.5 3 2 4v9"></path></svg></div>
+            <div>
+              <h3>Alimentación sin restricciones</h3>
+              <p>Aprende cuánto comer según tu objetivo y cómo adaptar tus comidas sin dejar el arroz, pan o lo que más te gusta.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal>
+            <div class="feat-num">04</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg></div>
+            <div>
+              <h3>Respuestas directas de expertos</h3>
+              <p>¿Dudas con un ejercicio o alimentación? Escríbenos y un entrenador te ayudará a responderlas.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal>
+            <div class="feat-num">05</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M11 18h2"></path></svg></div>
+            <div>
+              <h3>Área de miembros + video tutoriales</h3>
+              <p>Cada ejercicio tiene un video para que sepas exactamente cómo hacerlo y entrenes con seguridad.</p>
+            </div>
+          </div>
+          <div class="feat" data-reveal>
+            <div class="feat-num">06</div>
+            <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5zM9 18h6m-5 3h4"></path></svg></div>
+            <div>
+              <h3>Audios semanales de motivación</h3>
+              <p>Cada semana recibirás un audio para ayudarte a ser constante y dejar de volver a empezar cada vez que algo se salga del plan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planes" style="padding:12px 0 92px">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">Elige el plan que más <span>te convenga</span></h2>
+        </div>
+
+        <div class="plans">
+          <div class="plan" data-reveal>
+            <div class="plan-name">Suscripción mensual</div>
+            <div class="plan-desc">Ideal si quieres probar el método y avanzar a tu ritmo. <b>Puedes cambiar al plan anual cuando quieras.</b></div>
+            <div class="plan-price"><b>$22</b><span>USD / mes</span></div>
+            <div class="plan-note">&nbsp;</div>
+            <ul class="plan-list">
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Evaluación inicial y mensual</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Plan de alimentación personalizado</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Entrenamientos adaptados (casa o gym)</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Área privada con video tutoriales</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Audios semanales de mentalidad</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Chat de soporte directo con expertos</li>
+            </ul>
+            <a class="btn btn-ghost" data-checkout="mensual" href="#" rel="noopener">Empezar por $22/mes</a>
+          </div>
+
+          <div class="plan plan-annual" data-reveal>
+            <span class="plan-tag">Más elegido · Ahorras $65</span>
+            <div class="plan-name">Plan anual</div>
+            <div class="plan-desc">Ideal si ya decidiste tomar en serio tu cambio y quieres ahorrar pagando solo un año.</div>
+            <div class="plan-price"><b>$199</b><span>USD / año</span></div>
+            <div class="plan-note">Equivale a $16.6/mes · ahorras $65</div>
+            <ul class="plan-list">
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Evaluación inicial y mensual</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Plan de alimentación personalizado</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Entrenamientos adaptados (casa o gym)</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Área privada con video tutoriales</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Audios semanales de mentalidad</li>
+              <li><span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg></span>Chat de soporte directo con expertos</li>
+            </ul>
+            <a class="btn btn-solid" data-checkout="anual" href="#" rel="noopener">Quiero el plan anual</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:12px 0 92px">
+      <div class="wrap">
+        <div class="sec-head" data-reveal>
+          <h2 class="h2">¿Tienes dudas? <span>Aquí las resolvemos</span></h2>
+        </div>
+
+        <div class="faq">
+          <details data-reveal>
+            <summary>¿Funciona si nunca he entrenado antes?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. El plan se adapta a tu nivel actual. No importa si eres principiante total o si llevas años sin moverte: nuestro equipo evalúa tu punto de partida y diseña una estrategia progresiva para ti.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Tengo que comer solo pollo y arroz?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Para nada. Recibirás un plan con 3 opciones variadas por cada comida del día, con las calorías ajustadas a tu objetivo. Sin pasar hambre y sin comer feo.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Sirve si quiero ganar masa muscular y no perder peso?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Completamente. Tu plan se ajusta según tu objetivo: perder grasa, tonificar o ganar masa muscular. Si buscas verte definida y construir músculo, diseñamos tus cargas y tu alimentación exactamente para ese resultado.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Realmente me responderá una persona real?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. En FIT4CHALLENGE hablas directamente con nuestro equipo de profesionales dentro del área de miembros para responder todo tipo de dudas.</p>
+          </details>
+          <details data-reveal>
+            <summary>¿Puedo cancelar cuando quiera?<span class="faq-pm" aria-hidden="true">+</span></summary>
+            <p>Sí. Sin letras pequeñas ni contratos escondidos. Tienes 7 días de garantía de reembolso completo: si no es para ti, te devolvemos tu dinero.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap" data-reveal>
+        <h2 class="h2">Dentro de unos meses vas a<br>agradecer haber <span class="hl-span">empezado hoy</span></h2>
+        <p>Cada semana que pasa sin un plan es otra semana preguntándote si lo que haces realmente está funcionando. Empieza a seguir un plan diseñado para ayudarte a construir el cuerpo que buscas.</p>
+        <a href="#planes" class="btn btn-solid">Quiero empezar hoy</a>
       </div>
     </section>
   </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-brand">FIT<span>4</span> CHALLENGE</div>
+      <p>Entrenamiento y nutrición online · Miembros en +14 países</p>
+      <p>Acceso inmediato · Pago seguro vía Hotmart</p>
+    </div>
+  </footer>
 
   <script src="/attribution.js"></script>
   <script>
     (function () {
       'use strict';
 
-      var CTA_AT_SECONDS = 180;
-      var HOTMART_URL = 'https://pay.hotmart.com/K104111098X?off=9lmw8r6b&checkoutMode=10';
+      // TODO: falta el código `off` real del plan anual; hasta tenerlo ambos botones
+      // apuntan a la oferta mensual verificada para no mandar tráfico a una URL inválida.
+      var HOTMART_BASE = 'https://pay.hotmart.com/K104111098X';
+      var OFFERS = {
+        mensual: '9lmw8r6b',
+        anual: '9lmw8r6b'
+      };
+
       var params = new URLSearchParams(window.location.search);
       if (!params.has('utm_source')) params.set('utm_source', 'FIT4-VA-DIRECTO');
       if (!params.has('utm_campaign')) params.set('utm_campaign', 'FIT4-VA');
@@ -362,80 +739,63 @@
       window.dataLayer.push({ event: 'fit4_vsl_loaded', fit4_variant: variant, funnel_variant: 'fit4-va' });
 
       // Hotmart recibe todos los parámetros presentes, no una lista que quede vieja con la próxima campaña.
-      var checkoutUrl = new URL(HOTMART_URL);
-      params.forEach(function (value, key) {
-        if (value) checkoutUrl.searchParams.set(key, value);
-      });
+      function buildCheckoutUrl(plan) {
+        var url = new URL(HOTMART_BASE);
+        url.searchParams.set('off', OFFERS[plan]);
+        url.searchParams.set('checkoutMode', '10');
 
-      if (window.TR4Track) {
-        var persistedAttribution = window.TR4Track.getAttribution();
-        Object.keys(persistedAttribution).forEach(function (key) {
-          if (!checkoutUrl.searchParams.has(key)) checkoutUrl.searchParams.set(key, persistedAttribution[key]);
+        params.forEach(function (value, key) {
+          if (value) url.searchParams.set(key, value);
         });
+
+        if (window.TR4Track) {
+          var persistedAttribution = window.TR4Track.getAttribution();
+          Object.keys(persistedAttribution).forEach(function (key) {
+            if (!url.searchParams.has(key)) url.searchParams.set(key, persistedAttribution[key]);
+          });
+        }
+
+        return url.toString();
       }
 
-      var cta = document.getElementById('f4c-cta');
-      cta.href = checkoutUrl.toString();
-      cta.addEventListener('click', function () {
-        window.dataLayer.push({ event: 'fit4_checkout_click', fit4_variant: variant, funnel_variant: 'fit4-va' });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-checkout]'), function (cta) {
+        var plan = cta.getAttribute('data-checkout');
+        cta.href = buildCheckoutUrl(plan);
+        cta.addEventListener('click', function () {
+          window.dataLayer.push({
+            event: 'fit4_checkout_click',
+            fit4_variant: variant,
+            fit4_plan: plan,
+            funnel_variant: 'fit4-va'
+          });
+        });
       });
 
+      // ── Reveal on scroll ──────────────────────────────────
+      var revealables = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+      var show = function (el) { el.classList.add('is-visible'); };
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        revealables.forEach(show);
+      } else {
+        var observer = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) { show(entry.target); obs.unobserve(entry.target); }
+          });
+        }, { threshold: .12 });
+        revealables.forEach(function (el) { observer.observe(el); });
+        // Red de seguridad: si el observer no dispara, nada queda invisible.
+        setTimeout(function () { revealables.forEach(show); }, 2000);
+      }
+
+      // ── VSL ───────────────────────────────────────────────
       var embed = document.createElement('div');
       embed.id = video.id;
       embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
       document.getElementById('f4c-player').appendChild(embed);
 
-      // Helper oficial: resuelve el reproductor recién cuando Vidalytics expone la API.
-      !function (v, a, p, i) {
-        v.getVidalyticsPlayer = function (n) {
-          v[a] = v[a] || {}; v[a][p] = v[a][p] || {};
-          var d = v[a][p][n] = v[a][p][n] || {};
-          return new Promise(function (resolve) {
-            if (d[i]) return void resolve(d[i]);
-            var player;
-            Object.defineProperty(d, i, {
-              get: function () { return player; },
-              set: function (value) { player = value; resolve(value); }
-            });
-          });
-        };
-      }(window, '_vidalytics', 'embeds', 'player');
-
       loadVidalytics(video.id, video.url);
-
-      getVidalyticsPlayer(video.id).then(function (player) {
-        if (!player) return;
-
-        var countdown = document.getElementById('f4c-countdown');
-        var progress = document.getElementById('f4c-progress');
-        var fill = document.getElementById('f4c-progress-fill');
-        var waiting = document.getElementById('f4c-waiting');
-        var ready = document.getElementById('f4c-ready');
-        var revealed = false;
-
-        function render() {
-          var elapsed = Math.max(0, Number(player.currentTime()) || 0);
-          var remaining = Math.max(0, Math.ceil(CTA_AT_SECONDS - elapsed));
-          var percentage = Math.min(100, (elapsed / CTA_AT_SECONDS) * 100);
-
-          countdown.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' +
-            String(remaining % 60).padStart(2, '0');
-          progress.setAttribute('aria-valuenow', String(Math.min(CTA_AT_SECONDS, Math.floor(elapsed))));
-          fill.style.width = percentage + '%';
-
-          if (!revealed && elapsed >= CTA_AT_SECONDS) {
-            revealed = true;
-            waiting.hidden = true;
-            ready.hidden = false;
-            ready.classList.add('reveal');
-            window.dataLayer.push({ event: 'fit4_offer_unlocked', fit4_variant: variant, funnel_variant: 'fit4-va' });
-          }
-        }
-
-        player.on('timeupdate', render);
-        player.on('ratechange', render);
-        render();
-      });
 
       function loadVidalytics(embedId, embedUrl) {
         (function (v, i, d, a, l, y, t, c, s) {

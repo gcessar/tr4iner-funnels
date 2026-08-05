@@ -1762,6 +1762,56 @@ Verificar sobre las próximas agendas de GENESIS que lleguen con `utm_medium=GEN
 
 ---
 
+## 2026-08-04 — `/fit4-va` pasa de VSL con muro a landing de venta completa
+
+**Rama:** `work/fit4-va-rediseno` · **Estado:** preview, pendiente de aprobación del usuario.
+
+### Qué cambió
+
+`fit4-va/index.html` se rehízo sobre el prototipo aprobado (tema oscuro FIT4: Archivo Black,
+Barlow Semi Condensed, Inter y Space Mono sobre `#0A0A0A` con acento `#FFE500`). La página deja
+de ser una VSL con muro y pasa a ser una landing de venta larga: hero con el video, bloques de
+dolor, presentación del programa, seis features, dos planes, FAQ y cierre.
+
+Cambios de mecánica, no solo de estética:
+
+- **Se elimina el muro de 3 minutos.** Antes el CTA aparecía recién al llegar el reproductor a
+  `CTA_AT_SECONDS = 180`; ahora los planes están visibles desde el inicio y los CTA del hero y del
+  cierre son anclas a `#planes`. Se cae con esto el evento `fit4_offer_unlocked`.
+- **Dos ofertas en vez de una.** Mensual $22 USD y anual $199 USD. `fit4_checkout_click` ahora
+  viaja con `fit4_plan` (`mensual` | `anual`) para poder separarlas en GA4.
+- **Se quita `va-theme.css`** de esta página: fija fondo crema y redefine `--yellow` a `#e8a943`,
+  incompatible con el tema oscuro. El resto de páginas VA lo siguen usando.
+- Assets nuevos en `assets/fit4/`: `fit4-mockup-caja-app.png` y `fit4-va-poster.png` (este último
+  como fondo del marco mientras carga Vidalytics).
+
+Se conserva sin tocar lo que sostiene la medición: GTM `GTM-T88G63P`, el `noscript` de Meta,
+`attribution.js`/TR4Track, el `noindex` (sigue siendo paso de funnel, no página indexable), el
+canonical y el embed fijo de Veronika `Rl_cXuqDVuhtabtp`.
+
+### Por qué
+
+El muro asumía que la decisión se toma dentro del video. El prototipo apuesta por lo contrario:
+dar la oferta completa por escrito y dejar que el video empuje, no que bloquee.
+
+### Pendiente que bloquea el deploy
+
+**Falta el código `off` del plan anual.** Hoy `OFFERS.anual` apunta a `9lmw8r6b`, que es la oferta
+mensual verificada — se dejó así a propósito para no mandar tráfico a una URL inválida, pero
+publicar sin corregirlo cobraría mensual a quien elige anual.
+
+### Resultado esperado
+
+Más clics a checkout por visita al desaparecer el muro, y visibilidad de qué plan elige cada
+lead. A vigilar: que la conversión a compra no caiga por mostrar precio antes del video.
+
+### Resultado medido (completar después)
+
+Comparar contra la versión con muro: `fit4_checkout_click` / `fit4_vsl_loaded`, y el reparto
+mensual vs anual.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
