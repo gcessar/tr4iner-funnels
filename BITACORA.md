@@ -2010,7 +2010,7 @@ Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ## 2026-08-05 — `/fit4` toma la estructura de `/fit4-va` sin perder su piel
 
-**Rama:** `work/fit4-an-rediseno` · **Estado:** preview, pendiente de aprobación.
+**Rama:** `work/fit4-an-rediseno` · **Publicado el 05-ago-2026** (ver Deploy al final del bloque).
 
 ### Qué cambió
 
@@ -2065,7 +2065,7 @@ el formato sea una variable más.
 
 ## 2026-08-05 — `/redirectfit4`: puente de tráfico a FIT4 por UTMs
 
-**Rama:** `work/fit4-an-rediseno` (va junto al rediseño de `/fit4`) · **Estado:** preview.
+**Rama:** `work/fit4-an-rediseno` (fue junto al rediseño de `/fit4`) · **Publicado el 05-ago-2026**.
 
 ### Qué es
 
@@ -2111,6 +2111,20 @@ con el video correspondiente cargado.
 ### Resultado esperado
 
 Un solo enlace para las campañas de FIT4, que reparte solo y sin perder atribución.
+
+### Deploy
+
+**Publicado el 05-ago-2026.** `work/fit4-an-rediseno` integrado a `main` (merge `efdf2e3`).
+
+- **Deployment Vercel:** `tr4iner-funnels-5z0rme78z-metodotr4iners-projects.vercel.app` · Production · **Ready** · build 8s.
+- Verificado sobre el dominio canónico, los tres HTTP 200:
+  - `/redirectfit4` con `utm_campaign=TR4INER-VA` → aterriza en `/fit4-va` con el querystring intacto.
+  - `/redirectfit4` con `utm_campaign=TR4INER-AN` → aterriza en `/fit4`, carga `T7Hop2PBd6tWQl0W`
+    y arma los dos checkouts con `avsq480z` y `9lmw8r6b`.
+  - `/fit4` conserva Fraunces y los dos embeds de video; ambas landings abren en el bloque de
+    6 meses con la corrección de `DEFAULT_PLAN`.
+
+Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ### Resultado medido (completar después)
 
