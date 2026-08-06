@@ -330,6 +330,11 @@
           if (controller) controller.abort();
         }, 7000);
 
+        // Copia de seguridad directa al CRM, en paralelo al webhook de n8n:
+        // si n8n se cae, el sheet y Brevo se pierden juntos y esta es la
+        // única copia que queda. No bloquea ni altera la redirección.
+        if (window.TR4Track && window.TR4Track.saveOptIn) window.TR4Track.saveOptIn(payload);
+
         fetch("https://primary-production-0efa.up.railway.app/webhook/casos-estudio", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

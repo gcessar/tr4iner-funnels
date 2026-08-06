@@ -187,6 +187,30 @@
     } catch (e) { /* idem */ }
   }
 
+  var OPTIN_ENDPOINT = 'https://crm-ventas-eosin.vercel.app/api/optin';
+
+  /**
+   * Copia de seguridad del opt-in directo al CRM, EN PARALELO al webhook de n8n.
+   *
+   * Por qué en paralelo y no un nodo más adentro de n8n: si n8n se cae, el
+   * webhook no se dispara y se pierden por igual el sheet, Brevo y el CRM. Dos
+   * caminos independientes es lo único que sobrevive a eso.
+   *
+   * Nunca bloquea ni rompe: la promesa se ignora a propósito y el submit sigue
+   * su curso. `keepalive` deja que el request termine aunque la página ya esté
+   * navegando a la redirección.
+   */
+  function saveOptIn(payload) {
+    try {
+      fetch(OPTIN_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function () { /* la copia de seguridad nunca rompe la UI */ });
+    } catch (e) { /* idem */ }
+  }
+
   window.TR4Track = {
     UTM_KEYS: UTM_KEYS,
     isAttributionKey: isAttributionKey,
@@ -198,6 +222,7 @@
     getMetaIds: getMetaIds,
     getAttribution: getAttribution,
     getLead: getLead,
-    track: track
+    track: track,
+    saveOptIn: saveOptIn
   };
 })();
