@@ -1121,8 +1121,12 @@
         });
       });
 
-      var checkedRadio = radios.filter(function (r) { return r.checked; })[0];
-      selectPlan(checkedRadio ? checkedRadio.value : '6-meses');
+      // El arranque se fuerza acá y no se lee del DOM: `autocomplete=off` no
+      // impide que el navegador restaure la selección previa al recargar, y la
+      // página siempre debe abrir en el bloque de 6 meses.
+      var DEFAULT_PLAN = '6-meses';
+      radios.forEach(function (radio) { radio.checked = radio.value === DEFAULT_PLAN; });
+      selectPlan(DEFAULT_PLAN);
 
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

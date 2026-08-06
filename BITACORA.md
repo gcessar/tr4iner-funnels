@@ -2008,6 +2008,61 @@ Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ---
 
+## 2026-08-05 — `/fit4` toma la estructura de `/fit4-va` sin perder su piel
+
+**Rama:** `work/fit4-an-rediseno` · **Estado:** preview, pendiente de aprobación.
+
+### Qué cambió
+
+`/fit4` pasa de VSL con muro a la misma landing de venta larga que `/fit4-va`: mismo copy, mismos
+seis bloques de contenido y **la misma estructura de precios** (selector de bloque, tira de
+mesociclo, anclaje del $174 tachado, garantía junto al botón, barra fija en móvil).
+
+Lo que **no** se tocó, a propósito:
+
+- **La piel editorial.** `/fit4` conserva el crema `#F2EEE2`, Fraunces / Instrument Sans /
+  JetBrains Mono, el acento `#F5C518`, el grano de papel y el masthead. La estructura se tradujo a
+  ese idioma en vez de importar el tema oscuro de `/fit4-va`: la tira de meses se llena en tinta
+  sólida, el tachado es una línea de tinta y el chip de ahorro usa el acento. Son dos páginas
+  hermanas en estructura y distintas en identidad, como estaban.
+- **El selector dual de video.** Sigue cargando `T7Hop2PBd6tWQl0W` para AN y `Rl_cXuqDVuhtabtp`
+  cuando detecta marcadores VA en las UTMs. Verificado en los dos sentidos.
+- GTM, `noscript` de Meta, `attribution.js`/TR4Track, `noindex` y canonical.
+
+Igual que en `/fit4-va`, **se cae el muro de 3 minutos** y con él `fit4_offer_unlocked`. Los planes
+quedan visibles desde el inicio.
+
+### Precios y eventos
+
+Mismo contrato que `/fit4-va` (ver la entrada del 05-ago-2026): `avsq480z` = 3 meses $87,
+`9lmw8r6b` = 6 meses $127, los dos pago único. Se agregan `fit4_plan`, `fit4_cta` y
+`fit4_plan_toggle`; **se conserva `fit4_variant`** (`AN` | `VA`), que es propio de esta ruta y lo
+que permite separar su tráfico.
+
+### Corrección que alcanza también a `/fit4-va` (ya en producción)
+
+`autocomplete="off"` **no impide** que el navegador restaure la selección previa del toggle al
+recargar: se reprodujo en `/fit4`, que abría en el bloque de 3 meses después de una recarga. Ahora
+el plan inicial se fuerza por JS en vez de leerse del DOM, así la página siempre abre en 6 meses.
+El mismo arreglo se aplicó a `/fit4-va`, que traía el defecto idéntico.
+
+### Pendiente de decisión — copy en femenino
+
+El copy se copió tal cual de `/fit4-va`, que está escrito para mujeres. En `/fit4`, que atiende
+tráfico AN mixto, se ajustó solo la línea que quedaba gramaticalmente rota (*"No estás sola / las
+mujeres que llegan"* → *"No estás solo / las personas que llegan"*). El resto del copy es neutro,
+pero **la decisión editorial de fondo sigue abierta**: si `/fit4` debe hablarle a una audiencia
+mixta con el mismo texto que la página de Veronika.
+
+### Resultado esperado
+
+Igualar la estructura de conversión entre las dos rutas para poder comparar su rendimiento sin que
+el formato sea una variable más.
+
+### Resultado medido (completar después)
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
