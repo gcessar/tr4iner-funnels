@@ -2063,6 +2063,59 @@ el formato sea una variable más.
 
 ---
 
+## 2026-08-05 — `/redirectfit4`: puente de tráfico a FIT4 por UTMs
+
+**Rama:** `work/fit4-an-rediseno` (va junto al rediseño de `/fit4`) · **Estado:** preview.
+
+### Qué es
+
+Página puente en `/redirectfit4` que reparte el tráfico entre las dos landings de FIT4, con el
+mismo patrón que `/redirectionutmstr4iner2`: lee las UTMs, decide destino y **reenvía el
+querystring completo** con `window.location.replace(origin + destino + queryString)`.
+
+- **Tráfico VA → `/fit4-va`**
+- **Todo lo demás → `/fit4`** (incluido el tráfico sin ningún parámetro)
+
+`location.replace` en vez de `href` para que el puente no quede en el historial y el botón atrás
+lleve al origen, no de vuelta al redirect. `window.location.origin` mantiene el recorrido dentro
+del mismo deployment durante los previews.
+
+### Cómo detecta VA
+
+Usa **la misma definición que ya aplica `/fit4`** para elegir su video, que es un superconjunto de
+la de `/redirectionutmstr4iner2` (que solo mira dos valores exactos de `utm_campaign`). Se eligió
+así a propósito: si el puente y el destino no coincidieran en qué es "tráfico VA", un lead podría
+aterrizar en la página de AN y aun así ver el video de Veronika.
+
+Se considera VA si: `utm_campaign` es `TR4INER-VA` o `CASOS-VA`, o `funnel=VA`, o `funnel_variant`
+contiene `VA` como token, o **cualquier** `utm_*` contiene `VA` delimitado por `-` o `_`.
+
+El marcador está anclado (`/(^|[-_])VA($|[-_])/i`), así que no se dispara con `VA` dentro de una
+palabra. Verificado sobre 12 casos, incluidos tres trampas que deben ir a `/fit4`:
+`utm_campaign=NAVA-2026`, `utm_content=VARIANTE-A` y `utm_source=NAVIDAD`.
+
+Probado punta a punta: VA llega a `/fit4-va` y AN a `/fit4`, los dos con el querystring intacto y
+con el video correspondiente cargado.
+
+### Decisiones
+
+- **Sin GTM en el puente.** Sumaría un `page_view` que ensucia el embudo y retrasaría el redirect.
+  El reparto ya es medible en el destino: las dos páginas emiten `fit4_vsl_loaded`, y `/fit4` lo
+  hace con `fit4_variant` (`AN` | `VA`).
+- **`<noscript>` con enlaces reales** a las dos rutas, en vez del "Activa JavaScript" sin salida
+  que tienen las páginas puente anteriores. Sin JS se pierde el querystring, que es inevitable en
+  una página estática, pero al menos el visitante llega.
+- Ruta por directorio (`redirectfit4/index.html`) y `cleanUrls`, igual que sus hermanas: no hizo
+  falta tocar `vercel.json`.
+
+### Resultado esperado
+
+Un solo enlace para las campañas de FIT4, que reparte solo y sin perder atribución.
+
+### Resultado medido (completar después)
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

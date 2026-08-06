@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://metodo.tr4iner.com/redirectfit4">
+  <title>Continuando a tu presentación · TR4INER</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f4efe6; color: #16130e; }
+    main { padding: 24px; text-align: center; }
+    p { margin: 0; font-size: 16px; }
+    .alt { margin-top: 14px; font-size: 14px; }
+    .alt a { color: #16130e; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Preparando tu presentación…</p>
+    <noscript>
+      <p class="alt">
+        Continúa aquí:
+        <a href="/fit4">FIT4CHALLENGE</a> ·
+        <a href="/fit4-va">versión de Veronika</a>
+      </p>
+    </noscript>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var queryString = window.location.search;
+      var params = new URLSearchParams(queryString);
+
+      // Misma definición de "tráfico VA" que ya aplica /fit4 al elegir su video.
+      // Si el puente y el destino no coincidieran, un lead VA podría aterrizar en
+      // la página de AN y aun así ver el video de Veronika.
+      var campaign = (params.get("utm_campaign") || "").trim().toUpperCase();
+      var funnel = (params.get("funnel") || "").trim().toUpperCase();
+      var funnelVariant = (params.get("funnel_variant") || "").trim();
+      var vaMarker = /(^|[-_])VA($|[-_])/i;
+
+      var isVa = campaign === "TR4INER-VA" ||
+        campaign === "CASOS-VA" ||
+        funnel === "VA" ||
+        vaMarker.test(funnelVariant) ||
+        Array.from(params.entries()).some(function (entry) {
+          return entry[0].toLowerCase().indexOf("utm_") === 0 && vaMarker.test(entry[1]);
+        });
+
+      // Todo lo que no es VA va a /fit4.
+      var destination = isVa ? "/fit4-va" : "/fit4";
+
+      // origin + querystring: el recorrido queda dentro del mismo deployment
+      // durante los previews y la atribución viaja completa al destino.
+      window.location.replace(window.location.origin + destination + queryString);
+    });
+  </script>
+</body>
+</html>
