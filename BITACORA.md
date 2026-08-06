@@ -2008,6 +2008,114 @@ Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ---
 
+## 2026-08-05 — `/fit4` toma la estructura de `/fit4-va` sin perder su piel
+
+**Rama:** `work/fit4-an-rediseno` · **Estado:** preview, pendiente de aprobación.
+
+### Qué cambió
+
+`/fit4` pasa de VSL con muro a la misma landing de venta larga que `/fit4-va`: mismo copy, mismos
+seis bloques de contenido y **la misma estructura de precios** (selector de bloque, tira de
+mesociclo, anclaje del $174 tachado, garantía junto al botón, barra fija en móvil).
+
+Lo que **no** se tocó, a propósito:
+
+- **La piel editorial.** `/fit4` conserva el crema `#F2EEE2`, Fraunces / Instrument Sans /
+  JetBrains Mono, el acento `#F5C518`, el grano de papel y el masthead. La estructura se tradujo a
+  ese idioma en vez de importar el tema oscuro de `/fit4-va`: la tira de meses se llena en tinta
+  sólida, el tachado es una línea de tinta y el chip de ahorro usa el acento. Son dos páginas
+  hermanas en estructura y distintas en identidad, como estaban.
+- **El selector dual de video.** Sigue cargando `T7Hop2PBd6tWQl0W` para AN y `Rl_cXuqDVuhtabtp`
+  cuando detecta marcadores VA en las UTMs. Verificado en los dos sentidos.
+- GTM, `noscript` de Meta, `attribution.js`/TR4Track, `noindex` y canonical.
+
+Igual que en `/fit4-va`, **se cae el muro de 3 minutos** y con él `fit4_offer_unlocked`. Los planes
+quedan visibles desde el inicio.
+
+### Precios y eventos
+
+Mismo contrato que `/fit4-va` (ver la entrada del 05-ago-2026): `avsq480z` = 3 meses $87,
+`9lmw8r6b` = 6 meses $127, los dos pago único. Se agregan `fit4_plan`, `fit4_cta` y
+`fit4_plan_toggle`; **se conserva `fit4_variant`** (`AN` | `VA`), que es propio de esta ruta y lo
+que permite separar su tráfico.
+
+### Corrección que alcanza también a `/fit4-va` (ya en producción)
+
+`autocomplete="off"` **no impide** que el navegador restaure la selección previa del toggle al
+recargar: se reprodujo en `/fit4`, que abría en el bloque de 3 meses después de una recarga. Ahora
+el plan inicial se fuerza por JS en vez de leerse del DOM, así la página siempre abre en 6 meses.
+El mismo arreglo se aplicó a `/fit4-va`, que traía el defecto idéntico.
+
+### Pendiente de decisión — copy en femenino
+
+El copy se copió tal cual de `/fit4-va`, que está escrito para mujeres. En `/fit4`, que atiende
+tráfico AN mixto, se ajustó solo la línea que quedaba gramaticalmente rota (*"No estás sola / las
+mujeres que llegan"* → *"No estás solo / las personas que llegan"*). El resto del copy es neutro,
+pero **la decisión editorial de fondo sigue abierta**: si `/fit4` debe hablarle a una audiencia
+mixta con el mismo texto que la página de Veronika.
+
+### Resultado esperado
+
+Igualar la estructura de conversión entre las dos rutas para poder comparar su rendimiento sin que
+el formato sea una variable más.
+
+### Resultado medido (completar después)
+
+---
+
+## 2026-08-05 — `/redirectfit4`: puente de tráfico a FIT4 por UTMs
+
+**Rama:** `work/fit4-an-rediseno` (va junto al rediseño de `/fit4`) · **Estado:** preview.
+
+### Qué es
+
+Página puente en `/redirectfit4` que reparte el tráfico entre las dos landings de FIT4, con el
+mismo patrón que `/redirectionutmstr4iner2`: lee las UTMs, decide destino y **reenvía el
+querystring completo** con `window.location.replace(origin + destino + queryString)`.
+
+- **Tráfico VA → `/fit4-va`**
+- **Todo lo demás → `/fit4`** (incluido el tráfico sin ningún parámetro)
+
+`location.replace` en vez de `href` para que el puente no quede en el historial y el botón atrás
+lleve al origen, no de vuelta al redirect. `window.location.origin` mantiene el recorrido dentro
+del mismo deployment durante los previews.
+
+### Cómo detecta VA
+
+Usa **la misma definición que ya aplica `/fit4`** para elegir su video, que es un superconjunto de
+la de `/redirectionutmstr4iner2` (que solo mira dos valores exactos de `utm_campaign`). Se eligió
+así a propósito: si el puente y el destino no coincidieran en qué es "tráfico VA", un lead podría
+aterrizar en la página de AN y aun así ver el video de Veronika.
+
+Se considera VA si: `utm_campaign` es `TR4INER-VA` o `CASOS-VA`, o `funnel=VA`, o `funnel_variant`
+contiene `VA` como token, o **cualquier** `utm_*` contiene `VA` delimitado por `-` o `_`.
+
+El marcador está anclado (`/(^|[-_])VA($|[-_])/i`), así que no se dispara con `VA` dentro de una
+palabra. Verificado sobre 12 casos, incluidos tres trampas que deben ir a `/fit4`:
+`utm_campaign=NAVA-2026`, `utm_content=VARIANTE-A` y `utm_source=NAVIDAD`.
+
+Probado punta a punta: VA llega a `/fit4-va` y AN a `/fit4`, los dos con el querystring intacto y
+con el video correspondiente cargado.
+
+### Decisiones
+
+- **Sin GTM en el puente.** Sumaría un `page_view` que ensucia el embudo y retrasaría el redirect.
+  El reparto ya es medible en el destino: las dos páginas emiten `fit4_vsl_loaded`, y `/fit4` lo
+  hace con `fit4_variant` (`AN` | `VA`).
+- **`<noscript>` con enlaces reales** a las dos rutas, en vez del "Activa JavaScript" sin salida
+  que tienen las páginas puente anteriores. Sin JS se pierde el querystring, que es inevitable en
+  una página estática, pero al menos el visitante llega.
+- Ruta por directorio (`redirectfit4/index.html`) y `cleanUrls`, igual que sus hermanas: no hizo
+  falta tocar `vercel.json`.
+
+### Resultado esperado
+
+Un solo enlace para las campañas de FIT4, que reparte solo y sin perder atribución.
+
+### Resultado medido (completar después)
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

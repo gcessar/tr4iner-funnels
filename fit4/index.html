@@ -15,14 +15,16 @@
 
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#F2EEE2" />
-  <title>FIT4CHALLENGE · TR4INER</title>
-  <meta name="description" content="Mira la presentación de FIT4CHALLENGE y descubre si este programa de TR4INER encaja contigo." />
+  <title>FIT4CHALLENGE · Presentación privada</title>
+  <meta name="description" content="Mira la presentación de FIT4CHALLENGE y elige tu bloque: 3 o 6 meses de entrenamiento y alimentación con seguimiento." />
   <link rel="canonical" href="https://metodo.tr4iner.com/fit4" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Se carga sin bloquear el render; con display=swap el texto ya salía en la fuente de respaldo. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
 
   <style>
     :root {
@@ -38,11 +40,12 @@
       --serif: "Fraunces", Georgia, serif;
       --sans: "Instrument Sans", -apple-system, sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
+      --ease: cubic-bezier(.2, .7, .2, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { -webkit-text-size-adjust: 100%; }
+    html { color-scheme: light; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
     body {
       min-height: 100dvh;
@@ -57,6 +60,7 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Grano de papel: es lo que separa el crema de un fondo plano. */
     body::before {
       content: "";
       position: fixed;
@@ -69,8 +73,14 @@
       background-size: 240px 240px;
     }
 
-    a { touch-action: manipulation; -webkit-tap-highlight-color: rgba(245, 197, 24, .28); }
-    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    a {
+      color: inherit;
+      text-decoration: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(245, 197, 24, .28);
+    }
+    img { display: block; max-width: 100%; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
     ::selection { background: var(--accent); color: var(--ink); }
 
     .skip-link {
@@ -81,10 +91,11 @@
       padding: 9px 12px;
       background: var(--ink);
       color: var(--cream);
+      font-family: var(--mono);
+      font-size: 12px;
       transform: translateY(-160%);
-      transition: transform .16s ease;
+      transition: transform .16s var(--ease);
     }
-
     .skip-link:focus { transform: none; }
 
     .page {
@@ -98,7 +109,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      margin-bottom: clamp(34px, 7vw, 62px);
+      margin-bottom: clamp(30px, 6vw, 52px);
       padding-bottom: 14px;
       border-bottom: 1px solid var(--rule-strong);
       font-family: var(--mono);
@@ -107,11 +118,9 @@
       letter-spacing: 0.14em;
       text-transform: uppercase;
     }
-
     .masthead-meta { color: var(--muted); }
 
-    .intro { max-width: 620px; margin-bottom: 24px; }
-
+    /* ══ Tipografía editorial ═════════════════════════════════ */
     .kicker {
       margin-bottom: 12px;
       font-family: var(--mono);
@@ -123,100 +132,50 @@
     }
 
     h1 {
-      max-width: 15ch;
       font-family: var(--serif);
-      font-size: clamp(36px, 8vw, 58px);
+      font-size: clamp(32px, 6.6vw, 52px);
+      font-variation-settings: "opsz" 100;
       font-weight: 560;
-      line-height: 1.03;
+      line-height: 1.06;
       letter-spacing: -0.035em;
       text-wrap: balance;
     }
+    h1 em { font-style: italic; font-weight: 500; }
 
-    h1 em { font-weight: 500; }
-
-    .player-shell {
-      overflow: hidden;
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
-    }
-
-    #f4c-player > div { width: 100%; }
-
-    .gate {
+    /* El resaltado va detrás del texto, nunca sobre la tinta. */
+    .hl {
       position: relative;
-      margin-top: 18px;
-      padding: clamp(20px, 5vw, 30px);
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+      z-index: 0;
+      white-space: nowrap;
     }
-
-    .gate::before {
+    .hl::before {
       content: "";
       position: absolute;
-      inset: 0 0 auto;
-      height: 2px;
-      background: var(--ink);
-    }
-
-    .gate-kicker {
-      margin-bottom: 13px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .waiting-grid {
-      display: grid;
-      grid-template-columns: minmax(130px, .72fr) minmax(220px, 1.28fr);
-      align-items: center;
-      gap: 24px;
-    }
-
-    #f4c-countdown {
-      font-family: var(--mono);
-      font-size: clamp(36px, 9vw, 52px);
-      font-weight: 600;
-      line-height: 1;
-      letter-spacing: -0.04em;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .progress {
-      height: 2px;
-      margin-top: 12px;
-      overflow: hidden;
-      background: var(--rule);
-    }
-
-    #f4c-progress-fill {
-      display: block;
-      width: 0;
-      height: 100%;
+      z-index: -1;
+      inset: .12em -.1em .04em;
       background: var(--accent);
-      transition: width .3s linear;
+      transform: skewX(-9deg);
     }
 
-    .copy {
-      max-width: 52ch;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .offer-title {
-      max-width: 15ch;
+    .h2 {
       font-family: var(--serif);
-      font-size: clamp(30px, 7vw, 42px);
+      font-size: clamp(26px, 4.6vw, 38px);
+      font-variation-settings: "opsz" 100;
       font-weight: 560;
       line-height: 1.08;
       letter-spacing: -0.03em;
       text-wrap: balance;
     }
+    .h2 em { font-style: italic; font-weight: 500; }
 
-    .offer-copy { margin: 12px 0 24px; color: var(--ink-soft); }
+    .copy { max-width: 56ch; color: var(--muted); font-size: 16px; line-height: 1.6; }
 
+    .sec { padding: clamp(46px, 8vw, 76px) 0 0; scroll-margin-top: 18px; }
+    .sec-head { margin-bottom: 30px; }
+
+    .rule { height: 1px; margin-top: clamp(46px, 8vw, 76px); background: var(--rule-strong); }
+
+    /* ══ Botones ══════════════════════════════════════════════ */
     .cta {
       position: relative;
       display: flex;
@@ -232,11 +191,9 @@
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.08em;
-      text-decoration: none;
       text-transform: uppercase;
-      transition: color .35s ease;
+      transition: color .35s var(--ease);
     }
-
     .cta::before {
       content: "";
       position: absolute;
@@ -246,7 +203,6 @@
       transform: translateX(-100%);
       transition: transform .45s cubic-bezier(.7, 0, .3, 1);
     }
-
     .cta:hover::before { transform: translateX(0); }
     .cta:hover { color: var(--ink); }
     .cta span { position: relative; z-index: 1; }
@@ -258,40 +214,442 @@
       font-family: var(--mono);
       font-size: 10px;
       letter-spacing: .06em;
+      text-transform: uppercase;
     }
 
-    .sep { display: inline-block; margin: 0 8px; }
-    #f4c-ready.reveal { animation: reveal .5s cubic-bezier(.2, .7, .2, 1) both; }
+    /* ══ Hero ═════════════════════════════════════════════════ */
+    .hero-lead { margin-top: 18px; }
 
-    @keyframes reveal {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: none; }
+    .player-shell {
+      margin-top: 26px;
+      overflow: hidden;
+      border: 1px solid var(--rule-strong);
+      background: var(--bg-deeper);
     }
+    #f4c-player > div { width: 100%; }
+
+    .hero-cta { margin-top: 22px; }
+
+    /* ══ Bloques de dolor ═════════════════════════════════════ */
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1px;
+      margin-top: 26px;
+      background: var(--rule-strong);
+      border: 1px solid var(--rule-strong);
+    }
+    .pain { padding: 22px 20px; background: var(--bg); }
+    .pain h3 {
+      margin-bottom: 9px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .pain p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+
+    /* ══ Presentación del programa ════════════════════════════ */
+    .reveal-sec { text-align: center; }
+    .reveal-lead {
+      max-width: 44ch;
+      margin: 0 auto 22px;
+      font-family: var(--serif);
+      font-size: clamp(19px, 3vw, 24px);
+      font-variation-settings: "opsz" 100;
+      font-weight: 500;
+      font-style: italic;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+    .mockup { width: min(460px, 88%); height: auto; aspect-ratio: 732 / 574; margin: 0 auto 14px; }
+    .brand-title {
+      font-family: var(--serif);
+      font-size: clamp(30px, 5.4vw, 44px);
+      font-variation-settings: "opsz" 100;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+    .reveal-copy { max-width: 52ch; margin: 18px auto 0; color: var(--muted); font-size: 16px; }
+    .reveal-copy b { color: var(--ink); font-weight: 600; }
+
+    /* ══ Qué incluye ══════════════════════════════════════════ */
+    .feat-list { margin-top: 26px; border-top: 1px solid var(--rule); }
+    .feat {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 16px;
+      padding: 20px 2px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .feat-ico svg {
+      width: 24px;
+      height: 24px;
+      margin-top: 2px;
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .feat h3 { margin-bottom: 4px; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+    .feat p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+
+    /* ══ Planes ═══════════════════════════════════════════════
+       Los dos bloques traen lo mismo: lo único que cambia es
+       cuánto dura. Un solo selector y una sola ficha; la tira de
+       meses se estira al cambiar y ahí se ve el valor. */
+    .plan-toggle {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 420px;
+      margin-top: 26px;
+      border: 1px solid var(--rule-strong);
+    }
+    .plan-toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .plan-toggle label {
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: 13px 8px;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: background .26s var(--ease), color .26s var(--ease);
+    }
+    .plan-toggle label + input + label { border-left: 1px solid var(--rule-strong); }
+    .plan-toggle label small { font-size: 9.5px; font-weight: 500; letter-spacing: .1em; opacity: .8; }
+    .plan-toggle label:hover { color: var(--ink); }
+    .plan-toggle input:checked + label { background: var(--ink); color: var(--cream); }
+    .plan-toggle input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: -3px; }
+
+    .plan-card {
+      position: relative;
+      margin-top: 18px;
+      padding: clamp(22px, 4vw, 32px);
+      border: 1px solid var(--rule-strong);
+      background: var(--bg-deeper);
+    }
+    .plan-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 2px;
+      background: var(--ink);
+    }
+
+    /* ── La tira de mesociclo: la firma de la ficha ─────────── */
+    .strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+    .blk {
+      position: relative;
+      height: 24px;
+      border: 1px solid var(--rule-strong);
+      overflow: hidden;
+    }
+    .blk::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .4s var(--ease);
+      transition-delay: calc(var(--i) * 70ms);
+    }
+    .blk.on::after { transform: scaleX(1); }
+
+    .strip-legend {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0 22px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .strip-legend b { color: var(--ink); font-weight: 600; }
+
+    /* Los dos paneles comparten celda: la ficha toma la altura
+       del más alto y cambiar de plan no salta el layout. */
+    .panels { display: grid; }
+    .panel {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate3d(0, 8px, 0);
+      transition: opacity .28s var(--ease), transform .28s var(--ease), visibility .28s;
+    }
+    .panel.on { opacity: 1; visibility: visible; transform: none; }
+
+    .plan-goal { margin-bottom: 18px; color: var(--ink-soft); font-size: 16px; }
+
+    /* ── Anclaje de precio ─────────────────────────────────────
+       El $174 no es un precio anterior sino lo que costaría
+       comprar dos bloques de 3: va resaltado, pero etiquetado. */
+    .plan-anchor {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-height: 26px;
+      margin-bottom: 4px;
+    }
+    .was {
+      position: relative;
+      font-family: var(--serif);
+      font-size: 24px;
+      font-variation-settings: "opsz" 100;
+      font-weight: 560;
+      line-height: 1;
+      letter-spacing: -.03em;
+      text-decoration: none;
+    }
+    .was::after {
+      content: "";
+      position: absolute;
+      left: -3px;
+      right: -3px;
+      top: 50%;
+      height: 2px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform .5s var(--ease);
+    }
+    .plan-card.is-in .panel.on .was::after { transform: scaleX(1); transition-delay: .45s; }
+
+    .anchor-label, .anchor-rate {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .anchor-rate { color: var(--ink-soft); }
+
+    .plan-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+    .plan-price b {
+      font-family: var(--serif);
+      font-size: clamp(46px, 9vw, 62px);
+      font-variation-settings: "opsz" 100;
+      font-weight: 560;
+      line-height: 1;
+      letter-spacing: -.045em;
+    }
+    .plan-price > span {
+      white-space: nowrap;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .save-chip {
+      padding: 5px 10px;
+      background: var(--accent);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translate3d(0, 6px, 0);
+      transition: opacity .34s var(--ease), transform .34s var(--ease);
+    }
+    .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; transition-delay: .85s; }
+
+    .plan-math {
+      margin: 14px 0 22px;
+      padding-top: 12px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .plan-math b { color: var(--ink); font-weight: 600; }
+
+    .plan-guarantee {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .plan-guarantee svg { width: 13px; height: 13px; fill: none; stroke: var(--ink); stroke-width: 2; }
+
+    /* ── Lo que traen los dos (una sola vez, no dos listas) ── */
+    .shared { margin-top: 18px; padding: 22px 2px 0; border-top: 1px solid var(--rule-strong); }
+    .shared-title {
+      margin-bottom: 16px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .shared ul {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 9px 24px;
+      list-style: none;
+    }
+    .shared li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+    .shared li svg {
+      flex: 0 0 15px;
+      width: 15px;
+      height: 15px;
+      margin-top: 5px;
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ══ FAQ ══════════════════════════════════════════════════ */
+    .faq { margin-top: 26px; border-top: 1px solid var(--rule); }
+    .faq details { border-bottom: 1px solid var(--rule); }
+    .faq summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 17px 2px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      transition: color .2s var(--ease);
+    }
+    .faq summary:hover { color: var(--muted); }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::marker { content: ""; }
+    .faq-pm {
+      flex: 0 0 auto;
+      font-family: var(--mono);
+      font-size: 17px;
+      line-height: 1;
+      transition: transform .3s var(--ease);
+    }
+    .faq details[open] .faq-pm { transform: rotate(45deg); }
+    .faq p { padding: 0 2px 19px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+    /* ══ Cierre ═══════════════════════════════════════════════ */
+    .final { text-align: center; }
+    .final .copy { margin: 18px auto 0; }
+    .final .cta { max-width: 420px; margin: 26px auto 0; }
+    .final .microcopy { text-align: center; }
+
+    footer {
+      margin-top: clamp(46px, 8vw, 76px);
+      padding-top: 22px;
+      border-top: 1px solid var(--rule-strong);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    footer p { margin: 4px 0; }
+
+    /* ══ Barra fija de compra (móvil) ═════════════════════════ */
+    .buybar {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--rule-strong);
+      background: rgba(242, 238, 226, .95);
+      backdrop-filter: blur(10px);
+      transform: translate3d(0, 110%, 0);
+      transition: transform .34s var(--ease);
+    }
+    .buybar.is-up { transform: none; }
+    .buybar-info { flex: 1 1 auto; line-height: 1.2; }
+    .buybar-info b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+    .buybar-info span {
+      display: block;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .buybar .cta { width: auto; flex: 0 0 auto; padding: 13px 18px; font-size: 10.5px; }
+
+    /* ══ Movimiento ═══════════════════════════════════════════ */
+    [data-reveal] {
+      opacity: 0;
+      transform: translate3d(0, 16px, 0);
+      transition: opacity .6s var(--ease), transform .6s var(--ease);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    [data-reveal].is-in { opacity: 1; transform: none; }
 
     @media (max-width: 600px) {
-      .masthead { margin-bottom: 32px; }
-      .intro { margin-bottom: 18px; }
-      .gate { margin-top: 12px; padding: 18px; }
-      .waiting-grid { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; }
-      #f4c-countdown { font-size: 32px; }
-      .copy { font-size: 14px; line-height: 1.5; }
+      body { padding-bottom: 70px; }
+      .buybar { display: flex; }
+      .masthead { margin-bottom: 26px; }
       .cta { padding: 18px; font-size: 10.5px; }
+      .plan-toggle { max-width: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
       *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
+        animation: none !important;
         transition-duration: .01ms !important;
       }
+      [data-reveal] { opacity: 1; transform: none; }
+      .blk.on::after { transform: scaleX(1); }
+      .panel { transform: none; }
+      .plan-card.is-in .panel.on .was::after { transform: scaleX(1); }
+      .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; }
     }
   </style>
+  <!-- Sin JS las entradas nunca se disparan y el toggle no cambia de panel:
+       la página no puede quedar en blanco ni esconder un plan. -->
+  <noscript>
+    <style>
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .plan-toggle, .strip, .strip-legend { display: none; }
+      .panels { display: block; }
+      .panel { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+      .panel + .panel { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--rule-strong); }
+      .was::after { transform: scaleX(1) !important; }
+      .save-chip { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <a class="skip-link" href="#planes">Saltar a los planes</a>
 
   <main class="page" id="contenido">
     <header class="masthead">
@@ -299,47 +657,245 @@
       <span class="masthead-meta">Presentación privada</span>
     </header>
 
-    <section class="intro" aria-labelledby="page-title">
-      <p class="kicker">FIT4CHALLENGE · Antes de empezar</p>
-      <h1 id="page-title">Mira esto completo. <em>Luego decides.</em></h1>
+    <section aria-labelledby="page-title">
+      <p class="kicker" data-reveal>FIT4CHALLENGE · Antes de empezar</p>
+      <h1 id="page-title" data-reveal style="--i:1">Sientes que te esfuerzas mucho pero no sabes si te acercas <em class="hl">al cuerpo que quieres</em></h1>
+      <p class="copy hero-lead" data-reveal style="--i:2">Aprende a organizar tus entrenamientos y tu alimentación para empezar a ver los cambios que estás buscando.</p>
+
+      <div class="player-shell" id="f4c-player" data-reveal style="--i:3" aria-label="Presentación de FIT4CHALLENGE"></div>
+
+      <a href="#planes" class="cta hero-cta" data-reveal style="--i:4">
+        <span>Quiero unirme hoy</span>
+        <span class="cta-action">Ver planes</span>
+      </a>
+      <p class="microcopy" data-reveal style="--i:5">Pago único<span> · </span>Sin renovación automática</p>
     </section>
 
-    <div class="player-shell" id="f4c-player" aria-label="Presentación de FIT4CHALLENGE"></div>
+    <section class="sec">
+      <div class="sec-head" data-reveal>
+        <h2 class="h2">¿Llevas tiempo <em>intentándolo?</em></h2>
+        <p class="copy" style="margin-top:14px">No estás solo. La mayoría de las personas que llegan a nosotros están atrapadas en:</p>
+      </div>
 
-    <section class="gate" aria-live="polite">
-      <div id="f4c-waiting">
-        <p class="gate-kicker">Tu acceso se activa en</p>
-        <div class="waiting-grid">
+      <div class="pain-grid" data-reveal>
+        <article class="pain">
+          <h3>Siempre vuelves a empezar</h3>
+          <p>Entre semana haces todo «bien», pero cuando sales a comer o se complica un día sientes que ya dañaste todo.</p>
+        </article>
+        <article class="pain">
+          <h3>No sabes qué ajustar</h3>
+          <p>Entrenas, comes saludable y aún así no sabes qué te está faltando para reducir cintura, definirte o construir el cuerpo que buscas.</p>
+        </article>
+        <article class="pain">
+          <h3>No sabes si lo haces bien</h3>
+          <p>Un día haces más cardio, otro comes menos, otro pruebas una dieta diferente. Al final te esfuerzas, pero no sabes si de verdad está funcionando.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sec reveal-sec">
+      <div data-reveal>
+        <p class="reveal-lead">Si te identificas con al menos uno, esto es exactamente lo que resolvemos con:</p>
+        <img class="mockup" src="/assets/fit4/fit4-mockup-caja-app.webp" width="732" height="574" loading="lazy" decoding="async" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
+        <h2 class="brand-title" translate="no">Fit4&nbsp;Challenge</h2>
+        <p class="reveal-copy">Un programa que combina entrenamiento, alimentación y mentalidad para ayudarte a construir el cuerpo que buscas. <b>No es una rutina genérica en PDF que terminas dejando a la mitad.</b></p>
+      </div>
+    </section>
+
+    <section class="sec">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">Qué incluye</p>
+        <h2 class="h2">Todo lo que hay <em>dentro</em></h2>
+      </div>
+
+      <div class="feat-list">
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V4m5 16v-7m5 7V8"></path></svg></div>
           <div>
-            <div id="f4c-countdown">03:00</div>
-            <div class="progress" id="f4c-progress" role="progressbar" aria-label="Progreso hasta desbloquear el acceso" aria-valuemin="0" aria-valuemax="180" aria-valuenow="0">
-              <span id="f4c-progress-fill"></span>
-            </div>
+            <h3>Evaluación inicial y mensual</h3>
+            <p>Cada mes revisamos tus avances y te decimos qué ajustar para que sigas viendo resultados.</p>
           </div>
-          <p class="copy">Mira el video con atención. Cuando termine el contador, podrás acceder con toda la información clara.</p>
+        </div>
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2m12 0h2M6 9v6m12-6v6M8 12h8M9 10.5h6v3H9z"></path></svg></div>
+          <div>
+            <h3>Plan de entrenamiento personalizado</h3>
+            <p>Armamos tu rutina en casa o gym desde 30 min. Si un ejercicio te molesta o no tienes el equipo, te mostramos con cuál reemplazarlo.</p>
+          </div>
+        </div>
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 1-2 3-2 5s.5 3 2 4v9"></path></svg></div>
+          <div>
+            <h3>Alimentación sin restricciones</h3>
+            <p>Aprende cuánto comer según tu objetivo y cómo adaptar tus comidas sin dejar el arroz, pan o lo que más te gusta.</p>
+          </div>
+        </div>
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg></div>
+          <div>
+            <h3>Respuestas directas de expertos</h3>
+            <p>¿Dudas con un ejercicio o alimentación? Escríbenos y un entrenador te ayudará a responderlas.</p>
+          </div>
+        </div>
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M11 18h2"></path></svg></div>
+          <div>
+            <h3>Área de miembros + video tutoriales</h3>
+            <p>Cada ejercicio tiene un video para que sepas exactamente cómo hacerlo y entrenes con seguridad.</p>
+          </div>
+        </div>
+        <div class="feat" data-reveal>
+          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5zM9 18h6m-5 3h4"></path></svg></div>
+          <div>
+            <h3>Audios semanales de motivación</h3>
+            <p>Cada semana recibirás un audio para ayudarte a ser constante y dejar de volver a empezar cada vez que algo se salga del plan.</p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div id="f4c-ready" hidden>
-        <p class="gate-kicker">Acceso desbloqueado</p>
-        <h2 class="offer-title">¿Este enfoque encaja contigo?</h2>
-        <p class="copy offer-copy">Si la respuesta es sí, puedes empezar ahora con un plan adaptado a ti.</p>
-        <a class="cta" id="f4c-cta" href="#" rel="noopener">
-          <span>Empezar FIT4CHALLENGE</span>
-          <span class="cta-action">Ahora</span>
-        </a>
-        <p class="microcopy">Acceso inmediato<span class="sep">·</span>Pago seguro vía Hotmart</p>
+    <section class="sec" id="planes">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">Elige tu bloque</p>
+        <h2 class="h2">Elige el plan que más <em>te convenga</em></h2>
+        <p class="copy" style="margin-top:14px">Los dos incluyen exactamente lo mismo. Lo único que cambia es cuánto dura tu proceso.</p>
+      </div>
+
+      <div class="plan-toggle" role="radiogroup" aria-label="Duración del bloque" data-reveal>
+        <!-- autocomplete=off: si no, el navegador restaura la selección previa
+             y el usuario puede volver con el bloque corto ya elegido. -->
+        <input type="radio" name="bloque" id="bloque-3" value="3-meses" autocomplete="off" />
+        <label for="bloque-3">3 meses<small>$87</small></label>
+        <input type="radio" name="bloque" id="bloque-6" value="6-meses" autocomplete="off" checked />
+        <label for="bloque-6">6 meses<small>Ahorras&nbsp;$47</small></label>
+      </div>
+
+      <div class="plan-card" id="plan-card" data-reveal style="--i:1">
+        <div class="strip" id="strip" aria-hidden="true">
+          <span class="blk" style="--i:0"></span>
+          <span class="blk" style="--i:1"></span>
+          <span class="blk" style="--i:2"></span>
+          <span class="blk" style="--i:3"></span>
+          <span class="blk" style="--i:4"></span>
+          <span class="blk" style="--i:5"></span>
+        </div>
+
+        <div class="panels">
+          <div class="panel" id="panel-3-meses" role="region" aria-label="Bloque de 3 meses">
+            <div class="strip-legend"><span><b>12</b>&nbsp;semanas</span><span>Bloque corto</span></div>
+            <p class="plan-goal">Para empezar con estructura y ver tus primeros cambios.</p>
+            <div class="plan-anchor"><span class="anchor-rate">$29 al mes</span></div>
+            <div class="plan-price"><b>$87</b><span>USD&nbsp;· pago único</span></div>
+            <p class="plan-math">Con el bloque de 6 meses bajarías a <b>$21 al mes</b> y ahorrarías $47.</p>
+            <a class="cta" data-checkout="3-meses" href="#" rel="noopener">
+              <span>Empezar con 3 meses</span>
+              <span class="cta-action">Ahora</span>
+            </a>
+            <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+          </div>
+
+          <div class="panel on" id="panel-6-meses" role="region" aria-label="Bloque de 6 meses">
+            <div class="strip-legend"><span><b>24</b>&nbsp;semanas</span><span>Proceso completo</span></div>
+            <p class="plan-goal">Para completar el proceso entero sin volver a empezar a mitad de camino.</p>
+            <div class="plan-anchor">
+              <del class="was">$174</del>
+              <span class="anchor-label">en dos bloques de 3</span>
+            </div>
+            <div class="plan-price">
+              <b>$127</b><span>USD&nbsp;· pago único</span>
+              <span class="save-chip">Ahorras&nbsp;$47</span>
+            </div>
+            <p class="plan-math">Te sale <b>$21 al mes</b> · 27% menos.</p>
+            <a class="cta" data-checkout="6-meses" href="#" rel="noopener">
+              <span>Quiero los 6 meses</span>
+              <span class="cta-action">Ahora</span>
+            </a>
+            <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+          </div>
+        </div>
+
+        <div class="shared">
+          <p class="shared-title">Los dos bloques incluyen</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Evaluación inicial y mensual</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Plan de alimentación personalizado</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Entrenamientos adaptados (casa o gym)</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Área privada con video tutoriales</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Audios semanales de mentalidad</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Chat de soporte directo con expertos</li>
+          </ul>
+        </div>
       </div>
     </section>
+
+    <section class="sec">
+      <div class="sec-head" data-reveal>
+        <h2 class="h2">¿Tienes dudas? <em>Aquí las resolvemos</em></h2>
+      </div>
+
+      <div class="faq">
+        <details data-reveal>
+          <summary>¿Funciona si nunca he entrenado antes?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Sí. El plan se adapta a tu nivel actual. No importa si eres principiante total o si llevas años sin moverte: nuestro equipo evalúa tu punto de partida y diseña una estrategia progresiva para ti.</p>
+        </details>
+        <details data-reveal>
+          <summary>¿Tengo que comer solo pollo y arroz?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Para nada. Recibirás un plan con 3 opciones variadas por cada comida del día, con las calorías ajustadas a tu objetivo. Sin pasar hambre y sin comer feo.</p>
+        </details>
+        <details data-reveal>
+          <summary>¿Sirve si quiero ganar masa muscular y no perder peso?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Completamente. Tu plan se ajusta según tu objetivo: perder grasa, tonificar o ganar masa muscular. Si buscas definirte y construir músculo, diseñamos tus cargas y tu alimentación exactamente para ese resultado.</p>
+        </details>
+        <details data-reveal>
+          <summary>¿Realmente me responderá una persona real?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Sí. En FIT4CHALLENGE hablas directamente con nuestro equipo de profesionales dentro del área de miembros para responder todo tipo de dudas.</p>
+        </details>
+        <details data-reveal>
+          <summary>¿Puedo cancelar cuando quiera?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Sí. Sin letras pequeñas ni contratos escondidos. Tienes 7 días de garantía de reembolso completo: si no es para ti, te devolvemos tu dinero.</p>
+        </details>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section class="sec final">
+      <div data-reveal>
+        <h2 class="h2">Dentro de unos meses vas a agradecer haber <em class="hl">empezado hoy</em></h2>
+        <p class="copy">Cada semana que pasa sin un plan es otra semana preguntándote si lo que haces realmente está funcionando. Empieza a seguir un plan diseñado para ayudarte a construir el cuerpo que buscas.</p>
+        <a href="#planes" class="cta">
+          <span>Quiero empezar hoy</span>
+          <span class="cta-action">Ver planes</span>
+        </a>
+        <p class="microcopy">Acceso inmediato<span> · </span>Pago seguro vía Hotmart</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>Entrenamiento y nutrición online · Miembros en +14 países</p>
+      <p>Acceso inmediato · Pago seguro vía Hotmart</p>
+    </footer>
   </main>
+
+  <div class="buybar" id="buybar" aria-hidden="true">
+    <div class="buybar-info">
+      <b>6 meses · $127</b>
+      <span>Pago único · $21/mes</span>
+    </div>
+    <a class="cta" data-checkout="6-meses" data-src="buybar" href="#" rel="noopener"><span>Empezar</span></a>
+  </div>
 
   <script src="/attribution.js"></script>
   <script>
     (function () {
       'use strict';
 
-      var CTA_AT_SECONDS = 180;
-      var HOTMART_URL = 'https://pay.hotmart.com/K104111098X?off=9lmw8r6b&checkoutMode=10';
+      var HOTMART_BASE = 'https://pay.hotmart.com/K104111098X';
+      var OFFERS = {
+        '3-meses': 'avsq480z',
+        '6-meses': '9lmw8r6b'
+      };
+
       var params = new URLSearchParams(window.location.search);
 
       // Reconoce también campañas que terminan en “-VA” y marcadores funcionales del funnel.
@@ -371,80 +927,139 @@
       window.dataLayer.push({ event: 'fit4_vsl_loaded', fit4_variant: variant });
 
       // Hotmart recibe todos los parámetros presentes, no una lista que quede vieja con la próxima campaña.
-      var checkoutUrl = new URL(HOTMART_URL);
-      params.forEach(function (value, key) {
-        if (value) checkoutUrl.searchParams.set(key, value);
-      });
+      function buildCheckoutUrl(plan) {
+        var url = new URL(HOTMART_BASE);
+        url.searchParams.set('off', OFFERS[plan]);
+        url.searchParams.set('checkoutMode', '10');
 
-      if (window.TR4Track) {
-        var persistedAttribution = window.TR4Track.getAttribution();
-        Object.keys(persistedAttribution).forEach(function (key) {
-          if (!checkoutUrl.searchParams.has(key)) checkoutUrl.searchParams.set(key, persistedAttribution[key]);
+        params.forEach(function (value, key) {
+          if (value) url.searchParams.set(key, value);
         });
+
+        if (window.TR4Track) {
+          var persisted = window.TR4Track.getAttribution();
+          Object.keys(persisted).forEach(function (key) {
+            if (!url.searchParams.has(key)) url.searchParams.set(key, persisted[key]);
+          });
+        }
+
+        return url.toString();
       }
 
-      var cta = document.getElementById('f4c-cta');
-      cta.href = checkoutUrl.toString();
-      cta.addEventListener('click', function () {
-        window.dataLayer.push({ event: 'fit4_checkout_click', fit4_variant: variant });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-checkout]'), function (cta) {
+        cta.href = buildCheckoutUrl(cta.getAttribute('data-checkout'));
+        cta.addEventListener('click', function () {
+          // El plan se lee al hacer clic: el de la barra fija cambia con el toggle.
+          window.dataLayer.push({
+            event: 'fit4_checkout_click',
+            fit4_variant: variant,
+            fit4_plan: cta.getAttribute('data-checkout'),
+            fit4_cta: cta.getAttribute('data-src') || 'card'
+          });
+        });
       });
 
+      // ── Selector de bloque ────────────────────────────────
+      // Una sola ficha: la tira se estira al pasar de 3 a 6 meses.
+      var MONTHS = { '3-meses': 3, '6-meses': 6 };
+      var planCard = document.getElementById('plan-card');
+      var blocks = Array.prototype.slice.call(document.querySelectorAll('#strip .blk'));
+      var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="bloque"]'));
+      var buybar = document.getElementById('buybar');
+      var buybarCta = buybar && buybar.querySelector('[data-checkout]');
+      var buybarInfo = buybar && buybar.querySelector('.buybar-info');
+      var currentPlan = '6-meses';
+
+      var BUYBAR_COPY = {
+        '3-meses': { title: '3 meses · $87', note: 'Pago único · $29/mes' },
+        '6-meses': { title: '6 meses · $127', note: 'Pago único · $21/mes' }
+      };
+
+      function paintStrip() {
+        // La tira solo se llena cuando la ficha ya entró en vista, si no
+        // la animación se gasta detrás de un elemento invisible.
+        var filled = planCard.classList.contains('is-in') ? MONTHS[currentPlan] : 0;
+        blocks.forEach(function (blk, i) { blk.classList.toggle('on', i < filled); });
+      }
+
+      function selectPlan(plan) {
+        currentPlan = plan;
+        Object.keys(MONTHS).forEach(function (key) {
+          var panel = document.getElementById('panel-' + key);
+          if (panel) panel.classList.toggle('on', key === plan);
+        });
+        paintStrip();
+
+        if (buybarCta) {
+          buybarCta.href = buildCheckoutUrl(plan);
+          buybarCta.setAttribute('data-checkout', plan);
+          buybarInfo.querySelector('b').textContent = BUYBAR_COPY[plan].title;
+          buybarInfo.querySelector('span').textContent = BUYBAR_COPY[plan].note;
+        }
+      }
+
+      radios.forEach(function (radio) {
+        radio.addEventListener('change', function () {
+          if (!radio.checked) return;
+          selectPlan(radio.value);
+          window.dataLayer.push({
+            event: 'fit4_plan_toggle',
+            fit4_variant: variant,
+            fit4_plan: radio.value
+          });
+        });
+      });
+
+      // El arranque se fuerza acá y no se lee del DOM: `autocomplete=off` no
+      // impide que el navegador restaure la selección previa al recargar, y la
+      // página siempre debe abrir en el bloque de 6 meses.
+      var DEFAULT_PLAN = '6-meses';
+      radios.forEach(function (radio) { radio.checked = radio.value === DEFAULT_PLAN; });
+      selectPlan(DEFAULT_PLAN);
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // ── Entradas escalonadas ──────────────────────────────
+      var revealables = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+      var markIn = function (el) {
+        el.classList.add('is-in');
+        // La tira arranca su llenado recién cuando la ficha es visible.
+        if (el === planCard) paintStrip();
+      };
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        revealables.forEach(markIn);
+      } else {
+        var revealObserver = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) { markIn(entry.target); obs.unobserve(entry.target); }
+          });
+        }, { threshold: .15, rootMargin: '0px 0px -8% 0px' });
+        revealables.forEach(function (el) { revealObserver.observe(el); });
+        // Red de seguridad: si el observer no dispara, nada queda invisible.
+        setTimeout(function () { revealables.forEach(markIn); }, 2500);
+      }
+
+      // ── Barra fija: entra cuando los planes salen de vista ──
+      var planes = document.getElementById('planes');
+      if ('IntersectionObserver' in window && buybar && planes) {
+        new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            // Solo después de haber pasado los planes, no mientras sigue arriba.
+            var passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+            buybar.classList.toggle('is-up', passed);
+            buybar.setAttribute('aria-hidden', passed ? 'false' : 'true');
+          });
+        }, { threshold: 0 }).observe(planes);
+      }
+
+      // ── VSL ────────────────────────────────────────────────
       var embed = document.createElement('div');
       embed.id = video.id;
       embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
       document.getElementById('f4c-player').appendChild(embed);
 
-      // Helper oficial: resuelve el reproductor recién cuando Vidalytics expone la API.
-      !function (v, a, p, i) {
-        v.getVidalyticsPlayer = function (n) {
-          v[a] = v[a] || {}; v[a][p] = v[a][p] || {};
-          var d = v[a][p][n] = v[a][p][n] || {};
-          return new Promise(function (resolve) {
-            if (d[i]) return void resolve(d[i]);
-            var player;
-            Object.defineProperty(d, i, {
-              get: function () { return player; },
-              set: function (value) { player = value; resolve(value); }
-            });
-          });
-        };
-      }(window, '_vidalytics', 'embeds', 'player');
-
       loadVidalytics(video.id, video.url);
-
-      getVidalyticsPlayer(video.id).then(function (player) {
-        if (!player) return;
-
-        var countdown = document.getElementById('f4c-countdown');
-        var progress = document.getElementById('f4c-progress');
-        var fill = document.getElementById('f4c-progress-fill');
-        var waiting = document.getElementById('f4c-waiting');
-        var ready = document.getElementById('f4c-ready');
-        var revealed = false;
-
-        function render() {
-          var elapsed = Math.max(0, Number(player.currentTime()) || 0);
-          var remaining = Math.max(0, Math.ceil(CTA_AT_SECONDS - elapsed));
-          var percentage = Math.min(100, (elapsed / CTA_AT_SECONDS) * 100);
-
-          countdown.textContent = String(Math.floor(remaining / 60)).padStart(2, '0') + ':' +
-            String(remaining % 60).padStart(2, '0');
-          progress.setAttribute('aria-valuenow', String(Math.min(CTA_AT_SECONDS, Math.floor(elapsed))));
-          fill.style.width = percentage + '%';
-
-          if (!revealed && elapsed >= CTA_AT_SECONDS) {
-            revealed = true;
-            waiting.hidden = true;
-            ready.hidden = false;
-            ready.classList.add('reveal');
-            window.dataLayer.push({ event: 'fit4_offer_unlocked', fit4_variant: variant });
-          }
-        }
-
-        player.on('timeupdate', render);
-        player.on('ratechange', render);
-        render();
-      });
 
       function loadVidalytics(embedId, embedUrl) {
         (function (v, i, d, a, l, y, t, c, s) {
