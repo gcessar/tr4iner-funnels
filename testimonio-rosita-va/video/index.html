@@ -86,16 +86,10 @@
         <div class="form-loader" id="form-loader" role="status">Cargando evaluación…</div>
         <!-- El embed live 01KHA5... resuelve a este formulario, pero fuerza shareGaInstance.
              Usamos el ID real para conservar la evaluación; GA4 sigue centralizado en GTM. -->
-        <div
-          id="tf-embed"
-          data-tf-widget="CGxeptJu"
-          data-tf-hide-headers
-          data-tf-opacity="0"
-          data-tf-disable-scroll
-          data-tf-inline-on-mobile
-          data-tf-auto-resize="350,700"
-          data-tf-on-ready="rositaTypeformReady"
-        ></div>
+        <!-- Se monta con tf.createWidget (SDK) en vez de data-tf-*: así autoResize
+             va como booleano sin tope de alto y los hidden fields viajan como
+             objeto, sin romper tildes ni espacios. -->
+        <div id="tf-embed"></div>
         <noscript>
           <p class="form-loader">Activa JavaScript para completar la evaluación.</p>
         </noscript>
@@ -145,17 +139,17 @@
       params.set("funnel", "VA");
       params.set("funnel_variant", "testimonio-rosita-va-video");
 
-      function setHiddenFields() {
+      function buildHiddenFields() {
         var identityFields = ["first_name", "name", "email", "sexo", "video", "funnel", "funnel_variant"];
         var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
-        var hiddenFields = [];
+        var hidden = {};
 
         params.forEach(function (value, key) {
           var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
           if (!allowed || !value) return;
-          // Typeform codifica estos valores al construir el iframe. Precodificarlos
-          // acá convierte espacios, tildes y emojis en texto literal con porcentajes.
-          hiddenFields.push(key + "=" + value);
+          // El SDK codifica cada valor por su cuenta: acá van en crudo para que
+          // espacios, tildes y emojis lleguen enteros.
+          hidden[key] = value;
         });
 
         // fbc/fbp se toman del dominio actual; no se inventan ni se sustituyen por IDs externos.
@@ -163,28 +157,50 @@
           ? window.TR4Track.getMetaIds()
           : {};
         Object.keys(metaIds).forEach(function (key) {
-          if (metaIds[key]) hiddenFields.push(key + "=" + metaIds[key]);
+          if (metaIds[key]) hidden[key] = metaIds[key];
         });
 
-        if (tf && hiddenFields.length) {
-          tf.setAttribute("data-tf-hidden", hiddenFields.join(","));
-        }
+        return hidden;
+      }
+
+      function mountTypeform() {
+        if (!window.tf || !window.tf.createWidget || !tf) return;
+        window.tf.createWidget("CGxeptJu", {
+          container: tf,
+          hideHeaders: true,
+          opacity: 0,
+          // Evita que un swipe al scrollear la página salte de pregunta.
+          disableScroll: true,
+          inlineOnMobile: true,
+          // Booleano, sin "min,max": el alto sigue a la pregunta y las que tienen
+          // muchas opciones dejan de cortar el botón de continuar.
+          autoResize: true,
+          // Explícito porque GA4 va centralizado en GTM, no compartido con el embed.
+          // Ojo: el form sigue tirando el warning de shareGaInstance en consola;
+          // eso viene de su configuración en Typeform, no de acá.
+          shareGaInstance: false,
+          hidden: buildHiddenFields(),
+          onReady: function () {
+            var iframe = tf.querySelector("iframe");
+            if (iframe) iframe.title = "Diagnóstico para Asesoría TR4INER";
+            if (loader) loader.style.display = "none";
+          }
+        });
       }
 
       function loadTypeform() {
         if (typeformLoaded) return;
         typeformLoaded = true;
-        setHiddenFields();
 
-        window.rositaTypeformReady = function () {
-          var iframe = tf ? tf.querySelector("iframe") : null;
-          if (iframe) iframe.title = "Diagnóstico para Asesoría TR4INER";
-          if (loader) loader.style.display = "none";
-        };
+        if (window.tf && window.tf.createWidget) {
+          mountTypeform();
+          return;
+        }
 
         var script = document.createElement("script");
         script.src = "https://embed.typeform.com/next/embed.js";
         script.async = true;
+        script.onload = mountTypeform;
         script.onerror = function () {
           if (loader) loader.textContent = "No pudimos cargar la evaluación. Recarga la página para intentarlo otra vez.";
         };
@@ -201,12 +217,19 @@
       if (params.get("tf_debug") === "1" || !("IntersectionObserver" in window)) {
         loadTypeform();
       } else {
+        // Con rootMargin 0 el embed recién empezaba a bajar cuando el form ya estaba
+        // en pantalla, y el usuario se comía script + iframe + contenido mirando el
+        // "Cargando evaluación…". Se precarga un scroll antes de llegar.
         var observer = new IntersectionObserver(function (entries) {
           if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
           observer.disconnect();
           loadTypeform();
-        }, { rootMargin: "0px" });
+        }, { rootMargin: "1200px 0px" });
         observer.observe(frame);
+
+        // Red de seguridad: si alguien se queda viendo el VSL sin scrollear, el form
+        // igual queda listo para cuando baje.
+        setTimeout(loadTypeform, 6000);
       }
     })();
   </script>

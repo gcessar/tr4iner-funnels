@@ -2170,6 +2170,46 @@ dispararse en estas páginas — no se puede tocar desde el repo.
 
 ---
 
+## 2026-08-07 — Typeform de `/testimonio-rosita-va/video` con el SDK
+
+### Qué cambió
+El embed pasó de atributos `data-tf-*` a `tf.createWidget()` (el SDK que ya expone
+`embed.js` como `window.tf`, sin bundler — el repo no tiene build step).
+
+**El botón de continuar ya no se corta.** La causa era `data-tf-auto-resize="350,700"`:
+ese "min,max" topaba el iframe en 700 px, así que las preguntas con muchas opciones
+quedaban recortadas y el botón inalcanzable. Ahora `autoResize: true` (booleano, sin
+techo) deja que el alto siga a la pregunta. Verificado simulando 600/900/1300/1800 px:
+el marco acompaña sin recortar.
+
+**El `min-height` se queda como piso, nunca como techo.** Sin él Typeform apila el
+botón encima de la última opción en las preguntas cortas.
+
+**CSS del widget inline.** `createWidget()` no autoinyecta su CSS (el embed por
+`data-tf-*` sí lo hacía) y sin `.tf-v1-widget{height:100%}` el iframe caía al alto
+por defecto de 150 px. Va copiado en `rosita-theme.css` en vez de sumar una petición
+a `embed.typeform.com/next/css/widget.css`.
+
+**Hidden fields como objeto.** Antes se armaba un string `"k=v,k=v"`; el SDK los
+codifica solo, así que `first_name=María José` llega entero.
+
+**Carga anticipada.** El IntersectionObserver tenía `rootMargin: "0px"`, o sea que el
+form recién empezaba a bajar cuando ya estaba en pantalla y el usuario se comía
+script + iframe + contenido mirando el "Cargando evaluación…". Ahora precarga
+1200 px antes, con un timeout de 6 s de respaldo para quien se quede viendo el VSL.
+
+### Ojo
+- `disableScroll` se mantiene: según la doc no es scroll interno del contenido sino
+  que evita navegar entre preguntas con scroll/swipe. Quitarlo haría que un swipe al
+  scrollear la página saltee preguntas en móvil.
+- Sigue apareciendo en consola el warning de `shareGaInstance` (busca un objeto `ga`
+  que no existe porque GA4 va por GTM). Viene de la configuración del form en
+  Typeform, no del código; no rompe nada. Se dejó `shareGaInstance: false` explícito,
+  pero no se pudo verificar que lo silencie: el SDK sólo hace ese chequeo en el primer
+  montaje de la página.
+
+---
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
