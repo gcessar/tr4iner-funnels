@@ -2210,6 +2210,39 @@ script + iframe + contenido mirando el "Cargando evaluación…". Ahora precarga
 
 ---
 
+## 2026-08-07 — El tope de alto del Typeform también estaba en Flor, Flor VA y Dashiel
+
+### Qué cambió
+El mismo `data-tf-auto-resize="350,700"` que cortaba el botón en Rosita estaba en las
+tres páginas canónicas con Typeform incrustado:
+
+- `registro-typeform-flor.html` (`/testimonio-flor`)
+- `registro-typeform-flor-va.html` (`/testimonio-flor-va`)
+- `registro-typeform-optimizado.html` (`/testimonio-dashiel`)
+
+En las tres el "min,max" pasó a `data-tf-auto-resize` sin techo. Verificado forzando
+700/1200/1500 px sobre el div que Typeform redimensiona: el iframe acompaña sin recortar.
+
+**Precarga de `embed.js`.** Acá el form no se revela por scroll sino por temporizador
+(`REVEAL_SECONDS = 3`), así que la descarga arrancaba recién a los 3 s y el usuario se
+comía el "Cargando aplicación…". Con `<link rel="preload" as="script">` el archivo baja
+a los ~20 ms y cuando el reveal lo pide a los ~3 s resuelve en 49 ms desde caché.
+
+### Por qué no se migraron al SDK como Rosita
+Estas usan `data-tf-live="01KHA5…"` (embed live), no `data-tf-widget`. Pasarlas a
+`tf.createWidget()` implicaría cambiarles el tipo de embed en el funnel principal, y
+el bug se arregla sin eso. Además, con `data-tf-*` el CSS del widget sí se autoinyecta,
+así que no hacía falta copiarlo como en Rosita.
+
+### Sin tocar
+- `registro-typeform-flor-B.html` y `registro-typeform-optimizado-B.html`: archivadas,
+  no son rutas públicas, y ni siquiera declaran `auto-resize`.
+- El `min-height` de 590/640 px en `[data-tf-live]` de Flor VA deja ~264 px de hueco
+  bajo el form cuando la pregunta es corta. Es preexistente y reserva espacio contra
+  el salto de layout mientras carga; no se tocó.
+
+---
+
 ---
 
 <!-- TEMPLATE para próximas entradas:

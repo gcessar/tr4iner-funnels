@@ -21,6 +21,9 @@
 
   <link rel="preconnect" href="https://fast.vidalytics.com" />
   <link rel="preconnect" href="https://embed.typeform.com" />
+  <!-- El form se revela a los 3s; precargarlo evita que ahi recien empiece
+       la descarga y el usuario se coma el "Cargando aplicacion...". -->
+  <link rel="preload" as="script" href="https://embed.typeform.com/next/embed.js" crossorigin />
   <link rel="preload" href="/assets/fonts/instrument-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/assets/fonts/poppins-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -820,7 +823,7 @@
             id="tf-embed"
             data-tf-live="01KHA5RZHGV02HW971F4227939"
             data-tf-inline-on-mobile
-            data-tf-auto-resize="350,700"
+            data-tf-auto-resize
           ></div>
         </div>
       </div>
