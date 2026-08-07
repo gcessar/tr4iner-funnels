@@ -360,6 +360,16 @@
       background: transparent;
     }
 
+    /* Typeform mete un div propio entre el contenedor y su widget, y ese div corta
+       la cadena de `min-height: inherit` con la que el widget baja el piso hasta el
+       iframe. Sin esto el iframe se queda en el alto que calcula Typeform (288px en
+       la pregunta de SI/NO) y su layout apila el boton sobre la ultima opcion. */
+    .cta-typeform-frame [data-tf-live] > div,
+    .cta-typeform-frame [data-tf-live] .tf-v1-widget,
+    .cta-typeform-frame [data-tf-live] iframe {
+      min-height: inherit;
+    }
+
     .loading-form {
       display: grid;
       min-height: 350px;
@@ -581,7 +591,7 @@
   <main class="page" id="inicio">
     <header class="case-masthead">
       <span class="case-masthead-brand">Anthoni Montalván / Estudio</span>
-      <span class="case-masthead-date">Junio 2026</span>
+      <span class="case-masthead-date">Agosto 2026</span>
     </header>
 
     <div class="case-mark">Caso 01 · Análisis paso a paso</div>

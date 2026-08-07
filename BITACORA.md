@@ -2243,6 +2243,47 @@ así que no hacía falta copiarlo como en Rosita.
 
 ---
 
+## 2026-08-07 — Fecha del masthead a agosto 2026 y el piso de alto que no llegaba al iframe
+
+### Fecha
+La fecha del masthead estaba vieja en cuatro páginas:
+
+- `index.html` — julio → **agosto 2026**
+- `registro-typeform-flor-va.html` — julio → **agosto 2026**
+- `registro-typeform-flor.html` — junio → **agosto 2026**
+- `registro-typeform-optimizado.html` — junio → **agosto 2026**
+
+`renueva/index.html` ya decía agosto. Los `dateModified` del JSON-LD son otra cosa y
+no se tocaron.
+
+### Lo que faltaba del arreglo del Typeform
+Quitar el techo de `auto-resize` no alcanzaba. Typeform inserta un div propio entre el
+contenedor y su widget, y ese div corta la cadena de `min-height: inherit` con la que
+el widget baja el piso hasta el iframe. Resultado: el iframe se quedaba en el alto que
+calcula Typeform (288 px en la pregunta de SI/NO) y su layout apilaba el botón
+"Aceptar" encima de la última opción, con scroll interno.
+
+Se reconecta la cadena en las tres páginas:
+
+```css
+.cta-typeform-frame [data-tf-live] > div,
+.cta-typeform-frame [data-tf-live] .tf-v1-widget,
+.cta-typeform-frame [data-tf-live] iframe { min-height: inherit; }
+```
+
+El piso que ya existía (350 px en Flor y Dashiel, 590/640 px en Flor VA) ahora sí llega
+al iframe. Verificado: alto mínimo respetado, y sigue creciendo hasta 1400 px sin recortar.
+
+De paso desapareció el hueco de ~264 px bajo el form en Flor VA que había quedado
+anotado como pendiente: ahora el formulario ocupa los 640 px del contenedor en vez de
+dejar la franja beige.
+
+### Nota
+En Rosita esto no hacía falta porque usa `data-tf-widget` (sin el div intermedio) y ahí
+`.tf-v1-widget` es hijo directo del contenedor, así que la cadena nunca se cortó.
+
+---
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
