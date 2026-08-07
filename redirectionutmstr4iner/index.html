@@ -27,9 +27,19 @@
       const medium = urlParams.get("utm_medium");
 
       const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+
+      if (isVa) {
+        var fit4Url = new URL(window.location.origin + "/fit4-va");
+        urlParams.forEach(function (value, key) {
+          fit4Url.searchParams.set(key, value);
+        });
+        window.location.replace(fit4Url.toString());
+        return;
+      }
+
       const isMetaCaseStudy = source === "MetaAds" && medium === "Caso_Estudio";
-      const phone = isVa ? "15677024560" : "17439014239";
-      const message = isMetaCaseStudy && !isVa
+      const phone = "17439014239";
+      const message = isMetaCaseStudy
         ? "¡Hola! Quiero más información."
         : "Hola! Necesito ayuda con mi transformacion fisica y buscaba conocer mas sobre los programas que ofrece Tr4iner.";
 
