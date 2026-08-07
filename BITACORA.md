@@ -2128,6 +2128,48 @@ Rama borrada tras confirmar el merge con `git branch --merged main`.
 
 ### Resultado medido (completar después)
 
+## 2026-08-07 — Velocidad de carga en las páginas de Veronika (Rosita y Flor)
+
+### Qué cambió
+Optimización de la ruta crítica de `/testimonio-rosita-va`, `/testimonio-rosita-va/video`
+y `/testimonio-flor-va`.
+
+**Fuentes self-hosted (`/assets/fonts/`).** Antes cada página encadenaba
+`fonts.googleapis.com` (CSS) → `fonts.gstatic.com` (woff2): dos conexiones nuevas
+bloqueando el render. Ahora los woff2 salen del mismo origen, con `preload` de las
+dos familias del above-the-fold. Google servía el **mismo archivo variable** para
+cada peso declarado (Outfit 400/500/600/700 = 4 descargas idénticas), así que se
+dedupló a un archivo por familia con `font-weight` en rango. Sólo se guardan los
+subsets `latin` y `latin-ext`.
+
+**Montserrat eliminado de Flor.** Estaba declarado como fallback detrás de Poppins
+(`--serif: "Poppins", "Montserrat", ...`), por lo que nunca llegaba a renderizar,
+pero se descargaban sus 3 pesos igual.
+
+**Imágenes.**
+- `vero-perfil-footer.webp`: 700×700 / 193 KB para un avatar que se muestra a 46 px.
+  Regenerado a 144 px (cubre el `scale(1.55)` del tema VA) → 4.8 KB. **−97%**
+- `vsl-poster` (LCP de la landing de Rosita): JPG 159 KB → WebP q80 32 KB. **−80%**
+  Se conserva el `.jpg` porque `og:image` lo sigue usando para compartir en redes.
+
+### Por qué
+Son páginas de tráfico pago: el LCP se paga en CPL. La ruta crítica traía dos
+dominios extra antes de pintar texto y ~350 KB de imágenes evitables.
+
+### Resultado medido (local, servidor estático)
+- Peticiones a Google Fonts: **12 → 0**
+- DOMContentLoaded: **86 ms** (Rosita), **23 ms** (Flor), **36 ms** (video)
+- Verificado que Anton, Outfit, JetBrains Mono, Instrument Sans y Poppins renderizan
+  igual que antes, y que Vidalytics y Typeform siguen cargando.
+
+### Pendiente / observación
+GTM inyecta 12 hosts de terceros (ManyChat, Hotmart, Clarity, Brevo, Meta) que siguen
+pidiendo recursos hasta ~27 s después del load. No bloquean el primer render porque
+GTM es async, pero conviene revisar en el contenedor de GTM si todos esos tags deben
+dispararse en estas páginas — no se puede tocar desde el repo.
+
+---
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
