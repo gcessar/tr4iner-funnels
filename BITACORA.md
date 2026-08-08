@@ -5,6 +5,107 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-08-08 — El poster sale del HTML y el CTA sube al hero (PRUEBA EN CURSO: sáb 8 → dom 9)
+
+### Qué cambió
+
+Dos cosas en `/casos-de-estudio`, ambas de estructura. **No se tocó una sola
+palabra del copy ni un color.**
+
+1. **El thumbnail del video dejó de viajar dentro del HTML.** Estaba pegado como
+   base64: 253.600 bytes de los 301.453 que pesaba el archivo, el **84%**. Ahora
+   vive en `/assets/caso-estudio-an/` en WebP, con `srcset` 760w/1200w y
+   `preload`, siguiendo el mismo patrón que ya usaba Rosita VA.
+2. **CTA nuevo pegado al video** (`#heroCta`), visible sin scrollear. Abre el
+   mismo modal de siempre. El CTA de abajo de los bullets queda intacto.
+
+De yapa, tres arreglos que salieron de medir la página:
+
+- La barra fija ahora se esconde con **cualquiera** de los dos CTA en pantalla.
+  Se lleva la cuenta en un `Set`, porque con dos observers escribiendo la misma
+  clase, el que salía de pantalla le borraba la barra al que había entrado.
+- **Los tiempos de entrada.** El titular se revelaba palabra por palabra hasta
+  los 1,46 s y el video aparecía a los 2,0 s. Bajan a 0,79 s y 0,84 s.
+- **`prefers-reduced-motion`**, que la página no tenía.
+
+### Por qué
+
+El navegador lee el archivo de arriba abajo, así que **todo lo que venía después
+de esa foto no existía hasta que la foto terminaba de bajar**. Medido sobre el
+archivo de producción:
+
+| Qué | Byte | % del archivo |
+|---|---|---|
+| El titular | 29.998 | 10,0% |
+| Arranca el JPEG pegado | 30.465 | 10,1% |
+| Los bullets | 284.448 | 94,4% |
+| **El formulario de registro** | **287.259** | **95,3%** |
+
+En un celular con señal irregular eso es: el titular, un hueco gris, y ningún
+botón. El **97,5%** del tráfico de esta página es móvil.
+
+Lo que decía la medición de may–jul 2026 (GA4 + CRM producción):
+
+- **74,4%** de rebote y **5,9 s** de permanencia en el tráfico de MetaAds,
+  contra 44,3% y 20,9 s en el de YouTube. Meta es el 66% de las sesiones.
+- Sólo el **20,5%** de los visitantes llega a tocar el formulario
+  (13.559 de 66.185).
+- Perú es el 55% del tráfico, rebota 70,8% y pasa al caso de estudio al 14,9%,
+  contra 31,6% de Colombia.
+- Las páginas a las que esta landing manda gente pesan 23 KB (Dashiel), 23 KB
+  (Flor), 31 KB (calendly-an). **La landing pesaba 13 veces más que el destino.**
+
+### Resultado medido del cambio (peso, no conversión)
+
+| | Antes | Después |
+|---|---|---|
+| `index.html` crudo | 302.868 B | **52.258 B** (−83%) |
+| HTML comprimido (lo que viaja) | ~201 KB | **13 KB** (−93%) |
+| Transferencia real medida en prod (brotli) | — | **14,4 KB** |
+| Imagen | 248 KB base64, bloqueante | 45 KB WebP, en paralelo |
+| El formulario existe en el byte | 287.259 de 301.453 | 35.748 de 50.823 |
+| CTA termina en (viewport 812) | después de 4 bullets | **773 px** |
+
+El base64 casi no comprimía (302 KB → 205 KB con gzip): base64 de un JPEG es
+prácticamente incompresible. Ese es el motivo de que la mejora comprimida (−93%)
+sea mayor que la cruda (−83%).
+
+### Verificación
+
+- Local a 375×812: los tres CTA abren el modal, el formulario conserva
+  honeypot/nombre/email/sexo, 0 errores de consola, 0 errores de anidamiento.
+- Producción tras el deploy: poster externo (`poster-760.webp`), CTA a 773 px y
+  visible sin scroll, modal abre, titular sigue en Fraunces.
+
+### Lo que NO se publicó, a propósito
+
+La rama **`design/ce-an-tipografia`** (Stack Sans Headline + Lexend Light,
+fuentes auto-hospedadas, masthead y kicker eliminados, capitular fuera, minutos
+fuera de imagen y botones) queda sin publicar. Si entran las dos cosas juntas no
+hay forma de saber cuál movió la conversión.
+
+### Prueba en curso — sáb 8 al dom 9 de agosto 2026
+
+**KPI primario, declarado ANTES de mirar resultados:** rebote de
+`/casos-de-estudio` en tráfico `sessionSource = MetaAds`.
+
+**Secundarios:** permanencia media, % que llega al caso de estudio, `form_start`.
+
+**Base de comparación:** los **mismos días de semanas anteriores**, no el
+promedio del período — el fin de semana rinde distinto. Sábados: 25-jul (1.165
+sesiones, 55,0% rebote) y 1-ago (1.096, 55,0%). Domingo: 26-jul (1.691, 55,9%).
+**El domingo 2-ago se descarta**: 206 sesiones y 19,4% de rebote, cinco veces
+menos tráfico y una mezcla completamente distinta (casi seguro pauta apagada).
+
+**Lo que esta prueba NO puede decir.** No es un A/B: todos ven la página nueva,
+así que cualquier cambio de presupuesto, campaña o creativo la contamina —
+verificar el gasto de Meta de ambas ventanas antes de concluir. Y en 2 días no
+se miden ventas: la conversión lead→venta es 3,68% con una mediana de 3 días
+entre el alta y la compra, así que las ventas de este fin de semana no se ven
+hasta bien entrada la semana que viene.
+
+---
+
 ## 2026-05-18 — Setup inicial del proyecto
 
 ### Decisión estratégica
