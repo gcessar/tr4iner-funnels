@@ -46,21 +46,38 @@ concretos para que quien viene solo por estética se autoexcluya antes de gastar
 El registro es **absolutorio, no culpabilizador**: el informe es explícito en que el copy
 que culpa repele y el que ofrece estructura convierte.
 
-⚠️ **Límite duro heredado del prompt §7.7:** no se diagnostica, no se interpretan
-análisis y **no se promete revertir nada**. La página lo declara: *"TR4INER es un equipo
-de entrenamiento y nutrición. Acompaña lo que te indique tu médico — nunca lo reemplaza."*
-Esto no es letra chica defensiva: la página **parece clínica**, y parecer clínico mientras
-se promete como médico sería engañoso.
+La bajada se eligió sobre cinco opciones presentadas al usuario, cada una anclada a un
+dato del estudio de clientes (n=149 Typeform / 837 compradores). Ganó el ángulo de
+**susto médico**: *"Primero te avisó el cansancio. Después, los números de un análisis.
+Mira este caso de estudio y obtén todo lo que se aplicó para recuperar su mejor estado
+físico."* Las cifras del estudio **no aparecen en la página**: mandan el registro, no
+el texto — escribir "el 44% de quienes compraron…" expone las internas y suena a folleto.
+
+⚠️ **Hallazgo que corrige una suposición previa:** el tema #1 entre compradores no es
+bajar grasa ni prevenir enfermedad, es **"envejecer con fuerza e independencia" (208
+compradores, 57%)**, seguido de "trabajo, estrés y vida sedentaria" (50%). El par más
+frecuente combina ambos (111 casos). Queda como ángulo candidato para la próxima
+iteración: hoy no se usó porque el usuario eligió el de susto médico.
+
+⚠️ **Encuadre médico retirado a pedido del usuario.** La página llevaba *"TR4INER es un
+equipo de entrenamiento y nutrición. Acompaña lo que te indique tu médico — nunca lo
+reemplaza."*, derivada del límite §7.7 del prompt del bot (no diagnosticar, no prometer
+revertir nada). Se quitó junto con la microcopy del CTA. Queda anotado porque el titular
+sigue nombrando presión y análisis: **si el copy se acerca a prometer resultados de
+salud, esa línea tiene que volver.**
 
 ### Medido
 
 | | Control | B |
 |---|---|---|
-| HTML crudo | 52.258 B | **22.096 B** (−58%) |
-| HTML gzip | 13.461 B | **7.276 B** (−46%) |
+| HTML crudo | 52.258 B | **21.500 B** (−59%) |
+| HTML gzip | 13.461 B | **~7.100 B** (−47%) |
 | Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias** |
-| CTA termina en (viewport 812) | 773 px | **626 px** |
+| CTA termina en (viewport 812) | 773 px | **656 px** |
 | Contraste mínimo | — | **4,66:1** (todo pasa AA) |
+
+El CTA entra completo incluso en un viewport de 667, que es lo que le queda a un teléfono
+después del navegador. Está justo: cualquier línea extra en la bajada lo empuja afuera.
 
 Cadena de atribución verificada con UTMs sintéticas, con el webhook de producción
 interceptado para no ensuciar el CRM: sobreviven los `utm_*`, `fbclid`, `h_ad_id` y

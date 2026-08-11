@@ -142,6 +142,10 @@
     display: flex;
     flex-direction: column;
     padding-top: 24px;
+    /* Crece hasta el alto del viewport para que el margin-top:auto del pie
+       tenga contra qué empujar. Sin esto el pie queda pegado al botón y se
+       lee como si fuera parte del formulario. */
+    flex: 1;
   }
 
   /* ── Encabezado ──────────────────────────────────────── */
@@ -278,27 +282,6 @@
   .honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
 
   /* ── Letra chica ─────────────────────────────────────── */
-  .after-cta {
-    font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--label);
-    text-align: center;
-    margin-top: 12px;
-  }
-  /* Encuadre obligatorio: la página se ve clínica, así que tiene que
-     decir explícitamente que esto acompaña al médico y no lo reemplaza.
-     No es letra chica defensiva — es lo que separa a un equipo serio de
-     la promesa de curación que el visitante ya escuchó mil veces. */
-  .medico {
-    font-size: 12px;
-    line-height: 1.5;
-    color: var(--label);
-    text-align: center;
-    margin-top: 26px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
-  }
-
   .foot {
     margin-top: auto;
     padding-top: 28px;
@@ -363,7 +346,7 @@
 <div class="page">
 
   <div id="form-view">
-    <div class="eyebrow">Análisis de caso · Acceso gratuito</div>
+    <div class="eyebrow">Caso de estudio</div>
 
     <h1>
       Ya no es por cómo te ves.
@@ -371,8 +354,9 @@
     </h1>
 
     <p class="subhead">
-      Sabes qué cambiar. No cómo sostenerlo. Anthoni lo analiza mes a mes
-      sobre un caso real: 25 minutos, sin dietas extremas.
+      Primero te avisó el cansancio. Después, los números de un análisis.
+      Mira este caso de estudio y obtén todo lo que se aplicó para recuperar
+      su mejor estado físico.
     </p>
 
     <form id="lm-form" novalidate>
@@ -404,14 +388,7 @@
       </div>
 
       <button type="submit" id="lm-submit"><span>Ver el caso</span><span class="arrow" aria-hidden="true">&rarr;</span></button>
-
-      <p class="after-cta">Acceso gratuito e inmediato · No agenda una llamada</p>
     </form>
-
-    <p class="medico">
-      TR4INER es un equipo de entrenamiento y nutrición. Acompaña lo que te indique
-      tu médico — nunca lo reemplaza.
-    </p>
   </div>
 
   <div id="confirm">
