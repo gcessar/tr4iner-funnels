@@ -5,6 +5,85 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-08-11 — Bot de WhatsApp de Vero: sin países excluidos, detección de patologías y cierre en chat
+
+**Dónde:** agente de `VERO-BOT` en n8n (`N2e6Ht6uWwER5qbD`). No se tocó ninguna página del
+funnel. Prompt fuente versionado en `docs/bot-vero/prompt-v2.md`, cambios de flujo en
+`docs/bot-vero/n8n-patch.md`.
+
+**Publicado:** versión activa `eadb7ff9-6f73-4d50-bfe2-8fa7605f022a`. Rollback a
+`e14a64d7-06bd-4751-9ae9-5d63ffe265c2`.
+
+### Qué cambió
+
+1. **Perú y Estados Unidos dejan de derivarse.** El bot atiende todos los países y cierra
+   él mismo. De paso vuelve "vive en Estados Unidos" como señal de capacidad de pago —es la
+   más fuerte que tenemos, 89% pagó ≥$300— que estaba desactivada justamente porque a ese
+   mercado se lo derivaba.
+2. **Detección de perfil de salud.** 15 señales metabólicas (insulina alta, hígado graso,
+   prediabetes, tiroides, SOP, hipertensión…), profesionales de la salud, descontrol
+   alimentario y el patrón "ya sabía que necesitaba entrenador y nutricionista y no lo hice".
+   Más rango de edad, driver salud/estética y urgencia con disparador concreto.
+3. **Score de oportunidad 0–10** con tabla explícita de puntos. No decide si vende: decide
+   **con cuánta firmeza sostiene Método**. Con señal de salud se inclina al plazo largo con
+   un argumento honesto —un marcador metabólico no se corrige en 90 días— en vez de bajar a
+   Fit4.
+4. **Sin agenda.** Se evaluó agendar en el calendario de Martín (Google Calendar + el
+   webhook `crm-setter-agenda` que ya emite el `Schedule` a Meta CAPI) y se descartó: el
+   enfoque es venta directa por WhatsApp. Queda documentado en el anexo en pausa del patch,
+   con el cliente OAuth ya creado.
+5. **`Settear variables` pasa a `continueRegularOutput`.** Bug latente que existía desde
+   antes: si `setCustomFields` fallaba —por ejemplo por un campo inexistente en ManyChat—
+   `Enviar WPP` no corría y **el lead se quedaba sin respuesta**.
+6. **`Separar en partes` deja de usar el prefijo telefónico como país.** Un lead sin el
+   campo `País` cargado le llegaba al agente como `pais: "51"`, y el bot lo tomaba por país
+   confirmado y no volvía a preguntarlo.
+
+### Por qué
+
+El estudio interno y el feedback de closers coinciden: el mayor porcentaje de cierre no está
+en quien quiere verse mejor, sino en quien ya tiene un problema de salud provocado por sus
+hábitos y en quien vive descontrol con la comida. Gente que hacía tiempo sabía que necesitaba
+método y no actuó hasta que la salud se movió. El prompt anterior trataba esos casos como
+delicados y tendía a esquivarlos; ahora son el perfil que sostiene el ticket alto.
+
+### Resultado esperado
+
+Más leads atendidos (dos mercados que antes se derivaban), y mix de producto desplazado hacia
+Método y plazos largos en el segmento de salud. El guardarraíl es el opt-in a venta: si sube
+el volumen y cae la tasa de cierre, el problema es de calificación, no de alcance.
+
+### Incidente el mismo día, 18:40–18:55 UTC — el bot dejó de responder
+
+Dos ejecuciones en `success` y cero respuestas al lead. `setCustomFields` de ManyChat es
+**todo o nada**: rechazó el array completo por `Field[3] not found` (`Requiere Humano`, sin
+crear), y como el texto que lee el lead viaja dentro de `Parte 1`, ese campo nunca se
+escribió y el flow disparó vacío.
+
+El `onError: continueRegularOutput` del punto 5 no alcanzó, y vale anotar por qué: protege al
+workflow de caerse, pero no sirve cuando lo que no se pudo escribir **es el mensaje**.
+
+**Fix (versión activa `3f3fc990-f6db-4bed-a5ee-1727b4163fe4`):** `Respuesta` ahora emite dos
+arrays y el flujo hace dos llamadas. `fields` —`Parte 1..3` más los 6 campos que ya existían—
+va antes de `Enviar WPP`. `fields_nuevos` —los 12 del prompt v2— va en un nodo nuevo,
+`Settear cualificacion`, **después** de enviar el mensaje y con `continueRegularOutput`. Un
+campo de analítica ya no puede costar una conversación.
+
+Regla que queda: todo `field_name` nuevo entra por `fields_nuevos`. Pasa a la llamada crítica
+solo después de estar creado y verificado en ManyChat.
+
+### Pendiente
+
+- **Crear los 12 campos personalizados en ManyChat** (`Ciudad`, `Zona Horaria`, `Rango Edad`,
+  `Driver`, `Senales Salud`, `Profesional Salud`, `Ansiedad Comida`, `Bandera Clinica`,
+  `Score`, `Prioridad`, `Requiere Humano`, `Motivo Handoff`). Hasta que existan, la detección
+  funciona pero no se persiste. Ya no bloquea la respuesta al lead tras el fix del incidente.
+- **Usar `Prioridad=alta`** para que un closer humano filtre y entre a las conversaciones de
+  perfil de salud mientras el bot las trabaja. Es lo que reemplaza a la agenda.
+- Confirmar en producción los 8 casos de prueba listados en `docs/bot-vero/n8n-patch.md`.
+
+---
+
 ## 2026-08-10 — Especificación del A/B de `/casos-de-estudio` (sin implementar todavía)
 
 **Qué:** `docs/ab-casos-de-estudio.md` con los 4 cambios para montar el primer A/B real, y
