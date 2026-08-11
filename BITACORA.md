@@ -79,6 +79,42 @@ salud, esa línea tiene que volver.**
 El CTA entra completo incluso en un viewport de 667, que es lo que le queda a un teléfono
 después del navegador. Está justo: cualquier línea extra en la bajada lo empuja afuera.
 
+### Auditoría de velocidad — el hallazgo que importa
+
+Medido en local sobre la página terminada:
+
+| Métrica | Antes de la auditoría | Después |
+|---|---|---|
+| FCP | **992 ms** | **40 ms** |
+| LCP | — | **40 ms** (`p.subhead`) |
+| CLS | — | **0** |
+| DOM interactivo | 16 ms | 16 ms |
+
+**La causa era la animación de entrada, y era mía.** Los elementos arrancaban en
+`opacity: 0` con un fundido de 400 ms, así que no había primer pintado hasta que la
+animación avanzaba — y esa animación compite por el hilo principal con los ~12 scripts
+que inyecta GTM. Con el DOM interactivo a los 16 ms y el FCP a los 992, casi un segundo
+entero era fundido esperando hilo. Se quitó entera. **Es la misma lección del 8-ago**
+(«el titular se revelaba palabra por palabra hasta los 1,46 s»), reintroducida en versión
+suave y vuelta a corregir.
+
+**Lo que NO se puede arreglar desde esta página:** el peso real lo pone el stack de tags.
+`fbevents.js` solo pesa **106.994 B** —cinco veces el HTML de B— y hay llamadas de 947 ms,
+649 ms, 463 ms y 443 ms. Sigue vigente el pendiente de la auditoría de diferir los ~12
+scripts de GTM; es transversal a las dos variantes, así que no sesga el test, pero es la
+palanca de velocidad más grande que queda en el funnel.
+
+**Costo de fuentes:** 71.460 B entre las dos familias, no bloqueantes (`font-display: swap`)
+y cacheadas tras la primera visita. Stack Sans Headline son 31.768 B usados **solo** para
+el `<h1>`. La palanca disponible es servir Lexend sola con el titular en 500; no se aplicó
+porque el titular pesado es una decisión visual aprobada y el FCP ya está en 40 ms.
+
+⚠️ **`form_start` NO es comparable entre A y B.** Ninguna de las dos lo dispara a mano: lo
+emite la medición automática de GA4 al primer contacto con el formulario. En el control el
+formulario vive dentro de un modal y exige un clic previo; en B está visible desde el primer
+píxel. **B va a mostrar un `form_start` mucho más alto por construcción, no por persuasión.**
+La lectura tiene que hacerse sobre registros reales que llegan al sheet y al CRM.
+
 ### Firma de Anthoni en el pie
 
 Se agregó el bloque de confianza —avatar 46 px + "Producción · TR4INER" + "Anthoni

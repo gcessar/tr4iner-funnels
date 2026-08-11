@@ -329,15 +329,13 @@
   .foot a:hover { color: var(--ink-soft); }
   .foot .sep { margin: 0 7px; opacity: 0.5; }
 
-  /* Una sola entrada, corta. Más movimiento en una página de tres campos
-     se lee como relleno y retrasa el único elemento que importa. */
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(9px); }
-    to   { opacity: 1; transform: none; }
-  }
-  .page > * { animation: rise 400ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-  .page > *:nth-child(2) { animation-delay: 55ms; }
-  .page > *:nth-child(3) { animation-delay: 100ms; }
+  /* Acá había una animación de entrada y se quitó a propósito.
+     Arrancaba en opacity:0, así que no había primer pintado hasta que la
+     animación avanzaba — y esa animación compite por el hilo principal
+     con los ~12 scripts que inyecta GTM (fbevents pesa 107 KB solo).
+     El resultado medido era FCP a ~1 s con el DOM interactivo a los 16 ms.
+     En una página cuyo trabajo entero es leerse en seis segundos sobre una
+     conexión mala, 400 ms de fundido son costo sin contrapartida. */
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -345,7 +343,6 @@
       animation-delay: 0ms !important;
       transition-duration: 0.01ms !important;
     }
-    .page > * { opacity: 1 !important; transform: none !important; }
   }
 
   @media (min-width: 620px) {
