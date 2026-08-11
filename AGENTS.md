@@ -93,6 +93,23 @@ La Biblioteca es la referencia visual del proyecto. Todas las páginas canónica
 ### Incidente resuelto — bug de UTMs (13-jul-2026)
 `buildRedirectUrl()` **no reenviaba los UTMs** a las páginas flor/dashiel (solo nombre/email/sexo). Del 11 al 13-jul los leads del sheet `LEADS` quedaron sin UTMs. **Ya corregido** (el loop de `utmData` en `buildRedirectUrl`). Regularización de los datos históricos (Clarity + GA4): ver detalle en `BITACORA.md`. Al tocar la lógica de redirect, **verificar siempre que los UTMs sigan viajando a testimonio-flor/dashiel**.
 
+## A/B testing de la landing
+
+El primer A/B de `/casos-de-estudio` está especificado en
+[`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md): middleware de Vercel con
+**rewrite** (nunca redirect), cookie pegajosa, `index-b.html` que cambia **sólo el titular**,
+y `variant` viajando en el payload del opt-in hasta `OptIn.variant` del CRM.
+
+Dos cosas que parecen detalle y no lo son:
+
+- **Rewrite, no redirect.** Con redirect se pierden las UTMs, aparece un salto extra y Meta
+  ve una redirección que le ensucia el tracking.
+- **El KPI que decide NO es el CPL ni el volumen de registros.** El titular nuevo atrae al
+  segmento de recomposición (convierte 4,60% contra 2,62%), así que el CPL empeora antes de
+  que mejore la caja. Decide el **mix de calificación**; el opt-in rate es sólo guardarraíl.
+
+Protocolo de lectura y reglas de corte: `crm-ventas/docs/analisis-ads/protocolo-ab-landing.md`.
+
 ## Convenciones
 
 - **Comentarios:** el **porqué**, en español rioplatense.
