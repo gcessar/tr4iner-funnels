@@ -46,8 +46,26 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
+  <script>
+    // Mismo contrato del control: una exposición por vista asignada y evento
+    // distinto por brazo. El informe usa sesiones/usuarios, no eventCount.
+    (function () {
+      var match = /(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie);
+      if (!match) return;
+      var variant = match[1];
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag('event', 'ce_ab_exposure_' + variant.toLowerCase(), {
+        send_to: 'G-CGWMFER9V4',
+        experiment_id: 'ce_salud_202608',
+        experiment_variant: variant,
+        non_interaction: true
+      });
+    })();
+  </script>
+
   <!-- Variante B de un A/B servido por rewrite en /casos-de-estudio. La URL que ve
-       el visitante es siempre la canónica, así que /index-b no debe indexarse por
+       el visitante es siempre la canónica, así que /index-salud no debe indexarse por
        su cuenta: sería contenido duplicado compitiendo con el control. -->
   <meta name="robots" content="noindex, follow">
   <title>Ya no es por cómo te ves | TR4INER</title>
@@ -218,7 +236,7 @@
     border-color: var(--ink);
   }
   input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  input::placeholder { color: #858D95; font-weight: 300; }
+  input::placeholder { color: var(--muted); font-weight: 300; }
 
   /* El selector de caso reemplaza a la pregunta "Sexo": el dato es el
      mismo y decide a qué caso va la persona, pero pedirlo como una
@@ -354,7 +372,7 @@
 
 <body>
 
-<div class="page">
+<main class="page" id="contenido">
 
   <div id="form-view">
     <div class="eyebrow">Caso de estudio</div>
@@ -372,7 +390,7 @@
     <form id="lm-form" novalidate>
       <input type="text" class="honeypot" id="lm-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-      <fieldset class="field" style="border:0;">
+      <fieldset class="field" style="border:0;" aria-describedby="err-sexo">
         <legend class="lbl">Elige el caso que quieres ver</legend>
         <div class="cases">
           <label class="case">
@@ -382,19 +400,19 @@
             <input type="radio" name="sexo" value="Hombre">Hombre
           </label>
         </div>
-        <div class="err" id="err-sexo"></div>
+        <div class="err" id="err-sexo" role="alert" aria-live="polite"></div>
       </fieldset>
 
       <div class="field">
         <label class="lbl" for="lm-nombre">Nombre</label>
-        <input type="text" id="lm-nombre" name="nombre" autocomplete="given-name" placeholder="Tu nombre">
-        <div class="err" id="err-nombre"></div>
+        <input type="text" id="lm-nombre" name="nombre" autocomplete="given-name" placeholder="Tu nombre" aria-describedby="err-nombre">
+        <div class="err" id="err-nombre" role="alert" aria-live="polite"></div>
       </div>
 
       <div class="field">
         <label class="lbl" for="lm-email">Correo electrónico</label>
-        <input type="email" id="lm-email" name="email" autocomplete="email" inputmode="email" placeholder="tu@correo.com">
-        <div class="err" id="err-email"></div>
+        <input type="email" id="lm-email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="tu@correo.com" aria-describedby="err-email">
+        <div class="err" id="err-email" role="alert" aria-live="polite"></div>
       </div>
 
       <button type="submit" id="lm-submit"><span>Ver el caso</span><span class="arrow" aria-hidden="true">&rarr;</span></button>
@@ -403,7 +421,7 @@
 
   <div class="firma">
     <img src="/assets/team/anthoni-montalvan-92.webp" width="46" height="46"
-         loading="lazy" decoding="async" alt="Anthoni Montalván">
+         loading="lazy" decoding="async" alt="">
     <div class="firma-texto">
       <div class="firma-rol">Producción · TR4INER</div>
       <div class="firma-nombre">Anthoni Montalván <span class="sub">· Coach</span></div>
@@ -413,17 +431,17 @@
   <div class="foot">
     © 2026 TR4INER · BodyMindFitCo LLC
     <br>
-    <a href="#">Privacidad</a><span class="sep">|</span><a href="#">Términos</a>
+    <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a><span class="sep">|</span><a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
   </div>
 
-</div>
+</main>
 
 <script src="/attribution.js"></script>
 <script>
   // ───────────────────────────────────────
-  // Misma maquinaria que el control: honeypot, captura de UTMs,
-  // validación, webhook y redirect. Solo cambia la piel de la página,
-  // así que el A/B mide diseño y copy, no una diferencia de tracking.
+  // Mismo contrato de atribución y destinos que el control. La mecánica sí
+  // cambia: B usa keepalive y navega sin la confirmación intermedia, por eso
+  // este experimento mide el paquete completo y no una sola pieza.
   // ───────────────────────────────────────
   (function() {
     var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','fbclid','gclid','fbc_id','h_ad_id'];
@@ -443,6 +461,7 @@
       });
     }
     var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
+    var abVariant = (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || null;
     // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
     if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
 
@@ -464,6 +483,14 @@
       var el = document.getElementById(id);
       el.style.display = show ? 'block' : 'none';
       if (msg) el.textContent = msg;
+      var fieldId = id.replace('err-', 'lm-');
+      var field = document.getElementById(fieldId);
+      if (field) field.setAttribute('aria-invalid', show ? 'true' : 'false');
+      if (id === 'err-sexo') {
+        document.querySelectorAll('input[name="sexo"]').forEach(function(input) {
+          input.setAttribute('aria-invalid', show ? 'true' : 'false');
+        });
+      }
     }
     function buildRedirectUrl(sexo, nombre, email) {
       // Mismo origen: preview queda en preview y producción queda en metodo.tr4iner.com.
@@ -480,6 +507,7 @@
       p.set('first_name', nombre);
       p.set('email', email);
       p.set('sexo', sexo);
+      if (abVariant) p.set('variant', abVariant);
       if (videoId) p.set('video', videoId);
       Object.keys(utmData).forEach(function(key) {
         p.set(key, utmData[key]);
@@ -510,10 +538,15 @@
       showErr('err-sexo', !sexoEl, 'Elige el caso que quieres ver');
       if (!sexoEl) valid = false;
 
-      if (!valid) return;
+      if (!valid) {
+        if (!sexoEl) document.querySelector('input[name="sexo"]').focus();
+        else if (!nombre) document.getElementById('lm-nombre').focus();
+        else document.getElementById('lm-email').focus();
+        return;
+      }
 
       var btn = document.getElementById('lm-submit');
-      btn.querySelector('span').textContent = 'Abriendo el caso...';
+      btn.querySelector('span').textContent = 'Abriendo el caso…';
       btn.disabled = true;
 
       var sexoVal = sexoEl.value;
@@ -527,7 +560,7 @@
         timestamp: new Date().toISOString(),
         // Sin esto el test corre pero no se puede leer: es lo que permite
         // separar los registros de B de los del control en el CRM.
-        variant:   (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || 'B'
+        variant:   abVariant
       };
 
       // Copia de seguridad directa al CRM, en paralelo al webhook de n8n:

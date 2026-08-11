@@ -17,7 +17,11 @@ export const config = { matcher: "/casos-de-estudio" };
 // de IG) se comporta distinto —rebota 44% contra 74%— y mezclarlo diluiría
 // justo el segmento que la prueba quiere leer.
 function esTraficoDeAds(url: URL): boolean {
-  const source = (url.searchParams.get("utm_source") || "").toLowerCase();
+  // Replica la normalización del HTML: Instagram puede duplicar UTMs y dejar
+  // el primer valor vacío. Gana el primer valor no vacío, no `.get()` a ciegas.
+  const source = (
+    url.searchParams.getAll("utm_source").find((value) => value.trim()) || ""
+  ).toLowerCase();
   return source.includes("ads");
 }
 
@@ -53,7 +57,7 @@ export default function middleware(req: Request) {
   if (reciénAsignada) {
     res.headers.append(
       "set-cookie",
-      `ab_ce=${variante}; Path=/; Max-Age=7776000; SameSite=Lax`,
+      `ab_ce=${variante}; Path=/; Max-Age=15552000; SameSite=Lax`,
     );
   }
   return res;

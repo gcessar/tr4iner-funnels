@@ -4,8 +4,9 @@ Spec para construir el primer A/B real de la landing. Escrito el 2026-08-10 tras
 funnel completo. **Leer entero antes de tocar código**: hay dos decisiones que parecen
 detalles y no lo son (rewrite en vez de redirect, y cuál es el KPI).
 
-El protocolo de lectura y las reglas de decisión viven en el repo del CRM:
-`crm-ventas/docs/analisis-ads/protocolo-ab-landing.md`. Acá va sólo qué construir.
+El protocolo del CRM todavía describe el retador anterior, que cambiaba sólo el titular.
+**No usar sin adaptar sus supuestos de 30 días y una sola variable.** Este documento describe
+la implementación vigente; el protocolo deberá sincronizarse antes de abrir tráfico.
 
 ---
 
@@ -24,39 +25,22 @@ académico.
 
 ---
 
-## Los 4 cambios
+## Implementación vigente
 
 ### 1. `middleware.ts` en la raíz del repo
 
-```ts
-import { next, rewrite } from "@vercel/edge";
+El código fuente completo está en `middleware.ts`. Su contrato es:
 
-export const config = { matcher: "/casos-de-estudio" };
+- sólo asigna 50/50 a quien no tiene cookie y cuyo primer `utm_source` no vacío contiene
+  `ads`; orgánico ve A y no recibe cookie;
+- quien ya tiene `ab_ce=A|B` conserva el brazo aunque vuelva sin UTMs;
+- B se sirve por rewrite interno a `/index-salud`; A continúa al rewrite existente de
+  `vercel.json` hacia `index.html`;
+- la cookie dura 180 días y usa `SameSite=Lax`, suficiente para la muestra histórica
+  estimada en ~138 días.
 
-export default function middleware(req: Request) {
-  const url = new URL(req.url);
-  const cookie = req.headers.get("cookie") ?? "";
-  const previa = /(?:^|;\s*)ab_ce=([AB])/.exec(cookie)?.[1];
-
-  // Asignación pegajosa: quien ya vio una versión sigue viendo la misma.
-  // Sin esto alguien que recarga ve A y después B, y su registro queda
-  // atribuido a la variante equivocada.
-  const variante = previa ?? (Math.random() < 0.5 ? "A" : "B");
-
-  const res = variante === "B" ? rewrite(new URL("/index-salud", url)) : next();
-  if (!previa) {
-    res.headers.append(
-      "set-cookie",
-      `ab_ce=${variante}; Path=/; Max-Age=7776000; SameSite=Lax`,
-    );
-  }
-  return res;
-}
-```
-
-Requiere `@vercel/edge` como dependencia. El repo no tiene `package.json`; hay que crear uno
-mínimo sólo con esa dependencia — **no** convertir el proyecto a un framework ni agregar
-build step.
+Requiere `@vercel/edge`, instalado con un `package.json` mínimo. No hay framework ni build
+step de la página estática.
 
 > **`rewrite`, nunca `redirect`.** Con rewrite la URL sigue siendo `/casos-de-estudio`: las
 > UTMs quedan intactas, no hay salto extra, no hay parpadeo y Meta no ve una redirección
@@ -72,25 +56,26 @@ Verificar en preview que el middleware corre **antes** y que la variante A sigue
 > del tráfico pago cae en un 404. Verificado el 11-ago con `vercel dev`. Cualquier nombre
 > terminado en `-b.html` tiene el mismo problema; hoy la variante es `index-salud.html`.
 
-### 2. `index-b.html` — copia de `index.html` con UNA sola diferencia
+### 2. `index-salud.html` — retador de paquete completo
 
-Cambia el `<h1 id="headline">` (línea ~1120) y su bajada. **Nada más.** Ni imagen, ni CTA,
-ni orden de secciones: si cambian dos cosas, no se sabe cuál movió el número.
+B **no aísla un titular**. Cambia copy, jerarquía, tipografía, peso, formulario visible,
+ausencia de video/thumbnail y navegación posterior al registro. El resultado sólo podrá
+decir si el **paquete B** gana o pierde; no cuál de sus piezas causó el movimiento.
 
-| | Titular |
-|---|---|
-| **A** (`index.html`, control) | «Perdió grasa. No rebotó. Con trabajo, vida normal y sin dieta extrema. Anthoni analiza qué se cambió, mes por mes.» |
-| **B** (`index-b.html`) | «Entrenas. Comes bien. Y el espejo sigue igual.» |
-| | bajada: «No te falta disciplina — te falta orden. Anthoni analiza, mes por mes, qué se cambió en un caso real para perder grasa y ganar músculo al mismo tiempo.» |
+| | Control A | Retador B |
+|---|---|---|
+| Enfoque | Transformación física sin rebote | Salud preventiva y síntomas cotidianos |
+| Estructura | Hero + video + modal | Titular + formulario en una columna clínica |
+| Después del opt-in | Confirmación y contador | Salto directo al caso elegido |
+| HTML crudo | ~52 KB | ~21 KB |
 
-Fundamento en `crm-ventas/docs/analisis-ads/2026-08-08-cro-caso-estudio-an.md`: el segmento
-de recomposición convierte **4,60%** y vale $15,11 por lead; el de «tengo sobrepeso»,
-**2,62%**. El titular actual le habla al segundo y el thumbnail ya le habla al primero.
+El titular de B es «Ya no es por cómo te ves» y su segunda línea nombra presión, análisis y
+cansancio. Hay un riesgo declarado de *message-match*: Flor y Dashiel siguen presentándose
+principalmente como transformaciones físicas. Debe vigilarse el paso landing → Typeform.
 
 ### 3. El formulario manda la variante
 
-En `index.html` **y** en `index-b.html`, agregar una línea al objeto `payload`
-(`index.html` ~línea 1574):
+`index.html` e `index-salud.html` leen la cookie al construir el payload:
 
 ```js
 var payload = {
@@ -101,67 +86,92 @@ var payload = {
   utm:       utmData,
   page_url:  window.location.href,
   timestamp: new Date().toISOString(),
-  variant:   (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || 'A'
+  variant:   (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || null
 };
 ```
 
-Con eso viaja a los **dos** destinos sin tocar nada más: `TR4Track.saveOptIn(payload)` (copia
-al CRM) y el webhook de n8n. Del lado del CRM ya se persiste solo — `src/lib/optin.ts` lee
-`body.variant` y lo guarda en `OptIn.variant`, campo que hoy está libre para este funnel
-(sólo se usa con `"VA"`).
+`null` no significa A: significa **fuera del experimento**. Así el orgánico, que ve el
+control sin cookie, no contamina el brazo A. La variante viaja a `TR4Track.saveOptIn` y al
+webhook de n8n; el CRM ya guarda `body.variant` en `OptIn.variant`.
 
-### 4. Nada en el CRM
+### 4. La exposición tiene denominador
 
-No hace falta migración ni deploy del otro repo. El campo ya existe y el parser ya lo lee.
+Ambas páginas emiten en cada vista asignada `ce_ab_exposure_a` o `ce_ab_exposure_b` hacia la
+propiedad GA4 `G-CGWMFER9V4`. El brazo está en el nombre del evento para no depender de una
+dimensión personalizada. El informe usa **sesiones o usuarios que contienen el evento**, no
+`eventCount`, para que una recarga no infle el denominador. Sin cookie no se emite nada.
+
+### 5. Alcance del join con el CRM
+
+No hace falta migración para guardar el opt-in. Para cruzar luego presupuesto y ventas, el
+CRM enlaza `OptIn` con un **lead nuevo** por correo al crearlo. Flor y Dashiel ya permiten
+`variant` en `data-tf-hidden`, pero Typeform también exige declarar ese URL parameter en el
+editor y volver a publicar el formulario; ese cambio externo sigue pendiente. Además, la
+rama de reingresos sobre un lead existente no vuelve a ejecutar el enlace de OptIns. Hasta
+cerrar ambos puntos, el análisis inferencial debe limitarse a leads nuevos y los reingresos
+se reportan aparte.
 
 ---
 
 ## Qué NO tocar mientras corre
 
-- El titular de A.
+- El copy, estructura o mecánica de cualquiera de los dos brazos.
 - Las campañas de Meta (apagar un anuncio a mitad del test cambia el mix de tráfico y las
   dos mitades dejan de ser comparables).
 - El Typeform ni su bifurcación por presupuesto.
-- El peso de la página: `index-b.html` tiene que pesar lo mismo que `index.html` (~52 KB).
-  Si B pesa más, se está midiendo velocidad, no titular.
+- La cookie, los nombres de evento o la definición de población.
+
+`form_start` no es comparable: A abre el formulario en un modal y B lo muestra desde el
+primer píxel. Usar opt-ins reales y exposiciones, no ese evento automático.
 
 ---
 
 ## Verificación antes de dar por hecho el deploy
 
-1. En preview, entrar a `/casos-de-estudio` varias veces en ventanas de incógnito: deberían
-   verse los dos titulares, ~50/50.
-2. Con la cookie ya puesta, recargar 5 veces: **siempre la misma versión**.
-3. Confirmar que la URL nunca cambia a `/index-b`.
-4. Entrar con UTMs (`?utm_source=MetaAds&utm_term=A7-HOO1`) y confirmar que llegan intactas
-   al formulario y al payload.
-5. Registrarse una vez en cada variante y confirmar en el CRM que `OptIn.variant` quedó en
-   `A` y en `B` respectivamente.
-6. Confirmar que el sheet de n8n y Brevo siguen recibiendo igual que antes.
+1. Orgánico sin cookie: A siempre, sin `Set-Cookie` y payload `variant: null`.
+2. Pago nuevo (`utm_source=MetaAds`): A/B aproximadamente 50/50 y siempre con cookie.
+3. Cookie A o B: diez recargas y diez retornos al mismo brazo.
+4. Rewrite: 200, sin `Location`, con URL visible `/casos-de-estudio`.
+5. UTMs duplicadas (`utm_source=&utm_source=MetaAds`): se usa el primer valor no vacío.
+6. Recursos de B: HTML, fuentes, avatar y `attribution.js` en 200.
+7. Navegación: identidad, `video`, todos los `utm_*` e IDs publicitarios sobreviven y el
+   correo conserva `@` literal.
+8. Analítica: una exposición por vista asignada y, antes de abrir tráfico, eventos
+   `ce_ab_exposure_a/b` visibles en GA4; el reporte usa sesiones/usuarios, no eventCount.
+9. Payload: A y B de pago mandan su letra; orgánico manda `null`.
+10. Typeform: `variant=A|B` aparece en `data-tf-hidden` y, tras publicar el parámetro en el
+    editor, en una respuesta sandbox o controlada.
 
-El punto 5 es el que hace que el test tenga sentido. Si `variant` llega null, el test corre
-pero no se puede leer.
+El endpoint directo del CRM rechaza orígenes Preview de Vercel. En Preview se intercepta el
+payload sin enviarlo; la comprobación real A/B en CRM requiere un smoke test desde
+`metodo.tr4iner.com` después de aprobación y antes de abrir campañas.
 
 ---
 
 ## Cómo se lee (resumen — el detalle está en el CRM)
 
-**El KPI de decisión NO es el CPL ni el volumen de registros.** La auditoría CRO advierte
-que el titular nuevo atrae menos gente de +15 kg (31% de los leads), así que **el CPL va a
-empeorar antes de que mejore la caja**. Quien decida por CPL apaga al ganador.
+**No decidir por CPL ni por volumen bruto.** B filtra más y puede producir menos opt-ins, por
+lo que hay que leer calidad sin permitir que el ratio esconda una caída del negocio.
 
 | Rol | Métrica | Base | Se lee en |
 |---|---|---|---|
-| **Decide** | % de leads que declaran $300-600 | 17,7% | ~30 días |
-| Guardarraíl | opt-in rate (sesión → registro) | 11,1% | ~7 días |
-| Confirma | caja por lead | — | D+30 |
+| **Decide** | leads nuevos que declaran $300-600 / exposición elegible | — | al alcanzar muestra |
+| Diagnóstico | % de leads nuevos que declaran $300-600 | 17,7% | al alcanzar muestra |
+| Guardarraíl 1 | opt-ins / exposición | 11,1% | ~4.400 exposiciones totales |
+| Guardarraíl 2 | Typeform completados / exposición | — | semanal |
+| Confirma | caja por exposición y por lead | — | D+30 |
 
-El guardarraíl sólo sirve para **abortar**: si B hunde el opt-in rate más de 25% relativo,
-se corta. No sirve para declarar ganador.
+El primer guardarraíl sólo sirve para abortar: si B hunde opt-ins/exposición más de 25%
+relativo, se corta. El segundo impide declarar ganador a una variante que mejora el mix
+porque hizo desaparecer la mitad de los Typeform.
 
-**Horizonte fijo, sin espiar.** Se define antes de arrancar y no se corta en el medio
-porque uno va ganando: con tres miradas, un test sin diferencia real da «ganador» ~1 de
-cada 5 veces. Cortar en semanas completas. Empate a los 30 días = se queda el control.
+**La parada es por muestra, no por “30 días”.** La estimación anterior usó 67 leads diarios,
+pero la cohorte verificada may–jul tuvo 667 leads MetaAds en 92 días (~7,25/día): 1.000
+leads Meta tomarían cerca de 138 días a ese ritmo. Recalcular con la primera semana completa
+del tráfico elegible. Si no se alcanza la muestra, el resultado es inconcluso; no ganador.
+
+**Sin espiar.** Leer en semanas completas y no cortar porque un brazo va ganando. Empate o
+inconcluso conserva el control.
 
 **No se decide por ventas:** son ~10 en el período; detectar una diferencia entre variantes
 por venta necesitaría miles.

@@ -12,15 +12,31 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 ### Qué se montó
 
 1. **`middleware.ts` + `package.json`** — el split 50/50 en el edge que la auditoría
-   pedía desde el 9-ago. Rewrite (nunca redirect), cookie pegajosa `ab_ce` de 90 días.
+   pedía desde el 9-ago. Rewrite (nunca redirect), cookie pegajosa `ab_ce` de 180 días.
    `package.json` existe **solo** para poder importar `@vercel/edge`: no hay framework
    ni build step, y se agregó `"framework": null` a `vercel.json` para que Vercel no
    crea que ahora tiene que compilar algo.
-2. **`index-b.html`** — página nueva, no una variante del control. Blanco clínico +
+2. **`index-salud.html`** — página nueva, no una variante del control. Blanco clínico +
    el amarillo TR4INER, solo titular + formulario (caso / nombre / correo) + botón.
    Sin video, sin bullets, sin barra fija, sin modal.
 3. **Fuentes auto-hospedadas** — Stack Sans Headline 700 para el titular y Lexend 300
    para el resto, traídas de `design/ce-an-tipografia`. Cero peticiones a Google.
+
+### Cierre técnico al retomar el trabajo
+
+- El control no enviaba `variant`: los A de pago habrían quedado mezclados con histórico y
+  orgánico. Ahora A y B leen la cookie; **sin cookie se guarda `null`**, porque ese usuario
+  está fuera del experimento.
+- No existía denominador por brazo. Ambas páginas emiten `ce_ab_exposure_a/b` en cada vista
+  asignada; verificados ambos eventos en GA4 Realtime. El informe debe usar sesiones/usuarios
+  que contienen el evento, no `eventCount`.
+- El middleware leía sólo el primer `utm_source`; `?utm_source=&utm_source=MetaAds` quedaba
+  fuera del split. Ahora replica la normalización del HTML y usa el primer valor no vacío.
+- La cookie pasó de 90 a **180 días**: la muestra histórica se estima en ~138 días y una
+  cookie más corta podría reasignar retornos antes del cierre.
+- B ahora enfoca el primer campo inválido, anuncia errores a lectores de pantalla, corrige
+  contraste de placeholders y usa enlaces legales reales. El control no se alteró fuera de
+  la instrumentación necesaria del experimento.
 
 ### Por qué B solo corre contra tráfico de ads
 
@@ -70,8 +86,8 @@ salud, esa línea tiene que volver.**
 
 | | Control | B |
 |---|---|---|
-| HTML crudo | 52.258 B | **21.313 B** (−59%) |
-| HTML gzip | 13.461 B | **7.289 B** (−46%) |
+| HTML crudo | 53.407 B | **23.083 B** (−57%) |
+| HTML gzip | 14.050 B | **7.867 B** (−44%) |
 | Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias + avatar** |
 | CTA termina en (viewport 812) | 773 px | **608 px** |
 | Contraste mínimo | — | **4,66:1** (todo pasa AA) |
@@ -134,13 +150,11 @@ B **no muestra el aviso intermedio** del control (nombre + correo + contador de 
 al registrarse va derecho a `/testimonio-flor` o `/testimonio-dashiel` según el caso
 elegido. Es un paso menos entre el registro y el contenido.
 
-⚠️ **Por qué esto no pierde leads.** El control podía navegar recién cuando el `fetch`
-a n8n resolvía; navegar de inmediato cortaría el request en vuelo. La pieza que lo
-habilita es **`keepalive: true`** en el POST del webhook: el navegador se compromete a
-terminarlo aunque la página ya se haya descargado. `TR4Track.saveOptIn` ya lo usaba
-internamente. Verificado: el POST se dispara con `keepalive`, la copia al CRM también,
-y el destino conserva todas las UTMs. **Si alguien saca ese flag, el lead deja de
-llegar al sheet y a Brevo, y el síntoma va a parecer un problema de n8n.**
+⚠️ **Por qué esto debería conservar los leads — y qué falta probar.** El control navega
+recién cuando el `fetch` a n8n resuelve; B navega de inmediato y usa `keepalive: true` en
+el webhook. Se verificó que ambos POST se intentan con `keepalive` y que el destino conserva
+las UTMs, pero eso **no demuestra recepción** en n8n, Sheet, Brevo y CRM. Antes de abrir
+tráfico falta un smoke real desde el dominio canónico con correos únicos A/B.
 
 Cadena de atribución verificada con UTMs sintéticas, con el webhook de producción
 interceptado para no ensuciar el CRM: sobreviven los `utm_*`, `fbclid`, `h_ad_id` y
@@ -149,11 +163,13 @@ a `/testimonio-flor` y Hombre a `/testimonio-dashiel`; `variant` llega como `"B"
 
 ### KPI, declarado ANTES de mirar resultados
 
-**Decide:** % de leads que declaran $300-600 (base 17,7%), a ~30 días.
-**Guardarraíl:** opt-in rate, solo para **abortar** — si B lo hunde más de 25% relativo,
-se corta. No sirve para declarar ganador.
-**Horizonte fijo, sin espiar:** cortar en semanas completas; empate a los 30 días deja
-el control. Con tres miradas, un test sin diferencia real da "ganador" 1 de cada 5 veces.
+**Decide:** leads nuevos que declaran $300-600 por exposición elegible. El porcentaje dentro
+de leads es diagnóstico, no decide solo: podría mejorar mientras cae el negocio completo.
+**Guardarraíles:** opt-ins/exposición (abortar si B cae más de 25% relativo) y Typeform
+completados/exposición, para detectar el riesgo de *message-match*.
+**Horizonte por muestra, sin espiar:** el supuesto previo de 67 leads/día no coincide con la
+cohorte Meta verificada (667 en 92 días, ~7,25/día). Llegar a 1.000 tomaría cerca de 138 días
+al ritmo histórico. Recalcular tras la primera semana completa; inconcluso o empate deja A.
 
 **El CPL va a empeorar antes de que mejore la caja.** El corte de salud atrae menos
 volumen a propósito. Quien decida por CPL apaga al ganador.
@@ -166,7 +182,8 @@ sí aísla una variable.
 
 ### Verificación en preview — y el bug que atajó
 
-Preview `Ready` en 11 s: `tr4iner-funnels-dxo2iqvp7`. Rama `work/ce-rediseno-cro`.
+Preview previo al cierre técnico: `tr4iner-funnels-dxo2iqvp7`. Rama
+`work/ce-rediseno-cro`. Queda reemplazado por el Preview del próximo commit.
 
 **El `package.json` no dispara ningún build.** El log dice `added 1 package in 547ms`,
 `Using built-in TypeScript 5.9.3`, `Build Completed in /vercel/output [2s]`. Solo instala
@@ -185,16 +202,29 @@ Middleware verificado con `vercel dev`, que corre el edge y el enrutado real:
 | Prueba | Resultado |
 |---|---|
 | Orgánico ×8 | control ×8, **cero cookies** |
-| Pago ×24 | **A=15 / B=9**, cero fallos |
+| Pago ×40 | **A=15 / B=25**, 40 cookies, cero fallos |
 | Cookie `B` ×10 / `A` ×10 | pegajosa, 10/10 en ambas |
+| `utm_source=&utm_source=MetaAds` ×12 | 12/12 entraron al split y recibieron cookie |
+| `utm_source=YouTube&utm_source=MetaAds` | gana el primer valor no vacío: control sin cookie |
 | Rewrite y no redirect | **200 OK, sin cabecera `Location`** |
 | Vuelve por orgánico con cookie | conserva su variante |
 | Recursos de B vía rewrite | fuentes, avatar y `attribution.js` en 200 |
 | `noindex` + canonical a `/casos-de-estudio` | correctos |
+| GA4 Realtime | `ce_ab_exposure_a` y `ce_ab_exposure_b` recibidos; orgánico nuevo no emitió |
+| Formulario B vacío | foco vuelve al primer radio y todos los inválidos quedan con `aria-invalid` |
+| Typeform Flor / Dashiel | `data-tf-hidden` conserva `variant=B` / `variant=A` |
 
 ### Pendiente
-- Registrar una vez en cada variante y confirmar `OptIn.variant` en el CRM. Si llega
-  `null`, el test corre pero no se puede leer.
+- Smoke desde `metodo.tr4iner.com` con correos únicos A/B: confirmar `OptIn.variant`, n8n,
+  Sheet, Brevo y el salto final. Preview no sirve para la copia directa al CRM porque su
+  allowlist rechaza dominios `*.vercel.app`.
+- Flor y Dashiel ya pasan `variant` por `data-tf-hidden`; falta declarar ese URL parameter
+  en el editor de Typeform y publicar el formulario. El CRM tampoco religa OptIns al
+  reingresar un lead existente. Hasta cerrar ambos puntos, el análisis inferencial se limita
+  a leads nuevos.
+- La rama arrastra el commit ajeno `6e09507` (`docs/bot-vero/*`) porque nació desde un
+  `main` local adelantado a `origin/main`. Antes del PR hay que retirarlo del historial con
+  una reescritura controlada y `force-with-lease`; no se hará sin aprobación explícita.
 - **Riesgo de message-match:** B promete un corte de salud y la VSL de destino
   (Flor / Dashiel) está encuadrada como transformación estética. Vigilar el paso
   landing → Typeform, no solo el opt-in.
