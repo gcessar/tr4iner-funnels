@@ -281,10 +281,46 @@
 
   .honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
 
+  /* ── Firma ───────────────────────────────────────────
+     La objeción #1 del corpus de compradores es desconfianza y necesidad de
+     prueba real (25%), y lo que la destraba es autenticidad percibida: una
+     cara, no un adjetivo. Mismo patrón que /testimonio-flor para que el
+     recorrido no cambie de idioma entre una página y la siguiente. */
+  .firma {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    /* El auto vive acá y no en .foot para que la firma y la letra chica
+       bajen juntas al fondo en vez de separarse. */
+    margin-top: auto;
+    padding-top: 34px;
+  }
+  .firma img {
+    display: block;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #F1F3F5;
+    flex: 0 0 auto;
+  }
+  .firma-texto { text-align: left; }
+  .firma-rol {
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 2px;
+  }
+  .firma-nombre { font-size: 14.5px; font-weight: 400; color: var(--ink); }
+  .firma-nombre .sub { color: var(--label); font-weight: 300; }
+
   /* ── Letra chica ─────────────────────────────────────── */
   .foot {
-    margin-top: auto;
-    padding-top: 28px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
     font-size: 11px;
     color: var(--label);
     text-align: center;
@@ -332,9 +368,8 @@
     </h1>
 
     <p class="subhead">
-      Primero te avisó el cansancio. Después, los números de un análisis.
-      Mira este caso de estudio y obtén todo lo que se aplicó para recuperar
-      su mejor estado físico.
+      Mira el caso completo y obtén todo lo que se aplicó: qué cambió cada mes,
+      y en qué orden.
     </p>
 
     <form id="lm-form" novalidate>
@@ -367,6 +402,15 @@
 
       <button type="submit" id="lm-submit"><span>Ver el caso</span><span class="arrow" aria-hidden="true">&rarr;</span></button>
     </form>
+  </div>
+
+  <div class="firma">
+    <img src="/assets/team/anthoni-montalvan-92.webp" width="46" height="46"
+         loading="lazy" decoding="async" alt="Anthoni Montalván">
+    <div class="firma-texto">
+      <div class="firma-rol">Producción · TR4INER</div>
+      <div class="firma-nombre">Anthoni Montalván <span class="sub">· Coach</span></div>
+    </div>
   </div>
 
   <div class="foot">

@@ -70,14 +70,27 @@ salud, esa línea tiene que volver.**
 
 | | Control | B |
 |---|---|---|
-| HTML crudo | 52.258 B | **19.772 B** (−62%) |
-| HTML gzip | 13.461 B | **6.857 B** (−49%) |
-| Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias** |
-| CTA termina en (viewport 812) | 773 px | **656 px** |
+| HTML crudo | 52.258 B | **21.313 B** (−59%) |
+| HTML gzip | 13.461 B | **7.289 B** (−46%) |
+| Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias + avatar** |
+| CTA termina en (viewport 812) | 773 px | **608 px** |
 | Contraste mínimo | — | **4,66:1** (todo pasa AA) |
 
 El CTA entra completo incluso en un viewport de 667, que es lo que le queda a un teléfono
 después del navegador. Está justo: cualquier línea extra en la bajada lo empuja afuera.
+
+### Firma de Anthoni en el pie
+
+Se agregó el bloque de confianza —avatar 46 px + "Producción · TR4INER" + "Anthoni
+Montalván · Coach"— replicando el patrón de `/testimonio-flor` para que el recorrido no
+cambie de idioma entre una página y la siguiente. Lo pide el dato: **desconfianza y
+necesidad de prueba real es el 25% de los compradores**, y el informe cualitativo es
+explícito en que lo que destraba esa objeción es autenticidad percibida — una cara, no
+un adjetivo.
+
+El PNG original pesaba **40.883 B para un círculo de 46 px**, más del doble que toda la
+página. Se generó `anthoni-montalvan-92.webp` a 92×92 (2× para retina): **2.526 B, −94%**.
+El PNG queda porque lo usa `/testimonio-flor`.
 
 ### Sin pantalla de confirmación
 
