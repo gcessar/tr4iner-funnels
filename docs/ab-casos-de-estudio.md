@@ -43,7 +43,7 @@ export default function middleware(req: Request) {
   // atribuido a la variante equivocada.
   const variante = previa ?? (Math.random() < 0.5 ? "A" : "B");
 
-  const res = variante === "B" ? rewrite(new URL("/index-b", url)) : next();
+  const res = variante === "B" ? rewrite(new URL("/index-salud", url)) : next();
   if (!previa) {
     res.headers.append(
       "set-cookie",
@@ -65,6 +65,12 @@ build step.
 ⚠️ Convive con el rewrite que ya está en `vercel.json` (`/casos-de-estudio` → `/index`).
 Verificar en preview que el middleware corre **antes** y que la variante A sigue sirviendo
 `index.html` igual que hoy.
+
+> ⚠️ **El archivo de la variante NO puede llamarse `index-b.html`.** `.vercelignore`
+> excluye `*-B.html` —el patrón de las páginas viejas archivadas del repo— y el matcheo
+> es insensible a mayúsculas, así que el archivo nunca se sube al deployment y la mitad
+> del tráfico pago cae en un 404. Verificado el 11-ago con `vercel dev`. Cualquier nombre
+> terminado en `-b.html` tiene el mismo problema; hoy la variante es `index-salud.html`.
 
 ### 2. `index-b.html` — copia de `index.html` con UNA sola diferencia
 

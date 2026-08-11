@@ -164,11 +164,35 @@ B cambia copy, diseño **y peso** a la vez. Si gana, no se sabrá cuál de los t
 Es el precio de probar un rediseño como paquete, y es distinto del A/B de titular, que
 sí aísla una variable.
 
-### Pendiente
+### Verificación en preview — y el bug que atajó
 
-- **Verificar en preview que el middleware corre antes del rewrite de `vercel.json`**
-  (`/casos-de-estudio` → `/index`) y que agregar `package.json` no disparó un build.
-  Es el riesgo #1 de este deploy.
+Preview `Ready` en 11 s: `tr4iner-funnels-dxo2iqvp7`. Rama `work/ce-rediseno-cro`.
+
+**El `package.json` no dispara ningún build.** El log dice `added 1 package in 547ms`,
+`Using built-in TypeScript 5.9.3`, `Build Completed in /vercel/output [2s]`. Solo instala
+`@vercel/edge` y compila el middleware. Riesgo #1 descartado.
+
+🐞 **Bug encontrado en preview: la variante nunca se subía.** `.vercelignore` excluye
+`*-B.html` —el patrón de las páginas viejas archivadas— y el matcheo es insensible a
+mayúsculas, así que **`index-b.html` jamás llegó al deployment**: el rewrite devolvía
+**404**. De haber salido a producción, **la mitad del tráfico pago habría caído en una
+página de error**. El archivo pasa a llamarse `index-salud.html`; cualquier nombre
+terminado en `-b.html` tiene el mismo problema. Anotado también en
+`docs/ab-casos-de-estudio.md`, que proponía justamente ese nombre.
+
+Middleware verificado con `vercel dev`, que corre el edge y el enrutado real:
+
+| Prueba | Resultado |
+|---|---|
+| Orgánico ×8 | control ×8, **cero cookies** |
+| Pago ×24 | **A=15 / B=9**, cero fallos |
+| Cookie `B` ×10 / `A` ×10 | pegajosa, 10/10 en ambas |
+| Rewrite y no redirect | **200 OK, sin cabecera `Location`** |
+| Vuelve por orgánico con cookie | conserva su variante |
+| Recursos de B vía rewrite | fuentes, avatar y `attribution.js` en 200 |
+| `noindex` + canonical a `/casos-de-estudio` | correctos |
+
+### Pendiente
 - Registrar una vez en cada variante y confirmar `OptIn.variant` en el CRM. Si llega
   `null`, el test corre pero no se puede leer.
 - **Riesgo de message-match:** B promete un corte de salud y la VSL de destino

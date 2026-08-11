@@ -43,7 +43,12 @@ export default function middleware(req: Request) {
   // rewrite, nunca redirect: la URL sigue siendo /casos-de-estudio, las UTMs
   // quedan intactas, no hay salto extra ni parpadeo, y Meta no ve una
   // redirección que le ensucie el tracking.
-  const res = variante === "B" ? rewrite(new URL("/index-b", url)) : next();
+  //
+  // El archivo se llama index-salud y NO index-b por una razón concreta:
+  // `.vercelignore` excluye `*-B.html`, el patrón de las páginas viejas
+  // archivadas del repo. Con el nombre index-b.html el archivo nunca se
+  // subía al deployment y la mitad del tráfico pago caía en un 404.
+  const res = variante === "B" ? rewrite(new URL("/index-salud", url)) : next();
 
   if (reciénAsignada) {
     res.headers.append(
