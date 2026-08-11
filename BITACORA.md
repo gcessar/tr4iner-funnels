@@ -5,6 +5,103 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-08-11 — A/B real de `/casos-de-estudio`: variante B de salud, solo contra tráfico pago
+
+**Rama:** `work/ce-rediseno-cro`. **Sin publicar** — falta aprobación del preview.
+
+### Qué se montó
+
+1. **`middleware.ts` + `package.json`** — el split 50/50 en el edge que la auditoría
+   pedía desde el 9-ago. Rewrite (nunca redirect), cookie pegajosa `ab_ce` de 90 días.
+   `package.json` existe **solo** para poder importar `@vercel/edge`: no hay framework
+   ni build step, y se agregó `"framework": null` a `vercel.json` para que Vercel no
+   crea que ahora tiene que compilar algo.
+2. **`index-b.html`** — página nueva, no una variante del control. Blanco clínico +
+   el amarillo TR4INER, solo titular + formulario (caso / nombre / correo) + botón.
+   Sin video, sin bullets, sin barra fija, sin modal.
+3. **Fuentes auto-hospedadas** — Stack Sans Headline 700 para el titular y Lexend 300
+   para el resto, traídas de `design/ce-an-tipografia`. Cero peticiones a Google.
+
+### Por qué B solo corre contra tráfico de ads
+
+Decisión del usuario, y los datos la respaldan: el orgánico rebota 44% y el pago 74%.
+Mezclarlos diluiría justo el segmento que la prueba quiere leer. El middleware asigna
+variante **únicamente** si `utm_source` contiene `ads`; el visitante orgánico ve el
+control y **no gasta un lugar del experimento** (no se le pone cookie). Quien ya tiene
+cookie la conserva aunque vuelva por orgánico, para que su registro no cambie de bando.
+
+### Por qué el ángulo de salud
+
+El corte no es estético: es para quien **ya tiene síntomas y quiere prevenir**. Lo
+sostienen tres fuentes propias que coinciden:
+
+- El prompt del bot de Vero §7.1: *"el mayor porcentaje de cierre no se da en quien
+  quiere verse mejor: se da en quien ya tiene un problema de salud provocado por sus
+  hábitos"*.
+- El informe cualitativo de 230 llamadas: **110 señales** de salud/diabetes.
+- §7.5, el patrón de "ya lo sabía" — conciencia de método sin acción.
+
+El titular filtra a propósito («Ya no es por cómo te ves») y la bajada nombra síntomas
+concretos para que quien viene solo por estética se autoexcluya antes de gastar un lead.
+El registro es **absolutorio, no culpabilizador**: el informe es explícito en que el copy
+que culpa repele y el que ofrece estructura convierte.
+
+⚠️ **Límite duro heredado del prompt §7.7:** no se diagnostica, no se interpretan
+análisis y **no se promete revertir nada**. La página lo declara: *"TR4INER es un equipo
+de entrenamiento y nutrición. Acompaña lo que te indique tu médico — nunca lo reemplaza."*
+Esto no es letra chica defensiva: la página **parece clínica**, y parecer clínico mientras
+se promete como médico sería engañoso.
+
+### Medido
+
+| | Control | B |
+|---|---|---|
+| HTML crudo | 52.258 B | **22.096 B** (−58%) |
+| HTML gzip | 13.461 B | **7.276 B** (−46%) |
+| Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias** |
+| CTA termina en (viewport 812) | 773 px | **626 px** |
+| Contraste mínimo | — | **4,66:1** (todo pasa AA) |
+
+Cadena de atribución verificada con UTMs sintéticas, con el webhook de producción
+interceptado para no ensuciar el CRM: sobreviven los `utm_*`, `fbclid`, `h_ad_id` y
+`video`; `utm_content` se rellena con el video si falta; el `@` viaja literal; Mujer va
+a `/testimonio-flor` y Hombre a `/testimonio-dashiel`; `variant` llega como `"B"`.
+
+### KPI, declarado ANTES de mirar resultados
+
+**Decide:** % de leads que declaran $300-600 (base 17,7%), a ~30 días.
+**Guardarraíl:** opt-in rate, solo para **abortar** — si B lo hunde más de 25% relativo,
+se corta. No sirve para declarar ganador.
+**Horizonte fijo, sin espiar:** cortar en semanas completas; empate a los 30 días deja
+el control. Con tres miradas, un test sin diferencia real da "ganador" 1 de cada 5 veces.
+
+**El CPL va a empeorar antes de que mejore la caja.** El corte de salud atrae menos
+volumen a propósito. Quien decida por CPL apaga al ganador.
+
+### Lo que esta prueba NO puede decir
+
+B cambia copy, diseño **y peso** a la vez. Si gana, no se sabrá cuál de los tres fue.
+Es el precio de probar un rediseño como paquete, y es distinto del A/B de titular, que
+sí aísla una variable.
+
+### Pendiente
+
+- **Verificar en preview que el middleware corre antes del rewrite de `vercel.json`**
+  (`/casos-de-estudio` → `/index`) y que agregar `package.json` no disparó un build.
+  Es el riesgo #1 de este deploy.
+- Registrar una vez en cada variante y confirmar `OptIn.variant` en el CRM. Si llega
+  `null`, el test corre pero no se puede leer.
+- **Riesgo de message-match:** B promete un corte de salud y la VSL de destino
+  (Flor / Dashiel) está encuadrada como transformación estética. Vigilar el paso
+  landing → Typeform, no solo el opt-in.
+- El titular «Entrenas. Comes bien. Y el espejo sigue igual.» queda **libre** como
+  retador del A/B de titular sobre el control: es un ángulo de espejo y no entra acá.
+- `design/ce-an-tipografia` sigue sin publicar. Ya no está bloqueada por falta de
+  instrumento —el split existe—, pero sería una tercera variante y hoy no hay tráfico
+  para tres.
+
+---
+
 ## 2026-08-11 — Bot de WhatsApp de Vero: sin países excluidos, detección de patologías y cierre en chat
 
 **Dónde:** agente de `VERO-BOT` en n8n (`N2e6Ht6uWwER5qbD`). No se tocó ninguna página del
