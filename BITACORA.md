@@ -182,8 +182,12 @@ sí aísla una variable.
 
 ### Verificación en preview — y el bug que atajó
 
-Preview previo al cierre técnico: `tr4iner-funnels-dxo2iqvp7`. Rama
-`work/ce-rediseno-cro`. Queda reemplazado por el Preview del próximo commit.
+Preview funcional del cierre técnico: commit `eb8bf30`, deployment
+`dpl_E4mnPYYWYaRDGkGur1ruKf1hDmpf`, target `preview`, estado `Ready` en 11 s:
+`tr4iner-funnels-ntgo966zc-metodotr4iners-projects.vercel.app`. Está protegido por SSO;
+se verificó con `vercel curl` autenticado, sin desactivar la protección: A y B forzadas en
+200 sin `Location`, orgánico en control sin cookie y UTM vacía duplicada dentro del split.
+**Producción no se tocó.**
 
 **El `package.json` no dispara ningún build.** El log dice `added 1 package in 547ms`,
 `Using built-in TypeScript 5.9.3`, `Build Completed in /vercel/output [2s]`. Solo instala
