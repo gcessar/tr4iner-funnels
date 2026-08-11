@@ -293,28 +293,6 @@
   .foot a:hover { color: var(--ink-soft); }
   .foot .sep { margin: 0 7px; opacity: 0.5; }
 
-  /* ── Confirmación ────────────────────────────────────── */
-  #confirm { display: none; }
-  #confirm.visible { display: block; }
-  #confirm h2 { font-family: var(--display); font-size: 25px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
-  #confirm p { font-size: 15px; color: var(--muted); margin-top: 10px; }
-  #confirm .mail { color: var(--ink); }
-  #confirm a {
-    display: block;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent-ink);
-    background: var(--accent);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-top: 22px;
-  }
-  #confirm a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-
   /* Una sola entrada, corta. Más movimiento en una página de tres campos
      se lee como relleno y retrasa el único elemento que importa. */
   @keyframes rise {
@@ -389,12 +367,6 @@
 
       <button type="submit" id="lm-submit"><span>Ver el caso</span><span class="arrow" aria-hidden="true">&rarr;</span></button>
     </form>
-  </div>
-
-  <div id="confirm">
-    <h2>Listo, <span id="c-nombre"></span>.</h2>
-    <p>Te lo enviamos a <span class="mail" id="c-email"></span>. Abre el caso ahora:</p>
-    <a href="#" id="c-btn"><span>Abrir el caso</span></a>
   </div>
 
   <div class="foot">
@@ -475,37 +447,6 @@
       return base.toString();
     }
 
-    function showTransition(nombre, email, sexo) {
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('confirm').classList.add('visible');
-      document.getElementById('c-nombre').textContent = nombre;
-      document.getElementById('c-email').textContent = email;
-
-      var redirectUrl = buildRedirectUrl(sexo, nombre, email);
-      var btn = document.getElementById('c-btn');
-      btn.href = redirectUrl;
-      var btnLabel = btn.querySelector('span');
-
-      var seconds = 3;
-      function updateLabel() {
-        if (btnLabel) btnLabel.textContent = 'Abrir el caso (' + seconds + 's)';
-      }
-      updateLabel();
-
-      var timer = setInterval(function() {
-        seconds--;
-        if (seconds <= 0) {
-          clearInterval(timer);
-          window.location.href = redirectUrl;
-        } else {
-          updateLabel();
-        }
-      }, 1000);
-
-      // Click manual cancela el contador (el link navega normal)
-      btn.addEventListener('click', function() { clearInterval(timer); }, { once: true });
-    }
-
     document.getElementById('lm-form').addEventListener('submit', function(e) {
       e.preventDefault();
       if (document.getElementById('lm-honeypot').value !== '') return;
@@ -531,7 +472,7 @@
       if (!valid) return;
 
       var btn = document.getElementById('lm-submit');
-      btn.querySelector('span').textContent = 'Enviando...';
+      btn.querySelector('span').textContent = 'Abriendo el caso...';
       btn.disabled = true;
 
       var sexoVal = sexoEl.value;
@@ -550,16 +491,24 @@
 
       // Copia de seguridad directa al CRM, en paralelo al webhook de n8n:
       // si n8n se cae, el sheet y Brevo se pierden juntos y esta es la
-      // única copia que queda. No bloquea ni altera la redirección.
+      // única copia que queda. Ya usa keepalive internamente.
       if (window.TR4Track && window.TR4Track.saveOptIn) window.TR4Track.saveOptIn(payload);
 
-      fetch('https://primary-production-0efa.up.railway.app/webhook/casos-estudio', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(payload)
-      })
-      .then(function() { showTransition(nombre, email, sexoVal); })
-      .catch(function() { showTransition(nombre, email, sexoVal); });
+      // keepalive es lo que permite no esperar la respuesta: el navegador
+      // se compromete a terminar el POST aunque la página ya se haya
+      // descargado. Sin esto, navegar de inmediato cortaría el request en
+      // vuelo y el lead no llegaría ni al sheet ni a Brevo.
+      try {
+        fetch('https://primary-production-0efa.up.railway.app/webhook/casos-estudio', {
+          method:    'POST',
+          headers:   { 'Content-Type': 'application/json' },
+          body:      JSON.stringify(payload),
+          keepalive: true
+        }).catch(function() { /* el envío nunca puede frenar la navegación */ });
+      } catch (err) { /* idem */ }
+
+      // Sin pantalla intermedia: el registro va derecho al caso que eligió.
+      window.location.href = buildRedirectUrl(sexoVal, nombre, email);
     });
 
     document.getElementById('lm-email').addEventListener('blur', function() {

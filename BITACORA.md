@@ -70,14 +70,28 @@ salud, esa línea tiene que volver.**
 
 | | Control | B |
 |---|---|---|
-| HTML crudo | 52.258 B | **21.500 B** (−59%) |
-| HTML gzip | 13.461 B | **~7.100 B** (−47%) |
+| HTML crudo | 52.258 B | **19.772 B** (−62%) |
+| HTML gzip | 13.461 B | **6.857 B** (−49%) |
 | Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias** |
 | CTA termina en (viewport 812) | 773 px | **656 px** |
 | Contraste mínimo | — | **4,66:1** (todo pasa AA) |
 
 El CTA entra completo incluso en un viewport de 667, que es lo que le queda a un teléfono
 después del navegador. Está justo: cualquier línea extra en la bajada lo empuja afuera.
+
+### Sin pantalla de confirmación
+
+B **no muestra el aviso intermedio** del control (nombre + correo + contador de 3 s):
+al registrarse va derecho a `/testimonio-flor` o `/testimonio-dashiel` según el caso
+elegido. Es un paso menos entre el registro y el contenido.
+
+⚠️ **Por qué esto no pierde leads.** El control podía navegar recién cuando el `fetch`
+a n8n resolvía; navegar de inmediato cortaría el request en vuelo. La pieza que lo
+habilita es **`keepalive: true`** en el POST del webhook: el navegador se compromete a
+terminarlo aunque la página ya se haya descargado. `TR4Track.saveOptIn` ya lo usaba
+internamente. Verificado: el POST se dispara con `keepalive`, la copia al CRM también,
+y el destino conserva todas las UTMs. **Si alguien saca ese flag, el lead deja de
+llegar al sheet y a Brevo, y el síntoma va a parecer un problema de n8n.**
 
 Cadena de atribución verificada con UTMs sintéticas, con el webhook de producción
 interceptado para no ensuciar el CRM: sobreviven los `utm_*`, `fbclid`, `h_ad_id` y
