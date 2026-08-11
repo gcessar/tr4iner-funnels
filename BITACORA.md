@@ -5,6 +5,28 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-08-10 — Especificación del A/B de `/casos-de-estudio` (sin implementar todavía)
+
+**Qué:** `docs/ab-casos-de-estudio.md` con los 4 cambios para montar el primer A/B real, y
+un pointer en `AGENTS.md`. **No se tocó ninguna página.**
+
+**Por qué:** la prueba del 8-ago comparó antes/después y no pudo decidir nada — el rebote se
+movió 0,6 pp, dentro del ruido, y ya venía bajando solo desde el 27-jul. Un split 50/50
+elimina el tiempo como variable.
+
+**Decisiones:** middleware de Vercel con **rewrite** (no redirect: conserva las UTMs, evita
+el salto y el parpadeo); cookie pegajosa; `index-b.html` cambia **sólo el titular**;
+`variant` se agrega al `payload` del opt-in, que se arma en un solo lugar y va a los dos
+destinos (CRM y n8n). El KPI de decisión es el **mix de calificación**, no el CPL — el
+titular nuevo atrae al segmento de recomposición y el CPL empeora antes de que mejore la
+caja.
+
+**Pendiente:** implementar. Requiere `package.json` mínimo con `@vercel/edge` (sin
+convertir el proyecto a un framework) y verificar que el middleware corra antes del rewrite
+que ya existe en `vercel.json`.
+
+---
+
 ## 2026-08-08 — El poster sale del HTML y el CTA sube al hero (PRUEBA EN CURSO: sáb 8 → dom 9)
 
 ### Qué cambió
