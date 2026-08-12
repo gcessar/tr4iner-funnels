@@ -1,0 +1,8 @@
+{
+  "name": "tr4iner-funnels",
+  "private": true,
+  "description": "Páginas estáticas de los funnels de TR4INER. Este package.json existe SOLO para que el middleware del edge pueda importar @vercel/edge: el proyecto no tiene framework ni build step y no debe adquirirlos.",
+  "dependencies": {
+    "@vercel/edge": "^1.2.2"
+  }
+}

@@ -46,6 +46,25 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
+  <script>
+    // Una exposición por vista asignada. GA4 calcula sesiones o usuarios que
+    // contienen el evento; no usamos eventCount, que sí crecería al recargar.
+    // El nombre lleva la variante para no depender de una dimensión extra.
+    (function () {
+      var match = /(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie);
+      if (!match) return; // orgánico: control visual, pero fuera del experimento
+      var variant = match[1];
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag('event', 'ce_ab_exposure_' + variant.toLowerCase(), {
+        send_to: 'G-CGWMFER9V4',
+        experiment_id: 'ce_salud_202608',
+        experiment_variant: variant,
+        non_interaction: true
+      });
+    })();
+  </script>
+
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <title>Cómo perder grasa sin rebote: caso real | TR4INER</title>
   <meta name="description" content="Anthoni Montalván analiza un caso real de pérdida de grasa sin dieta extrema: qué cambió, cómo evitó el rebote y qué sostuvo el resultado.">
@@ -1458,6 +1477,7 @@
       });
     }
     var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
+    var abVariant = (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || null;
     // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
     if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
 
@@ -1495,6 +1515,7 @@
       p.set('first_name', nombre);
       p.set('email', email);
       p.set('sexo', sexo);
+      if (abVariant) p.set('variant', abVariant);
       if (videoId) p.set('video', videoId);
       Object.keys(utmData).forEach(function(key) {
         p.set(key, utmData[key]);
@@ -1578,7 +1599,10 @@
         video:     videoId,
         utm:       utmData,
         page_url:  window.location.href,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        // Sin cookie es orgánico y queda fuera del experimento; no debe
+        // contaminar A. El control pago sí recibe cookie antes de renderizar.
+        variant:   abVariant
       };
 
       // Copia de seguridad directa al CRM, en paralelo al webhook de n8n:

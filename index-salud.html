@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script>
+    /*
+      Instagram puede agregar sus propios UTMs a un enlace que ya los trae.
+      Normalizamos antes de GTM para que analítica, formulario y redirect lean
+      una sola fuente: gana el primer valor no vacío de cada dato de atribución.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <script>
+    // Mismo contrato del control: una exposición por vista asignada y evento
+    // distinto por brazo. El informe usa sesiones/usuarios, no eventCount.
+    (function () {
+      var match = /(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie);
+      if (!match) return;
+      var variant = match[1];
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag('event', 'ce_ab_exposure_' + variant.toLowerCase(), {
+        send_to: 'G-CGWMFER9V4',
+        experiment_id: 'ce_salud_202608',
+        experiment_variant: variant,
+        non_interaction: true
+      });
+    })();
+  </script>
+
+  <!-- Variante B de un A/B servido por rewrite en /casos-de-estudio. La URL que ve
+       el visitante es siempre la canónica, así que /index-salud no debe indexarse por
+       su cuenta: sería contenido duplicado compitiendo con el control. -->
+  <meta name="robots" content="noindex, follow">
+  <title>Ya no es por cómo te ves | TR4INER</title>
+  <meta name="description" content="Anthoni Montalván analiza, mes por mes, un caso real: qué se ordenó primero para que el cambio durara.">
+  <link rel="canonical" href="https://metodo.tr4iner.com/casos-de-estudio">
+
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
+
+  <style>
+  /* ── Tokens ─────────────────────────────────────────────
+     Blanco clínico + el amarillo TR4INER. El amarillo NO se usa nunca
+     como texto sobre blanco (1,7:1, ilegible): vive como relleno del
+     botón con tinta encima (11:1). Es el único color saturado de la
+     página, y por eso el ojo va directo al botón. */
+  :root {
+    --bg: #FFFFFF;
+    --ink: #16181A;
+    --ink-soft: #575F67;
+    /* Los grises están calculados contra blanco, no elegidos a ojo: a 11-13px
+       cualquier cosa por debajo de 4,5:1 falla AA y esta página es casi toda
+       texto chico. #6B7278 da 4,88:1 y sigue leyéndose como gris tranquilo. */
+    --muted: #6E757D;
+    --label: #6B7278;
+    --line: #DDE1E5;
+    --accent: #F5C518;
+    --accent-ink: #16181A;
+    --error: #C0392B;
+    --max: 400px;
+    --radius: 9px;
+    --display: "Stack Sans Headline", -apple-system, "Helvetica Neue", sans-serif;
+    --sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  @font-face {
+    font-family: "Stack Sans Headline";
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/assets/fonts/stack-sans-headline-normal-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: "Stack Sans Headline";
+    font-style: normal;
+    font-weight: 200 700;
+    font-display: swap;
+    src: url("/assets/fonts/stack-sans-headline-normal-latin-ext.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url("/assets/fonts/lexend-normal-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 300 500;
+    font-display: swap;
+    src: url("/assets/fonts/lexend-normal-latin-ext.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px 32px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: var(--max);
+    display: flex;
+    flex-direction: column;
+    padding-top: 24px;
+    /* Crece hasta el alto del viewport para que el margin-top:auto del pie
+       tenga contra qué empujar. Sin esto el pie queda pegado al botón y se
+       lee como si fuera parte del formulario. */
+    flex: 1;
+  }
+
+  /* ── Encabezado ──────────────────────────────────────── */
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(30px, 8.4vw, 37px);
+    font-weight: 700;
+    line-height: 1.11;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+  /* La segunda oración es la que filtra: nombra síntomas concretos para
+     que quien viene solo por estética se autoexcluya acá y no gaste
+     un lead. Va más liviana porque primero tiene que leerse el corte. */
+  h1 .sintomas {
+    display: block;
+    margin-top: 9px;
+    font-weight: 400;
+    font-size: 0.6em;
+    line-height: 1.28;
+    letter-spacing: -0.008em;
+    color: var(--ink-soft);
+  }
+
+  .subhead {
+    font-size: 15px;
+    line-height: 1.58;
+    color: var(--muted);
+    margin-top: 14px;
+  }
+
+  /* ── Formulario ──────────────────────────────────────── */
+  form { margin-top: 22px; }
+
+  .field { margin-bottom: 15px; }
+
+  .lbl {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], input[type="email"] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;   /* <16px hace que iOS haga zoom al enfocar */
+    font-weight: 300;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 15px;
+    transition: border-color 140ms ease;
+  }
+  input[type="text"]:focus, input[type="email"]:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+  input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  input::placeholder { color: var(--muted); font-weight: 300; }
+
+  /* El selector de caso reemplaza a la pregunta "Sexo": el dato es el
+     mismo y decide a qué caso va la persona, pero pedirlo como una
+     elección de contenido en vez de como un dato personal saca fricción. */
+  .cases { display: flex; gap: 10px; }
+  .case {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 8px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+  .case input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .case:has(input:checked) {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #FFFFFF;
+  }
+  .case:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: filter 140ms ease, transform 90ms ease;
+  }
+  button:hover { filter: brightness(0.94); }
+  button:active { transform: scale(0.99); }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  button[disabled] { opacity: 0.55; cursor: default; }
+  button .arrow { margin-left: 8px; }
+
+  .err {
+    display: none;
+    font-size: 12.5px;
+    color: var(--error);
+    margin-top: 6px;
+  }
+
+  .honeypot { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+
+  /* ── Firma ───────────────────────────────────────────
+     La objeción #1 del corpus de compradores es desconfianza y necesidad de
+     prueba real (25%), y lo que la destraba es autenticidad percibida: una
+     cara, no un adjetivo. Mismo patrón que /testimonio-flor para que el
+     recorrido no cambie de idioma entre una página y la siguiente. */
+  .firma {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    /* El auto vive acá y no en .foot para que la firma y la letra chica
+       bajen juntas al fondo en vez de separarse. */
+    margin-top: auto;
+    padding-top: 34px;
+  }
+  .firma img {
+    display: block;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #F1F3F5;
+    flex: 0 0 auto;
+  }
+  .firma-texto { text-align: left; }
+  .firma-rol {
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--label);
+    margin-bottom: 2px;
+  }
+  .firma-nombre { font-size: 14.5px; font-weight: 400; color: var(--ink); }
+  .firma-nombre .sub { color: var(--label); font-weight: 300; }
+
+  /* ── Letra chica ─────────────────────────────────────── */
+  .foot {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--label);
+    text-align: center;
+  }
+  .foot a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line); }
+  .foot a:hover { color: var(--ink-soft); }
+  .foot .sep { margin: 0 7px; opacity: 0.5; }
+
+  /* Acá había una animación de entrada y se quitó a propósito.
+     Arrancaba en opacity:0, así que no había primer pintado hasta que la
+     animación avanzaba — y esa animación compite por el hilo principal
+     con los ~12 scripts que inyecta GTM (fbevents pesa 107 KB solo).
+     El resultado medido era FCP a ~1 s con el DOM interactivo a los 16 ms.
+     En una página cuyo trabajo entero es leerse en seis segundos sobre una
+     conexión mala, 400 ms de fundido son costo sin contrapartida. */
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (min-width: 620px) {
+    .page { padding-top: 60px; }
+    body { padding-bottom: 52px; }
+  }
+  </style>
+</head>
+
+<body>
+
+<main class="page" id="contenido">
+
+  <div id="form-view">
+    <div class="eyebrow">Caso de estudio</div>
+
+    <h1>
+      Ya no es por cómo te ves.
+      <span class="sintomas">Es la presión, el análisis que salió mal, el cansancio que no se va.</span>
+    </h1>
+
+    <p class="subhead">
+      Mira el caso completo y obtén todo lo que se aplicó: qué cambió cada mes,
+      y en qué orden.
+    </p>
+
+    <form id="lm-form" novalidate>
+      <input type="text" class="honeypot" id="lm-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <fieldset class="field" style="border:0;" aria-describedby="err-sexo">
+        <legend class="lbl">Elige el caso que quieres ver</legend>
+        <div class="cases">
+          <label class="case">
+            <input type="radio" name="sexo" value="Mujer">Mujer
+          </label>
+          <label class="case">
+            <input type="radio" name="sexo" value="Hombre">Hombre
+          </label>
+        </div>
+        <div class="err" id="err-sexo" role="alert" aria-live="polite"></div>
+      </fieldset>
+
+      <div class="field">
+        <label class="lbl" for="lm-nombre">Nombre</label>
+        <input type="text" id="lm-nombre" name="nombre" autocomplete="given-name" placeholder="Tu nombre" aria-describedby="err-nombre">
+        <div class="err" id="err-nombre" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="lm-email">Correo electrónico</label>
+        <input type="email" id="lm-email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="tu@correo.com" aria-describedby="err-email">
+        <div class="err" id="err-email" role="alert" aria-live="polite"></div>
+      </div>
+
+      <button type="submit" id="lm-submit"><span>Ver el caso</span><span class="arrow" aria-hidden="true">&rarr;</span></button>
+    </form>
+  </div>
+
+  <div class="firma">
+    <img src="/assets/team/anthoni-montalvan-92.webp" width="46" height="46"
+         loading="lazy" decoding="async" alt="">
+    <div class="firma-texto">
+      <div class="firma-rol">Producción · TR4INER</div>
+      <div class="firma-nombre">Anthoni Montalván <span class="sub">· Coach</span></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    © 2026 TR4INER · BodyMindFitCo LLC
+    <br>
+    <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a><span class="sep">|</span><a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+  </div>
+
+</main>
+
+<script src="/attribution.js"></script>
+<script>
+  // ───────────────────────────────────────
+  // Mismo contrato de atribución y destinos que el control. La mecánica sí
+  // cambia: B usa keepalive y navega sin la confirmación intermedia, por eso
+  // este experimento mide el paquete completo y no una sola pieza.
+  // ───────────────────────────────────────
+  (function() {
+    var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','utm_id','fbclid','gclid','fbc_id','h_ad_id'];
+    var currentParams = window.TR4Track && window.TR4Track.getCanonicalParams
+      ? window.TR4Track.getCanonicalParams()
+      : new URLSearchParams(window.location.search);
+    var utmData = {};
+    currentParams.forEach(function(value, key) {
+      if (value && (key.indexOf('utm_') === 0 || utmKeys.indexOf(key) !== -1)) {
+        utmData[key] = value;
+      }
+    });
+    if (window.TR4Track) {
+      var trackedUtms = window.TR4Track.getUTMs(utmKeys);
+      Object.keys(trackedUtms).forEach(function(key) {
+        if (!utmData[key]) utmData[key] = trackedUtms[key];
+      });
+    }
+    var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
+    var abVariant = (/(?:^|;\s*)ab_ce=([AB])/.exec(document.cookie) || [])[1] || null;
+    // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
+    if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
+
+    var dominiosFalsos = [
+      'test.com','ejemplo.com','example.com','fake.com','temp.com',
+      'mailinator.com','guerrillamail.com','yopmail.com','trashmail.com',
+      'throwam.com','sharklasers.com','guerrillamailblock.com','grr.la',
+      'spam4.me','tempr.email','dispostable.com','spamgourmet.com'
+    ];
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    function isDomainSuspect(email) {
+      var domain = (email.split('@')[1] || '').toLowerCase();
+      return dominiosFalsos.includes(domain);
+    }
+    function showErr(id, show, msg) {
+      var el = document.getElementById(id);
+      el.style.display = show ? 'block' : 'none';
+      if (msg) el.textContent = msg;
+      var fieldId = id.replace('err-', 'lm-');
+      var field = document.getElementById(fieldId);
+      if (field) field.setAttribute('aria-invalid', show ? 'true' : 'false');
+      if (id === 'err-sexo') {
+        document.querySelectorAll('input[name="sexo"]').forEach(function(input) {
+          input.setAttribute('aria-invalid', show ? 'true' : 'false');
+        });
+      }
+    }
+    function buildRedirectUrl(sexo, nombre, email) {
+      // Mismo origen: preview queda en preview y producción queda en metodo.tr4iner.com.
+      var base = new URL(
+        sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
+        window.location.origin
+      );
+      var p = new URLSearchParams();
+      // Conserva la query completa: así un identificador nuevo no desaparece
+      // antes de que podamos incorporarlo al esquema de atribución.
+      currentParams.forEach(function(value, key) {
+        p.set(key, value);
+      });
+      p.set('first_name', nombre);
+      p.set('email', email);
+      p.set('sexo', sexo);
+      if (abVariant) p.set('variant', abVariant);
+      if (videoId) p.set('video', videoId);
+      Object.keys(utmData).forEach(function(key) {
+        p.set(key, utmData[key]);
+      });
+      base.search = p.toString().replace(/%40/g, '@');
+      return base.toString();
+    }
+
+    document.getElementById('lm-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (document.getElementById('lm-honeypot').value !== '') return;
+
+      var nombre = document.getElementById('lm-nombre').value.trim();
+      var email  = document.getElementById('lm-email').value.trim();
+      var sexoEl = document.querySelector('input[name="sexo"]:checked');
+      var valid  = true;
+
+      showErr('err-nombre', !nombre, 'Ingresa tu nombre');
+      if (!nombre) valid = false;
+
+      var emailFmt     = validateEmail(email);
+      var emailSuspect = isDomainSuspect(email);
+      var emailBad     = !emailFmt || emailSuspect;
+      showErr('err-email', emailBad,
+        !emailFmt ? 'Ingresa un correo válido' : 'Ingresa un correo real (no uses correos temporales)');
+      if (emailBad) valid = false;
+
+      showErr('err-sexo', !sexoEl, 'Elige el caso que quieres ver');
+      if (!sexoEl) valid = false;
+
+      if (!valid) {
+        if (!sexoEl) document.querySelector('input[name="sexo"]').focus();
+        else if (!nombre) document.getElementById('lm-nombre').focus();
+        else document.getElementById('lm-email').focus();
+        return;
+      }
+
+      var btn = document.getElementById('lm-submit');
+      btn.querySelector('span').textContent = 'Abriendo el caso…';
+      btn.disabled = true;
+
+      var sexoVal = sexoEl.value;
+      var payload = {
+        nombre:    nombre,
+        email:     email,
+        sexo:      sexoVal,
+        video:     videoId,
+        utm:       utmData,
+        page_url:  window.location.href,
+        timestamp: new Date().toISOString(),
+        // Sin esto el test corre pero no se puede leer: es lo que permite
+        // separar los registros de B de los del control en el CRM.
+        variant:   abVariant
+      };
+
+      // Copia de seguridad directa al CRM, en paralelo al webhook de n8n:
+      // si n8n se cae, el sheet y Brevo se pierden juntos y esta es la
+      // única copia que queda. Ya usa keepalive internamente.
+      if (window.TR4Track && window.TR4Track.saveOptIn) window.TR4Track.saveOptIn(payload);
+
+      // keepalive es lo que permite no esperar la respuesta: el navegador
+      // se compromete a terminar el POST aunque la página ya se haya
+      // descargado. Sin esto, navegar de inmediato cortaría el request en
+      // vuelo y el lead no llegaría ni al sheet ni a Brevo.
+      try {
+        fetch('https://primary-production-0efa.up.railway.app/webhook/casos-estudio', {
+          method:    'POST',
+          headers:   { 'Content-Type': 'application/json' },
+          body:      JSON.stringify(payload),
+          keepalive: true
+        }).catch(function() { /* el envío nunca puede frenar la navegación */ });
+      } catch (err) { /* idem */ }
+
+      // Sin pantalla intermedia: el registro va derecho al caso que eligió.
+      window.location.href = buildRedirectUrl(sexoVal, nombre, email);
+    });
+
+    document.getElementById('lm-email').addEventListener('blur', function() {
+      var email = this.value.trim();
+      if (!email) return;
+      if (!validateEmail(email)) {
+        showErr('err-email', true, 'Ingresa un correo válido');
+      } else if (isDomainSuspect(email)) {
+        showErr('err-email', true, 'Ingresa un correo real (no uses correos temporales)');
+      } else {
+        showErr('err-email', false);
+      }
+    });
+    document.getElementById('lm-email').addEventListener('input', function() {
+      showErr('err-email', false);
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -747,7 +747,9 @@
           El script toma cada valor desde la URL, por ejemplo:
           ?first_name=Juan&email=juan@email.com&utm_source=facebook
         */
-        var identityFields = ["first_name", "name", "email", "sexo", "video"];
+        // `variant` identifica el brazo del A/B de /casos-de-estudio. Typeform
+        // también debe tener ese URL parameter declarado y publicado.
+        var identityFields = ["first_name", "name", "email", "sexo", "video", "variant"];
         var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
         var hiddenFields = [];
         params.forEach(function (value, key) {

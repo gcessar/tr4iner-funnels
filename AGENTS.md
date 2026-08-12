@@ -97,18 +97,23 @@ La Biblioteca es la referencia visual del proyecto. Todas las páginas canónica
 
 El primer A/B de `/casos-de-estudio` está especificado en
 [`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md): middleware de Vercel con
-**rewrite** (nunca redirect), cookie pegajosa, `index-b.html` que cambia **sólo el titular**,
-y `variant` viajando en el payload del opt-in hasta `OptIn.variant` del CRM.
+**rewrite** (nunca redirect), cookie pegajosa, control `index.html` contra el paquete de salud
+`index-salud.html`, sólo para tráfico pago. `variant` viaja en el opt-in; sin cookie queda
+`null` para no mezclar orgánico con A. GA4 recibe `ce_ab_exposure_a/b`; el denominador se
+lee con sesiones/usuarios que contienen el evento, no con eventCount.
 
 Dos cosas que parecen detalle y no lo son:
 
 - **Rewrite, no redirect.** Con redirect se pierden las UTMs, aparece un salto extra y Meta
   ve una redirección que le ensucia el tracking.
-- **El KPI que decide NO es el CPL ni el volumen de registros.** El titular nuevo atrae al
-  segmento de recomposición (convierte 4,60% contra 2,62%), así que el CPL empeora antes de
-  que mejore la caja. Decide el **mix de calificación**; el opt-in rate es sólo guardarraíl.
+- **Es una prueba de paquete, no de titular.** Si B gana, no se puede adjudicar el resultado
+  al copy, al diseño o al peso por separado.
+- **El KPI que decide NO es el CPL ni el volumen de registros.** Leer leads de $300-600 por
+  exposición elegible; el mix solo es diagnóstico y opt-in/Typeform por exposición son
+  guardarraíles. La parada es por muestra, no por un calendario fijo de 30 días.
 
-Protocolo de lectura y reglas de corte: `crm-ventas/docs/analisis-ads/protocolo-ab-landing.md`.
+El protocolo del CRM aún describe el test anterior de titular; sincronizarlo antes de abrir
+tráfico. Mientras tanto, la implementación vigente está en `docs/ab-casos-de-estudio.md`.
 
 ## Convenciones
 

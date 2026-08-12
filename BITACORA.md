@@ -5,6 +5,241 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-08-11 — A/B real de `/casos-de-estudio`: variante B de salud, solo contra tráfico pago
+
+**Rama:** `work/ce-rediseno-cro`. **Sin publicar** — falta aprobación del preview.
+
+### Qué se montó
+
+1. **`middleware.ts` + `package.json`** — el split 50/50 en el edge que la auditoría
+   pedía desde el 9-ago. Rewrite (nunca redirect), cookie pegajosa `ab_ce` de 180 días.
+   `package.json` existe **solo** para poder importar `@vercel/edge`: no hay framework
+   ni build step, y se agregó `"framework": null` a `vercel.json` para que Vercel no
+   crea que ahora tiene que compilar algo.
+2. **`index-salud.html`** — página nueva, no una variante del control. Blanco clínico +
+   el amarillo TR4INER, solo titular + formulario (caso / nombre / correo) + botón.
+   Sin video, sin bullets, sin barra fija, sin modal.
+3. **Fuentes auto-hospedadas** — Stack Sans Headline 700 para el titular y Lexend 300
+   para el resto, traídas de `design/ce-an-tipografia`. Cero peticiones a Google.
+
+### Cierre técnico al retomar el trabajo
+
+- El control no enviaba `variant`: los A de pago habrían quedado mezclados con histórico y
+  orgánico. Ahora A y B leen la cookie; **sin cookie se guarda `null`**, porque ese usuario
+  está fuera del experimento.
+- No existía denominador por brazo. Ambas páginas emiten `ce_ab_exposure_a/b` en cada vista
+  asignada; verificados ambos eventos en GA4 Realtime. El informe debe usar sesiones/usuarios
+  que contienen el evento, no `eventCount`.
+- El middleware leía sólo el primer `utm_source`; `?utm_source=&utm_source=MetaAds` quedaba
+  fuera del split. Ahora replica la normalización del HTML y usa el primer valor no vacío.
+- La cookie pasó de 90 a **180 días**: la muestra histórica se estima en ~138 días y una
+  cookie más corta podría reasignar retornos antes del cierre.
+- B ahora enfoca el primer campo inválido, anuncia errores a lectores de pantalla, corrige
+  contraste de placeholders y usa enlaces legales reales. El control no se alteró fuera de
+  la instrumentación necesaria del experimento.
+
+### Por qué B solo corre contra tráfico de ads
+
+Decisión del usuario, y los datos la respaldan: el orgánico rebota 44% y el pago 74%.
+Mezclarlos diluiría justo el segmento que la prueba quiere leer. El middleware asigna
+variante **únicamente** si `utm_source` contiene `ads`; el visitante orgánico ve el
+control y **no gasta un lugar del experimento** (no se le pone cookie). Quien ya tiene
+cookie la conserva aunque vuelva por orgánico, para que su registro no cambie de bando.
+
+### Por qué el ángulo de salud
+
+El corte no es estético: es para quien **ya tiene síntomas y quiere prevenir**. Lo
+sostienen tres fuentes propias que coinciden:
+
+- El prompt del bot de Vero §7.1: *"el mayor porcentaje de cierre no se da en quien
+  quiere verse mejor: se da en quien ya tiene un problema de salud provocado por sus
+  hábitos"*.
+- El informe cualitativo de 230 llamadas: **110 señales** de salud/diabetes.
+- §7.5, el patrón de "ya lo sabía" — conciencia de método sin acción.
+
+El titular filtra a propósito («Ya no es por cómo te ves») y la bajada nombra síntomas
+concretos para que quien viene solo por estética se autoexcluya antes de gastar un lead.
+El registro es **absolutorio, no culpabilizador**: el informe es explícito en que el copy
+que culpa repele y el que ofrece estructura convierte.
+
+La bajada se eligió sobre cinco opciones presentadas al usuario, cada una anclada a un
+dato del estudio de clientes (n=149 Typeform / 837 compradores). Ganó el ángulo de
+**susto médico**: *"Primero te avisó el cansancio. Después, los números de un análisis.
+Mira este caso de estudio y obtén todo lo que se aplicó para recuperar su mejor estado
+físico."* Las cifras del estudio **no aparecen en la página**: mandan el registro, no
+el texto — escribir "el 44% de quienes compraron…" expone las internas y suena a folleto.
+
+⚠️ **Hallazgo que corrige una suposición previa:** el tema #1 entre compradores no es
+bajar grasa ni prevenir enfermedad, es **"envejecer con fuerza e independencia" (208
+compradores, 57%)**, seguido de "trabajo, estrés y vida sedentaria" (50%). El par más
+frecuente combina ambos (111 casos). Queda como ángulo candidato para la próxima
+iteración: hoy no se usó porque el usuario eligió el de susto médico.
+
+⚠️ **Encuadre médico retirado a pedido del usuario.** La página llevaba *"TR4INER es un
+equipo de entrenamiento y nutrición. Acompaña lo que te indique tu médico — nunca lo
+reemplaza."*, derivada del límite §7.7 del prompt del bot (no diagnosticar, no prometer
+revertir nada). Se quitó junto con la microcopy del CTA. Queda anotado porque el titular
+sigue nombrando presión y análisis: **si el copy se acerca a prometer resultados de
+salud, esa línea tiene que volver.**
+
+### Medido
+
+| | Control | B |
+|---|---|---|
+| HTML crudo | 53.407 B | **23.083 B** (−57%) |
+| HTML gzip | 14.050 B | **7.867 B** (−44%) |
+| Peticiones | HTML + poster WebP + 3 familias de Google | **HTML + 2 fuentes propias + avatar** |
+| CTA termina en (viewport 812) | 773 px | **608 px** |
+| Contraste mínimo | — | **4,66:1** (todo pasa AA) |
+
+El CTA entra completo incluso en un viewport de 667, que es lo que le queda a un teléfono
+después del navegador. Está justo: cualquier línea extra en la bajada lo empuja afuera.
+
+### Auditoría de velocidad — el hallazgo que importa
+
+Medido en local sobre la página terminada:
+
+| Métrica | Antes de la auditoría | Después |
+|---|---|---|
+| FCP | **992 ms** | **40 ms** |
+| LCP | — | **40 ms** (`p.subhead`) |
+| CLS | — | **0** |
+| DOM interactivo | 16 ms | 16 ms |
+
+**La causa era la animación de entrada, y era mía.** Los elementos arrancaban en
+`opacity: 0` con un fundido de 400 ms, así que no había primer pintado hasta que la
+animación avanzaba — y esa animación compite por el hilo principal con los ~12 scripts
+que inyecta GTM. Con el DOM interactivo a los 16 ms y el FCP a los 992, casi un segundo
+entero era fundido esperando hilo. Se quitó entera. **Es la misma lección del 8-ago**
+(«el titular se revelaba palabra por palabra hasta los 1,46 s»), reintroducida en versión
+suave y vuelta a corregir.
+
+**Lo que NO se puede arreglar desde esta página:** el peso real lo pone el stack de tags.
+`fbevents.js` solo pesa **106.994 B** —cinco veces el HTML de B— y hay llamadas de 947 ms,
+649 ms, 463 ms y 443 ms. Sigue vigente el pendiente de la auditoría de diferir los ~12
+scripts de GTM; es transversal a las dos variantes, así que no sesga el test, pero es la
+palanca de velocidad más grande que queda en el funnel.
+
+**Costo de fuentes:** 71.460 B entre las dos familias, no bloqueantes (`font-display: swap`)
+y cacheadas tras la primera visita. Stack Sans Headline son 31.768 B usados **solo** para
+el `<h1>`. La palanca disponible es servir Lexend sola con el titular en 500; no se aplicó
+porque el titular pesado es una decisión visual aprobada y el FCP ya está en 40 ms.
+
+⚠️ **`form_start` NO es comparable entre A y B.** Ninguna de las dos lo dispara a mano: lo
+emite la medición automática de GA4 al primer contacto con el formulario. En el control el
+formulario vive dentro de un modal y exige un clic previo; en B está visible desde el primer
+píxel. **B va a mostrar un `form_start` mucho más alto por construcción, no por persuasión.**
+La lectura tiene que hacerse sobre registros reales que llegan al sheet y al CRM.
+
+### Firma de Anthoni en el pie
+
+Se agregó el bloque de confianza —avatar 46 px + "Producción · TR4INER" + "Anthoni
+Montalván · Coach"— replicando el patrón de `/testimonio-flor` para que el recorrido no
+cambie de idioma entre una página y la siguiente. Lo pide el dato: **desconfianza y
+necesidad de prueba real es el 25% de los compradores**, y el informe cualitativo es
+explícito en que lo que destraba esa objeción es autenticidad percibida — una cara, no
+un adjetivo.
+
+El PNG original pesaba **40.883 B para un círculo de 46 px**, más del doble que toda la
+página. Se generó `anthoni-montalvan-92.webp` a 92×92 (2× para retina): **2.526 B, −94%**.
+El PNG queda porque lo usa `/testimonio-flor`.
+
+### Sin pantalla de confirmación
+
+B **no muestra el aviso intermedio** del control (nombre + correo + contador de 3 s):
+al registrarse va derecho a `/testimonio-flor` o `/testimonio-dashiel` según el caso
+elegido. Es un paso menos entre el registro y el contenido.
+
+⚠️ **Por qué esto debería conservar los leads — y qué falta probar.** El control navega
+recién cuando el `fetch` a n8n resuelve; B navega de inmediato y usa `keepalive: true` en
+el webhook. Se verificó que ambos POST se intentan con `keepalive` y que el destino conserva
+las UTMs, pero eso **no demuestra recepción** en n8n, Sheet, Brevo y CRM. Antes de abrir
+tráfico falta un smoke real desde el dominio canónico con correos únicos A/B.
+
+Cadena de atribución verificada con UTMs sintéticas, con el webhook de producción
+interceptado para no ensuciar el CRM: sobreviven los `utm_*`, `fbclid`, `h_ad_id` y
+`video`; `utm_content` se rellena con el video si falta; el `@` viaja literal; Mujer va
+a `/testimonio-flor` y Hombre a `/testimonio-dashiel`; `variant` llega como `"B"`.
+
+### KPI, declarado ANTES de mirar resultados
+
+**Decide:** leads nuevos que declaran $300-600 por exposición elegible. El porcentaje dentro
+de leads es diagnóstico, no decide solo: podría mejorar mientras cae el negocio completo.
+**Guardarraíles:** opt-ins/exposición (abortar si B cae más de 25% relativo) y Typeform
+completados/exposición, para detectar el riesgo de *message-match*.
+**Horizonte por muestra, sin espiar:** el supuesto previo de 67 leads/día no coincide con la
+cohorte Meta verificada (667 en 92 días, ~7,25/día). Llegar a 1.000 tomaría cerca de 138 días
+al ritmo histórico. Recalcular tras la primera semana completa; inconcluso o empate deja A.
+
+**El CPL va a empeorar antes de que mejore la caja.** El corte de salud atrae menos
+volumen a propósito. Quien decida por CPL apaga al ganador.
+
+### Lo que esta prueba NO puede decir
+
+B cambia copy, diseño **y peso** a la vez. Si gana, no se sabrá cuál de los tres fue.
+Es el precio de probar un rediseño como paquete, y es distinto del A/B de titular, que
+sí aísla una variable.
+
+### Verificación en preview — y el bug que atajó
+
+Preview funcional del cierre técnico: commit `eb8bf30`, deployment
+`dpl_E4mnPYYWYaRDGkGur1ruKf1hDmpf`, target `preview`, estado `Ready` en 11 s:
+`tr4iner-funnels-ntgo966zc-metodotr4iners-projects.vercel.app`. Está protegido por SSO;
+se verificó con `vercel curl` autenticado, sin desactivar la protección: A y B forzadas en
+200 sin `Location`, orgánico en control sin cookie y UTM vacía duplicada dentro del split.
+**Producción no se tocó.**
+
+**El `package.json` no dispara ningún build.** El log dice `added 1 package in 547ms`,
+`Using built-in TypeScript 5.9.3`, `Build Completed in /vercel/output [2s]`. Solo instala
+`@vercel/edge` y compila el middleware. Riesgo #1 descartado.
+
+🐞 **Bug encontrado en preview: la variante nunca se subía.** `.vercelignore` excluye
+`*-B.html` —el patrón de las páginas viejas archivadas— y el matcheo es insensible a
+mayúsculas, así que **`index-b.html` jamás llegó al deployment**: el rewrite devolvía
+**404**. De haber salido a producción, **la mitad del tráfico pago habría caído en una
+página de error**. El archivo pasa a llamarse `index-salud.html`; cualquier nombre
+terminado en `-b.html` tiene el mismo problema. Anotado también en
+`docs/ab-casos-de-estudio.md`, que proponía justamente ese nombre.
+
+Middleware verificado con `vercel dev`, que corre el edge y el enrutado real:
+
+| Prueba | Resultado |
+|---|---|
+| Orgánico ×8 | control ×8, **cero cookies** |
+| Pago ×40 | **A=15 / B=25**, 40 cookies, cero fallos |
+| Cookie `B` ×10 / `A` ×10 | pegajosa, 10/10 en ambas |
+| `utm_source=&utm_source=MetaAds` ×12 | 12/12 entraron al split y recibieron cookie |
+| `utm_source=YouTube&utm_source=MetaAds` | gana el primer valor no vacío: control sin cookie |
+| Rewrite y no redirect | **200 OK, sin cabecera `Location`** |
+| Vuelve por orgánico con cookie | conserva su variante |
+| Recursos de B vía rewrite | fuentes, avatar y `attribution.js` en 200 |
+| `noindex` + canonical a `/casos-de-estudio` | correctos |
+| GA4 Realtime | `ce_ab_exposure_a` y `ce_ab_exposure_b` recibidos; orgánico nuevo no emitió |
+| Formulario B vacío | foco vuelve al primer radio y todos los inválidos quedan con `aria-invalid` |
+| Typeform Flor / Dashiel | `data-tf-hidden` conserva `variant=B` / `variant=A` |
+
+### Pendiente
+- Smoke desde `metodo.tr4iner.com` con correos únicos A/B: confirmar `OptIn.variant`, n8n,
+  Sheet, Brevo y el salto final. Preview no sirve para la copia directa al CRM porque su
+  allowlist rechaza dominios `*.vercel.app`.
+- Flor y Dashiel ya pasan `variant` por `data-tf-hidden`; falta declarar ese URL parameter
+  en el editor de Typeform y publicar el formulario. El CRM tampoco religa OptIns al
+  reingresar un lead existente. Hasta cerrar ambos puntos, el análisis inferencial se limita
+  a leads nuevos.
+- La rama arrastra el commit ajeno `6e09507` (`docs/bot-vero/*`) porque nació desde un
+  `main` local adelantado a `origin/main`. Antes del PR hay que retirarlo del historial con
+  una reescritura controlada y `force-with-lease`; no se hará sin aprobación explícita.
+- **Riesgo de message-match:** B promete un corte de salud y la VSL de destino
+  (Flor / Dashiel) está encuadrada como transformación estética. Vigilar el paso
+  landing → Typeform, no solo el opt-in.
+- El titular «Entrenas. Comes bien. Y el espejo sigue igual.» queda **libre** como
+  retador del A/B de titular sobre el control: es un ángulo de espejo y no entra acá.
+- `design/ce-an-tipografia` sigue sin publicar. Ya no está bloqueada por falta de
+  instrumento —el split existe—, pero sería una tercera variante y hoy no hay tráfico
+  para tres.
+
+---
+
 ## 2026-08-11 — Bot de WhatsApp de Vero: sin países excluidos, detección de patologías y cierre en chat
 
 **Dónde:** agente de `VERO-BOT` en n8n (`N2e6Ht6uWwER5qbD`). No se tocó ninguna página del
