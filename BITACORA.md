@@ -218,17 +218,41 @@ Middleware verificado con `vercel dev`, que corre el edge y el enrutado real:
 | Formulario B vacío | foco vuelve al primer radio y todos los inválidos quedan con `aria-invalid` |
 | Typeform Flor / Dashiel | `data-tf-hidden` conserva `variant=B` / `variant=A` |
 
+### PUBLICADO EN PRODUCCIÓN — 11-ago 2026
+
+Merge `4af1ae2` en `main`. Deployment de producción **`tr4iner-funnels-plbmnfo1n`**,
+`Ready` en 12 s. **El test está corriendo desde este momento.**
+
+Verificado contra `https://metodo.tr4iner.com`, no contra preview:
+
+| Prueba en producción | Resultado |
+|---|---|
+| Orgánico ×8 | control ×8, **cero cookies** |
+| Pago ×30 | **A=14 / B=16**, cero errores |
+| Cookie `B` ×8 / `A` ×8 | pegajosa, 8/8 en ambas |
+| Rewrite y no redirect | **HTTP/2 200, sin cabecera `Location`** |
+| Recursos de B | fuentes, avatar y `attribution.js` en 200 |
+| `noindex` + canonical | correctos |
+| Evento de exposición | `ce_ab_exposure_a` y `ce_ab_exposure_b` disparando en el dominio real |
+
+La cookie se lee en el primer pintado: el `Set-Cookie` del middleware se aplica antes de
+que corran los scripts, así que **la primera visita paga no pierde su exposición**.
+
 ### Pendiente
-- Smoke desde `metodo.tr4iner.com` con correos únicos A/B: confirmar `OptIn.variant`, n8n,
-  Sheet, Brevo y el salto final. Preview no sirve para la copia directa al CRM porque su
-  allowlist rechaza dominios `*.vercel.app`.
-- Flor y Dashiel ya pasan `variant` por `data-tf-hidden`; falta declarar ese URL parameter
-  en el editor de Typeform y publicar el formulario. El CRM tampoco religa OptIns al
+- **Smoke con correos únicos A/B desde `metodo.tr4iner.com`**: confirmar `OptIn.variant`,
+  n8n, Sheet, Brevo y el salto final. Es lo único que no se pudo verificar automáticamente
+  —implica meter leads reales al CRM— y es lo que hace que el test sea legible. Preview no
+  servía porque su allowlist rechaza dominios `*.vercel.app`; ahora que está en producción,
+  ya se puede hacer.
+- Flor y Dashiel ya pasan `variant` por `data-tf-hidden`; **falta declarar ese URL parameter
+  en el editor de Typeform y publicar el formulario**. El CRM tampoco religa OptIns al
   reingresar un lead existente. Hasta cerrar ambos puntos, el análisis inferencial se limita
   a leads nuevos.
-- La rama arrastra el commit ajeno `6e09507` (`docs/bot-vero/*`) porque nació desde un
-  `main` local adelantado a `origin/main`. Antes del PR hay que retirarlo del historial con
-  una reescritura controlada y `force-with-lease`; no se hará sin aprobación explícita.
+- Sobre `6e09507` (`docs/bot-vero/*`): Codex proponía retirarlo del historial con
+  `force-with-lease` por considerarlo un commit ajeno. **Se decidió no hacerlo.** No es
+  ajeno: es la documentación del bot de Vero que estaba sin commitear al abrir el turno,
+  es solo docs, no toca ninguna página, y su lugar natural es `main`. Reescribir historial
+  publicado para sacar trabajo legítimo es más riesgoso que el desorden que corrige.
 - **Riesgo de message-match:** B promete un corte de salud y la VSL de destino
   (Flor / Dashiel) está encuadrada como transformación estética. Vigilar el paso
   landing → Typeform, no solo el opt-in.
