@@ -238,16 +238,39 @@ Verificado contra `https://metodo.tr4iner.com`, no contra preview:
 La cookie se lee en el primer pintado: el `Set-Cookie` del middleware se aplica antes de
 que corran los scripts, así que **la primera visita paga no pierde su exposición**.
 
+### ▶ T0 DEL EXPERIMENTO — 12-ago 2026, 10:23 (Lima)
+
+**El usuario confirmó el circuito completo y el test arranca a contar desde acá.** Typeform
+tiene declarado el parámetro `variant` y el formulario está publicado. Verificado en vivo que
+`/testimonio-flor` entrega al embed `first_name, email, sexo, variant=B, utm_source,
+utm_campaign, video, fbp`.
+
+**Calendario de lectura, fijado ANTES de ver un solo número:**
+
+| Cuándo | Qué se mira | Para qué |
+|---|---|---|
+| ~19-ago (D+7) | opt-in rate | **Solo para abortar.** Si B lo hunde más de 25% relativo, se corta. No sirve para declarar ganador. |
+| ~11-sep (D+30) | % de leads que declaran $300-600 (base 17,7%) | **Decide.** |
+| D+30 en adelante | caja por lead | Confirma. |
+
+**Reglas que no se negocian, escritas ahora para no discutirlas cuando haya números:**
+
+1. **No se espía y se corta al ver una ventaja.** Con tres miradas, un test sin diferencia
+   real da "ganador" ~1 de cada 5 veces. Cortar en semanas completas.
+2. **Empate a los 30 días = se queda el control.**
+3. **No se decide por CPL ni por volumen de registros.** El corte de salud atrae menos gente
+   a propósito: el CPL empeora antes de que mejore la caja. Quien decida por CPL apaga al
+   ganador.
+4. **No se lee `form_start`.** B lo infla por construcción —su formulario está visible y el
+   del control vive detrás de un botón—, así que la comparación no significa nada.
+5. **No se tocan las campañas de Meta mientras corre.** Apagar un anuncio a mitad cambia el
+   mix de tráfico y las dos mitades dejan de ser comparables. Es exactamente lo que arruinó
+   la prueba del 8-ago.
+6. **No se toca el titular del control** ni el peso de ninguna de las dos páginas.
+
 ### Pendiente
-- **Smoke con correos únicos A/B desde `metodo.tr4iner.com`**: confirmar `OptIn.variant`,
-  n8n, Sheet, Brevo y el salto final. Es lo único que no se pudo verificar automáticamente
-  —implica meter leads reales al CRM— y es lo que hace que el test sea legible. Preview no
-  servía porque su allowlist rechaza dominios `*.vercel.app`; ahora que está en producción,
-  ya se puede hacer.
-- Flor y Dashiel ya pasan `variant` por `data-tf-hidden`; **falta declarar ese URL parameter
-  en el editor de Typeform y publicar el formulario**. El CRM tampoco religa OptIns al
-  reingresar un lead existente. Hasta cerrar ambos puntos, el análisis inferencial se limita
-  a leads nuevos.
+- El CRM no religa OptIns al reingresar un lead existente: el análisis inferencial se limita
+  a **leads nuevos**. Suficiente para tráfico frío, que es el de este test.
 - Sobre `6e09507` (`docs/bot-vero/*`): Codex proponía retirarlo del historial con
   `force-with-lease` por considerarlo un commit ajeno. **Se decidió no hacerlo.** No es
   ajeno: es la documentación del bot de Vero que estaba sin commitear al abrir el turno,
