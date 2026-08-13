@@ -2794,6 +2794,10 @@ Se entrega mediante la rama `work/genesis-inicio-oferta` para generar un Preview
 
 El Preview comparte el webhook y el CRM productivos: una prueba funcional crea datos y correos reales. Para QA interactivo debe usarse una identidad controlada y fresca; el enlace de verificación mantiene como destino el dominio canónico de producción.
 
+### Publicación en producción
+
+La rama aprobada se integró en `main` mediante el merge `d75502a`. Vercel publicó el deployment productivo `dpl_71rpkqFez5zXTuDNSqBB69bffta8`, confirmado `Ready` el 13-ago-2026 a las 16:57 (Lima), con `https://metodo.tr4iner.com` entre sus aliases. El deployment corresponde al mismo cambio funcional validado en el Preview `dpl_5tFCm4WjHSSYc3nUBu1q1cmbz2DF`.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
