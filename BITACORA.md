@@ -2768,6 +2768,32 @@ En Rosita esto no hacía falta porque usa `data-tf-widget` (sin el div intermedi
 
 ---
 
+## 2026-08-13 — Nueva oferta de Ruta Tr4iner en `/biblioteca/inicio/` (rama de Preview)
+
+### Qué cambió
+La entrada de GENESIS ahora presenta primero la oferta **“Recibe GRATIS tu Ruta Tr4iner personalizada”**, explica el resultado y el tiempo requerido, y usa un CTA único que abre un cuestionario dentro de la misma `/biblioteca/inicio/`.
+
+El flujo muestra una respuesta a la vez: nombre → sexo → situación actual (5 opciones) → WhatsApp → correo. Desde la segunda pregunta usa el primer nombre ingresado para que la experiencia se sienta construida para la persona y no como un formulario de leads ordinario. El último botón dice **“VER MI RUTA PERSONALIZADA”** y mantiene la verificación por correo de GENESIS; ya no envía a `/biblioteca/` para completar el registro.
+
+La superficie pasó a fondo blanco y el titular usa Instrument Sans en peso fuerte. Fraunces queda únicamente como acento editorial en la frase final; no se añadieron fuentes ni dependencias.
+
+Se eliminó la franja superior repetida de todas las páginas canónicas de GENESIS porque duplicaba marca y estado sin ayudar a completar la tarea: `/biblioteca/`, `/biblioteca/inicio/`, `/biblioteca/acceso/`, `/biblioteca/confirma/`, `/biblioteca/plan/` y `/biblioteca/videos/`. `/biblioteca/verificar/` ya no tenía esa cabecera. En `/plan/` se conservó “← Tu ruta” como navegación funcional, integrado en el contenido y sin masthead.
+
+Las pantallas posteriores a la oferta adoptaron la misma línea funcional de `/biblioteca/inicio/`: fondo blanco, Instrument Sans como tipografía dominante, negro/gris para jerarquía y amarillo solo para progreso o acción. `/acceso/`, `/confirma/` y `/verificar/` dejaron la tarjeta crema flotante; `/plan/` incorporó una barra móvil persistente con avance y controles de mayor área táctil; `/videos/` pasó a una experiencia de ruta tipo app con onboarding compacto, recomendación prioritaria, acordeones y fichas de video horizontales en móvil. El reproductor se presenta como hoja inferior en pantallas pequeñas. No se añadieron dependencias ni navegación decorativa.
+
+### Sin tocar
+Se conservaron el webhook productivo de Biblioteca, `/api/genesis/register`, la llegada a `/biblioteca/confirma/`, el acceso para miembros, `noindex`, canonical y enlaces legales. Los parámetros de atribución siguen viajando al webhook, al CRM y a la confirmación.
+
+La respuesta se envía con una categoría compatible con el contrato existente (`estancado`, `dietas-fallidas`, `subida`, `confianza` o `sin-camino`) y también con el texto literal elegido en `situacion_text`. Los eventos `biblioteca_situacion_select` y `registro` guardan ambos valores.
+
+### Resultado esperado
+Que una persona entienda en el primer pantallazo qué recibe, para qué sirve, cuánto tarda y que es gratis antes de tomar una decisión funcional sobre su ruta.
+
+### Estado
+Se entrega mediante la rama `work/genesis-inicio-oferta` para generar un Preview de Vercel; queda pendiente la aprobación visual antes de integrar `main`. Producción no se toca. QA local interceptó los envíos para no crear leads ni correos reales: 375, 768 y 1280 px completaron nombre → sexo → situación → WhatsApp → correo, conservaron respuestas al volver, personalizaron con el primer nombre, mantuvieron nombre completo/UTMs/`fbclid` en ambos payloads y llegaron a `/biblioteca/confirma/` sin errores. Las siete rutas canónicas también se recorrieron sin cabeceras residuales. El rediseño tipo app se validó en `/acceso/`, `/confirma/`, `/verificar/`, `/plan/` y `/videos/` a 375, 768 y 1280 px: fondo y `theme-color` blancos, Instrument Sans visible, cero errores de JavaScript, cero desbordes y targets táctiles de al menos 44 px. El wizard avanzó a la siguiente pregunta, los enlaces conservaron UTMs y el acordeón/reproductor de la videoteca abrieron y cerraron correctamente.
+
+El Preview comparte el webhook y el CRM productivos: una prueba funcional crea datos y correos reales. Para QA interactivo debe usarse una identidad controlada y fresca; el enlace de verificación mantiene como destino el dominio canónico de producción.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:

@@ -13,7 +13,7 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
-  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Confirma tu acceso · GENESIS TR4INER</title>
   <meta name="description" content="Confirma tu correo para abrir tu ruta privada de GENESIS y conservar tu avance en un solo expediente." />
@@ -90,16 +90,6 @@
       width: min(100% - 64px, 1180px);
       margin: 0 auto;
     }
-    .site-header {
-      height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      border-bottom: 1px solid var(--rule-strong);
-    }
-    .brand,
-    .header-status,
     .eyebrow,
     .section-code,
     .file-tab,
@@ -110,14 +100,6 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-    .brand {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-decoration: none;
-    }
-    .brand span,
-    .header-status { color: var(--muted); }
-
     main { min-height: calc(100vh - 170px); }
     .view { padding: 84px 0 96px; }
     h1, h2, p { margin-top: 0; }
@@ -354,7 +336,6 @@
 
     @media (max-width: 860px) {
       .page-frame { width: min(100% - 40px, 690px); }
-      .site-header { height: 68px; }
       .view { padding: 56px 0 72px; }
     }
     @media (max-width: 560px) {
@@ -368,11 +349,6 @@
         );
       }
       .page-frame { width: calc(100% - 36px); }
-      .site-header { height: 62px; }
-      .brand,
-      .header-status { font-size: 8.5px; }
-      .brand { letter-spacing: 0.12em; }
-      .header-status { letter-spacing: 0.09em; }
       .view { padding: 48px 0 60px; }
       .activation-path {
         gap: 6px;
@@ -444,6 +420,71 @@
       .primary-button,
       .secondary-button { transition: none; }
     }
+
+    /* GENESIS app: misma superficie funcional y tipografía de /biblioteca/inicio/. */
+    :root {
+      --paper: #FFFFFF;
+      --paper-deep: #F5F5F5;
+      --card: #FFFFFF;
+      --ink: #111111;
+      --ink-soft: #3F3F3F;
+      --muted: #6B6B6B;
+      --mark: #FFD43B;
+      --rule: rgba(17, 17, 17, 0.12);
+      --rule-strong: rgba(17, 17, 17, 0.24);
+      --shadow: none;
+      --display: "Instrument Sans", Arial, sans-serif;
+    }
+    body { background: var(--paper); }
+    h1, h2 { font-weight: 750; letter-spacing: -0.052em; }
+    h1 em, h2 em { font-style: normal; font-weight: 750; }
+    .view { padding: 68px 0 84px; }
+    .activation-path {
+      gap: 10px;
+      margin-bottom: 38px;
+      padding-bottom: 17px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+    }
+    .activation-path .done { text-decoration: none; }
+    .activation-path .current { background: linear-gradient(transparent 66%, var(--mark) 66%); }
+    .confirm-wrap h1 { max-width: 720px; margin-bottom: 24px; font-size: clamp(42px, 5vw, 60px); line-height: 1; }
+    .lede { font-size: 18px; line-height: 1.55; }
+    .file-sheet { overflow: hidden; border-color: var(--rule-strong); border-radius: 8px; box-shadow: none; }
+    .file-sheet::after { display: none; }
+    .mail-sheet { margin-top: 42px; background: #FAFAFA; }
+    .file-tab { background: #FAFAFA; color: var(--ink); border-bottom: 1px solid var(--rule); }
+    .file-tab b { color: var(--ink); background: var(--mark); padding: 3px 6px; }
+    .mail-avatar { background: var(--mark); color: var(--ink); font-family: var(--body); font-weight: 750; }
+    .primary-button, .secondary-button { min-height: 54px; border-radius: 6px; font-weight: 700; }
+    .primary-button:hover { background: #2B2B2B; }
+    .secondary-button { background: var(--card); }
+    .confirm-help { gap: 28px; margin-top: 48px; padding-top: 32px; }
+    .confirm-help h2 { font-size: 30px; }
+    .security-note { border-radius: 6px; background: #FAFAFA; }
+
+    @media (max-width: 560px) {
+      body { background: var(--paper); }
+      .view { padding: 34px 0 52px; }
+      .activation-path {
+        gap: 5px;
+        margin-bottom: 32px;
+        font-size: 8px;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+      }
+      .confirm-wrap h1 { margin-bottom: 18px; font-size: clamp(36px, 10.2vw, 42px); line-height: 1.01; }
+      .lede { font-size: 16px; }
+      .mail-sheet { margin-top: 32px; }
+      .file-tab { min-height: 44px; padding: 10px 12px; font-size: 7.5px; }
+      .mail-toolbar { padding: 14px 16px; }
+      .mail-preview { padding: 18px 16px; }
+      .mail-actions { gap: 10px; padding: 18px 16px 20px; }
+      .confirm-help { gap: 24px; margin-top: 38px; padding-top: 28px; }
+      .confirm-help h2 { font-size: 28px; }
+      .text-link { margin: 20px 16px 24px; }
+    }
   </style>
 </head>
 <body>
@@ -452,11 +493,6 @@
   <a class="skip-link" href="#contenido">Ir al contenido</a>
 
   <div class="page-frame">
-    <header class="site-header">
-      <a class="brand" id="home-link" href="/biblioteca/inicio/">TR4INER <span>· GENESIS</span></a>
-      <span class="header-status">Activación</span>
-    </header>
-
     <main id="contenido">
       <article class="view">
         <section class="confirm-wrap">
@@ -546,10 +582,6 @@
       if (sexo === 'Mujer' || sexo === 'Hombre') {
         document.documentElement.dataset.sexo = sexo.toLowerCase();
       }
-
-      var homeUrl = new URL('/biblioteca/inicio/', window.location.origin);
-      params.forEach(function (value, key) { homeUrl.searchParams.set(key, value); });
-      document.getElementById('home-link').href = homeUrl.toString();
 
       // Pedir otro enlace vuelve al acceso sin soltar ninguna atribución.
       var resendUrl = new URL('/biblioteca/acceso/', window.location.origin);
