@@ -13,7 +13,7 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
-  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Tu GENESIS · TR4INER</title>
   <meta name="description" content="Abre tu ruta privada de orientación en nutrición y entrenamiento y continúa desde tu punto de partida." />
@@ -95,24 +95,6 @@
       margin: 0 auto;
       padding: calc(20px + env(safe-area-inset-top)) var(--gutter) calc(60px + env(safe-area-inset-bottom));
     }
-
-    /* ── Barra superior ── */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding-bottom: 16px;
-      margin-bottom: 40px;
-      border-bottom: 1px solid var(--rule-strong);
-    }
-    .wordmark {
-      font-family: var(--mono);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-    }
-    .wordmark span { color: var(--muted); font-weight: 400; }
 
     /* ── Hero ── */
     .hero { text-align: center; margin-bottom: 34px; }
@@ -1397,6 +1379,148 @@
       .bridge-copy { padding: 34px 24px 38px; }
       .bridge-copy h2 { font-size: 31px; }
     }
+
+    /* GENESIS app: el contenido se lee como una ruta personal, no como una revista. */
+    :root {
+      --paper: #FFFFFF;
+      --paper-deep: #F5F5F5;
+      --card: #FFFFFF;
+      --ink: #111111;
+      --ink-soft: #3F3F3F;
+      --muted: #6B6B6B;
+      --rule: rgba(17, 17, 17, 0.12);
+      --rule-strong: rgba(17, 17, 17, 0.24);
+      --mark: #FFD43B;
+      --mark-soft: rgba(255, 212, 59, 0.36);
+      --serif: "Instrument Sans", Arial, sans-serif;
+    }
+    body { background: var(--paper); }
+    body::before { display: none; }
+    a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; }
+    .page { padding-top: calc(48px + env(safe-area-inset-top)); }
+    .rv, .vcard, .rv.is-in, .vcard.is-in { opacity: 1; transform: none; transition: none; }
+
+    .library-hero { align-items: end; gap: 32px; margin-bottom: 48px; }
+    .library-hero .hero-eyebrow { margin-bottom: 14px; font-size: 9.5px; letter-spacing: 0.16em; }
+    .library-hero h1 { max-width: 860px; margin-bottom: 18px; font-size: clamp(44px, 6vw, 64px); font-weight: 750; letter-spacing: -0.052em; line-height: 0.99; }
+    .library-hero h1 em { font-style: normal; font-weight: 750; }
+    .library-hero .dek { max-width: 720px; color: var(--ink-soft); font-size: 17px; }
+    .active-label { min-width: 0; padding: 12px 14px; border: 1px solid var(--rule-strong); border-left: 4px solid var(--mark); border-radius: 6px; background: #FAFAFA; color: var(--ink); }
+    .active-label span { color: var(--muted); }
+
+    .onboard {
+      margin-bottom: 40px;
+      padding: 28px;
+      border-color: var(--rule-strong);
+      border-left: 5px solid var(--mark);
+      border-radius: 8px;
+      background: #FAFAFA;
+      box-shadow: none;
+    }
+    .onboard::before { display: none; }
+    .onboard h2 { font-size: clamp(25px, 3.4vw, 34px); font-weight: 750; letter-spacing: -0.04em; line-height: 1.05; }
+    .onboard h2 em { font-style: normal; font-weight: 750; }
+    .onboard p { color: var(--ink-soft); }
+    .onboard-cta { min-height: 54px; justify-content: center; border-radius: 6px; background: var(--ink); color: var(--card); font-weight: 750; }
+    .onboard-cta:hover { background: #2B2B2B; }
+    .gate .onboard-cta { border: 1px solid var(--ink); }
+    .gate-ghost { min-height: 52px; border-radius: 6px; background: var(--card); }
+    .gate-input { min-height: 54px; border-radius: 6px; }
+    .new-release { border-radius: 8px; background: #FAFAFA; box-shadow: none; }
+    .new-release h2 { font-weight: 750; letter-spacing: -0.035em; }
+    .new-release-open { min-height: 48px; border-radius: 5px; background: var(--ink); color: var(--card); }
+    .new-release-close { min-width: 44px; min-height: 44px; }
+
+    .library-layout { grid-template-columns: minmax(280px, .31fr) minmax(0, .69fr); gap: 32px; }
+    .file-sheet { overflow: hidden; border-color: var(--rule-strong); border-radius: 8px; box-shadow: none; }
+    .file-sheet::after { display: none; }
+    .file-tab { min-height: 46px; background: #FAFAFA; color: var(--ink); border-bottom: 1px solid var(--rule); }
+    .file-tab b { color: var(--ink); background: var(--mark); padding: 3px 6px; }
+    .profile-summary h2 { font-size: 29px; font-weight: 750; letter-spacing: -0.04em; }
+
+    #program-content .priority-guide { min-height: 300px; overflow: hidden; border-radius: 8px; box-shadow: none; }
+    #program-content .priority-guide:hover { transform: none; border-color: var(--ink); }
+    .guide-visual { background: var(--ink); }
+    .guide-symbol b { font-weight: 750; }
+    .guide-copy { padding: 34px; }
+    .guide-copy .nx-title { font-size: clamp(28px, 3.6vw, 36px); font-weight: 750; letter-spacing: -0.045em; }
+    .primary-button, .yellow-button { min-height: 54px; border-radius: 6px; font-weight: 750; }
+
+    .editorial-index { margin-top: 42px; }
+    .index-head { border-bottom-width: 1px; }
+    .index-head h2 { font-size: 32px; font-weight: 750; letter-spacing: -0.04em; }
+    .route-group > summary { min-height: 88px; }
+    .index-copy strong { font-size: 19px; font-weight: 700; }
+    .vcard { border-radius: 8px; box-shadow: none; }
+    .vdone { width: 44px; height: 44px; box-shadow: none; }
+    .vtitle { font-weight: 650; }
+
+    dialog.player { border-radius: 12px; }
+    .player-close { width: 44px; height: 44px; }
+    .tour-card { border-radius: 8px; box-shadow: none; }
+    .tour-card h2 { font-weight: 750; }
+    .tour-next { min-height: 48px; border-radius: 6px; }
+
+    .conversion-bridge { min-height: 360px; border-radius: 8px; overflow: hidden; }
+    .bridge-case strong, .bridge-copy h2 { font-weight: 750; }
+    .bridge-copy h2 { letter-spacing: -0.045em; }
+
+    @media (max-width: 860px) {
+      .library-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .page { padding: calc(28px + env(safe-area-inset-top)) 18px calc(44px + env(safe-area-inset-bottom)); }
+      .library-hero { gap: 18px; margin-bottom: 32px; }
+      .library-hero h1 { font-size: clamp(38px, 11vw, 45px); }
+      .library-hero .dek { font-size: 16px; }
+      .active-label { width: 100%; padding: 11px 12px; font-size: 8px; }
+      .onboard { grid-template-columns: 1fr; margin-bottom: 32px; padding: 22px 18px; }
+      .onboard h2 { font-size: 28px; }
+      .onboard-cta { width: 100%; }
+      .gate-row { align-items: stretch; flex-direction: column; }
+      .gate-row .onboard-cta, .gate-row .gate-ghost { width: 100%; }
+      .new-release { grid-template-columns: 80px minmax(0, 1fr); padding: 12px; }
+      .new-release img { width: 80px; }
+      .library-layout { gap: 34px; }
+      .profile-summary { order: 2; }
+      .route-content { order: 1; }
+      #program-content .priority-guide { min-height: 0; grid-template-columns: 1fr; border-left: 5px solid var(--mark); }
+      .guide-visual { display: none; }
+      .guide-copy { padding: 24px 18px; }
+      .guide-copy .nx-title { font-size: 28px; }
+      .guide-meta { margin: 20px 0 18px; }
+      .guide-copy .primary-button { width: 100%; }
+      .editorial-index { margin-top: 34px; }
+      .index-head { gap: 5px; }
+      .index-head h2 { font-size: 29px; }
+      .route-group > summary { min-height: 88px; }
+      .route-group-body { padding-right: 0; }
+      .route-group-body .grid { grid-template-columns: 1fr; gap: 10px; }
+      .vcard { min-height: 102px; }
+      .vmain { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: stretch; }
+      .thumb { width: 112px; min-height: 100%; aspect-ratio: auto; }
+      .play { left: 8px; bottom: 8px; width: 34px; height: 34px; }
+      .vbody { justify-content: center; padding: 12px 48px 12px 12px; }
+      .vmeta { font-size: 8px; }
+      .vtitle { font-size: 14px; line-height: 1.3; }
+      .vdone { top: 50%; right: 8px; transform: translateY(-50%); }
+      .vdone:active { transform: translateY(-50%) scale(.94); }
+      dialog.player { width: 100vw; max-width: none; margin: auto 0 0; border-radius: 16px 16px 0 0; }
+      .player-bar { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+      .conversion-bridge { grid-template-columns: 1fr; min-height: 0; margin-top: 54px; }
+      .bridge-case { height: 126px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+      .bridge-case span { top: 18px; left: 18px; }
+      .bridge-case strong { top: 48px; left: 18px; font-size: 38px; }
+      .bridge-case > i { top: 44px; right: 18px; left: auto; font-size: 42px; }
+      .bridge-case small { display: none; }
+      .bridge-copy { padding: 28px 20px 32px; }
+      .bridge-copy h2 { font-size: 29px; }
+      .yellow-button { width: 100%; }
+      footer { margin-top: 36px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rv, .vcard, .thumb img, .play, .weekly-progress > div i { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -1404,10 +1528,6 @@
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <a class="skip-link" href="#contenido">Ir al contenido</a>
   <main class="page is-in" id="contenido">
-
-    <div class="topbar">
-      <p class="wordmark">TR4INER <span>· GENESIS</span></p>
-    </div>
 
     <header class="library-hero">
       <div>
@@ -2166,7 +2286,7 @@
             '<span class="thumb">' +
               '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
                 'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />' +
-              '<span class="play" aria-hidden="true"><svg viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
+              '<span class="play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
             '</span>' +
             '<span class="vbody">' +
               '<span class="vmeta"><span>ORIENTACIÓN · ' + escapeHtml(b.name) + '</span>' + badge + '</span>' +

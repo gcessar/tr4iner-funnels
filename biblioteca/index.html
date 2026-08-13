@@ -132,16 +132,6 @@
       margin: 0 auto;
     }
 
-    .site-header {
-      height: 82px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--rule-strong);
-    }
-
-    .brand,
-    .header-status,
     .section-code,
     .eyebrow,
     .file-tab,
@@ -155,17 +145,6 @@
       text-transform: uppercase;
     }
 
-    .brand {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-decoration: none;
-    }
-
-    .brand span {
-      color: var(--muted);
-    }
-
-    .header-status,
     .eyebrow,
     .section-code {
       color: var(--muted);
@@ -988,10 +967,6 @@
         width: min(100% - 40px, 690px);
       }
 
-      .site-header {
-        height: 68px;
-      }
-
       .view {
         padding: 56px 0 72px;
       }
@@ -1045,23 +1020,6 @@
 
       .page-frame {
         width: calc(100% - 36px);
-      }
-
-      .site-header {
-        height: 62px;
-      }
-
-      .brand,
-      .header-status {
-        font-size: 8.5px;
-      }
-
-      .brand {
-        letter-spacing: 0.12em;
-      }
-
-      .header-status {
-        letter-spacing: 0.09em;
       }
 
       .view {
@@ -1319,11 +1277,6 @@
   <a class="skip-link" href="#contenido">Ir al contenido</a>
 
   <div class="page-frame">
-    <header class="site-header">
-      <a class="brand" href="/biblioteca/inicio/">TR4INER <span>· GENESIS</span></a>
-      <span class="header-status" id="header-status">RUTA PRIVADA</span>
-    </header>
-
     <main class="view" id="contenido">
       <section class="registration-hero">
         <div>
@@ -1616,7 +1569,6 @@
       document.documentElement.dataset.sexo = entrySexo.toLowerCase();
       document.title = 'GENESIS para ' + (entrySexo === 'Mujer' ? 'mujeres' : 'hombres') + ' · TR4INER';
       document.getElementById('hero-eyebrow').textContent = profile.eyebrow;
-      document.getElementById('header-status').textContent = profile.status;
       document.getElementById('form-title').textContent = profile.formTitle;
       document.getElementById('form-dek').textContent = profile.formDek;
       document.querySelector('[data-name-placeholder]').placeholder = profile.namePlaceholder;

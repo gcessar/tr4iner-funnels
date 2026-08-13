@@ -13,7 +13,7 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
-  <meta name="theme-color" content="#F4EFE6" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Diseña tu plan · GENESIS · TR4INER</title>
   <meta name="description" content="Calcula tu punto de partida y organiza tu ruta personalizada dentro de GENESIS." />
@@ -97,22 +97,6 @@
       padding: calc(26px + env(safe-area-inset-top)) var(--gutter) calc(56px + env(safe-area-inset-bottom));
     }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding-bottom: 16px;
-      margin-bottom: 72px;
-      border-bottom: 1px solid var(--rule-strong);
-    }
-    .wordmark {
-      font-family: var(--mono);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-    }
-    .wordmark span { color: var(--muted); font-weight: 400; }
     .back {
       color: var(--muted);
       font-family: var(--mono);
@@ -130,6 +114,10 @@
       max-width: var(--max);
       margin: 0 auto 50px;
       text-align: left;
+    }
+    .head > .back {
+      display: inline-block;
+      margin-bottom: 26px;
     }
     .eyebrow {
       display: flex;
@@ -759,7 +747,6 @@
 
     @media (max-width: 480px) {
       .page { padding-right: 18px; padding-left: 18px; }
-      .topbar { margin-bottom: 48px; }
       .head { margin-bottom: 42px; }
       .progress {
         gap: 9px;
@@ -768,7 +755,7 @@
         letter-spacing: 0.08em;
       }
       .progress-track { height: 3px; }
-      h1 { font-size: 40px; line-height: 1.06; }
+      h1 { font-size: clamp(30px, 9vw, 40px); line-height: 1.06; }
       .head .dek { font-size: 16px; }
       .ficha {
         padding: 76px 20px 28px;
@@ -815,6 +802,106 @@
       .mk::before { transform: rotate(-0.7deg) scaleX(1); transition: none; }
       .progress-track i { transition: none; }
     }
+
+    /* GENESIS app: superficie blanca, jerarquía sans y navegación móvil persistente. */
+    :root {
+      --paper: #FFFFFF;
+      --paper-deep: #F5F5F5;
+      --card: #FFFFFF;
+      --ink: #111111;
+      --ink-soft: #3F3F3F;
+      --muted: #6B6B6B;
+      --rule: rgba(17, 17, 17, 0.12);
+      --rule-strong: rgba(17, 17, 17, 0.24);
+      --mark: #FFD43B;
+      --mark-soft: rgba(255, 212, 59, 0.36);
+      --serif: "Instrument Sans", Arial, sans-serif;
+    }
+    body { background: var(--paper); }
+    body::before { display: none; }
+    .page { width: min(100%, 900px); padding-top: calc(16px + env(safe-area-inset-top)); }
+    .app-bar {
+      position: sticky;
+      z-index: 80;
+      top: 0;
+      max-width: var(--max);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 22px;
+      margin: 0 auto 38px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(255, 255, 255, 0.97);
+    }
+    .back { min-height: 44px; display: inline-flex; align-items: center; font-family: var(--sans); font-size: 12px; font-weight: 650; letter-spacing: 0; text-transform: none; }
+    .head { margin-bottom: 34px; }
+    .head > .back { margin-bottom: 0; }
+    .eyebrow { margin-bottom: 12px; font-size: 9.5px; letter-spacing: 0.16em; }
+    h1 { max-width: 720px; margin-bottom: 16px; font-size: clamp(40px, 6vw, 58px); font-weight: 750; letter-spacing: -0.052em; line-height: 1; }
+    h1 em { font-style: normal; font-weight: 750; }
+    .mk {
+      position: static;
+      white-space: normal;
+      background: linear-gradient(transparent 68%, var(--mark) 68%);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+    .mk::before { display: none; }
+    .head .dek { font-size: 17px; }
+    .progress { min-width: 0; margin: 0; font-size: 9px; letter-spacing: 0.09em; }
+    .progress-track { height: 5px; border: 0; }
+    .ficha { padding: 34px 32px; border-color: var(--rule-strong); border-radius: 10px; box-shadow: none; }
+    .ficha::before, .file-status { display: none !important; }
+    .step.active { animation: stepInApp 0.22s ease-out; }
+    @keyframes stepInApp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .q { font-size: clamp(24px, 4vw, 30px); font-weight: 750; letter-spacing: -0.035em; line-height: 1.08; }
+    .signal-step .q { max-width: 640px; font-size: clamp(28px, 4.5vw, 34px); }
+    .q-hint { color: var(--ink-soft); }
+    .opt-card { min-height: 68px; border-radius: 6px; font-size: 15.5px; }
+    .opt-card.selected { background: #FFFDF4; box-shadow: 0 0 0 3px var(--mark-soft); }
+    .privacy-note { border-radius: 0 6px 6px 0; background: #FAFAFA; }
+    .unit-toggle { background: #F2F2F2; }
+    .unit-option { min-width: 44px; min-height: 40px; }
+    .control { min-height: 54px; border-radius: 6px; font-family: var(--sans); font-size: 18px; font-weight: 650; }
+    .grasa-visual { border-radius: 8px; background-color: #F5F5F5; }
+    .wiz-back { min-height: 44px; font-family: var(--sans); font-size: 12px; font-weight: 650; letter-spacing: 0; text-transform: none; }
+    .wiz-next, .res-cta { min-height: 56px; border-radius: 6px; font-weight: 750; }
+    .calorie-number, .macro-grid dd { font-family: var(--sans); font-weight: 750; }
+    .signal-result { margin: 0; padding: 34px 0; }
+    .signal-result h2 { font-family: var(--sans); font-weight: 750; }
+    .route-start { margin: 0; padding: 34px 0 24px; }
+    .route-start h3 { font-family: var(--sans); font-weight: 700; }
+
+    @media (max-width: 700px) {
+      .page { padding: calc(8px + env(safe-area-inset-top)) 18px calc(44px + env(safe-area-inset-bottom)); }
+      .app-bar { gap: 12px; margin: 0 -2px 30px; padding: 8px 2px; }
+      .progress { gap: 8px; font-size: 8px; }
+      .progress-state { display: none; }
+      .head { margin-bottom: 28px; }
+      .head .eyebrow { display: none; }
+      h1 { font-size: clamp(36px, 10.5vw, 43px); }
+      .head .dek { font-size: 16px; }
+      .ficha { padding: 4px 0 0; border: 0; border-radius: 0; }
+      .q { font-size: 27px; }
+      .signal-step .q { font-size: 29px; }
+      .signal-step .wiz-nav, .wiz-nav { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      .wiz-next { grid-row: 1; width: 100%; justify-content: center; }
+      .wiz-back { grid-row: 2; justify-self: center; }
+      .num-grid { grid-template-columns: 1fr; gap: 16px; }
+      .num-grid .field:first-child, .num-grid.height-imperial #f-altura, .num-grid.height-imperial #f-peso { grid-column: auto; }
+      .grasa-selector { grid-template-columns: 1fr; }
+      .grasa-visual { width: min(66vw, 220px); margin: 0 auto; }
+      .result-top { grid-template-columns: 1fr; gap: 18px; }
+      .signal-result, .route-start { margin-right: 0; margin-left: 0; padding-right: 0; padding-left: 0; }
+      .route-start > div { grid-template-columns: 26px 1fr; gap: 5px 8px; }
+      .route-start p { grid-column: 2; }
+      footer { margin-top: 34px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .step.active { animation: none; }
+      .opt-card, .wiz-next, .res-cta { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -823,17 +910,16 @@
   <a class="skip-link" href="#contenido">Ir al contenido</a>
   <main class="page is-in" id="contenido">
 
-    <div class="topbar">
-      <p class="wordmark">TR4INER <span>· GENESIS</span></p>
+    <div class="app-bar">
       <a class="back" id="back-link" href="/biblioteca/videos/">← Tu ruta</a>
-    </div>
-
-    <header class="head">
       <div class="progress" id="progress" role="progressbar" aria-label="Progreso del perfil inicial" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
         <span class="progress-label" id="progress-label">Perfil inicial</span>
         <span class="progress-track"><i id="progress-fill"></i></span>
         <span class="progress-state">En progreso</span>
       </div>
+    </div>
+
+    <header class="head">
       <p class="eyebrow" id="hero-eyebrow">Tu expediente privado</p>
       <h1 id="headline">Diseñemos <span class="mk">tu punto de partida</span><span id="saludo"></span>.</h1>
       <p class="dek">
@@ -852,11 +938,11 @@
         <p class="q-hint">Se usa únicamente para aplicar la fórmula correspondiente.</p>
         <div class="opts" role="group" aria-label="Sexo">
           <button type="button" class="opt-card" data-value="Mujer">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body"><span class="opt-title">Mujer</span></span>
           </button>
           <button type="button" class="opt-card" data-value="Hombre">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body"><span class="opt-title">Hombre</span></span>
           </button>
         </div>
@@ -873,21 +959,21 @@
         <p class="q-hint">Esto ajusta la referencia de energía y macronutrientes.</p>
         <div class="opts" role="group" aria-label="Objetivo">
           <button type="button" class="opt-card" data-value="PG">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Reducir grasa corporal</span>
               <span class="opt-desc">Crear una tendencia gradual mientras conservas masa muscular.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="MM">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Desarrollar masa muscular</span>
               <span class="opt-desc">Dar a tu cuerpo energía y estímulo para construir fuerza y tejido.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="MA">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Mejorar mi composición corporal</span>
               <span class="opt-desc">Reducir grasa mientras mantienes o mejoras tu masa muscular.</span>
@@ -907,12 +993,12 @@
           <legend class="q">¿Qué señal te preocupa más en este momento?</legend>
           <p class="q-hint">Elige la que mejor describe por qué quieres cambiar ahora.</p>
           <div class="opts" role="radiogroup" aria-label="Señal principal">
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="energia_cansancio"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me falta energía o me canso con facilidad.</span></span></button>
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="movilidad_limitada"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi peso ya limita mi movilidad o actividades cotidianas.</span></span></button>
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="diagnostico_analisis"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Tengo un diagnóstico o análisis que me preocupa.</span></span></button>
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="peso_grasa_abdominal"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi grasa abdominal o peso siguen aumentando.</span></span></button>
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="hambre_desorden_alimentario"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me cuesta manejar el hambre o mantener una alimentación ordenada.</span></span></button>
-            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="prevencion"><span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Quiero prevenir antes de que aparezcan problemas.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="energia_cansancio"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me falta energía o me canso con facilidad.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="movilidad_limitada"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi peso ya limita mi movilidad o actividades cotidianas.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="diagnostico_analisis"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Tengo un diagnóstico o análisis que me preocupa.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="peso_grasa_abdominal"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Mi grasa abdominal o peso siguen aumentando.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="hambre_desorden_alimentario"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Me cuesta manejar el hambre o mantener una alimentación ordenada.</span></span></button>
+            <button type="button" class="opt-card" role="radio" aria-checked="false" data-value="prevencion"><span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span><span class="opt-body"><span class="opt-title">Quiero prevenir antes de que aparezcan problemas.</span></span></button>
           </div>
         </fieldset>
         <p class="err" id="err-senal">Elige la señal que mejor describe tu situación actual.</p>
@@ -920,7 +1006,7 @@
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="senal-next">
             Guardar y continuar
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
         </div>
         <div class="privacy-note">
@@ -989,7 +1075,7 @@
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="datos-next">
             Continuar
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
         </div>
       </div>
@@ -1001,21 +1087,21 @@
         <p class="q-hint">La de verdad, no la que te gustaría tener.</p>
         <div class="opts" role="group" aria-label="Nivel de actividad">
           <button type="button" class="opt-card" data-value="sedentario">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Sedentario</span>
               <span class="opt-desc">Paso la mayor parte del tiempo sentado.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="ligero">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Ligeramente activo</span>
               <span class="opt-desc">Entreno de 1 a 3 veces por semana.</span>
             </span>
           </button>
           <button type="button" class="opt-card" data-value="activo">
-            <span class="tick"><svg viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Activo</span>
               <span class="opt-desc">Entreno de 3 a 6 veces por semana.</span>
@@ -1042,7 +1128,7 @@
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="email-next">
             Calcular mi punto de partida
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
           </button>
         </div>
       </div>
@@ -1086,7 +1172,7 @@
 
         <a class="res-cta" id="res-cta" href="/biblioteca/videos/">
           Entrar a mi ruta en GENESIS
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+          <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
         </a>
         <p class="res-note">
           Este punto de partida queda guardado en tu expediente.
@@ -1251,7 +1337,10 @@
           : 'PERFIL INICIAL · ' + String(i + 1).padStart(2, '0'));
         document.getElementById('file-status').textContent = isSignal ? 'Dato privado' : '';
         if (isSignal) renderSignalHero(); else renderDefaultHero();
-        ficha.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        ficha.scrollIntoView({
+          block: 'nearest',
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
       }
 
       function next() {
