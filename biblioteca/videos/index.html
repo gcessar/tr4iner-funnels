@@ -57,6 +57,7 @@
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
     }
+    body.modal-open { overflow: hidden; }
 
     body::before {
       content: "";
@@ -749,6 +750,100 @@
     .player-close:hover { background: rgba(244, 239, 230, 0.12); border-color: rgba(244, 239, 230, 0.5); }
     .player-close svg { width: 13px; height: 13px; }
 
+    /* ── Enfoque móvil + expediente bajo demanda ── */
+    .mobile-focus,
+    .mobile-profile-trigger { display: none; }
+    .mobile-focus[hidden],
+    .mobile-profile-trigger[hidden] { display: none !important; }
+    dialog.profile-dialog {
+      position: fixed;
+      inset: 50% auto auto 50%;
+      width: min(calc(100% - 24px), 440px);
+      max-height: min(760px, calc(100dvh - 24px));
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--rule-strong);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--ink);
+      overscroll-behavior: contain;
+      box-shadow: 0 32px 90px -24px rgba(0, 0, 0, 0.48);
+    }
+    dialog.profile-dialog::backdrop { background: rgba(17, 17, 17, 0.72); }
+    .profile-dialog-head {
+      position: sticky;
+      z-index: 1;
+      top: 0;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 8px 10px 8px 18px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--card);
+    }
+    .profile-dialog-head span {
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .profile-dialog-close {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--rule-strong);
+      border-radius: 50%;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .profile-dialog-close svg { width: 14px; height: 14px; }
+    .profile-dialog-body { padding: 26px 22px 24px; }
+    .profile-dialog-route,
+    .profile-dialog-body dt,
+    .profile-dialog-progress > span {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .profile-dialog-body h2 {
+      margin: 5px 0 22px;
+      font-size: 30px;
+      font-weight: 750;
+      letter-spacing: -.04em;
+      line-height: 1.05;
+    }
+    .profile-dialog-body dl div { padding: 13px 0; border-bottom: 1px solid var(--rule); }
+    .profile-dialog-body dt { margin-bottom: 5px; }
+    .profile-dialog-body dd { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.45; }
+    .profile-dialog-progress { padding: 24px 0 16px; }
+    .profile-dialog-progress > div { height: 5px; margin: 10px 0 8px; background: var(--paper-deep); }
+    .profile-dialog-progress i { width: 0; height: 100%; display: block; background: var(--mark); }
+    .profile-dialog-progress p { color: var(--ink-soft); font-size: 13px; }
+    .profile-dialog-plan {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      background: var(--ink);
+      color: var(--card);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
     /* ── Bisagra: después del programa, la asesoría ── */
     .bridge {
       margin-top: 26px;
@@ -1397,6 +1492,7 @@
     body { background: var(--paper); }
     body::before { display: none; }
     a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; }
+    #route-index-title:focus-visible { outline: 3px solid var(--mark); outline-offset: 4px; }
     .page { padding-top: calc(48px + env(safe-area-inset-top)); }
     .rv, .vcard, .rv.is-in, .vcard.is-in { opacity: 1; transform: none; transition: none; }
 
@@ -1505,8 +1601,16 @@
       .vtitle { font-size: 14px; line-height: 1.3; }
       .vdone { top: 50%; right: 8px; transform: translateY(-50%); }
       .vdone:active { transform: translateY(-50%) scale(.94); }
-      dialog.player { width: 100vw; max-width: none; margin: auto 0 0; border-radius: 16px 16px 0 0; }
-      .player-bar { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); }
+      dialog.player {
+        position: fixed;
+        inset: 50% auto auto 50%;
+        width: min(calc(100% - 24px), 520px);
+        max-width: none;
+        margin: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 12px;
+      }
+      .player-bar { padding: 12px 14px; }
       .conversion-bridge { grid-template-columns: 1fr; min-height: 0; margin-top: 54px; }
       .bridge-case { height: 126px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
       .bridge-case span { top: 18px; left: 18px; }
@@ -1518,8 +1622,222 @@
       .yellow-button { width: 100%; }
       footer { margin-top: 36px; }
     }
+    @keyframes mobile-focus-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes mobile-dialog-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (max-width: 640px) {
+      body.mobile-video-experience .library-hero { display: none; }
+      body.mobile-video-experience .mobile-profile-trigger:not([hidden]) {
+        width: 100%;
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 14px;
+        border: 1px solid var(--rule-strong);
+        border-left: 4px solid var(--mark);
+        border-radius: 7px;
+        background: #FAFAFA;
+        color: var(--ink);
+        cursor: pointer;
+        font-family: var(--sans);
+        text-align: left;
+      }
+      .mobile-profile-trigger span,
+      .mobile-profile-trigger small,
+      .mobile-profile-trigger strong { display: block; }
+      .mobile-profile-trigger small {
+        margin-bottom: 3px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: .13em;
+      }
+      .mobile-profile-trigger strong { font-size: 14px; font-weight: 700; }
+      .mobile-profile-trigger svg { flex: none; width: 18px; height: 18px; }
+
+      body.mobile-focus-mode .page {
+        min-height: 100svh;
+        display: grid;
+        align-content: center;
+        padding-top: calc(24px + env(safe-area-inset-top));
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+      }
+      body.mobile-focus-mode .new-release,
+      body.mobile-focus-mode #program-content > :not(.mobile-focus):not(.mobile-profile-trigger),
+      body.mobile-focus-mode footer { display: none !important; }
+      body.mobile-focus-mode #program-content { display: block; }
+      body.mobile-focus-mode .mobile-focus:not([hidden]) {
+        width: 100%;
+        max-width: 420px;
+        display: block;
+        margin: 0 auto;
+        transition: opacity .18s ease, transform .18s ease;
+      }
+      body.mobile-video-playing .mobile-focus {
+        opacity: 0;
+        transform: scale(.985);
+        pointer-events: none;
+      }
+      body.mobile-focus-mode .mobile-profile-trigger:not([hidden]) {
+        max-width: 420px;
+        margin: 14px auto 0;
+      }
+      .mobile-focus-eyebrow {
+        margin-bottom: 12px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+      .mobile-focus h1 {
+        max-width: 360px;
+        margin: 0;
+        font-size: clamp(33px, 9.5vw, 42px);
+        font-weight: 750;
+        letter-spacing: -.05em;
+        line-height: .98;
+        text-wrap: balance;
+      }
+      .mobile-focus-lead {
+        max-width: 360px;
+        margin: 14px 0 22px;
+        color: var(--ink-soft);
+        font-size: 15px;
+        line-height: 1.5;
+        text-wrap: pretty;
+      }
+      .mobile-focus-card {
+        width: 100%;
+        display: block;
+        padding: 22px 18px 18px;
+        border: 1px solid var(--rule-strong);
+        border-left: 5px solid var(--mark);
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--ink);
+        cursor: pointer;
+        font-family: var(--sans);
+        text-align: left;
+      }
+      .mobile-focus-kicker {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 8.5px;
+        font-weight: 600;
+        letter-spacing: .14em;
+      }
+      .mobile-focus-card strong {
+        display: block;
+        font-size: clamp(24px, 7.4vw, 31px);
+        font-weight: 750;
+        letter-spacing: -.045em;
+        line-height: 1.02;
+        text-wrap: balance;
+      }
+      .mobile-focus-description {
+        display: block;
+        margin-top: 13px;
+        color: var(--ink-soft);
+        font-size: 14px;
+        line-height: 1.48;
+        text-wrap: pretty;
+      }
+      .mobile-focus-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px 14px;
+        margin: 18px 0 15px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: .11em;
+      }
+      .mobile-focus-cta {
+        min-height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        background: var(--ink);
+        color: var(--card);
+        font-size: 14px;
+        font-weight: 750;
+      }
+      .mobile-focus-cta i { color: var(--mark); font-size: 18px; font-style: normal; }
+      .mobile-show-library {
+        min-height: 44px;
+        display: block;
+        margin: 8px auto 0;
+        padding: 8px 12px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-family: var(--sans);
+        font-size: 13px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .mobile-focus.is-ready .mobile-focus-eyebrow,
+      .mobile-focus.is-ready h1,
+      .mobile-focus.is-ready .mobile-focus-lead,
+      .mobile-focus.is-ready .mobile-focus-card,
+      .mobile-focus.is-ready .mobile-show-library {
+        animation: mobile-focus-in .3s cubic-bezier(.16, 1, .3, 1) both;
+      }
+      .mobile-focus.is-ready h1 { animation-delay: .035s; }
+      .mobile-focus.is-ready .mobile-focus-lead { animation-delay: .07s; }
+      .mobile-focus.is-ready .mobile-focus-card { animation-delay: .105s; }
+      .mobile-focus.is-ready .mobile-show-library { animation-delay: .14s; }
+
+      body.mobile-library-mode .page { padding-top: calc(24px + env(safe-area-inset-top)); }
+      body.mobile-library-mode .mobile-focus { display: none !important; }
+      body.mobile-library-mode .mobile-profile-trigger:not([hidden]) { margin-bottom: 28px; }
+      body.mobile-library-mode .profile-summary,
+      body.mobile-library-mode #next-card { display: none !important; }
+      body.mobile-library-mode .library-layout { display: block; }
+      body.mobile-library-mode .editorial-index { margin-top: 0; }
+      body.mobile-library-mode .index-head h2 { font-size: 32px; }
+
+      dialog.player::backdrop { backdrop-filter: none; }
+      dialog.player[open],
+      dialog.profile-dialog[open] { animation: mobile-dialog-in .2s ease-out both; }
+    }
+    @media (max-width: 640px) and (max-height: 700px) {
+      body.mobile-focus-mode .page { align-content: start; }
+      .mobile-focus h1 { font-size: clamp(30px, 9vw, 38px); }
+      .mobile-focus-lead { margin: 10px 0 16px; }
+      .mobile-focus-card { padding-top: 18px; }
+      .mobile-focus-description { margin-top: 10px; }
+      .mobile-focus-meta { margin: 14px 0 12px; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .rv, .vcard, .thumb img, .play, .weekly-progress > div i { transition: none; }
+      .rv, .vcard, .thumb img, .play, .weekly-progress > div i,
+      .mobile-focus,
+      .mobile-focus.is-ready .mobile-focus-eyebrow,
+      .mobile-focus.is-ready h1,
+      .mobile-focus.is-ready .mobile-focus-lead,
+      .mobile-focus.is-ready .mobile-focus-card,
+      .mobile-focus.is-ready .mobile-show-library,
+      dialog.player[open], dialog.profile-dialog[open] {
+        animation: none;
+        transition: none;
+      }
     }
   </style>
 </head>
@@ -1532,7 +1850,7 @@
     <header class="library-hero">
       <div>
         <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Tu ruta privada · GENESIS</p>
-        <h1 class="rv" style="--i:1" id="headline">No necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em><span id="saludo"></span></h1>
+        <h1 class="rv" style="--i:1" id="headline" tabindex="-1">No necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em><span id="saludo"></span></h1>
         <p class="dek rv" style="--i:2" id="dek">
           Tu punto de partida queda guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.
         </p>
@@ -1585,6 +1903,31 @@
     </section>
 
     <div id="program-content" hidden>
+      <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
+        <p class="mobile-focus-eyebrow">Tu ruta privada · GENESIS</p>
+        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
+        <p class="mobile-focus-lead">No necesitas verlo todo hoy. Abre este video y llévate una sola acción clara.</p>
+        <button type="button" class="mobile-focus-card" id="mobile-focus-open">
+          <span class="mobile-focus-kicker">TU SIGUIENTE ENFOQUE</span>
+          <strong id="mobile-focus-recommendation">Tu orientación de hoy</strong>
+          <span class="mobile-focus-description" id="mobile-focus-description">Empieza por una idea que puedas aplicar desde hoy.</span>
+          <span class="mobile-focus-meta">
+            <span id="mobile-focus-category">TU RUTA</span>
+            <span>APLICACIÓN INMEDIATA</span>
+          </span>
+          <span class="mobile-focus-cta">Ver esta orientación <i aria-hidden="true">→</i></span>
+        </button>
+        <button type="button" class="mobile-show-library" id="mobile-show-library">Ver todos los videos</button>
+      </section>
+
+      <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
+        <span>
+          <small>TU PUNTO DE PARTIDA</small>
+          <strong id="mobile-profile-trigger-value">RUTA ACTIVA</strong>
+        </span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+      </button>
+
       <div class="library-layout">
         <aside class="file-sheet profile-summary rv" aria-label="Resumen privado de tu punto de partida">
           <div class="file-tab">
@@ -1638,7 +1981,7 @@
             <div class="index-head">
               <div>
                 <p class="section-code">ÍNDICE DE TU RUTA</p>
-                <h2 id="route-index-title">Lo que sigue, en orden.</h2>
+                <h2 id="route-index-title" tabindex="-1">Lo que sigue, en orden.</h2>
               </div>
               <span>SEGÚN TU PERFIL</span>
             </div>
@@ -1685,7 +2028,7 @@
     </footer>
   </main>
 
-  <dialog class="player" id="player" aria-label="Reproductor de la orientación">
+  <dialog class="player" id="player" aria-labelledby="player-title">
     <div class="player-frame" id="player-frame"></div>
     <div class="player-bar">
       <div class="player-meta">
@@ -1695,6 +2038,30 @@
       <button class="player-close" id="player-close" type="button" aria-label="Cerrar reproductor">
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
       </button>
+    </div>
+  </dialog>
+
+  <dialog class="profile-dialog" id="profile-dialog" aria-labelledby="profile-dialog-title">
+    <div class="profile-dialog-head">
+      <span>EXPEDIENTE PRIVADO</span>
+      <button type="button" class="profile-dialog-close" id="profile-dialog-close" aria-label="Cerrar punto de partida">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="profile-dialog-body">
+      <p class="profile-dialog-route" id="profile-dialog-route">GENESIS · RUTA PERSONAL</p>
+      <h2 id="profile-dialog-title">Tu punto de partida.</h2>
+      <dl>
+        <div><dt>Señal principal</dt><dd id="profile-dialog-signal">Punto de partida guardado</dd></div>
+        <div><dt>Base estimada</dt><dd id="profile-dialog-kcal">—</dd></div>
+        <div><dt>Foco actual</dt><dd id="profile-dialog-focus">Construir una base sostenible</dd></div>
+      </dl>
+      <div class="profile-dialog-progress">
+        <span>AVANCE DE TU RUTA</span>
+        <div><i id="profile-dialog-progress-fill"></i></div>
+        <p id="profile-dialog-progress-label">Tu avance queda guardado.</p>
+      </div>
+      <a class="profile-dialog-plan" id="profile-dialog-plan" href="/biblioteca/plan/">Ver o actualizar mi punto de partida →</a>
     </div>
   </dialog>
 
@@ -1828,6 +2195,7 @@
       }
 
       var activeAnnouncement = null;
+      var announcementShown = false;
       if (memberSession) {
         try {
           var catalogResponse = await fetch('/api/genesis/catalog', { cache: 'no-store' });
@@ -2000,10 +2368,11 @@
         aplicarIdentidad();
         renderOnboard();
         renderFilters();
-        renderLibrary();
         renderNextCard();
+        setupMobileExperience();
         updateBridge();
         maybeStartTour();
+        showAnnouncement();
       }
 
       function resolverIdentidad() {
@@ -2139,7 +2508,7 @@
         progreso.push(v.id);
         saveProgreso();
         emitirCompletada(v, 'auto');
-        renderLibrary();
+        if (libraryRendered) renderLibrary(); else updateProgressUI();
         renderNextCard();
         updateBridge();
       }
@@ -2159,18 +2528,20 @@
         });
         var visibles = VIDEOS.filter(videoVisible);
         var d = doneIn(visibles);
+        var progressPercent = visibles.length ? (d / visibles.length) * 100 : 0;
+        var progressCopy = d
+          ? 'Tu avance está guardado. Continúa desde la recomendación de hoy.'
+          : 'Empieza por la recomendación de hoy; tu avance quedará guardado.';
         var avance = document.getElementById('avance');
         avance.hidden = true;
         document.getElementById('avance-num').textContent = '';
-        document.getElementById('avance-fill').style.width = (visibles.length ? (d / visibles.length) * 100 : 0) + '%';
+        document.getElementById('avance-fill').style.width = progressPercent + '%';
         var profileFill = document.getElementById('profile-progress-fill');
         var profileLabel = document.getElementById('profile-progress-label');
-        if (profileFill) profileFill.style.width = (visibles.length ? (d / visibles.length) * 100 : 0) + '%';
-        if (profileLabel) {
-          profileLabel.textContent = d
-            ? 'Tu avance está guardado. Continúa desde la recomendación de hoy.'
-            : 'Empieza por la recomendación de hoy; tu avance quedará guardado.';
-        }
+        if (profileFill) profileFill.style.width = progressPercent + '%';
+        if (profileLabel) profileLabel.textContent = progressCopy;
+        document.getElementById('profile-dialog-progress-fill').style.width = progressPercent + '%';
+        document.getElementById('profile-dialog-progress-label').textContent = progressCopy;
       }
 
       // El índice editorial reemplaza los filtros con contadores.
@@ -2183,6 +2554,7 @@
       // ── Render de la biblioteca ──────────────────────────────
       var libraryEl = document.getElementById('library');
       var emptyEl = document.getElementById('empty');
+      var libraryRendered = false;
 
       // Reveals: se revelan al entrar en el viewport
       function checkReveals() {
@@ -2196,6 +2568,7 @@
       window.addEventListener('resize', checkReveals, { passive: true });
 
       function renderLibrary() {
+        libraryRendered = true;
         libraryEl.innerHTML = '';
         var shown = 0;
 
@@ -2262,6 +2635,10 @@
         updateProgressUI();
       }
 
+      function ensureLibraryRendered() {
+        if (!libraryRendered) renderLibrary();
+      }
+
       function escapeHtml(value) {
         return String(value || '')
           .replace(/&/g, '&amp;')
@@ -2313,6 +2690,7 @@
 
       // ── Reproductor (IFrame API: mide reproducción real) ────
       var player = document.getElementById('player');
+      var profileDialog = document.getElementById('profile-dialog');
       var playerFrame = document.getElementById('player-frame');
       var ytLoading = false;
       var ytPlayer = null;
@@ -2321,6 +2699,11 @@
       var activeVideo = null;
       var watchedDelta = 0;
       var playStartedSent = false;
+      var playerLastFocus = null;
+
+      function syncModalState() {
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open));
+      }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
       // caemos al iframe simple de siempre — se ve el video, sin autocompletar.
@@ -2393,11 +2776,14 @@
 
       function openPlayer(v, b) {
         var myOpen = ++openId;
+        playerLastFocus = document.activeElement;
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
         playerFrame.innerHTML = '<div id="yt-target"></div>';
+        document.body.classList.add('mobile-video-playing');
         player.showModal();
+        syncModalState();
         loadYT(function (ok) {
           if (myOpen !== openId || !player.open) return;
           if (ok) {
@@ -2444,6 +2830,17 @@
         }
         ytPlayer = null;
         playerFrame.innerHTML = '';
+        document.body.classList.remove('mobile-video-playing');
+        renderNextCard();
+        syncModalState();
+        if (playerLastFocus && playerLastFocus.isConnected &&
+            !playerLastFocus.closest('[hidden]') && typeof playerLastFocus.focus === 'function') {
+          setTimeout(function () { playerLastFocus.focus({ preventScroll: true }); }, 0);
+        } else if (document.body.classList.contains('mobile-library-mode')) {
+          setTimeout(function () { document.getElementById('route-index-title').focus({ preventScroll: true }); }, 0);
+        } else {
+          setTimeout(function () { document.getElementById('headline').focus({ preventScroll: true }); }, 0);
+        }
       });
       document.getElementById('player-close').addEventListener('click', closePlayer);
       player.addEventListener('click', function (e) {
@@ -2461,13 +2858,14 @@
       }
 
       function showAnnouncement() {
-        if (!activeAnnouncement || gateActivo) return;
+        if (!activeAnnouncement || gateActivo || mobileFocusActive || announcementShown) return;
         var banner = document.getElementById('new-release');
         document.getElementById('new-release-img').src = activeAnnouncement.thumbnail ||
           ('https://i.ytimg.com/vi/' + activeAnnouncement.videoId + '/hqdefault.jpg');
         document.getElementById('new-release-title').textContent = activeAnnouncement.title;
         document.getElementById('new-release-body').textContent = activeAnnouncement.body || activeAnnouncement.videoTitle;
         banner.hidden = false;
+        announcementShown = true;
         announceEvent('viewed');
       }
 
@@ -2600,22 +2998,42 @@
           'Tu punto de partida ya está guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.';
         document.getElementById('active-label-value').textContent =
           (state.sexo ? state.sexo.toUpperCase() + ' · ' : '') + signal.short;
-        document.getElementById('profile-route').textContent =
+        var routeLabel =
           (first ? first.toUpperCase() + ' · ' : 'GENESIS · ') +
           (state.sexo ? 'RUTA ' + state.sexo.toUpperCase() : 'RUTA PERSONAL');
-        document.getElementById('profile-signal').textContent = signal.label;
-        document.getElementById('profile-kcal').textContent =
+        var kcalLabel =
           String(Math.round(Number(plan.kcal))).replace(/\B(?=(\d{3})+(?!\d))/g, '.') +
           ' kcal estimadas';
+        document.getElementById('profile-route').textContent = routeLabel;
+        document.getElementById('profile-signal').textContent = signal.label;
+        document.getElementById('profile-kcal').textContent = kcalLabel;
         document.getElementById('profile-focus').textContent = signal.focus;
+        document.getElementById('profile-dialog-route').textContent = routeLabel;
+        document.getElementById('profile-dialog-signal').textContent = signal.label;
+        document.getElementById('profile-dialog-kcal').textContent = kcalLabel;
+        document.getElementById('profile-dialog-focus').textContent = signal.focus;
+        document.getElementById('profile-dialog-plan').href = planUrl();
+        document.getElementById('mobile-profile-trigger-value').textContent = signal.short;
       }
 
       // ── Siguiente orientación: primera pendiente de la ruta ──
       var nextCardEl = document.getElementById('next-card');
+      var mobileFocusEl = document.getElementById('mobile-focus');
+      var mobileFocusOpen = document.getElementById('mobile-focus-open');
+      var mobileProfileTrigger = document.getElementById('mobile-profile-trigger');
+      var routeIndexTitle = document.getElementById('route-index-title');
+      var mobileViewport = window.matchMedia('(max-width: 640px)');
+      var mobileFocusActive = false;
+      var mobileLibraryRequested = false;
+      var profileLastFocus = null;
       var nextVideo = null;
       var nextBloque = null;
       function renderNextCard() {
-        if (!plan) { nextCardEl.hidden = true; return; }
+        if (!plan) {
+          nextCardEl.hidden = true;
+          mobileFocusOpen.disabled = true;
+          return;
+        }
         nextVideo = null;
         nextBloque = null;
         bloquesOrdenados().some(function (b) {
@@ -2624,18 +3042,115 @@
             return false;
           });
         });
-        if (!nextVideo) { nextCardEl.hidden = true; return; }
+        if (!nextVideo) {
+          nextCardEl.hidden = true;
+          mobileFocusOpen.disabled = true;
+          if (mobileFocusActive) showMobileLibrary(false);
+          return;
+        }
         nextCardEl.hidden = false;
+        mobileFocusOpen.disabled = false;
         nextCardEl.classList.add('is-in');
         var signal = SIGNAL_INFO[currentSignal()];
+        var first = primerNombre(lead.nombre || nombre);
         document.getElementById('nx-meta').textContent = 'TU SIGUIENTE ENFOQUE';
         document.getElementById('nx-title').textContent = signal.title;
         document.getElementById('nx-description').textContent = signal.description;
         document.getElementById('nx-category').textContent = signal.category;
+        document.getElementById('mobile-focus-name').textContent = first ? first + ', ' : '';
+        document.getElementById('mobile-focus-recommendation').textContent = signal.title;
+        document.getElementById('mobile-focus-description').textContent = signal.description;
+        document.getElementById('mobile-focus-category').textContent = signal.category;
+        mobileFocusOpen.setAttribute('aria-label', 'Ver orientación: ' + nextVideo.title);
       }
       nextCardEl.addEventListener('click', function () {
         if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
       });
+
+      function setupMobileExperience() {
+        var enabled = mobileViewport.matches && !!plan && !gateActivo && !params.get('video');
+        document.body.classList.toggle('mobile-video-experience', enabled);
+        mobileProfileTrigger.hidden = !enabled;
+        if (!enabled) {
+          mobileFocusActive = false;
+          mobileFocusEl.hidden = true;
+          routeIndexTitle.removeAttribute('role');
+          routeIndexTitle.removeAttribute('aria-level');
+          document.body.classList.remove('mobile-focus-mode', 'mobile-library-mode');
+          ensureLibraryRendered();
+          return false;
+        }
+        if (!nextVideo || mobileLibraryRequested || document.body.classList.contains('mobile-library-mode')) {
+          showMobileLibrary(false);
+          return false;
+        }
+        mobileFocusActive = true;
+        mobileFocusEl.hidden = false;
+        routeIndexTitle.removeAttribute('role');
+        routeIndexTitle.removeAttribute('aria-level');
+        document.body.classList.add('mobile-focus-mode');
+        document.body.classList.remove('mobile-library-mode');
+        requestAnimationFrame(function () { mobileFocusEl.classList.add('is-ready'); });
+        updateProgressUI();
+        return true;
+      }
+
+      function showMobileLibrary(moveFocus) {
+        if (moveFocus) mobileLibraryRequested = true;
+        mobileFocusActive = false;
+        mobileFocusEl.hidden = true;
+        document.body.classList.remove('mobile-focus-mode');
+        document.body.classList.add('mobile-video-experience', 'mobile-library-mode');
+        routeIndexTitle.setAttribute('role', 'heading');
+        routeIndexTitle.setAttribute('aria-level', '1');
+        mobileProfileTrigger.hidden = false;
+        ensureLibraryRendered();
+        showAnnouncement();
+        requestAnimationFrame(checkReveals);
+        if (moveFocus) {
+          setTimeout(function () {
+            routeIndexTitle.focus({ preventScroll: false });
+          }, 0);
+        }
+      }
+
+      mobileFocusOpen.addEventListener('click', function () {
+        if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
+      });
+      document.getElementById('mobile-show-library').addEventListener('click', function () {
+        showMobileLibrary(true);
+      });
+
+      mobileProfileTrigger.addEventListener('click', function () {
+        profileLastFocus = document.activeElement;
+        profileDialog.showModal();
+        syncModalState();
+      });
+      document.getElementById('profile-dialog-close').addEventListener('click', function () {
+        profileDialog.close();
+      });
+      profileDialog.addEventListener('click', function (event) {
+        if (event.target === profileDialog) profileDialog.close();
+      });
+      profileDialog.addEventListener('close', function () {
+        syncModalState();
+        if (profileLastFocus && profileLastFocus.isConnected &&
+            !profileLastFocus.closest('[hidden]') && typeof profileLastFocus.focus === 'function') {
+          setTimeout(function () { profileLastFocus.focus({ preventScroll: true }); }, 0);
+        } else {
+          setTimeout(function () { routeIndexTitle.focus({ preventScroll: true }); }, 0);
+        }
+      });
+      function handleMobileViewportChange() {
+        var wasMobileExperience = document.body.classList.contains('mobile-video-experience');
+        setupMobileExperience();
+        if (wasMobileExperience && !mobileViewport.matches) {
+          showAnnouncement();
+          maybeStartTour();
+        }
+      }
+      if (mobileViewport.addEventListener) mobileViewport.addEventListener('change', handleMobileViewportChange);
+      else mobileViewport.addListener(handleMobileViewportChange);
 
       // ── Bisagra a la asesoría: escala con el compromiso del lead ──
       // A (sin plan): puerta genérica · B (plan hecho): habla con sus números ·
@@ -2771,7 +3286,8 @@
         document.getElementById('tour-next').focus({ preventScroll: true });
       }
       function maybeStartTour() {
-        if (!plan || gateActivo || activeAnnouncement || params.get('video')) return;
+        if (!plan || gateActivo || activeAnnouncement || params.get('video') ||
+            document.body.classList.contains('mobile-video-experience')) return;
         try { if (window.localStorage.getItem(TOUR_KEY)) return; } catch (e) { /* incógnito */ }
         setTimeout(function () { showTourStep(0); }, 550);
       }
@@ -2824,8 +3340,8 @@
       })();
       renderOnboard();
       renderFilters();
-      renderLibrary();
       renderNextCard();
+      setupMobileExperience();
       updateBridge();
       maybeStartTour();
       showAnnouncement();
