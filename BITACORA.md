@@ -2800,7 +2800,7 @@ La rama aprobada se integró en `main` mediante el merge `d75502a`. Vercel publi
 
 ---
 
-## 2026-08-13 — GENESIS móvil centrado en una sola orientación (candidato de publicación)
+## 2026-08-13 — GENESIS móvil centrado en una sola orientación (producción)
 
 ### Qué cambió
 
@@ -2820,11 +2820,17 @@ Reducir la sensación de “biblioteca para explorar” y convertir la primera p
 
 ### QA local
 
-Validado a 320 × 568, 375 × 667, 375 × 812, 768 × 1024 y 1280 × 800 px: sin overflow horizontal; CTA principal visible; expediente y reproductor con centro geométrico exacto; cierre de 44 × 44 px; restauración de foco; biblioteca diferida; acceso al índice completo; y enlace directo `?video=` sin pasar por la vista de enfoque. Los scripts inline compilan y `git diff --check` pasa. Candidato preparado en `work/genesis-player-center`; pendiente de Preview y producción.
+Validado a 320 × 568, 375 × 667, 375 × 812, 768 × 1024 y 1280 × 800 px: sin overflow horizontal; CTA principal visible; expediente y reproductor con centro geométrico exacto; cierre de 44 × 44 px; restauración de foco; biblioteca diferida; acceso al índice completo; y enlace directo `?video=` sin pasar por la vista de enfoque. Los scripts inline compilan y `git diff --check` pasa.
+
+### Publicación en producción
+
+El commit funcional `f712c4f` generó el Preview `dpl_6yfaT7i5Aj4tMdSnEyMTP95R87F2`, confirmado `Ready`. El smoke autenticado devolvió `200` en `/biblioteca/videos/`, encontró la nueva vista de enfoque y el expediente modal, y confirmó `401` en `/api/genesis/me` sin sesión; no se enviaron formularios ni se crearon leads.
+
+La rama se integró en `main` mediante el merge `7196936`. Vercel publicó el deployment productivo `dpl_H8iMEAPg51MGBf4Rt5VER4hJj5wK`, confirmado `Ready` el 13-ago-2026, con `https://metodo.tr4iner.com` entre sus aliases. En el dominio canónico, `/biblioteca/videos/` respondió `200`, `/api/genesis/me` respondió el `401` esperado sin sesión y el HTML publicado coincidió byte por byte con `biblioteca/videos/index.html` (`SHA-256 bf46d5972a718b446ffefc8a77dcb5370075c1bdbee7ee546a7fe8f6c7e75ccb`).
 
 ---
 
-## 2026-08-13 — Reproductor de GENESIS centrado en móvil (candidato de publicación)
+## 2026-08-13 — Reproductor de GENESIS centrado en móvil (producción)
 
 ### Qué cambió
 
@@ -2838,7 +2844,7 @@ No cambió la apertura/cierre del diálogo, el iframe de YouTube, el progreso, l
 
 ### QA local
 
-Validado a 375 × 812 px con la geometría real del diálogo: quedó centrado con desviación `0 × 0`, ancho de 351 px, 12 px de margen lateral, sin overflow horizontal y cierre de 44 × 44 px. A 768 × 1024 y 1280 × 800 px también conservó centro exacto, sin overflow. Candidato preparado en `work/genesis-player-center`; pendiente de Preview y producción.
+Validado a 375 × 812 px con la geometría real del diálogo: quedó centrado con desviación `0 × 0`, ancho de 351 px, 12 px de margen lateral, sin overflow horizontal y cierre de 44 × 44 px. A 768 × 1024 y 1280 × 800 px también conservó centro exacto, sin overflow. Publicado con el mismo merge y deployment productivo documentados en la entrada anterior.
 
 ---
 
