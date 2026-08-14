@@ -2800,6 +2800,48 @@ La rama aprobada se integró en `main` mediante el merge `d75502a`. Vercel publi
 
 ---
 
+## 2026-08-13 — GENESIS móvil centrado en una sola orientación (candidato de publicación)
+
+### Qué cambió
+
+En `/biblioteca/videos/`, una persona con sesión y punto de partida guardado ahora entra en móvil a una vista de enfoque: nombre, una recomendación personalizada y un único CTA para reproducirla. El resto del catálogo, la bisagra comercial, el aviso de novedades y el tour quedan fuera de la primera decisión. **“Ver todos los videos”** mantiene una salida explícita hacia el índice completo.
+
+La entrada usa un fade con desplazamiento corto y escalonado de hasta 440 ms; no simula escritura letra por letra ni añade librerías. Respeta `prefers-reduced-motion`. Al tocar el CTA, el bloque pierde protagonismo y abre el reproductor centrado que ya registra reproducción y progreso.
+
+**“Tu punto de partida”** dejó de ocupar una ficha estática en móvil. Ahora es un control compacto que abre un `<dialog>` nativo centrado con señal, calorías, foco, progreso y enlace para actualizar el plan. El cierre funciona con botón, `Escape` o fondo y devuelve el foco al control que lo abrió.
+
+### Velocidad y compatibilidad
+
+La biblioteca se renderiza bajo demanda: antes del primer clic móvil hay 0 tarjetas, 0 miniaturas, 0 iframes y 0 scripts de YouTube. La API de YouTube sigue cargando únicamente cuando se abre un video. Los accesos directos con `?video=`, el gate sin sesión, el onboarding sin plan y las vistas desde 641 px conservan el flujo anterior.
+
+### Resultado esperado
+
+Reducir la sensación de “biblioteca para explorar” y convertir la primera pantalla en una acción concreta: abrir la orientación que corresponde hoy.
+
+### QA local
+
+Validado a 320 × 568, 375 × 667, 375 × 812, 768 × 1024 y 1280 × 800 px: sin overflow horizontal; CTA principal visible; expediente y reproductor con centro geométrico exacto; cierre de 44 × 44 px; restauración de foco; biblioteca diferida; acceso al índice completo; y enlace directo `?video=` sin pasar por la vista de enfoque. Los scripts inline compilan y `git diff --check` pasa. Candidato preparado en `work/genesis-player-center`; pendiente de Preview y producción.
+
+---
+
+## 2026-08-13 — Reproductor de GENESIS centrado en móvil (candidato de publicación)
+
+### Qué cambió
+
+En `/biblioteca/videos/`, el breakpoint móvil dejó de presentar el reproductor como una hoja anclada al borde inferior. El diálogo ahora conserva 12 px de margen lateral, las cuatro esquinas redondeadas y un centro explícito con `position: fixed`, coordenadas al 50% y `translate(-50%, -50%)`. Así no depende de cómo cada navegador móvil resuelva los márgenes automáticos de un `<dialog>`.
+
+El ancho usa `100%` en vez de `100vw` para no contar la barra de desplazamiento como parte del contenido y evitar márgenes laterales desiguales. Al dejar de tocar el borde inferior, la barra del reproductor ya no añade el `safe-area-inset-bottom` reservado para una hoja inferior.
+
+### Sin tocar
+
+No cambió la apertura/cierre del diálogo, el iframe de YouTube, el progreso, la finalización automática, la analítica, el catálogo ni la navegación de la videoteca.
+
+### QA local
+
+Validado a 375 × 812 px con la geometría real del diálogo: quedó centrado con desviación `0 × 0`, ancho de 351 px, 12 px de margen lateral, sin overflow horizontal y cierre de 44 × 44 px. A 768 × 1024 y 1280 × 800 px también conservó centro exacto, sin overflow. Candidato preparado en `work/genesis-player-center`; pendiente de Preview y producción.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
