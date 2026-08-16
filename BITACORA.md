@@ -3,11 +3,247 @@
 Registro de decisiones, cambios y resultados del proyecto de funnels de adquisición.  
 Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
+> **Cómo leer este archivo.** Cada entrada empieza con `## AAAA-MM-DD — Título`. El
+> índice de abajo lista todas por fecha, de la más nueva a la más vieja, para poder
+> responder "¿qué hicimos en agosto?" sin leer 3.000 líneas. El cuerpo del archivo **no**
+> está ordenado: arriba hay un bloque reciente y abajo uno cronológico desde mayo. Buscá
+> por la fecha del índice, no por posición.
+>
+> Para filtrar un mes: `grep -n "^## 2026-08" BITACORA.md`
+
+---
+
+## Índice por fecha
+
+**Agosto 2026**
+
+- `2026-08-15` — A/B en D+3: B duplica registros, los pierde abajo, y el criterio cambia
+- `2026-08-13` — Nueva oferta de Ruta Tr4iner en `/biblioteca/inicio/` (rama de Preview)
+- `2026-08-13` — GENESIS móvil centrado en una sola orientación (producción)
+- `2026-08-13` — Reproductor de GENESIS centrado en móvil (producción)
+- `2026-08-11` — A/B real de `/casos-de-estudio`: variante B de salud, solo contra tráfico pago
+- `2026-08-11` — Bot de WhatsApp de Vero: sin países excluidos, detección de patologías y cierre en chat
+- `2026-08-10` — Especificación del A/B de `/casos-de-estudio` (sin implementar todavía)
+- `2026-08-08` — El poster sale del HTML y el CTA sube al hero (PRUEBA EN CURSO: sáb 8 → dom 9)
+- `2026-08-07` — Velocidad de carga en las páginas de Veronika (Rosita y Flor)
+- `2026-08-07` — Typeform de `/testimonio-rosita-va/video` con el SDK
+- `2026-08-07` — El tope de alto del Typeform también estaba en Flor, Flor VA y Dashiel
+- `2026-08-07` — Fecha del masthead a agosto 2026 y el piso de alto que no llegaba al iframe
+- `2026-08-05` — Prueba de agosto: tráfico VA a WhatsApp vs. `/fit4-va`
+- `2026-08-05` — `/fit4-va` a producción · contrato de datos para CRM y n8n
+- `2026-08-05` — `/fit4` toma la estructura de `/fit4-va` sin perder su piel
+- `2026-08-05` — `/redirectfit4`: puente de tráfico a FIT4 por UTMs
+- `2026-08-04` — `/fit4-va` pasa de VSL con muro a landing de venta completa
+- `2026-08-03` — GENESIS: unidades imperiales en el test de macros
+- `2026-08-03` — GENESIS: retirar salida externa a YouTube
+- `2026-08-03` — GENESIS: corregir referencia masculina del 10% de grasa
+- `2026-08-03` — La bisagra de GENESIS recupera la atribución desde el CRM
+
+**Julio 2026**
+
+- `2026-07-31` — Texto del CTA de agenda AN
+- `2026-07-30` — Selector móvil de ruta GENESIS
+- `2026-07-30` — Funnel VA de Rosita
+- `2026-07-30` — Centrado del play en el prerregistro de Rosita
+- `2026-07-30` — Nombre legible en el Typeform de Rosita
+- `2026-07-29` — Renovación privada de exclientes por WhatsApp
+- `2026-07-29` — Conceptos Meta Ads para renovación
+- `2026-07-28` — Biblioteca orientada a salud + testimonios Bunny
+- `2026-07-28` — Recorrido GENESIS completo y señal principal privada
+- `2026-07-28` — Meta CAPI: fbc/fbp en el funnel y evento Schedule unificado
+- `2026-07-23` — Paso 2 visible a los tres segundos
+- `2026-07-23` — Paridad visual VA entre local y Producción
+- `2026-07-23` — Tipografías VA preservadas entre local y Producción
+- `2026-07-23` — Metadata y modal móvil del registro VA
+- `2026-07-23` — Firma editorial de Veronika unificada
+- `2026-07-23` — GitHub recupera la autoridad + protocolo Codex/Claude
+- `2026-07-23` — Placeholder de Nombre personalizado por sexo en `/biblioteca`
+- `2026-07-23` — Rollout GENESIS: acceso mágico y CRM MQL
+- `2026-07-22` — GENESIS privado conectado al CRM
+- `2026-07-22` — Puentes condicionales de salida para Typeform
+- `2026-07-22` — Recuperación de rutas antiguas con 404 orientado a conversión
+- `2026-07-22` — Confirmación de compra FIT4CHALLENGE
+- `2026-07-22` — Preview integral antes de migrar `metodo.tr4iner.com`
+- `2026-07-22` — Promoción de `metodo.tr4iner.com` a Producción
+- `2026-07-22` — Peso tipográfico VA y retiro de imágenes ClickFunnels
+- `2026-07-22` — Formulario VA sin desplazamiento automático
+- `2026-07-22` — CTA y testimonios más legibles en Calendly VA
+- `2026-07-22` — Fondo unificado en las páginas VA
+- `2026-07-22` — Publicación de los ajustes VA en Producción
+- `2026-07-22` — UTMs duplicados conservan la nomenclatura original
+- `2026-07-20` — Variante completa de Veronika: registro, tipografía y FIT4 separado
+- `2026-07-19` — Analítica completa del funnel Caso de Estudio
+- `2026-07-19` — SEO/GEO multiruta y VSL FIT4CHALLENGE
+- `2026-07-18` — Lead magnet “10 platos para perder grasa”
+- `2026-07-18` — Rediseño directo del lead magnet “10 platos”
+- `2026-07-16` — GENESIS: entrada por sexo y Biblioteca personalizada
+- `2026-07-15` — Biblioteca: lead scoring MQL→SQL + test de macros + tracking real
+- `2026-07-15` — Regularización Git y compatibilidad ClickFunnels
+- `2026-07-15` — Biblioteca: test obligatorio, grasa visual y desbloqueo guiado
+- `2026-07-15` — Biblioteca: interfaz de YouTube reducida sin cambiar la reproducción
+- `2026-07-14` — Biblioteca: sexo automático y versión ClickFunnels 2.0
+- `2026-07-14` — Arquitectura unificada en Vercel para Caso de Estudio y Programa Cero
+- `2026-07-14` — Preview integral en Vercel listo para pruebas
+- `2026-07-14` — Flor y Dashiel: variante A promovida a canónica
+- `2026-07-14` — Línea editorial unificada en Calendly y confirmación
+- `2026-07-14` — Sistema tipográfico unificado
+- `2026-07-14` — Ruta pública para Flor VA
+- `2026-07-14` — Testimonios unificados en Calendly AN y VA
+- `2026-07-14` — Publicación integral a producción
+- `2026-07-14` — Proyecto duplicado eliminado de Vercel
+- `2026-07-13` — Fix: UTMs no se reenviaban a flor/dashiel + regularización de leads
+- `2026-07-09` — Funnel nuevo: Videoteca TR4INER (3 páginas)
+- `2026-07-09` — Concepto creativo «Programa Cero» (reescritura del funnel Videoteca)
+- `2026-07-07` — Páginas de agendamiento y confirmación Calendly
+
+**Junio 2026**
+
+- `2026-06-08` — Atribución por video de YouTube (estilo getrevtrack)
+
+**Mayo 2026**
+
+- `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
+- `2026-05-18` — Setup inicial del proyecto
+- `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-15 — A/B en D+3: B duplica registros, los pierde abajo, y el criterio cambia
+
+Primera lectura del A/B lanzado el 12-ago. **No es una decisión** — a D+3 el protocolo solo
+habilita mirar SRM, guardarraíles y volumen. Se cambió el criterio de decisión y se documentó
+por qué.
+
+### El embudo por variante (12→15 ago)
+
+| Etapa | A (control) | B (salud) | B/A |
+|---|---|---|---|
+| Exposiciones | 1.489 | 1.489 | **1,00 — SRM perfecto** |
+| Registros (→VSL) | 146 | 296 | **2,03×** |
+| Typeform completos | 75 | 135 | 1,80× |
+| Declara $300-600 | 10 | 11 | 1,10× |
+| **Agendas atribuibles** | **12** | **14** | **1,17×** |
+
+Y las tasas, que cuentan la historia real:
+
+| Conversión | A | B |
+|---|---|---|
+| Registro → Typeform | 51,4% | 45,6% |
+| Typeform → agenda | **16,0%** | **10,4%** |
+| Registro → agenda | **8,22%** | **4,73%** |
+
+**Cada lead de B vale 43% menos, pero B trae el doble.** El neto queda casi empatado.
+
+### ⚠️ Criterio de decisión NUEVO: agendas por 1.000 exposiciones
+
+El anterior era "% de leads que declaran $300-600". **Se descarta**: A=13,3% vs B=8,1% da
+p≈0,23 con n=75/135, y en absoluto es 10 contra 11. Con este volumen no decide nada.
+
+El criterio nuevo lo propuso el usuario y es mejor porque está pegado a la caja:
+
+- A: **8,06** agendas por 1.000 exposiciones
+- B: **9,40** por 1.000 → **B ~17% más barata por agenda**
+
+Como el split reparte tráfico idéntico, esto es directamente eficiencia por peso invertido.
+Todavía es ruido (z=1,47, p≈0,14) — hacen falta ~130 agendas por brazo, o sea el mes completo.
+
+### Cómo se cruzan las agendas con la variante (repetible)
+
+Las agendas del setter y de ManyChat viajan **sin UTMs a propósito**, así que no se pueden
+atribuir por campaña. El cruce que funciona:
+
+1. Typeform API (`TYPEFORM_TOKEN`, form `CGxeptJu`) → índice identidad→`variant` desde el
+   campo `hidden`. Clave: correo, o los últimos 9 dígitos del teléfono.
+2. `AgendaEvent` del CRM (Neon) filtrado por `scheduledAt >= T0`.
+3. Match por correo o teléfono.
+
+Es el mismo mecanismo de `crm-ventas/scripts/resolver-agendas-typeform.ts`, que ya hacía
+esto para `utm_term`. Fuente de las agendas: workflow n8n **`NzshDBl2sb13DrmQ`**
+(*TR4INER Schedule → Meta CAPI*), que unifica Calendly + setter CRM + ManyChat y deduplica
+**por cita, no por persona**.
+
+**62 agendas desde el T0** (39 `setter_whatsapp` + 23 `calendly_direct`). Atribuibles: 26
+(A=12, B=14). **36 sin atribuir (58%)** — leads previos al T0 o que nunca pasaron por la
+landing. Ese punto ciego se achica solo con el tiempo, pero hay que declararlo siempre.
+
+### El salto de línea gráfica NO es lo que frena a B
+
+Duda del usuario: B es blanco clínico y la VSL siguiente es crema editorial. ¿Choca?
+**Los datos dicen que no.**
+
+| En la VSL | A | B |
+|---|---|---|
+| Rebote `/testimonio-flor` | 10,34% | **6,13%** |
+| Rebote `/testimonio-dashiel` | 15,49% | **9,77%** |
+| Sesiones con engagement | 87,7% | **92,5%** |
+| Tiempo por sesión | **221 s** | 194 s |
+
+Si el salto visual causara rechazo, B rebotaría **más** al aterrizar. Rebota ~40% **menos**.
+La explicación que queda es **selección**: B saca fricción, entra gente que con el modal no
+se hubiera registrado, y esa gente marginal es de menor intención. La pérdida no ocurre al
+aterrizar, ocurre más abajo.
+
+**Decisión: NO homogeneizar tipografías ni fondo del funnel mientras corre el test.** Dos
+razones. La táctica: las VSL son compartidas por los dos brazos, tocarlas invalida el pooling
+y devuelve el test a D+0. La de fondo: **homogeneizar no lo convertiría en un test de copy**
+— B difiere de A en estructura, formulario inline vs modal, con/sin video, peso, redirect sin
+pantalla intermedia **y** copy. Unificar fuentes no toca ninguna de esas. Un test de copy real
+exige una B estructuralmente idéntica a A cambiando solo el titular, y eso es otro test.
+La incoherencia visual es real y se arregla **después**, sobre la ganadora.
+
+### Señales cualitativas a favor de B
+
+- **«No tengo una estructura clara»**: A=18,7% → **B=30,4%**. Era el obstáculo #1 declarado
+  por los compradores del estudio (44%).
+- **Recomposición**: A=16,0% → **B=21,5%**. El segmento que convierte 4,60%.
+- **Sobrepeso +15kg** (el que peor paga): A=76,0% → B=71,9%.
+- Leads de $100: A=54, **B=104 (1,93×)**. No son basura: el estudio dice que ese segmento
+  aporta 33 de 59 ventas.
+
+### 🔴 Confounder abierto: el tráfico se desplomó
+
+| Día | Sesiones MetaAds a `/casos-de-estudio` |
+|---|---|
+| 12-ago (T0) | 1.613 |
+| 13-ago | 1.285 |
+| **14-ago** | **426** |
+| 15-ago (parcial) | 79 |
+
+**−67% en un día.** No se pudo confirmar la inversión: el conector de Meta no devuelve las
+campañas `[CE]` en ninguna cuenta consultable. **Hay que revisarlo en Business Manager.**
+Sin tráfico el test no junta muestra.
+
+### Dos bugs encontrados
+
+1. **`variant` corrupto en 1 de 211 respuestas**: llegó como `B?fbclid=PAVERFW...`. La URL se
+   concatenó mal en algún salto. No mueve el test, pero es un borde frágil.
+2. **GA4 devuelve conteos de sesión distintos según qué métricas se pidan** en la misma
+   consulta (296 vs 345 para B). Por eso **toda conclusión firme se ancla en Typeform y CRM**,
+   que son exactos, y no en GA4.
+
+### Correcciones a lecturas previas
+
+- Se había estimado que el test necesitaba 180 días de muestra. **Estaba mal**: el cálculo
+  salía de GA4, y **GA4 no ve el Typeform porque va embebido** (registraba 113 sesiones
+  cuando hubo 506 respuestas completas). El volumen alcanza de sobra.
+- **`form_start` sigue sin ser comparable** entre brazos, por construcción.
+
+### El Typeform volvió a su primera pregunta original
+
+El cambio del 6-ago dio peor feedback de closers y se revirtió el 15-ago. Se mantiene el campo
+oculto `variant`, verificado.
+
+**No rompe el A/B**: los dos brazos pasan por el mismo formulario al mismo tiempo, así que el
+cambio los afecta igual. Es justamente lo que un split concurrente protege y un antes/después
+no. **Pero no se pueden mezclar** los datos del 12-15 con los posteriores para nada que salga
+de esa primera pregunta.
+
 ---
 
 ## 2026-08-11 — A/B real de `/casos-de-estudio`: variante B de salud, solo contra tráfico pago
 
-**Rama:** `work/ce-rediseno-cro`. **Sin publicar** — falta aprobación del preview.
+**Rama:** `work/ce-rediseno-cro`. **PUBLICADO** el 12-ago (merge `4af1ae2`). Ver la
+sección "T0 DEL EXPERIMENTO" más abajo y la entrada del 15-ago con la primera lectura.
 
 ### Qué se montó
 
