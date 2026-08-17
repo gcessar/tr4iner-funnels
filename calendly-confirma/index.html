@@ -31,41 +31,55 @@
   <meta name="description" content="Tu sesión con TR4INER quedó agendada. Revisa las indicaciones antes de la evaluación." />
   <link rel="canonical" href="https://metodo.tr4iner.com/calendly-confirma/" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;500;900&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas.
+       Antes había que resolver DNS y TLS contra fonts.googleapis y
+       fonts.gstatic antes de dibujar una sola letra. Ahora: 0 peticiones
+       a Google y el mismo lenguaje visual que la landing que gana. -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
+  <style>
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 600;font-display:swap;src:url("/assets/fonts/jetbrains-mono-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  </style>
 
   <style>
     :root {
-      --bg: #F2EEE2;
-      --bg-deeper: #EBE6D6;
-      --paper: #FFFDF8;
-      --ink: #0A0A0A;
-      --ink-soft: #2B2826;
-      --muted: #6B6660;
-      --muted-2: #8B857D;
-      --rule: rgba(10, 10, 10, 0.14);
-      --rule-strong: rgba(10, 10, 10, 0.28);
-      --accent: #B87355;
-      --accent-deep: #B87355;
+      --bg: #FFFFFF;
+      --bg-deeper: #FAFBFC;
+      --paper: #FFFFFF;
+      --ink: #16181A;
+      --ink-soft: #575F67;
+      --muted: #6E757D;
+      --muted-2: #6B7278;
+      --rule: #DDE1E5;
+      --rule-strong: #C6CDD4;
+      --accent: #A85E40;
+      --accent-deep: #A85E40;
       --gold: #F5C518;
       --black: #0A0A0A;
       --whatsapp: #25D366;
       --max: 900px;
       --gutter: clamp(14px, 4vw, 28px);
-      --serif: "Poppins", "Montserrat", Arial, sans-serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
+      --serif: "Stack Sans Headline", -apple-system, "Helvetica Neue", sans-serif;
+      --sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
       --display-weight: 500;
       --display-leading: 1.06;
-      --display-tracking: -0.03em;
+      --display-tracking: -0.022em;
       --meta-size: 10.5px;
       --meta-weight: 500;
       --meta-tracking: 0.14em;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Ni Stack Sans Headline ni Lexend traen itálica: sin esto el
+     navegador inclina las letras a la fuerza y se ve mecánico.
+     El énfasis lo llevan el color y el peso. */
+  em, i { font-style: normal; }
 
     html {
       -webkit-text-size-adjust: 100%;
