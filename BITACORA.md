@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-17` — B gana, el funnel se uniforma y arranca el test de copy
 - `2026-08-15` — A/B en D+3: B duplica registros, los pierde abajo, y el criterio cambia
 - `2026-08-13` — Nueva oferta de Ruta Tr4iner en `/biblioteca/inicio/` (rama de Preview)
 - `2026-08-13` — GENESIS móvil centrado en una sola orientación (producción)
@@ -105,6 +106,99 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-17 — B gana, el funnel se uniforma y arranca el test de copy
+
+Tres cosas en un mismo turno. Rama `work/b-ganadora-y-uniformidad`.
+
+### 1. B declarada ganadora en D+5 — decisión de negocio, no estadística
+
+⚠️ **Se cortó antes del horizonte previsto.** La evidencia es consistente pero **no
+significativa**: agendas 15 contra 21, p≈0,30. Queda asentado que fue una decisión del
+usuario por velocidad, no un resultado del test. **El tamaño real del efecto no se conoce
+y ya no se va a conocer.**
+
+Con tráfico idéntico en los dos brazos (2.542 contra 2.518 exposiciones):
+
+| Etapa | A | B | Ventaja B |
+|---|---|---|---|
+| Registros | 278 | **525** | +89% |
+| Typeform completos | 102 | **180** | +76% |
+| Leads CRM | 31 | **57** | +84% |
+| Agendas | 15 | **21** | +40% |
+| Ventas (WIN) | 1 | 1 | sin lectura a D+5 |
+
+**B nunca estuvo abajo en ninguna.** La ventaja aparece en cuatro sistemas de medición
+independientes que no se hablan entre sí. Las ventas no eran legibles ni lo iban a ser:
+la mediana lead→venta es 3 días y el 25% tarda más de 17.
+
+**Cómo se publicó.** El rewrite de `/casos-de-estudio` pasa de `/index` a `/index-salud`.
+Con eso, **quien tenía cookie `ab_ce` recibe lo mismo con A o con B**: nadie queda servido
+una página que ya no existe. `index.html` **se queda desplegado pero sin ruta**, para poder
+revertir cambiando una línea en vez de restaurar archivos — el test se cortó temprano y sin
+significancia, así que el rollback tiene que ser barato.
+
+### 2. El funnel AN uniformado al sistema de la ganadora
+
+Fondo y tipografía de `index-salud.html` en Flor, Dashiel, Calendly AN y la confirmación.
+**No es un rediseño**: estructura, copy y acentos quedan como estaban. El funnel VA queda
+fuera a propósito — tiene tema propio de Veronika y uniformarlo borraría esa diferenciación.
+
+- Crema `#F2EEE2` → blanco. Los derivados del crema pasan a neutros.
+- Fraunces → Stack Sans Headline; Instrument Sans → Lexend. Se conservan los nombres
+  `--serif`/`--sans` para no tocar las ~200 reglas que ya los usan.
+- Las tres familias pasan a servirse desde el propio dominio: **cero peticiones a Google
+  Fonts en todo el funnel**.
+
+**Dos regresiones que causó el cambio de fondo y hubo que arreglar:**
+
+1. **Ninguna de las dos familias trae itálica**, así que el navegador estaba inclinando las
+   letras a la fuerza. Se quitaron las 10 reglas de `font-style: italic` —el color ya hacía
+   el énfasis en casi todas— y se normalizó `em, i`, porque **`<em>` es itálica por defecto
+   del navegador y borrar la regla CSS no alcanzaba**.
+2. **El terracota `#B87355` daba 4,5:1 sobre crema y 3,74:1 sobre blanco.** Pasa a
+   `#A85E40`. Y el gris de tarjeta elegido al principio (`#F4F6F8`) bajaba **todos** los
+   textos de encima por debajo de AA: pasa a `#FAFBFC`.
+
+Verificado a 375px: 0 itálicas sintéticas, 0 peticiones a Google, 0 fallos de contraste
+salvo el separador decorativo `|` que ya fallaba antes. Intactos `attribution.js`, los
+campos ocultos de Typeform con `variant`, `hasVaUtm` y los dos IDs de Vidalytics.
+
+### 3. Arranca el test de COPY — B vs C, solo MetaAds
+
+**Este sí aísla una variable.** `index-fuerza.html` es idéntico a `index-salud.html` salvo
+el titular: **23.073 contra 23.088 bytes**. Si pesaran distinto se estaría midiendo
+velocidad, no copy.
+
+| | Titular |
+|---|---|
+| **B** (ganadora) | «Ya no es por cómo te ves. / Es la presión, el análisis que salió mal, el cansancio que no se va.» |
+| **C** (retador) | «No se trata de los kilos. / Se trata de con cuánta fuerza vas a llegar a los sesenta.» |
+
+C prueba el ángulo de **envejecer con fuerza**: tema #1 del estudio de 837 compradores
+(**57%**), muy por encima de bajar grasa, y nunca probado en la landing.
+
+⚠️ **Cookie nueva `ab_copy` con valores B/C.** No se reusa `ab_ce`: tiene valores A/B vivos
+por 180 días y un visitante con `ab_ce=A` habría quedado asignado a una variante que ya no
+existe. Verificado que esos visitantes entran frescos al test nuevo. Evento propio
+`ce_copy_exposure_b|c` con `experiment_id: ce_copy_202608`, para no mezclar denominadores.
+
+El orgánico ve B y no gasta lugar del experimento.
+
+**Verificado con `vercel dev` sobre el edge real:** orgánico 8/8 a B sin cookie; MetaAds
+B=10 / C=14 en 24 sin errores; cookie pegajosa 8/8 en ambas; 200 sin cabecera `Location`;
+recursos de C en 200; `noindex` y canonical correctos; los dos eventos disparando con el
+titular que corresponde.
+
+### Pendiente
+
+- **Declarar el criterio de decisión del test de copy ANTES de mirar resultados.** El
+  anterior terminó en "agendas por 1.000 exposiciones"; hay que confirmarlo o cambiarlo
+  ahora, no cuando haya números.
+- El campo `variant` del opt-in ahora lee `ab_copy`. Los registros del orgánico van a
+  llegar con `variant: null`, que es lo correcto: están fuera del experimento.
 
 ---
 
