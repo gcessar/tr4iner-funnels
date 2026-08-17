@@ -192,11 +192,31 @@ B=10 / C=14 en 24 sin errores; cookie pegajosa 8/8 en ambas; 200 sin cabecera `L
 recursos de C en 200; `noindex` y canonical correctos; los dos eventos disparando con el
 titular que corresponde.
 
+### ▶ Criterio del test de copy — DECLARADO ANTES DE VER UN SOLO NÚMERO
+
+Aprobado por el usuario el 17-ago, con el test recién publicado y cero datos a la vista.
+
+| Rol | Métrica | Lectura |
+|---|---|---|
+| **Decide** | opt-in rate: registros / exposiciones | **~24-ago (D+7)** |
+| **Guardarraíl** | agendas por 1.000 exposiciones | D+21 |
+
+**Por qué el opt-in decide acá y no decidía en el test anterior.** Un titular actúa
+*directamente* sobre el opt-in: es el único elemento que cambia entre los dos brazos, así
+que la señal es limpia y llega rápido. Con ~1.100 exposiciones diarias, detectar un cambio
+del 15% relativo toma unos 6 días. En el test anterior el opt-in no servía porque los dos
+brazos diferían en estructura, formulario y peso a la vez.
+
+**Por qué las agendas quedan como freno.** El test anterior enseñó que el opt-in puede
+subir mientras la calidad cae: B duplicó registros y cada lead suyo valía 43% menos.
+**Si C sube el opt-in pero hunde las agendas por 1.000, no se publica.**
+
+Reglas que se mantienen del test anterior: no espiar y cortar al ver ventaja, empate deja
+el control (que ahora es B), no decidir por CPL, no leer `form_start`, y no tocar las
+campañas de Meta mientras corre.
+
 ### Pendiente
 
-- **Declarar el criterio de decisión del test de copy ANTES de mirar resultados.** El
-  anterior terminó en "agendas por 1.000 exposiciones"; hay que confirmarlo o cambiarlo
-  ahora, no cuando haya números.
 - El campo `variant` del opt-in ahora lee `ab_copy`. Los registros del orgánico van a
   llegar con `variant: null`, que es lo correcto: están fuera del experimento.
 
