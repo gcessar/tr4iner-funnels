@@ -32,7 +32,7 @@
   "rewrites": [
     {
       "source": "/casos-de-estudio",
-      "destination": "/index"
+      "destination": "/index-salud"
     },
     {
       "source": "/testimonio-flor",
