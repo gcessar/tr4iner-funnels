@@ -614,9 +614,10 @@
               <input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off" aria-label="No completar este campo" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap" />
               <input type="hidden" name="sexo" id="sexo" />
               <input type="hidden" name="situacion" id="situacion" />
+              <input type="hidden" name="edad_rango" id="edad_rango" />
 
               <section class="wizard-step" id="step-nombre" aria-labelledby="nombre-title">
-                <div class="wizard-meta"><span>Creando tu Ruta Tr4iner</span><strong>Paso 1 de 5</strong></div>
+                <div class="wizard-meta"><span>Creando tu Ruta Tr4iner</span><strong>Paso 1 de 6</strong></div>
                 <h2 class="question-title" id="nombre-title" tabindex="-1">Para empezar, ¿cómo te llamas?</h2>
                 <p class="question-dek">Usaremos tu nombre para personalizar esta experiencia.</p>
                 <div class="single-answer">
@@ -631,7 +632,7 @@
               </section>
 
               <section class="wizard-step" id="step-sexo" aria-labelledby="sexo-title" hidden>
-                <div class="wizard-meta"><span>Personalizando tu ruta</span><strong>Paso 2 de 5</strong></div>
+                <div class="wizard-meta"><span>Personalizando tu ruta</span><strong>Paso 2 de 6</strong></div>
                 <h2 class="question-title" id="sexo-title" tabindex="-1"><span data-first-name></span>, ¿qué opción corresponde a tu fisiología?</h2>
                 <div class="route-options" aria-label="Elige tu sexo">
                   <button class="route-option" type="button" data-sexo="Mujer"><span class="route-copy"><strong>Soy mujer</strong><small>Personalizar mi ruta</small></span><span class="route-action" aria-hidden="true">→</span></button>
@@ -641,7 +642,7 @@
               </section>
 
               <section class="wizard-step" id="step-situacion" aria-labelledby="situacion-title" hidden>
-                <div class="wizard-meta"><span>Entendiendo tu punto de partida</span><strong>Paso 3 de 5</strong></div>
+                <div class="wizard-meta"><span>Entendiendo tu punto de partida</span><strong>Paso 3 de 6</strong></div>
                 <h2 class="question-title" id="situacion-title" tabindex="-1"><span data-first-name></span>, ¿cuál de estas situaciones se parece más a la tuya?</h2>
                 <div class="choice-list" aria-label="Elige tu situación actual">
                   <button class="choice-button" type="button" data-situacion="estancado" data-situacion-text="Entreno o intento comer bien, pero no consigo los resultados que quiero."><span class="choice-index">01</span><span>Entreno o intento comer bien, pero no consigo los resultados que quiero.</span><span class="choice-arrow" aria-hidden="true">→</span></button>
@@ -653,10 +654,37 @@
                 <button class="wizard-back" type="button" data-back="sexo">← Volver</button>
               </section>
 
+              <section class="wizard-step" id="step-edad" aria-labelledby="edad-title" hidden>
+                <div class="wizard-meta"><span>Ajustando tu ruta</span><strong>Paso 4 de 6</strong></div>
+                <h2 class="question-title" id="edad-title" tabindex="-1"><span data-first-name></span>, ¿en qué rango de edad estás?</h2>
+                <p class="question-dek">Cambia qué priorizamos: no es lo mismo empezar a los 22 que a los 45.</p>
+                <div class="route-options" aria-label="Elige tu rango de edad">
+                  <button class="route-option" type="button" data-edad="18-25"><span class="route-copy"><strong>18 a 25 años</strong></span><span class="route-action" aria-hidden="true">→</span></button>
+                  <button class="route-option" type="button" data-edad="26-35"><span class="route-copy"><strong>26 a 35 años</strong></span><span class="route-action" aria-hidden="true">→</span></button>
+                  <button class="route-option" type="button" data-edad="36+"><span class="route-copy"><strong>Más de 35</strong></span><span class="route-action" aria-hidden="true">→</span></button>
+                </div>
+                <button class="wizard-back" type="button" data-back="situacion">← Volver</button>
+              </section>
+
+              <section class="wizard-step" id="step-email" aria-labelledby="email-title" hidden>
+                <div class="wizard-meta"><span>Guardando tu ruta</span><strong>Paso 5 de 6</strong></div>
+                <h2 class="question-title" id="email-title" tabindex="-1"><span data-first-name></span>, ¿a qué correo guardamos tu Ruta Tr4iner?</h2>
+                <p class="question-dek">Ahí queda guardada y ahí llega tu enlace personal para abrirla.</p>
+                <div class="single-answer">
+                  <div class="field" id="f-email">
+                    <label for="email">Tu correo</label>
+                    <input class="control" type="email" id="email" name="email" placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" maxlength="254" />
+                    <p class="err" aria-live="polite">Ingresa un correo válido</p>
+                  </div>
+                  <button class="primary-cta answer-cta" type="button" id="continue-email">Continuar <span class="cta-arrow" aria-hidden="true">→</span></button>
+                </div>
+                <button class="wizard-back" type="button" data-back="edad">← Volver</button>
+              </section>
+
               <section class="wizard-step" id="step-whatsapp" aria-labelledby="whatsapp-title" hidden>
-                <div class="wizard-meta"><span>Guardando tu ruta</span><strong>Paso 4 de 5</strong></div>
-                <h2 class="question-title" id="whatsapp-title" tabindex="-1"><span data-first-name></span>, ¿cuál es tu WhatsApp?</h2>
-                <p class="question-dek">Lo usaremos para vincular tu Ruta Tr4iner con tu contacto.</p>
+                <div class="wizard-meta"><span>Tu ruta está lista</span><strong>Paso 6 de 6</strong></div>
+                <h2 class="question-title" id="whatsapp-title" tabindex="-1">Por último, <span data-first-name></span>, ¿a qué WhatsApp te la enviamos?</h2>
+                <p class="question-dek">Te llega ahí apenas termines, sin buscarla en el correo.</p>
                 <div class="single-answer">
                   <div class="field" id="f-whatsapp">
                     <label for="whatsapp">Tu WhatsApp</label>
@@ -668,26 +696,11 @@
                     </div>
                     <p class="err" aria-live="polite">Ingresa un número válido (solo dígitos)</p>
                   </div>
-                  <button class="primary-cta answer-cta" type="button" id="continue-whatsapp">Continuar <span class="cta-arrow" aria-hidden="true">→</span></button>
-                </div>
-                <button class="wizard-back" type="button" data-back="situacion">← Volver</button>
-              </section>
-
-              <section class="wizard-step" id="step-email" aria-labelledby="email-title" hidden>
-                <div class="wizard-meta"><span>Tu ruta está lista</span><strong>Paso 5 de 5</strong></div>
-                <h2 class="question-title" id="email-title" tabindex="-1">Por último, <span data-first-name></span>, ¿a qué correo enviamos tu Ruta Tr4iner?</h2>
-                <p class="question-dek">Recibirás un enlace personal para verificar tu correo y abrirla.</p>
-                <div class="single-answer">
-                  <div class="field" id="f-email">
-                    <label for="email">Tu correo</label>
-                    <input class="control" type="email" id="email" name="email" placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" maxlength="254" />
-                    <p class="err" aria-live="polite">Ingresa un correo válido</p>
-                  </div>
                   <button class="primary-cta submit-cta" type="submit" id="submit-btn"><span class="submit-label">Ver mi ruta personalizada</span><span class="spinner" aria-hidden="true"></span><span class="cta-arrow" aria-hidden="true">→</span></button>
                   <p class="privacy-note">Gratis · Sin tarjeta · Tus datos están protegidos</p>
                   <p class="privacy-note">Al continuar aceptas la <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Política de Privacidad</a>.</p>
                 </div>
-                <button class="wizard-back" type="button" data-back="whatsapp">← Volver</button>
+                <button class="wizard-back" type="button" data-back="email">← Volver</button>
               </section>
             </form>
           </div>
@@ -724,10 +737,11 @@
         nombre: document.getElementById('step-nombre'),
         sexo: document.getElementById('step-sexo'),
         situacion: document.getElementById('step-situacion'),
-        whatsapp: document.getElementById('step-whatsapp'),
-        email: document.getElementById('step-email')
+        edad: document.getElementById('step-edad'),
+        email: document.getElementById('step-email'),
+        whatsapp: document.getElementById('step-whatsapp')
       };
-      var state = { nombre: '', firstName: '', sexo: '', situacion: '', situacionText: '' };
+      var state = { nombre: '', firstName: '', sexo: '', situacion: '', situacionText: '', edadRango: '' };
 
       function showStep(name) {
         Object.keys(steps).forEach(function (key) { steps[key].hidden = key !== name; });
@@ -796,36 +810,33 @@
               situacion_text: state.situacionText
             });
           }
-          showStep('whatsapp');
+          showStep('edad');
         });
       });
 
+      // El rango, no la edad exacta: el número puntual lo pide después el test
+      // de macros, y acá pedirlo frenaría la respuesta sin cambiar la ruta.
+      document.querySelectorAll('[data-edad]').forEach(function (choice) {
+        choice.addEventListener('click', function () {
+          state.edadRango = choice.getAttribute('data-edad');
+          document.getElementById('edad_rango').value = state.edadRango;
+          if (window.TR4Track && TR4Track.track) {
+            TR4Track.track('biblioteca_edad_select', { edad_rango: state.edadRango });
+          }
+          showStep('email');
+        });
+      });
+
+      // Atajo por número en las dos preguntas de opción múltiple.
       document.addEventListener('keydown', function (event) {
-        if (steps.situacion.hidden || event.metaKey || event.ctrlKey || event.altKey) return;
+        if (event.metaKey || event.ctrlKey || event.altKey) return;
+        var selector = !steps.situacion.hidden ? '[data-situacion]' : !steps.edad.hidden ? '[data-edad]' : null;
+        if (!selector) return;
         var option = Number(event.key) - 1;
-        var choices = document.querySelectorAll('[data-situacion]');
+        var choices = document.querySelectorAll(selector);
         if (option >= 0 && option < choices.length) {
           event.preventDefault();
           choices[option].click();
-        }
-      });
-
-      function continueWhatsapp() {
-        var telefono = document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
-        var telOk = /^\d{7,15}$/.test(telefono);
-        setFieldError('f-whatsapp', !telOk);
-        if (!telOk) {
-          document.getElementById('whatsapp').focus();
-          return;
-        }
-        showStep('email');
-      }
-
-      document.getElementById('continue-whatsapp').addEventListener('click', continueWhatsapp);
-      document.getElementById('whatsapp').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          continueWhatsapp();
         }
       });
 
@@ -874,6 +885,26 @@
         catch (e) { /* modo incógnito */ }
       }
 
+      function continueEmail() {
+        var email = document.getElementById('email').value.trim();
+        var malo = !validateEmail(email) || isDomainSuspect(email);
+        setFieldError('f-email', malo, !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega tu ruta');
+        if (malo) {
+          document.getElementById('email').focus();
+          return;
+        }
+        showStep('whatsapp');
+        if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_email_complete');
+      }
+
+      document.getElementById('continue-email').addEventListener('click', continueEmail);
+      document.getElementById('email').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          continueEmail();
+        }
+      });
+
       document.getElementById('email').addEventListener('blur', function () {
         var email = this.value.trim();
         if (!email) return;
@@ -890,7 +921,6 @@
         var telefono = document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
         var prefijo = document.getElementById('prefijo').value;
         var email = document.getElementById('email').value.trim();
-        var valid = true;
 
         setFieldError('f-nombre', !nombre);
         if (!nombre) {
@@ -899,26 +929,23 @@
           return;
         }
 
-        var telOk = /^\d{7,15}$/.test(telefono);
-        setFieldError('f-whatsapp', !telOk);
-        if (!telOk) {
-          showStep('whatsapp');
-          document.getElementById('whatsapp').focus();
+        if (!state.sexo || !state.situacion || !state.edadRango) {
+          showStep(!state.sexo ? 'sexo' : !state.situacion ? 'situacion' : 'edad');
           return;
         }
 
         var emailBad = !validateEmail(email) || isDomainSuspect(email);
         setFieldError('f-email', emailBad, !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega tu ruta');
-        if (emailBad) valid = false;
-
-        if (!state.sexo || !state.situacion) {
-          showStep(!state.sexo ? 'sexo' : 'situacion');
+        if (emailBad) {
+          showStep('email');
+          document.getElementById('email').focus();
           return;
         }
 
-        if (!valid) {
-          showStep('email');
-          document.getElementById('email').focus();
+        var telOk = /^\d{7,15}$/.test(telefono);
+        setFieldError('f-whatsapp', !telOk);
+        if (!telOk) {
+          document.getElementById('whatsapp').focus();
           return;
         }
 
@@ -937,6 +964,7 @@
           sexo: state.sexo,
           situacion: state.situacion,
           situacion_text: state.situacionText,
+          edad_rango: state.edadRango,
           video: videoId,
           utm: utmData,
           page_url: window.location.href,
@@ -944,12 +972,13 @@
           suppress_access_email: true
         };
 
-        saveLead({ nombre: nombre, email: email, sexo: state.sexo, situacion: state.situacion });
+        saveLead({ nombre: nombre, email: email, whatsapp: prefijo + telefono, sexo: state.sexo, situacion: state.situacion, edad_rango: state.edadRango });
         if (window.TR4Track && TR4Track.track) {
           TR4Track.track('registro', {
             whatsapp: prefijo + telefono,
             situacion: state.situacion,
-            situacion_text: state.situacionText
+            situacion_text: state.situacionText,
+            edad_rango: state.edadRango
           });
         }
 
@@ -976,6 +1005,7 @@
           sexo: state.sexo,
           situacion: state.situacion,
           situacion_text: state.situacionText,
+          edad_rango: state.edadRango,
           video: videoId
         };
         Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });

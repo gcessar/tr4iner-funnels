@@ -151,6 +151,12 @@
       font-weight: 600;
       overflow-wrap: anywhere;
     }
+    /* La promesa de seguimiento acompaña a la entrega sin competir con ella. */
+    .lede-seguimiento {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 17px;
+    }
 
     .file-sheet {
       position: relative;
@@ -506,7 +512,11 @@
 
           <p class="eyebrow">Acceso privado · Falta un paso</p>
           <h1>Ya reservamos tu acceso<span id="name-line"></span>. <em>Ahora confirma que eres tú.</em></h1>
-          <p class="lede">Te enviamos un enlace personal a <strong id="email-line">tu correo</strong>. Ábrelo para entrar a GENESIS y conectar tu avance con un solo expediente.</p>
+          <p class="lede">
+            <span id="entrega-wa" hidden>Acabamos de enviarte los accesos al WhatsApp que nos diste <strong id="whatsapp-line"></strong> y de igual forma en tu correo <strong class="email-line"></strong> te acabo de enviar un mensaje especial.</span>
+            <span id="entrega-mail">Te enviamos un enlace personal a <strong class="email-line">tu correo</strong>. Ábrelo para entrar a GENESIS y conectar tu avance con un solo expediente.</span>
+          </p>
+          <p class="lede lede-seguimiento" id="entrega-seguimiento" hidden>También podremos enviarte recomendaciones relacionadas con tu ruta y mensajes de nuestro equipo para ayudarte con tus próximos pasos.</p>
 
           <section class="file-sheet mail-sheet" aria-label="Correo que vas a recibir">
             <div class="file-tab">
@@ -569,15 +579,31 @@
       var lead = {};
       try { lead = JSON.parse(window.localStorage.getItem('tr4_lead') || '{}'); } catch (e) { /* incógnito */ }
 
+      // Interruptor del canal de WhatsApp. Queda apagado hasta que la plantilla
+      // de ManyChat esté aprobada por Meta y el flow activo: prometer un mensaje
+      // que no llega quema el único momento en que la persona está mirando.
+      var CANAL_WHATSAPP_ACTIVO = false;
+
       var nombre = params.get('nombre') || params.get('first_name') || lead.nombre || '';
       var sexo = params.get('sexo') || lead.sexo || '';
       var email = params.get('email') || lead.email || '';
+      // El número nunca viaja por la URL: queda en el historial, en el Referer y
+      // en cualquier log intermedio. Se lee del registro local de esta sesión.
+      var whatsapp = lead.whatsapp || '';
 
       if (nombre) {
         document.getElementById('name-line').textContent = ', ' + nombre.trim().split(/\s+/)[0];
       }
       if (email) {
-        document.getElementById('email-line').textContent = email;
+        document.querySelectorAll('.email-line').forEach(function (target) {
+          target.textContent = email;
+        });
+      }
+      if (CANAL_WHATSAPP_ACTIVO && whatsapp) {
+        document.getElementById('whatsapp-line').textContent = whatsapp;
+        document.getElementById('entrega-wa').hidden = false;
+        document.getElementById('entrega-mail').hidden = true;
+        document.getElementById('entrega-seguimiento').hidden = false;
       }
       if (sexo === 'Mujer' || sexo === 'Hombre') {
         document.documentElement.dataset.sexo = sexo.toLowerCase();
