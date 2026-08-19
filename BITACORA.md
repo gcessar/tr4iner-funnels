@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-19` — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 - `2026-08-17` — B gana, el funnel se uniforma y arranca el test de copy
 - `2026-08-15` — A/B en D+3: B duplica registros, los pierde abajo, y el criterio cambia
 - `2026-08-13` — Nueva oferta de Ruta Tr4iner en `/biblioteca/inicio/` (rama de Preview)
@@ -106,6 +107,76 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-19 — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
+
+### Qué cambió
+
+`/biblioteca/inicio/` pasa de cinco preguntas a seis. Entre la situación y los
+datos de contacto aparece **el rango de edad** (18 a 25 · 26 a 35 · Más de 35),
+con las mismas tarjetas visuales de la pregunta de sexo y el mismo atajo por
+número de teclado.
+
+**Correo y WhatsApp cambian de orden.** Antes se pedía el WhatsApp y después el
+correo; ahora primero *dónde se guarda* la ruta («¿a qué correo guardamos tu
+Ruta Tr4iner?») y al final *a dónde se envía* («¿a qué WhatsApp te la
+enviamos?»). El envío queda en el último paso, que es el que promete la entrega
+inmediata.
+
+`/biblioteca/confirma/` puede nombrar los dos canales con el correo y el número
+reales: «Acabamos de enviarte los accesos al WhatsApp que nos diste … y de igual
+forma en tu correo … te acabo de enviar un mensaje especial», más la promesa de
+seguimiento del equipo.
+
+### Por qué un rango y no la edad exacta
+
+El número puntual ya lo pide el test de macros más adelante, donde hace falta
+para calcular calorías. Pedirlo acá frena la respuesta sin cambiar la ruta. El
+tramo alcanza para segmentar el catálogo.
+
+### Decisiones que no son obvias
+
+- **El número de WhatsApp no viaja en la URL.** La confirmación lo lee del
+  registro local de la sesión (`tr4_lead`). En la query quedaría en el historial,
+  en el `Referer` y en cualquier log intermedio; el correo y el nombre ya viajan
+  así de antes y eso no se cambió en este turno.
+- **`CANAL_WHATSAPP_ACTIVO` arranca apagado.** Mientras está en `false`, la
+  confirmación dice exactamente lo que decía antes. Se enciende cuando la
+  plantilla de ManyChat esté aprobada por Meta y el flow activo: prometer un
+  mensaje que no llega quema el único momento en que la persona está mirando la
+  pantalla.
+
+### Contrato de datos
+
+`edad_rango` viaja al webhook `biblioteca` de n8n y a `/api/genesis/register`
+con los valores `18-25`, `26-35` y `36+`. El CRM lo guarda en
+`BibliotecaLead.edadRango` y lo cruza con el sexo para segmentar el catálogo
+(rama `work/genesis-rango-edad` en `crm-ventas`). Todo lo demás —`nombre`,
+`email`, `sexo`, `situacion`, `situacion_text`, `video`, UTMs y `fbclid`— sigue
+igual en los dos payloads.
+
+### QA local
+
+Recorrido completo a 375 y 1280 px con los dos `fetch` productivos interceptados:
+no se creó ningún lead ni se disparó ningún correo. Los seis pasos avanzan en
+orden con los contadores correctos («Paso 4 de 6» en la pregunta nueva), la
+personalización por nombre se mantiene, los atajos numéricos funcionan en las dos
+preguntas de opción múltiple, y `edad_rango: "26-35"` llegó a los dos payloads
+junto con las UTMs y el `fbclid`. La URL de salto a `/biblioteca/confirma/`
+conserva la atribución y **no** lleva el teléfono. Con el interruptor encendido,
+la confirmación mostró el número y el correo reales sin desborde horizontal;
+apagado, el texto es el de siempre. Cero errores de consola.
+
+### Pendientes
+
+- Plantilla de WhatsApp en ManyChat aprobada por Meta + flow de bienvenida.
+- Nodo en el workflow `abwkDFUOBL0qTTug` que cree el suscriptor y dispare el flow.
+- Encender `CANAL_WHATSAPP_ACTIVO` recién cuando lo anterior esté vivo.
+- Aplicar la migración del CRM antes de integrar esto a `main`: si el funnel
+  manda `edad_rango` y el CRM todavía no tiene la columna, el dato se descarta
+  en silencio.
 
 ---
 
