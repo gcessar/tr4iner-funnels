@@ -579,10 +579,11 @@
       var lead = {};
       try { lead = JSON.parse(window.localStorage.getItem('tr4_lead') || '{}'); } catch (e) { /* incógnito */ }
 
-      // Interruptor del canal de WhatsApp. Queda apagado hasta que la plantilla
-      // de ManyChat esté aprobada por Meta y el flow activo: prometer un mensaje
-      // que no llega quema el único momento en que la persona está mirando.
-      var CANAL_WHATSAPP_ACTIVO = false;
+      // Interruptor del canal de WhatsApp. Encendido el 19-ago-2026, cuando el
+      // flow «ENVIO de RUTA» de ManyChat quedó activo y el sub-workflow de n8n
+      // verificado de punta a punta. Si alguna vez se cae ese canal, apagarlo
+      // acá antes que dejar la pantalla prometiendo un mensaje que no llega.
+      var CANAL_WHATSAPP_ACTIVO = true;
 
       var nombre = params.get('nombre') || params.get('first_name') || lead.nombre || '';
       var sexo = params.get('sexo') || lead.sexo || '';
