@@ -194,8 +194,23 @@ recibe WhatsApp: se detiene a propósito en un NoOp. Escribirle desde el número
 Anthoni cruzaría las dos marcas. Cuando entre la cuenta de Veronika, ese nodo se
 reemplaza por su propia cadena.
 
+### Publicación en producción
+
+Merge `d4c6fd2` en `main`. Vercel publicó el deployment productivo
+**`dpl_7YStDBWP1DopbMH2aLmbggXt2JWJ`**, `Ready`, con `https://metodo.tr4iner.com`
+entre sus aliases. Verificado sobre el dominio canónico: `/biblioteca/inicio/`
+responde `200` con los seis pasos, las tres opciones de edad y el orden
+correo → WhatsApp; `/biblioteca/confirma/` responde `200` con
+`CANAL_WHATSAPP_ACTIVO = true`. El HTML publicado coincide byte por byte con el
+local en las dos páginas.
+
 ### Pendientes
 
+- **Migración del CRM sin aplicar.** Hasta que corra
+  `pnpm db:migrate:prod --deploy`, `BibliotecaLead.edadRango` no existe y el
+  `edad_rango` que manda el funnel se descarta en silencio en
+  `/api/genesis/register`. **No se pierde el dato**: viaja igual al webhook de
+  n8n y queda escrito en `ce_edad_rango` de ManyChat, así que es recuperable.
 - Token de acceso de vida larga en el CRM: el botón del WhatsApp todavía manda a
   `/biblioteca/acceso/` porque el token del correo vive 15 minutos y un WhatsApp
   se lee horas después.
