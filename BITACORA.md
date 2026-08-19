@@ -169,14 +169,38 @@ conserva la atribución y **no** lleva el teléfono. Con el interruptor encendid
 la confirmación mostró el número y el correo reales sin desborde horizontal;
 apagado, el texto es el de siempre. Cero errores de consola.
 
+### Canal de WhatsApp: vivo
+
+El mismo día quedó todo conectado y `CANAL_WHATSAPP_ACTIVO` pasó a `true`.
+
+- Flow **«ENVIO de RUTA»** en la cuenta de ManyChat de Tr4iner
+  (`content20260819201728_45308`). Ojo: la interfaz de ManyChat muestra el
+  namespace con un prefijo de cuenta y dos guiones que **la API no acepta**.
+- Sub-workflow n8n **`zIs9F846ykP5kIjt`**, que llama
+  `Biblioteca → Brevo` (`abwkDFUOBL0qTTug`) desde `Normalizar payload`, sin
+  esperar respuesta y tolerando el error: si ManyChat cae, el alta en Brevo y el
+  correo del CRM salen igual.
+- `Normalizar payload` pasó a arrastrar `edad_rango`, `situacion` y
+  `situacion_text`, que antes se perdían en ese nodo.
+- Verificado de punta a punta desde el webhook con las llamadas a Brevo
+  simuladas (ejecución `506674`): el registro llegó completo, se escribieron los
+  campos en ManyChat y el mensaje se entregó.
+
+El detalle de los ocho defectos que aparecieron probando está en la bitácora del
+CRM, entrada `2026-08-19 (3)`.
+
+**Sólo tráfico de Anthoni.** El registro con `utm_source` que contenga `VA` no
+recibe WhatsApp: se detiene a propósito en un NoOp. Escribirle desde el número de
+Anthoni cruzaría las dos marcas. Cuando entre la cuenta de Veronika, ese nodo se
+reemplaza por su propia cadena.
+
 ### Pendientes
 
-- Plantilla de WhatsApp en ManyChat aprobada por Meta + flow de bienvenida.
-- Nodo en el workflow `abwkDFUOBL0qTTug` que cree el suscriptor y dispare el flow.
-- Encender `CANAL_WHATSAPP_ACTIVO` recién cuando lo anterior esté vivo.
-- Aplicar la migración del CRM antes de integrar esto a `main`: si el funnel
-  manda `edad_rango` y el CRM todavía no tiene la columna, el dato se descarta
-  en silencio.
+- Token de acceso de vida larga en el CRM: el botón del WhatsApp todavía manda a
+  `/biblioteca/acceso/` porque el token del correo vive 15 minutos y un WhatsApp
+  se lee horas después.
+- Rotar la API key de ManyChat de Tr4iner: sigue en texto plano dentro de
+  `Email CTA → ManyChat 100$`.
 
 ---
 
