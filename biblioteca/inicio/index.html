@@ -421,8 +421,14 @@
     }
     .privacy-note a { text-underline-offset: 3px; }
     .text-link {
-      display: inline-flex;
-      margin: 26px 0 0;
+      /* Bloque y no inline-flex: el CTA es inline-flex y, sin un bloque en el
+         medio, el enlace se acomodaba a su lado en pantallas anchas. Antes eso
+         no pasaba porque el microcopy iba entremedio; al retirarlo quedó
+         dependiendo del ancho. `fit-content` evita además que el área clicable
+         se estire de lado a lado. */
+      display: block;
+      width: fit-content;
+      margin: 26px auto 0;
       color: var(--ink-soft);
       font-size: 14px;
       font-weight: 600;
