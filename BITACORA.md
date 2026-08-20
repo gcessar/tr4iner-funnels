@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-19` — Copy de la landing de GENESIS afinado desde Claude Design
 - `2026-08-19` — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 - `2026-08-17` — B gana, el funnel se uniforma y arranca el test de copy
 - `2026-08-15` — A/B en D+3: B duplica registros, los pierde abajo, y el criterio cambia
@@ -109,6 +110,47 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
 
 ---
+
+## 2026-08-19 — Copy de la landing de GENESIS afinado desde Claude Design
+
+### Qué cambió
+
+Cuatro textos de `/biblioteca/inicio/`, ninguno estructural:
+
+| Antes | Ahora |
+|---|---|
+| `Ya tengo acceso a GENESIS →` | `Ya tengo acceso a mi RUTA TR4INER →` |
+| `¿qué opción corresponde a tu fisiología?` | `¿Eres Hombre o Mujer?` |
+| `Orientación educativa… · Equipo con nutricionista y entrenadores certificados` | `Equipo con nutricionistas y entrenadores certificados` |
+| `Te toma menos de 30 segundos. Sin tarjeta.` | (se retira) |
+
+### Por qué
+
+La entrada de miembros nombraba el producto —GENESIS— que la persona todavía no
+conoce en ese punto del recorrido; ahora reconoce lo que le prometimos dos líneas
+más arriba. La pregunta de sexo hablaba de *fisiología*, que es el porqué interno
+de la segmentación y no la pregunta que la persona espera leer.
+
+**El microcopy es el único con riesgo real.** Bajaba la fricción justo antes del
+CTA, diciendo lo que cuesta y lo que no. Si el opt-in cae en los próximos días,
+es lo primero que hay que devolver.
+
+### Cómo llegó
+
+Editado en Claude Design, que trabaja sobre su propia copia y **no** está
+conectado al repo: los cambios no aparecían en localhost ni había nada
+modificado en disco. Se trajeron a mano sobre el archivo real. Importante para la
+próxima: `biblioteca/inicio/index.html` son 1030 líneas —wizard de seis pasos,
+captura de UTMs, payloads a n8n y al CRM—, así que **pegar encima el HTML que
+exporta Design destruiría todo eso**. La copia de Design venía además de la
+versión anterior de cinco pasos.
+
+### QA local
+
+Los cuatro textos verificados en el DOM, y el wizard intacto: seis pasos en el
+orden correcto, «Paso 2 de 6», y `edad_rango` guardándose al elegir el tramo.
+
+### Publicación en producción
 
 ## 2026-08-19 — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 
