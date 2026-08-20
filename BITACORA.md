@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-19` — GENESIS pasa a llamarse Ruta Tr4iner
 - `2026-08-19` — Copy de la landing de GENESIS afinado desde Claude Design
 - `2026-08-19` — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 - `2026-08-17` — B gana, el funnel se uniforma y arranca el test de copy
@@ -110,6 +111,52 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
 
 ---
+
+## 2026-08-19 — GENESIS pasa a llamarse Ruta Tr4iner
+
+### Qué cambió
+
+El producto se llama **Ruta Tr4iner**. Renombrado en todo lo que una persona lee:
+
+- **Ocho páginas del funnel:** `/biblioteca/`, `/inicio/`, `/confirma/`,
+  `/acceso/`, `/verificar/`, `/plan/`, `/videos/` y `404.html`. Títulos, meta
+  descriptions, etiquetas, copy y los textos que arma el JavaScript.
+- **Los dos correos de acceso** (repo `crm-ventas`): asunto, cabecera, CTA y pie.
+- **Las etiquetas del panel** de administración y la entrada del menú lateral.
+
+Caso tipográfico según contexto, como ya venía escrito en la landing:
+«Ruta Tr4iner» en prosa, «RUTA TR4INER» en etiquetas mono en versalitas.
+
+### Lo que NO se renombró, y por qué
+
+Nada de esto lo ve un usuario, y romperlo sí se nota:
+
+- Rutas `/api/genesis/*`, cookie `tr4_genesis_session`, variables `GENESIS_*` y
+  `BREVO_GENESIS_*` configuradas en Vercel, nombres de archivo y símbolos.
+- **`GENESIS_RELAY_MEDIUM = "GENESIS"`** se escribe en la base como `utmSource`,
+  `funnel` y `utmCampaign`. Cambiarlo partiría la atribución en dos: las filas
+  viejas seguirían diciendo GENESIS y ninguna consulta las juntaría con las
+  nuevas.
+- **`utm_campaign=GENESIS-Nuevo-Contenido`** viaja a GA4 y a Brevo. Renombrarlo
+  corta la serie histórica de esa campaña, justo con un A/B en curso.
+- **La ruta pública sigue siendo `/biblioteca/`.** Cambiarla es otra tarea:
+  pide redirects, canonicals y una revisión de SEO, no un buscar y reemplazar.
+
+### Dos ajustes que el reemplazo literal no resolvía
+
+El kicker de `/verificar/` decía «TR4INER · GENESIS»; con el nombre nuevo
+repetía la marca dos veces, así que quedó solo «RUTA TR4INER». Y los eyebrows
+«GENESIS · RUTA PRIVADA» y «GENESIS · RUTA PERSONAL» decían «ruta» dos veces al
+sustituir: pasan a «RUTA TR4INER · PRIVADA» y «RUTA TR4INER · PERSONAL».
+
+### QA
+
+Cero ocurrencias de GENESIS en el HTML servido de las ocho páginas, todas `200`
+y con su título nuevo. Los scripts en línea se pasaron por el parser de Node
+después del reemplazo, para descartar cadenas rotas. En el CRM, `tsc --noEmit`
+limpio y 36 pruebas en verde.
+
+### Publicación en producción
 
 ## 2026-08-19 — Copy de la landing de GENESIS afinado desde Claude Design
 
