@@ -150,6 +150,21 @@ versión anterior de cinco pasos.
 Los cuatro textos verificados en el DOM, y el wizard intacto: seis pasos en el
 orden correcto, «Paso 2 de 6», y `edad_rango` guardándose al elegir el tramo.
 
+### Segunda pasada: el pie
+
+También sale **«GENESIS · Orientación educativa en nutrición y entrenamiento»**
+del pie, y no solo en la landing: era el mismo elemento del mismo pie en
+`/biblioteca/`, `/inicio/`, `/confirma/` y `/videos/`, y quitarlo de una sola
+habría dejado un pie distinto según la página. El pie es grid y fluye solo, así
+que al pasar de tres hijos a dos la marca queda a la izquierda y los enlaces
+legales a la derecha, sin hueco.
+
+**Consecuencia a tener presente:** la landing se queda sin ningún encuadre de
+«orientación educativa», ni visible ni en la `meta description`. Para un producto
+de nutrición y entrenamiento esa línea era lo que separaba contenido educativo de
+consejo médico. Si hay que declararlo, el lugar barato es la meta, que no ensucia
+la página.
+
 ### Publicación en producción
 
 Merge `4c4cfad` en `main`. Deployment **`dpl_HZTRCefdDkdv2d1w55y89rWx6fZS`**,
