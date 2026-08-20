@@ -152,6 +152,11 @@ orden correcto, «Paso 2 de 6», y `edad_rango` guardándose al elegir el tramo.
 
 ### Publicación en producción
 
+Merge `4c4cfad` en `main`. Deployment **`dpl_HZTRCefdDkdv2d1w55y89rWx6fZS`**,
+`Ready`, con `https://metodo.tr4iner.com` entre sus aliases. Verificado sobre el
+dominio: los tres textos nuevos presentes, el microcopy ausente, las tres
+opciones de edad en pie, y el HTML publicado idéntico byte por byte al local.
+
 ## 2026-08-19 — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 
 ### Qué cambió
