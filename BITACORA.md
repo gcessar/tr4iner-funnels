@@ -167,10 +167,19 @@ la página.
 
 ### Publicación en producción
 
-Merge `4c4cfad` en `main`. Deployment **`dpl_HZTRCefdDkdv2d1w55y89rWx6fZS`**,
-`Ready`, con `https://metodo.tr4iner.com` entre sus aliases. Verificado sobre el
-dominio: los tres textos nuevos presentes, el microcopy ausente, las tres
-opciones de edad en pie, y el HTML publicado idéntico byte por byte al local.
+Dos deployments, uno por pasada:
+
+- Copy de la landing: merge `4c4cfad` → **`dpl_HZTRCefdDkdv2d1w55y89rWx6fZS`**.
+- Pie sin bajada: merge `e6e09a0` → **`dpl_HdL6j7Kh8JThsn2UjX2HgVUDwLKL`**, el
+  que hoy tiene `https://metodo.tr4iner.com`.
+
+Verificado sobre el dominio canónico: los textos nuevos presentes, el microcopy y
+la bajada del pie ausentes, las tres opciones de edad en pie, y el HTML publicado
+idéntico byte por byte al local en las **cuatro** páginas.
+
+Al verificar, las primeras respuestas del dominio todavía traían la bajada: era
+caché del CDN, no un deploy incompleto. Con `?cb=<algo>` al final de la URL se
+confirma el contenido real.
 
 ## 2026-08-19 — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
 
