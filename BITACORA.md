@@ -189,6 +189,12 @@ conoce en ese punto del recorrido; ahora reconoce lo que le prometimos dos líne
 más arriba. La pregunta de sexo hablaba de *fisiología*, que es el porqué interno
 de la segmentación y no la pregunta que la persona espera leer.
 
+> **Corrección del 20-ago.** Retirar ese `<p>` dejó un bug de maquetado: era el
+> único bloque entre el CTA y el enlace de miembros, y sin él los dos —ambos
+> `inline-flex`— se acomodaban lado a lado en cuanto había ancho. Se arregló en
+> `.text-link`, que pasó a `display: block` con `width: fit-content` centrado.
+> Deployment `dpl_Eb9wdotiwvPrvDW8pFA7PwfeaQXo`.
+
 **El microcopy es el único con riesgo real.** Bajaba la fricción justo antes del
 CTA, diciendo lo que cuesta y lo que no. Si el opt-in cae en los próximos días,
 es lo primero que hay que devolver.
