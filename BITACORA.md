@@ -158,6 +158,17 @@ limpio y 36 pruebas en verde.
 
 ### Publicación en producción
 
+- **Funnel:** merge `4542077` → **`dpl_EKiu5ZibmDchqHQ6GCu1eSuoM2Co`**, `Ready`,
+  con `https://metodo.tr4iner.com`. Verificado sin caché: cero ocurrencias de
+  GENESIS en las ocho páginas y todos los títulos nuevos.
+- **CRM:** merge `b94a8c6` → **`dpl_BEGQbJR1hoPE3sde6KvnZzhhGrrU`**, `Ready`,
+  con `https://hub.tr4iner.com`.
+- **n8n:** el sub-workflow pasa a llamarse «Ruta Tr4iner · Bienvenida
+  (WhatsApp)» y el nodo llamador «Ruta Tr4iner: bienvenida por WhatsApp». Son
+  etiquetas: el sub-workflow se invoca por id. Se renombró también el disparador
+  `Registro de Ruta Tr4iner` y se verificó con una corrida simulada
+  (`506835`) que la cadena sigue resolviendo entera.
+
 ## 2026-08-19 — Copy de la landing de GENESIS afinado desde Claude Design
 
 ### Qué cambió
