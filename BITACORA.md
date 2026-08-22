@@ -3471,7 +3471,7 @@ Mejorar la identificación del médico antes de pedir la agenda y medir la caíd
 
 ### Estado
 
-Trabajo en la rama `work/medicos-guardias`, disponible únicamente en local. No se creó Preview ni se tocó producción; ambos pasos quedan pendientes de aprobación visual.
+El commit funcional `859ec2b` quedó aislado en `work/medicos-guardias` y generó el Preview `dpl_549edhwHfaV16WGgKZJg5jrKvkDu`, confirmado `Ready`. `/medicos` y ambos posters respondieron `200`; el HTML servido coincidió byte por byte con `medicos/index.html` (`SHA-256 a1d6fd58d4853f1785f91d474cf6c94cfb7666c3e7caebc2d5e8357426919164`). El usuario aprobó la publicación; producción aún no se había tocado al cerrar esta validación.
 
 ---
 
