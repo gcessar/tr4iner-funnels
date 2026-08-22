@@ -3473,6 +3473,10 @@ Mejorar la identificación del médico antes de pedir la agenda y medir la caíd
 
 El commit funcional `859ec2b` quedó aislado en `work/medicos-guardias` y generó el Preview `dpl_549edhwHfaV16WGgKZJg5jrKvkDu`, confirmado `Ready`. `/medicos` y ambos posters respondieron `200`; el HTML servido coincidió byte por byte con `medicos/index.html` (`SHA-256 a1d6fd58d4853f1785f91d474cf6c94cfb7666c3e7caebc2d5e8357426919164`). El usuario aprobó la publicación; producción aún no se había tocado al cerrar esta validación.
 
+### Publicación en producción
+
+La rama se integró en `main` mediante el merge `239dd68`. Vercel publicó el deployment productivo `dpl_EfKBfpgqKV4fFJD2WMtJbMNTyiY4`, confirmado `Ready` el 22-ago-2026 a las 07:50 (Lima), con `https://metodo.tr4iner.com` entre sus aliases. En el dominio canónico, `/medicos` y ambos posters respondieron `200`; el HTML conservó el mismo SHA-256 validado en Preview y local.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
