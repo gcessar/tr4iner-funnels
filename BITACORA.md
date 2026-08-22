@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-22` — C gana el test de copy y pasa a servirse a todo el tráfico
 - `2026-08-19` — GENESIS pasa a llamarse Ruta Tr4iner
 - `2026-08-19` — Copy de la landing de GENESIS afinado desde Claude Design
 - `2026-08-19` — Rango de edad en el wizard, WhatsApp al final y confirmación de dos canales
@@ -109,6 +110,106 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-22 — C gana el test de copy y pasa a servirse a todo el tráfico
+
+Rama `work/c-ganadora`. **Cortado en D+5 de 7 por decisión del usuario**, con el test aún
+sin significancia. Es el mismo patrón que el corte del 17-ago y queda asentado igual: la
+evidencia favorece a C de punta a punta del embudo, pero **el tamaño real del efecto no se
+conoce y ya no se va a conocer**.
+
+### El embudo por variante (cohorte 18→22 ago)
+
+Cohorte: los opt-ins de la ventana, seguidos hacia abajo **sin corte de fecha**. Contar cada
+etapa "dentro del rango" da cero estructural en agendas y ventas, que maduran días después.
+
+| Etapa | B (control) | C (fuerza) | C vs B |
+|---|---|---|---|
+| Exposiciones | 1.193 | 1.174 | −2% (SRM 50,4/49,6 ✅) |
+| Registros (opt-in) | 206 | **215** | +4% |
+| Typeform completos | **101** | 87 | −14% |
+| Leads CRM | 29 | **33** | +14% |
+| Agendas | 12 | **18** | **+50%** |
+| · setter WhatsApp | 11 | 13 | +18% |
+| · Calendly directo | 1 | 5 | +400% |
+| Ventas | 0 | 0 | sin lectura a D+5 |
+
+| Conversión | B | C | p |
+|---|---|---|---|
+| Opt-in rate | 17,3% | **18,3%** | 0,506 |
+| Registro → Typeform | **49,0%** | 40,5% | 0,077 |
+| Typeform → agenda | 11,9% | **20,7%** | 0,100 |
+| **Agendas por 1.000 expo** | 10,06 | **15,33** | 0,251 |
+
+**El patrón es el inverso exacto del test 1.** Allá B duplicaba registros y cada lead valía
+43% menos. Acá C hace que *menos* gente complete el Typeform pero la que lo completa agenda
+casi al doble: es un filtro, no una pérdida. Las dos señales más fuertes se cancelan entre sí
+y ninguna cruza 0,05.
+
+### 🔴 El 17-ago está contaminado y da vuelta el signo
+
+Los dos tests consecutivos **reusaron la etiqueta «B»**: se estrenó cookie (`ab_ce` →
+`ab_copy`) pero no el nombre del brazo. Los opt-ins del 17 previos al deploy son del test
+**viejo**. La prueba: ese día hay **40 opt-ins con `variant=A`**, imposibles en el test nuevo,
+y restándolos de los 117 «B» del 17 quedan ~77 contra 73 de C.
+
+| Ventana | B | C | p |
+|---|---|---|---|
+| 17→22 (contaminada) | **23,1%** | 21,1% | 0,184 |
+| **18→22 (limpia)** | 19,3% | **20,5%** | 0,447 |
+
+Incluyendo el 17 gana B; excluyéndolo gana C. **Toda lectura arranca el 18.** Aprendizaje
+para C vs D: **etiquetas nuevas, no sólo cookie nueva**.
+
+### Cómo se lee un test ahora (más simple que antes)
+
+`/api/optin` del CRM guarda `variant` como **columna de la tabla `OptIn`**, así que la
+asignación al brazo sale de Neon y **no hace falta la API de Typeform para eso**. Lo que sí
+hace falta de Typeform es **el teléfono**: la landing sólo pide nombre y correo, y el teléfono
+es el único puente hacia las agendas de WhatsApp, que viajan sin UTMs y sin correo. Aportó 187
+identidades y **las agendas atribuidas pasaron de 4/8 a 12/18** — sin ese cruce se subcontaba
+más de la mitad.
+
+⚠️ **El sheet `LEADS` no tiene columna `variant`** y nunca sirvió para leer un A/B: el
+workflow n8n `9PH91FpMyNYZo3ct` no se tocó desde el 7-ago. Script repetible y de sólo lectura:
+`crm-ventas/scripts/ab-copy-variant-embudo.ts`.
+
+Control de integridad: Typeform por `hidden.variant` directo da B=100/C=86 contra B=101/C=87
+del cruce por cohorte. El hidden no se pierde en los saltos.
+
+### Qué se publicó
+
+El rewrite de `/casos-de-estudio` pasa de `/index-salud` a `/index-fuerza` y **se elimina
+`middleware.ts`**: ya no hay split y el orgánico ve lo mismo que el pago. Quien tenga cookie
+`ab_copy` recibe C igual. `index-salud.html` e `index.html` quedan desplegados **sin ruta**,
+así el rollback es una línea de `vercel.json`.
+
+Se quitaron las dos lecturas de la cookie. **Dejar el evento fijo en C no alcanzaba**: leía
+`ab_copy`, viva 180 días, así que un visitante con `ab_copy=B` habría emitido
+`ce_copy_exposure_b` estando en la página C. Y `variant` del opt-in ahora viaja `null` como
+el orgánico — marcar «B» a quien vio C es peor que no marcar nada.
+
+### 🔴 Confounder abierto: el tráfico se está desplomando otra vez
+
+| Día | Exposiciones |
+|---|---|
+| 18-ago | 722 |
+| 19-ago | 427 |
+| 20-ago | 281 |
+| 21-ago | 250 |
+
+**−65% en tres días**, el mismo patrón que hundió la muestra del test anterior. Revisar
+Business Manager antes de abrir el próximo test: sin tráfico no junta N.
+
+### Pendiente
+
+- **Próximo test C vs D**: cookie nueva **y** etiquetas nuevas. Esperar a que el tráfico se
+  recupere.
+- Las ventas de esta cohorte quedan sin leer (mediana lead→venta 3 días, 25% más de 17).
+  Si se quiere saber si C sostuvo la calidad, correr el script en septiembre — pero ya sin
+  brazo de control contra el cual comparar.
 
 ---
 
