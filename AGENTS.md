@@ -41,7 +41,8 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 
 | Archivo | Función |
 |---|---|
-| `index.html` | Landing + registro de **Caso de Estudio** (`/casos-de-estudio`). Captura nombre/email/sexo + UTMs y redirige al VSL. |
+| `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite). Variante C, ganadora del test de copy. Captura nombre/email/sexo + UTMs y redirige al VSL. |
+| `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
 | `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer`, UTMs VA de respaldo y redirige a `/testimonio-flor-va`. |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
@@ -99,25 +100,38 @@ La Biblioteca es la referencia visual del proyecto. Todas las páginas canónica
 
 ## A/B testing de la landing
 
-El primer A/B de `/casos-de-estudio` está especificado en
-[`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md): middleware de Vercel con
-**rewrite** (nunca redirect), cookie pegajosa, control `index.html` contra el paquete de salud
-`index-salud.html`, sólo para tráfico pago. `variant` viaja en el opt-in; sin cookie queda
-`null` para no mezclar orgánico con A. GA4 recibe `ce_ab_exposure_a/b`; el denominador se
-lee con sesiones/usuarios que contienen el evento, no con eventCount.
+**Al 22-ago-2026 NO hay ningún test corriendo.** `/casos-de-estudio` sirve `index-fuerza.html`
+(variante C, «No se trata de los kilos / Se trata de con cuánta fuerza vas a llegar a los
+sesenta») a **todo el tráfico, orgánico y pago**, vía el rewrite de `vercel.json`. No hay
+middleware. `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin
+ruta**: revertir es cambiar una línea, no restaurar archivos.
 
-Dos cosas que parecen detalle y no lo son:
+Se corrieron dos tests, los dos cortados por decisión de negocio antes de alcanzar
+significancia. Ver `BITACORA.md` (11, 15, 17 y 22-ago) y
+[`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md) para la mecánica del split.
+
+Lo que hay que respetar al montar el próximo (C vs D):
 
 - **Rewrite, no redirect.** Con redirect se pierden las UTMs, aparece un salto extra y Meta
   ve una redirección que le ensucia el tracking.
-- **Es una prueba de paquete, no de titular.** Si B gana, no se puede adjudicar el resultado
-  al copy, al diseño o al peso por separado.
-- **El KPI que decide NO es el CPL ni el volumen de registros.** Leer leads de $300-600 por
-  exposición elegible; el mix solo es diagnóstico y opt-in/Typeform por exposición son
-  guardarraíles. La parada es por muestra, no por un calendario fijo de 30 días.
+- **Etiqueta de variante nueva, no sólo cookie nueva.** El test 2 estrenó cookie (`ab_ce` →
+  `ab_copy`) pero reusó el nombre «B», y eso volvió **ilegible el día del cruce**: los
+  opt-ins del 17-ago previos al deploy llevan `variant=B` del test viejo. Incluyendo el 17
+  ganaba B; excluyéndolo ganaba C. Para C vs D: cookie nueva **y** etiquetas nuevas.
+- **Aislar una variable.** El test 1 comparó paquetes enteros (estructura + formulario +
+  peso + copy) y su resultado no se puede adjudicar a ninguna parte. El test 2 sí aisló el
+  titular: los dos archivos diferían en 15 bytes.
+- **El KPI que decide NO es el CPL ni el volumen de registros**, y el opt-in por sí solo
+  tampoco alcanzó: en el test 2 quedó empatado mientras toda la diferencia aparecía abajo
+  (agendas por 1.000 exposiciones, 10,06 contra 15,33). Declarar el KPI antes de ver datos,
+  y **no cambiarlo después** — ya se hizo una vez, en D+3 del test 1.
+- **Denominador:** usuarios/sesiones que contienen el evento de exposición, nunca `eventCount`.
 
-El protocolo del CRM aún describe el test anterior de titular; sincronizarlo antes de abrir
-tráfico. Mientras tanto, la implementación vigente está en `docs/ab-casos-de-estudio.md`.
+**Para leer un test, la fuente es el CRM, no el sheet.** `/api/optin` guarda `variant` como
+columna de la tabla `OptIn` (Neon); el sheet `LEADS` **no tiene esa columna** y nunca sirve.
+El teléfono, que la landing no pide, sale del `hidden` de Typeform y es el único puente hacia
+las agendas de WhatsApp — sin él se subcuenta más de la mitad. Script de lectura:
+`crm-ventas/scripts/ab-copy-variant-embudo.ts`.
 
 ## Convenciones
 
