@@ -3543,8 +3543,11 @@ medir el avance desde registro médico hasta consumo del caso de Flor.
 
 ### Estado
 
-Cambio aislado en `work/medicos-gsap-motion`, disponible solo en local. No se generó Preview
-ni se tocó producción; ambos pasos esperan aprobación visual.
+El commit funcional `5ef520f` quedó aislado en `work/medicos-gsap-motion`. Generó el Preview
+`dpl_82ubgMDYzTWXcg116LLugnSEZfKL`, confirmado `Ready` el 22-ago-2026. La ruta protegida
+`/medicos/`, `attribution.js` y `/testimonio-flor` respondieron `200` mediante el acceso
+autenticado de Vercel. El usuario aprobó la publicación; producción seguía intacta al cerrar
+esta validación.
 
 ---
 
