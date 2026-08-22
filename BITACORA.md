@@ -3443,6 +3443,38 @@ Validado a 375 × 812 px con la geometría real del diálogo: quedó centrado co
 
 ---
 
+## 2026-08-22 — Landing Médicos / Guardias completa en local
+
+### Qué cambió
+
+Se creó `/medicos/` como un funnel independiente para médicos con turnos reales. La página desarrolla la dirección visual aprobada de **Guardias**: hero cinematográfico, una línea de 24 horas que avanza con el scroll y cuatro escenas —consulta, familia, guardia y ajuste— que explican cómo el plan cambia sin abandonar el objetivo.
+
+El recorrido se completó con diagnóstico del problema, método de cuatro pasos, entregables, testimonios literales de Nohemí Aguilar, Flor de María y Víctor Dimas, criterios de encaje, preguntas frecuentes y un cierre único hacia una llamada de evaluación. El copy evita promesas clínicas y aclara que el acompañamiento no sustituye atención médica ni rehabilitación.
+
+El hero usa posters WebP propios para escritorio y móvil. La estructura de video ya está preparada con fuentes WebM/MP4 comentadas: mientras no exista el archivo final, no descarga video y conserva el poster como elemento principal. Cuando se configure, solo intentará cargarlo al acercarse al viewport y respetará `prefers-reduced-motion`.
+
+### Calendly, velocidad y atribución
+
+El widget oficial de Calendly no se carga al abrir la página. El CSS y el SDK se solicitan únicamente ante intención real —foco, puntero o toque sobre un CTA— y el calendario se abre como popup. Si el SDK falla o un bloqueador lo impide, el enlace directo sigue funcionando.
+
+Todos los `utm_*`, identificadores publicitarios disponibles y datos funcionales compatibles viajan a Calendly. Los eventos de vista, selección de hora y reserva confirmada se exponen a `dataLayer`; el webhook servidor existente sigue siendo la fuente de verdad de una agenda. No se ocultó el banner GDPR de Calendly porque esta landing todavía no tiene un gestor de consentimiento propio.
+
+### SEO, accesibilidad y QA local
+
+La ruta queda explícitamente en `noindex, nofollow` mientras sea una página de adquisición sin decisión orgánica. Incluye metadatos sociales, JSON-LD, estructura semántica, foco visible, navegación por teclado, áreas táctiles adecuadas, restauración del foco al cerrar Calendly y movimiento reducido.
+
+Validado en 375 × 844, 768 × 1024, 1280 × 720 y 1280 × 900 px: cero overflow horizontal, CTA y línea temporal dentro del viewport, las cuatro escenas activan su estado correcto, FAQ y CTA móvil funcionan y el popup real de Calendly abre con los parámetros de atribución. No hubo errores propios de JavaScript; solo avisos esperables de Meta Pixel al ejecutarse sobre localhost.
+
+### Resultado esperado
+
+Mejorar la identificación del médico antes de pedir la agenda y medir la caída entre clic en CTA, vista del calendario, selección de horario y reserva confirmada.
+
+### Estado
+
+Trabajo en la rama `work/medicos-guardias`, disponible únicamente en local. No se creó Preview ni se tocó producción; ambos pasos quedan pendientes de aprobación visual.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]

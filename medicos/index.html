@@ -1,0 +1,2255 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <script>
+    /*
+      Algunas plataformas duplican UTMs sobre una URL que ya los trae. Se
+      normalizan antes de GTM para que analítica y Calendly lean una sola fuente.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = [
+        "fbclid", "gclid", "fbc", "fbp", "fbc_id", "h_ad_id",
+        "ttclid", "msclkid", "wbraid", "gbraid", "ctwa_clid"
+      ];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <!-- Funnel de adquisición: se mantiene fuera del índice hasta aprobar su uso orgánico. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#0B1217" />
+  <title>TR4INER para médicos | Un plan que sobreviva a tus guardias</title>
+  <meta name="description" content="Asesoría online de entrenamiento y nutrición para médicos con guardias y horarios variables. Conoce el proceso y agenda una llamada para evaluar tu caso." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/medicos" />
+
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TR4INER" />
+  <meta property="og:title" content="Tu plan tiene que sobrevivir a tus guardias" />
+  <meta property="og:description" content="Entrenamiento, nutrición y seguimiento para médicos con turnos reales." />
+  <meta property="og:url" content="https://metodo.tr4iner.com/medicos" />
+  <meta property="og:image" content="https://metodo.tr4iner.com/assets/medicos/hero-guardias-desktop.webp" />
+  <meta property="og:image:width" content="1536" />
+  <meta property="og:image:height" content="1024" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tu plan tiene que sobrevivir a tus guardias" />
+  <meta name="twitter:description" content="Asesoría online para médicos con guardias y horarios variables." />
+  <meta name="twitter:image" content="https://metodo.tr4iner.com/assets/medicos/hero-guardias-desktop.webp" />
+
+  <link rel="preload" href="/assets/fonts/instrument-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/medicos/hero-guardias-desktop.webp" as="image" type="image/webp" media="(min-width: 641px)" fetchpriority="high" />
+  <link rel="preload" href="/assets/medicos/hero-guardias-mobile.webp" as="image" type="image/webp" media="(max-width: 640px)" fetchpriority="high" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://tr4iner.com/#organization",
+        "name": "TR4INER",
+        "url": "https://tr4iner.com/"
+      },
+      {
+        "@type": "Service",
+        "@id": "https://metodo.tr4iner.com/medicos#service",
+        "name": "Asesoría online de entrenamiento y nutrición para médicos",
+        "serviceType": "Asesoría de entrenamiento y nutrición",
+        "provider": { "@id": "https://tr4iner.com/#organization" },
+        "audience": {
+          "@type": "Audience",
+          "audienceType": "Médicos con guardias y horarios variables"
+        },
+        "areaServed": "Latinoamérica"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://metodo.tr4iner.com/medicos#webpage",
+        "url": "https://metodo.tr4iner.com/medicos",
+        "name": "TR4INER para médicos | Un plan que sobreviva a tus guardias",
+        "description": "Asesoría online de entrenamiento y nutrición para médicos con guardias y horarios variables.",
+        "inLanguage": "es-419",
+        "about": { "@id": "https://metodo.tr4iner.com/medicos#service" },
+        "isPartOf": { "@id": "https://tr4iner.com/#organization" }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    @font-face {
+      font-family: "Instrument Sans";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/instrument-sans-normal-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    @font-face {
+      font-family: "Instrument Sans";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/instrument-sans-normal-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    @font-face {
+      font-family: "JetBrains Mono";
+      font-style: normal;
+      font-weight: 400 600;
+      font-display: swap;
+      src: url("/assets/fonts/jetbrains-mono-normal-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    @font-face {
+      font-family: "JetBrains Mono";
+      font-style: normal;
+      font-weight: 400 600;
+      font-display: swap;
+      src: url("/assets/fonts/jetbrains-mono-normal-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    :root {
+      color-scheme: dark;
+      --night: #0B1217;
+      --night-soft: #101A20;
+      --scrub: #23464A;
+      --clinical: #F3F4EE;
+      --graphite: #252C31;
+      --steel: #949DA1;
+      --line-dark: rgba(243, 244, 238, 0.16);
+      --line-light: rgba(11, 18, 23, 0.16);
+      --yellow: #F5C518;
+      --yellow-dark: #D7AA00;
+      --danger: #B9473E;
+      --sans: "Instrument Sans", Arial, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --max: 1280px;
+      --gutter: clamp(20px, 4vw, 64px);
+      --section: clamp(88px, 10vw, 152px);
+      --header-h: calc(80px + env(safe-area-inset-top));
+      --radius: 2px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      color-scheme: dark;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      background: var(--night);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100dvh;
+      overflow-x: clip;
+      background: var(--night);
+      color: var(--clinical);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      position: fixed;
+      z-index: 20;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    img, video { display: block; max-width: 100%; }
+    button, a { font: inherit; }
+    a { color: inherit; }
+
+    a,
+    button,
+    summary {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(245, 197, 24, 0.2);
+    }
+
+    [id] { scroll-margin-top: calc(var(--header-h) + 24px); }
+
+    ::selection {
+      background: var(--yellow);
+      color: var(--night);
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 10px;
+      left: 10px;
+      padding: 12px 16px;
+      transform: translateY(-150%);
+      background: var(--yellow);
+      color: var(--night);
+      font-weight: 700;
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    :focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 4px;
+    }
+
+    .container {
+      width: min(100%, var(--max));
+      margin-inline: auto;
+      padding-left: max(var(--gutter), env(safe-area-inset-left));
+      padding-right: max(var(--gutter), env(safe-area-inset-right));
+    }
+
+    .eyebrow,
+    .meta-label {
+      margin: 0;
+      color: currentColor;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      line-height: 1.45;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::after {
+      display: block;
+      width: 54px;
+      height: 3px;
+      margin-top: 22px;
+      background: var(--yellow);
+      content: "";
+    }
+
+    .section-heading {
+      max-width: 980px;
+      margin: 0;
+      font-size: clamp(42px, 6vw, 88px);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      text-wrap: balance;
+    }
+
+    .section-intro {
+      max-width: 690px;
+      margin: 28px 0 0;
+      color: color-mix(in srgb, currentColor 72%, transparent);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.55;
+    }
+
+    .cta {
+      display: inline-flex;
+      min-height: 56px;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 15px 22px;
+      background: var(--yellow);
+      color: var(--night);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.065em;
+      line-height: 1.25;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .cta::after {
+      width: 17px;
+      height: 17px;
+      background: currentColor;
+      clip-path: polygon(0 45%, 65% 45%, 65% 8%, 100% 50%, 65% 92%, 65% 55%, 0 55%);
+      content: "";
+      transition: transform 180ms ease;
+    }
+
+    .cta:hover {
+      border-color: #FFD42E;
+      background: #FFD42E;
+      transform: translateY(-2px);
+    }
+
+    .cta:hover::after { transform: translateX(3px); }
+    .cta:active { transform: translateY(0); }
+    .cta[aria-busy="true"] { cursor: wait; opacity: 0.72; }
+
+    .cta-small {
+      min-height: 48px;
+      padding: 12px 17px;
+      font-size: 10px;
+    }
+
+    .cta-note {
+      max-width: 520px;
+      margin: 14px 0 0;
+      color: rgba(243, 244, 238, 0.68);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .site-header {
+      position: fixed;
+      z-index: 100;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: var(--header-h);
+      border-bottom: 1px solid transparent;
+      transition: transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 220ms ease, border-color 220ms ease;
+    }
+
+    .site-header.is-scrolled {
+      border-color: var(--line-dark);
+      background: rgba(11, 18, 23, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .site-header.is-hidden { transform: translateY(-105%); }
+
+    .header-inner {
+      display: grid;
+      height: 100%;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .brand {
+      color: var(--clinical);
+      font-size: 23px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .brand-mark { color: var(--yellow); }
+
+    .header-context {
+      margin: 0;
+      color: rgba(243, 244, 238, 0.64);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      min-height: 100svh;
+      overflow: hidden;
+      background: var(--night);
+    }
+
+    .hero-media,
+    .hero-media picture,
+    .hero-media img,
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-media img,
+    .hero-video {
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .hero-media picture { transition: opacity 900ms ease; }
+
+    .hero-video {
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 900ms ease;
+    }
+
+    .hero-video.is-ready { opacity: 1; }
+    .hero-media:has(.hero-video.is-ready) picture { opacity: 0; }
+
+    .hero-video-toggle {
+      position: absolute;
+      z-index: 6;
+      bottom: 24px;
+      left: max(var(--gutter), env(safe-area-inset-left));
+      display: inline-flex;
+      min-width: 48px;
+      min-height: 48px;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(243, 244, 238, 0.38);
+      border-radius: 999px;
+      padding: 10px 15px;
+      background: rgba(11, 18, 23, 0.7);
+      color: var(--clinical);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: border-color 180ms ease, background-color 180ms ease;
+    }
+
+    .hero-video-toggle[hidden] { display: none; }
+
+    .hero-video-toggle:hover {
+      border-color: var(--yellow);
+      background: rgba(11, 18, 23, 0.9);
+    }
+
+    .hero-video-toggle::before {
+      width: 11px;
+      height: 13px;
+      border-right: 3px solid currentColor;
+      border-left: 3px solid currentColor;
+      content: "";
+    }
+
+    .hero-video-toggle.is-paused::before {
+      border: 0;
+      background: currentColor;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+    }
+
+    .hero::before {
+      background:
+        linear-gradient(90deg, rgba(11, 18, 23, 0.99) 0%, rgba(11, 18, 23, 0.93) 25%, rgba(11, 18, 23, 0.52) 49%, rgba(11, 18, 23, 0.08) 73%),
+        linear-gradient(0deg, rgba(11, 18, 23, 0.82) 0%, transparent 35%);
+    }
+
+    .hero::after {
+      background: linear-gradient(180deg, rgba(11, 18, 23, 0.35), transparent 20%, transparent 78%, rgba(11, 18, 23, 0.65));
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 4;
+      display: grid;
+      min-height: 100svh;
+      grid-template-columns: minmax(0, 1fr) 188px;
+      align-items: center;
+      gap: clamp(32px, 6vw, 90px);
+      padding-top: calc(var(--header-h) + 34px);
+      padding-bottom: 84px;
+    }
+
+    .hero-copy { max-width: 760px; }
+
+    .hero-copy h1 {
+      max-width: 750px;
+      margin: 38px 0 0;
+      font-size: clamp(58px, 7vw, 106px);
+      font-weight: 700;
+      letter-spacing: -0.064em;
+      line-height: 0.88;
+      text-wrap: balance;
+    }
+
+    .hero-copy .lead {
+      max-width: 610px;
+      margin: 30px 0 0;
+      color: rgba(243, 244, 238, 0.78);
+      font-size: clamp(18px, 1.6vw, 22px);
+      line-height: 1.5;
+    }
+
+    .hero-actions { margin-top: 32px; }
+
+    .hero-clock {
+      position: relative;
+      display: grid;
+      height: clamp(420px, calc(100svh - var(--header-h) - 110px), 610px);
+      min-height: 0;
+      align-content: space-between;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .hero-clock::before {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      left: 8px;
+      width: 1px;
+      background: rgba(243, 244, 238, 0.38);
+      content: "";
+    }
+
+    .hero-clock li {
+      position: relative;
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      align-items: start;
+      gap: 18px;
+      color: rgba(243, 244, 238, 0.62);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.45;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-clock li::before {
+      position: relative;
+      z-index: 1;
+      width: 17px;
+      height: 17px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      background: var(--night);
+      content: "";
+    }
+
+    .hero-clock li.is-active { color: var(--yellow); }
+
+    .hero-clock li.is-active::before {
+      border: 4px solid var(--night);
+      background: var(--yellow);
+      box-shadow: 0 0 0 2px var(--yellow);
+    }
+
+    .hero-clock span { display: block; }
+    .hero-clock strong { color: inherit; font-weight: 600; }
+
+    .scroll-cue {
+      position: absolute;
+      z-index: 5;
+      right: 0;
+      bottom: 28px;
+      left: 0;
+      display: flex;
+      width: max-content;
+      min-height: 48px;
+      align-items: center;
+      gap: 12px;
+      margin-inline: auto;
+      color: rgba(243, 244, 238, 0.78);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.11em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .scroll-cue::after {
+      width: 12px;
+      height: 18px;
+      border-right: 1px solid currentColor;
+      border-bottom: 1px solid currentColor;
+      content: "";
+      transform: rotate(45deg) translate(-3px, 3px);
+    }
+
+    .thesis {
+      position: relative;
+      padding-block: var(--section);
+      background: var(--clinical);
+      color: var(--night);
+    }
+
+    .thesis-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+      align-items: end;
+      gap: clamp(48px, 8vw, 120px);
+    }
+
+    .thesis h2 {
+      max-width: 920px;
+      margin: 0;
+      font-size: clamp(50px, 7.5vw, 112px);
+      font-weight: 700;
+      letter-spacing: -0.065em;
+      line-height: 0.91;
+      text-wrap: balance;
+    }
+
+    .thesis aside {
+      border-top: 3px solid var(--yellow);
+      padding-top: 24px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .thesis aside p { margin: 0; }
+    .thesis aside p + p { margin-top: 18px; }
+
+    .shift-story {
+      position: relative;
+      background:
+        linear-gradient(rgba(243, 244, 238, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243, 244, 238, 0.035) 1px, transparent 1px),
+        var(--night);
+      background-size: 80px 80px;
+    }
+
+    .shift-layout {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: clamp(46px, 8vw, 118px);
+    }
+
+    .shift-rail {
+      position: sticky;
+      top: calc(var(--header-h) + 28px);
+      display: flex;
+      height: calc(100svh - var(--header-h) - 56px);
+      min-height: 520px;
+      flex-direction: column;
+      padding-block: 18px 30px;
+    }
+
+    .shift-rail-title {
+      margin: 0 0 36px;
+      color: rgba(243, 244, 238, 0.56);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .shift-track {
+      --progress: 0;
+      position: relative;
+      display: grid;
+      flex: 1;
+      align-content: space-between;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .shift-track::before,
+    .shift-track::after {
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      left: 8px;
+      width: 1px;
+      content: "";
+    }
+
+    .shift-track::before { background: rgba(243, 244, 238, 0.25); }
+
+    .shift-track::after {
+      transform: scaleY(var(--progress));
+      transform-origin: top;
+      background: var(--yellow);
+      transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .shift-node {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      align-items: start;
+      gap: 18px;
+      color: rgba(243, 244, 238, 0.46);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.075em;
+      line-height: 1.45;
+      text-transform: uppercase;
+      font-variant-numeric: tabular-nums;
+      transition: color 260ms ease;
+    }
+
+    .shift-node::before {
+      width: 17px;
+      height: 17px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      background: var(--night);
+      content: "";
+    }
+
+    .shift-node strong,
+    .shift-node span { display: block; }
+
+    .shift-node strong {
+      margin-bottom: 4px;
+      color: inherit;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .shift-node.is-active,
+    .shift-node.is-past { color: var(--yellow); }
+
+    .shift-node.is-active::before {
+      border: 4px solid var(--night);
+      background: var(--yellow);
+      box-shadow: 0 0 0 2px var(--yellow);
+    }
+
+    .shift-scenes { min-width: 0; }
+
+    .shift-scene {
+      position: relative;
+      display: flex;
+      min-height: 92svh;
+      align-items: center;
+      border-bottom: 1px solid var(--line-dark);
+      padding-block: clamp(96px, 12vw, 170px);
+    }
+
+    .shift-scene:last-child { border-bottom: 0; }
+
+    .scene-time {
+      position: absolute;
+      z-index: 0;
+      top: 8%;
+      right: 0;
+      color: rgba(243, 244, 238, 0.035);
+      font-family: var(--mono);
+      font-size: clamp(100px, 17vw, 240px);
+      font-weight: 600;
+      letter-spacing: -0.08em;
+      line-height: 0.8;
+      pointer-events: none;
+    }
+
+    .scene-content {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 850px);
+    }
+
+    .scene-label {
+      margin: 0;
+      color: var(--yellow);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .shift-scene h3 {
+      max-width: 830px;
+      margin: 30px 0 0;
+      font-size: clamp(44px, 6vw, 86px);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      text-wrap: balance;
+    }
+
+    .scene-copy {
+      max-width: 670px;
+      margin-top: 34px;
+      color: rgba(243, 244, 238, 0.72);
+      font-size: clamp(18px, 1.8vw, 22px);
+    }
+
+    .scene-copy p { margin: 0; }
+    .scene-copy p + p { margin-top: 20px; }
+
+    .scene-statement {
+      max-width: 760px;
+      margin: 42px 0 0;
+      border-left: 3px solid var(--yellow);
+      padding-left: 24px;
+      color: var(--clinical);
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .scene-actions { margin-top: 38px; }
+
+    .decision-list {
+      display: grid;
+      margin-top: 54px;
+      border-top: 1px solid var(--line-dark);
+    }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
+      gap: 30px;
+      border-bottom: 1px solid var(--line-dark);
+      padding-block: 25px;
+    }
+
+    .decision-row strong {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      line-height: 1.55;
+      text-transform: uppercase;
+    }
+
+    .decision-row p {
+      margin: 0;
+      color: rgba(243, 244, 238, 0.68);
+    }
+
+    .reframe {
+      padding-block: var(--section);
+      background: var(--clinical);
+      color: var(--night);
+    }
+
+    .reframe-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr);
+      gap: clamp(48px, 9vw, 140px);
+    }
+
+    .reframe-copy {
+      align-self: end;
+      border-top: 1px solid var(--line-light);
+      padding-top: 24px;
+    }
+
+    .reframe-copy p {
+      margin: 0;
+      color: rgba(11, 18, 23, 0.72);
+      font-size: 19px;
+    }
+
+    .reframe-copy p + p { margin-top: 18px; }
+
+    .reframe-main h2 {
+      margin: 30px 0 0;
+      font-size: clamp(50px, 7vw, 100px);
+      font-weight: 700;
+      letter-spacing: -0.06em;
+      line-height: 0.94;
+      text-wrap: balance;
+    }
+
+    .reframe-line {
+      display: block;
+      margin-top: 34px;
+      color: var(--scrub);
+      font-family: var(--mono);
+      font-size: clamp(18px, 2.3vw, 30px);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .process {
+      padding-block: var(--section);
+      background: var(--night-soft);
+    }
+
+    .process-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+      align-items: end;
+      gap: 48px;
+    }
+
+    .process-intro {
+      margin: 0;
+      color: rgba(243, 244, 238, 0.66);
+      font-size: 18px;
+    }
+
+    .process-list {
+      margin-top: 72px;
+      border-top: 1px solid var(--line-dark);
+    }
+
+    .process-step {
+      display: grid;
+      grid-template-columns: 72px minmax(230px, 0.8fr) minmax(0, 1.2fr);
+      gap: 34px;
+      border-bottom: 1px solid var(--line-dark);
+      padding-block: 34px;
+    }
+
+    .step-number {
+      color: var(--yellow);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .process-step h3 {
+      margin: 0;
+      font-size: clamp(24px, 2.5vw, 36px);
+      font-weight: 650;
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+    }
+
+    .process-step p {
+      margin: 0;
+      color: rgba(243, 244, 238, 0.68);
+    }
+
+    .scope-note {
+      max-width: 900px;
+      margin: 42px 0 0;
+      border-left: 3px solid var(--steel);
+      padding-left: 20px;
+      color: rgba(243, 244, 238, 0.58);
+      font-size: 14px;
+    }
+
+    .process-actions { margin-top: 38px; }
+
+    .included {
+      padding-block: var(--section);
+      background: var(--clinical);
+      color: var(--night);
+    }
+
+    .included-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.7fr) minmax(0, 1.3fr);
+      gap: clamp(54px, 10vw, 150px);
+    }
+
+    .included-sticky {
+      position: sticky;
+      top: calc(var(--header-h) + 40px);
+      align-self: start;
+    }
+
+    .included-sticky h2 {
+      margin: 30px 0 0;
+      font-size: clamp(44px, 5vw, 74px);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+    }
+
+    .included-sticky p {
+      margin: 28px 0 0;
+      color: rgba(11, 18, 23, 0.66);
+    }
+
+    .included-list { border-top: 1px solid var(--line-light); }
+
+    .included-item {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 24px;
+      border-bottom: 1px solid var(--line-light);
+      padding-block: 28px;
+    }
+
+    .included-icon {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(11, 18, 23, 0.24);
+      border-radius: 50%;
+      color: var(--scrub);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .included-item h3 {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .included-item p {
+      margin: 12px 0 0;
+      color: rgba(11, 18, 23, 0.68);
+      font-size: 17px;
+    }
+
+    .included-foot {
+      margin: 32px 0 0;
+      color: rgba(11, 18, 23, 0.58);
+      font-size: 14px;
+    }
+
+    .proof {
+      padding-block: var(--section);
+      background: var(--scrub);
+    }
+
+    .proof .section-heading { max-width: 900px; }
+
+    .quotes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 70px;
+      border-top: 1px solid rgba(243, 244, 238, 0.24);
+      border-bottom: 1px solid rgba(243, 244, 238, 0.24);
+    }
+
+    .quote {
+      display: flex;
+      min-height: 350px;
+      flex-direction: column;
+      justify-content: space-between;
+      margin: 0;
+      padding: 34px;
+    }
+
+    .quote + .quote { border-left: 1px solid rgba(243, 244, 238, 0.24); }
+
+    .quote blockquote {
+      margin: 0;
+      font-size: clamp(24px, 2.2vw, 34px);
+      font-weight: 550;
+      letter-spacing: -0.035em;
+      line-height: 1.24;
+    }
+
+    .quote figcaption {
+      margin-top: 36px;
+      color: rgba(243, 244, 238, 0.64);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      line-height: 1.55;
+      text-transform: uppercase;
+    }
+
+    .proof-note {
+      max-width: 760px;
+      margin: 26px 0 0;
+      color: rgba(243, 244, 238, 0.58);
+      font-size: 13px;
+    }
+
+    .fit {
+      padding-block: var(--section);
+      background: var(--night);
+    }
+
+    .fit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 64px;
+      background: var(--line-dark);
+    }
+
+    .fit-column {
+      padding: clamp(30px, 5vw, 58px);
+      background: var(--night);
+    }
+
+    .fit-column:last-child { background: var(--night-soft); }
+
+    .fit-column h3 {
+      margin: 0;
+      font-size: clamp(30px, 3.4vw, 48px);
+      font-weight: 650;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    .fit-list {
+      display: grid;
+      gap: 0;
+      margin: 34px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .fit-list li {
+      position: relative;
+      border-top: 1px solid var(--line-dark);
+      padding: 18px 0 18px 30px;
+      color: rgba(243, 244, 238, 0.7);
+    }
+
+    .fit-list li::before {
+      position: absolute;
+      top: 22px;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--yellow);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .fit-column:last-child .fit-list li::before {
+      border-color: rgba(243, 244, 238, 0.38);
+    }
+
+    .faq {
+      padding-block: var(--section);
+      background: var(--clinical);
+      color: var(--night);
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.6fr) minmax(0, 1.4fr);
+      gap: clamp(54px, 10vw, 150px);
+    }
+
+    .faq-heading {
+      position: sticky;
+      top: calc(var(--header-h) + 40px);
+      align-self: start;
+    }
+
+    .faq-heading h2 {
+      margin: 30px 0 0;
+      font-size: clamp(46px, 6vw, 82px);
+      font-weight: 700;
+      letter-spacing: -0.055em;
+      line-height: 0.96;
+    }
+
+    .faq-list { border-top: 1px solid var(--line-light); }
+
+    .faq-item { border-bottom: 1px solid var(--line-light); }
+
+    .faq-item summary {
+      position: relative;
+      min-height: 76px;
+      padding: 25px 54px 25px 0;
+      cursor: pointer;
+      font-size: clamp(18px, 2vw, 23px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      list-style: none;
+    }
+
+    .faq-item summary::-webkit-details-marker { display: none; }
+
+    .faq-item summary::before,
+    .faq-item summary::after {
+      position: absolute;
+      top: 37px;
+      right: 8px;
+      width: 18px;
+      height: 2px;
+      background: var(--night);
+      content: "";
+      transition: transform 220ms ease;
+    }
+
+    .faq-item summary::after { transform: rotate(90deg); }
+    .faq-item[open] summary::after { transform: rotate(0); }
+
+    .faq-answer {
+      max-width: 760px;
+      padding: 0 54px 28px 0;
+      color: rgba(11, 18, 23, 0.68);
+    }
+
+    .faq-answer p { margin: 0; }
+
+    .schedule {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      padding-block: var(--section);
+      background: var(--night);
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      align-items: end;
+      gap: clamp(54px, 9vw, 140px);
+    }
+
+    .schedule h2 {
+      max-width: 880px;
+      margin: 30px 0 0;
+      font-size: clamp(54px, 7.5vw, 108px);
+      font-weight: 700;
+      letter-spacing: -0.064em;
+      line-height: 0.91;
+      text-wrap: balance;
+    }
+
+    .schedule-copy {
+      border-top: 1px solid var(--line-dark);
+      padding-top: 28px;
+    }
+
+    .schedule-copy > p {
+      margin: 0;
+      color: rgba(243, 244, 238, 0.72);
+      font-size: 18px;
+    }
+
+    .call-agenda {
+      display: grid;
+      gap: 12px;
+      margin: 28px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .call-agenda li {
+      position: relative;
+      padding-left: 22px;
+      color: rgba(243, 244, 238, 0.72);
+      font-size: 15px;
+    }
+
+    .call-agenda li::before {
+      position: absolute;
+      top: 0.72em;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+      content: "";
+    }
+
+    .schedule-actions { margin-top: 34px; }
+    .schedule-actions .cta { width: 100%; }
+
+    .schedule-assurance {
+      margin: 16px 0 0;
+      color: rgba(243, 244, 238, 0.54);
+      font-size: 13px;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--line-dark);
+      padding-block: 28px calc(28px + env(safe-area-inset-bottom));
+      background: var(--night);
+      color: rgba(243, 244, 238, 0.52);
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { text-underline-offset: 4px; }
+
+    .mobile-cta {
+      position: fixed;
+      z-index: 90;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      left: 12px;
+      display: none;
+      transform: translateY(calc(130% + env(safe-area-inset-bottom)));
+      transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .mobile-cta.is-visible { transform: translateY(0); }
+    .mobile-cta .cta { width: 100%; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 980px) {
+      :root { --header-h: calc(72px + env(safe-area-inset-top)); }
+
+      .hero-inner { grid-template-columns: minmax(0, 1fr) 144px; }
+      .hero-clock { min-height: 500px; }
+
+      .shift-layout { grid-template-columns: 180px minmax(0, 1fr); gap: 52px; }
+      .decision-row { grid-template-columns: 1fr; gap: 10px; }
+
+      .process-head,
+      .included-grid,
+      .faq-grid,
+      .schedule-grid { grid-template-columns: 1fr; }
+
+      .process-head { align-items: start; }
+      .process-intro { max-width: 620px; }
+      .included-sticky, .faq-heading { position: static; }
+      .included-sticky h2, .faq-heading h2 { max-width: 760px; }
+
+      .quotes { grid-template-columns: 1fr; }
+      .quote { min-height: 260px; }
+      .quote + .quote { border-top: 1px solid rgba(243, 244, 238, 0.24); border-left: 0; }
+
+      .schedule-copy { max-width: 640px; }
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --gutter: 20px;
+        --section: 88px;
+      }
+
+      body { font-size: 16px; }
+      html { scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+      .header-inner { grid-template-columns: auto 1fr; gap: 14px; }
+      .header-context { display: none; }
+      .header-inner > .cta { justify-self: end; }
+      .brand { font-size: 20px; }
+
+      .hero-inner {
+        display: block;
+        padding-top: calc(var(--header-h) + 42px);
+        padding-bottom: 116px;
+      }
+
+      .hero-media img,
+      .hero-video { object-position: center center; }
+
+      .hero::before {
+        background:
+          linear-gradient(180deg, rgba(11, 18, 23, 0.98) 0%, rgba(11, 18, 23, 0.92) 35%, rgba(11, 18, 23, 0.42) 68%, rgba(11, 18, 23, 0.82) 100%),
+          linear-gradient(90deg, rgba(11, 18, 23, 0.48), transparent 70%);
+      }
+
+      .hero-copy { max-width: calc(100% - 44px); }
+      .hero-copy h1 { margin-top: 27px; font-size: clamp(45px, 13.4vw, 62px); line-height: 0.93; }
+      .hero-copy .lead { margin-top: 23px; font-size: 17px; }
+      .hero-actions { margin-top: 25px; }
+      .hero-actions .cta { width: 100%; }
+      .cta-note { font-size: 12px; }
+
+      .hero-clock {
+        position: absolute;
+        right: 16px;
+        bottom: 82px;
+        width: 28px;
+        height: 300px;
+        min-height: 300px;
+      }
+
+      .hero-clock::before { left: 7px; }
+      .hero-clock li { grid-template-columns: 16px; gap: 0; font-size: 0; }
+      .hero-clock li::before { width: 15px; height: 15px; }
+      .hero-clock li div { display: none; }
+      .scroll-cue { bottom: 16px; }
+
+      .thesis-grid,
+      .reframe-grid { grid-template-columns: 1fr; }
+
+      .thesis-grid { gap: 52px; }
+      .thesis h2 { font-size: clamp(49px, 14vw, 68px); }
+      .thesis aside { font-size: 17px; }
+
+      .shift-story { background-size: 48px 48px; }
+      .shift-layout { grid-template-columns: 66px minmax(0, 1fr); gap: 20px; }
+
+      .shift-rail {
+        top: calc(var(--header-h) + 12px);
+        height: calc(100svh - var(--header-h) - 24px);
+        min-height: 430px;
+        padding-block: 14px 26px;
+      }
+
+      .shift-rail-title { display: none; }
+      .shift-node { grid-template-columns: 16px 1fr; gap: 8px; font-size: 0; }
+      .shift-node::before { width: 15px; height: 15px; }
+      .shift-node strong { margin: 0; font-size: 9px; writing-mode: vertical-rl; }
+      .shift-node span { display: none; }
+      .shift-track::before, .shift-track::after { left: 7px; }
+
+      .shift-scene { min-height: 90svh; padding-block: 92px; }
+      .scene-time { top: 7%; font-size: 30vw; }
+      .shift-scene h3 { margin-top: 22px; font-size: clamp(40px, 11.5vw, 54px); }
+      .scene-copy { margin-top: 26px; font-size: 17px; }
+      .scene-statement { margin-top: 30px; padding-left: 17px; font-size: 24px; }
+      .scene-actions .cta { width: 100%; }
+
+      .decision-list { margin-top: 38px; }
+      .decision-row { padding-block: 20px; }
+      .decision-row strong { font-size: 10px; }
+      .decision-row p { font-size: 15px; }
+
+      .reframe-grid { gap: 50px; }
+      .reframe-main h2 { font-size: clamp(48px, 13vw, 64px); }
+
+      .process-list { margin-top: 50px; }
+      .process-step { grid-template-columns: 44px 1fr; gap: 16px; padding-block: 26px; }
+      .process-step p { grid-column: 2; }
+
+      .included-item { grid-template-columns: 44px 1fr; gap: 16px; }
+      .included-icon { width: 38px; height: 38px; }
+
+      .quote { min-height: 280px; padding: 28px 0; }
+      .quote blockquote { font-size: 27px; }
+
+      .fit-grid { grid-template-columns: 1fr; }
+      .fit-column { padding: 32px 24px; }
+
+      .faq-item summary {
+        padding-right: 44px;
+        scroll-margin-bottom: calc(84px + env(safe-area-inset-bottom));
+      }
+      .faq-answer { padding-right: 20px; }
+
+      .schedule h2 { font-size: clamp(50px, 14vw, 67px); }
+      .schedule { padding-block: 72px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .mobile-cta { display: block; }
+      .site-footer { padding-bottom: calc(94px + env(safe-area-inset-bottom)); }
+    }
+
+    @media (max-width: 430px) {
+      .site-header .cta-small { width: 48px; overflow: hidden; padding-inline: 0; color: transparent; }
+      .site-header .cta-small::after { position: absolute; color: var(--night); }
+      .hero-copy { max-width: calc(100% - 34px); }
+      .hero-copy h1 { font-size: clamp(42px, 12.6vw, 54px); }
+      .hero-copy .lead { font-size: 16px; }
+      .section-heading { font-size: 43px; }
+    }
+
+    @media (min-width: 721px) and (max-height: 760px) {
+      .hero-inner {
+        padding-top: calc(var(--header-h) + 18px);
+        padding-bottom: 48px;
+      }
+
+      .hero-copy h1 {
+        margin-top: 27px;
+        font-size: clamp(56px, 6.2vw, 84px);
+      }
+
+      .hero-copy .lead {
+        margin-top: 20px;
+        font-size: 18px;
+      }
+
+      .hero-actions { margin-top: 22px; }
+      .cta-note { margin-top: 10px; font-size: 12px; }
+      .hero-clock { height: calc(100svh - var(--header-h) - 74px); }
+      .scroll-cue { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+      .hero-video { display: none; }
+      .hero-video-toggle { display: none !important; }
+      .site-header.is-hidden { transform: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe>
+  </noscript>
+
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="TR4INER, volver al inicio" translate="no">TR<span class="brand-mark">4</span>INER</a>
+      <p class="header-context">Asesoría online para médicos</p>
+      <a
+        class="cta cta-small js-calendly"
+        href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+        target="_blank"
+        rel="noopener"
+        aria-haspopup="dialog"
+        data-cta-location="header"
+      >Agendar llamada</a>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="hero-media" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 640px)" srcset="/assets/medicos/hero-guardias-mobile.webp" type="image/webp" />
+          <img
+            src="/assets/medicos/hero-guardias-desktop.webp"
+            width="1536"
+            height="1024"
+            alt=""
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
+
+        <!--
+          Futuro video IA: añade aquí sources WebM/MP4. El JS solo lo cargará
+          si existe una fuente, el hero entra en viewport y el usuario no pidió
+          reducir movimiento. Hasta entonces, el poster conserva el LCP.
+        -->
+        <video id="hero-video" class="hero-video" muted loop playsinline preload="none" tabindex="-1">
+          <!-- <source src="/assets/medicos/hero-guardias.webm" type="video/webm" /> -->
+          <!-- <source src="/assets/medicos/hero-guardias.mp4" type="video/mp4" /> -->
+        </video>
+      </div>
+
+      <button class="hero-video-toggle" id="hero-video-toggle" type="button" aria-label="Pausar video ambiental" hidden>Pausar video</button>
+
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Para médicos con turnos reales</p>
+          <h1 id="hero-title">Tu plan tiene que sobrevivir a tus guardias.</h1>
+          <p class="lead">Entrenamiento, nutrición y seguimiento para dejar de empezar de cero cada vez que una guardia cambia tu semana. Sin convertir el fitness en otra profesión.</p>
+
+          <div class="hero-actions">
+            <a
+              class="cta js-calendly"
+              href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+              target="_blank"
+              rel="noopener"
+              aria-haspopup="dialog"
+              data-cta-location="hero"
+            >Agendar mi llamada de evaluación</a>
+            <p class="cta-note">Elige un horario disponible. Revisaremos tu objetivo, tus turnos y si la asesoría puede encajar en tu vida actual.</p>
+          </div>
+        </div>
+
+        <ol class="hero-clock" aria-hidden="true">
+          <li class="is-active"><div><strong>04:30</strong><span>Preparar</span></div></li>
+          <li><div><strong>08:00</strong><span>Consulta</span></div></li>
+          <li><div><strong>20:00</strong><span>Familia</span></div></li>
+          <li><div><strong>00:30</strong><span>Guardia</span></div></li>
+          <li><div><strong>06:00</strong><span>Ajustar</span></div></li>
+        </ol>
+      </div>
+
+      <a class="scroll-cue" href="#turno-real">Recorre una guardia real</a>
+    </section>
+
+    <section class="thesis" aria-labelledby="thesis-title">
+      <div class="container thesis-grid">
+        <h2 id="thesis-title">No todos los días son iguales. Tu plan tampoco debería tratarlos como si lo fueran.</h2>
+        <aside>
+          <p>Tu problema probablemente no es falta de información.</p>
+          <p>Es intentar aplicar un plan rígido dentro de una semana que cambia sin pedir permiso.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="shift-story" id="turno-real" aria-label="Una semana médica real">
+      <div class="container shift-layout">
+        <aside class="shift-rail" aria-label="Línea de una guardia de 24 horas">
+          <p class="shift-rail-title">Una semana médica real · 24 h</p>
+          <ol class="shift-track" id="shift-track">
+            <li class="shift-node is-active" data-shift-node="08:00" aria-current="step"><strong>08:00</strong><span>Consulta</span></li>
+            <li class="shift-node" data-shift-node="20:00"><strong>20:00</strong><span>Familia</span></li>
+            <li class="shift-node" data-shift-node="00:30"><strong>00:30</strong><span>Guardia</span></li>
+            <li class="shift-node" data-shift-node="06:00"><strong>06:00</strong><span>Ajustar</span></li>
+          </ol>
+        </aside>
+
+        <div class="shift-scenes">
+          <article class="shift-scene" data-shift-scene="08:00" aria-labelledby="scene-consulta">
+            <span class="scene-time" aria-hidden="true">08:00</span>
+            <div class="scene-content">
+              <p class="scene-label">08:00 · La semana perfecta</p>
+              <h3 id="scene-consulta">Tu problema no es que no sepas qué hacer.</h3>
+              <div class="scene-copy">
+                <p>Probablemente ya sabes que deberías entrenar, comer mejor y ser constante. El problema aparece cuando una consulta se alarga, cambia el turno, duermes poco o terminas comiendo lo primero que encuentras.</p>
+                <p>Entonces una guardia rompe el miércoles y parece que toda la semana se perdió.</p>
+              </div>
+              <p class="scene-statement">No necesitas otra semana perfecta. Necesitas una forma de continuar cuando la semana deja de serlo.</p>
+            </div>
+          </article>
+
+          <article class="shift-scene" data-shift-scene="20:00" aria-labelledby="scene-familia">
+            <span class="scene-time" aria-hidden="true">20:00</span>
+            <div class="scene-content">
+              <p class="scene-label">20:00 · El tiempo que queda</p>
+              <h3 id="scene-familia">Ponerte en forma no debería costarte el poco tiempo que te queda para tu familia.</h3>
+              <div class="scene-copy">
+                <p>Después de trabajar todo el día, el gimnasio compite con tus hijos, tu pareja, el descanso y todo lo que todavía quedó pendiente.</p>
+                <p>Por eso un proceso realista no comienza preguntando cuánto podrías hacer en una semana ideal. Comienza preguntando qué puedes sostener dentro de la vida que ya tienes.</p>
+              </div>
+              <div class="scene-actions">
+                <a
+                  class="cta js-calendly"
+                  href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+                  target="_blank"
+                  rel="noopener"
+                  aria-haspopup="dialog"
+                  data-cta-location="familia"
+                >Agendar mi llamada de evaluación</a>
+                <p class="cta-note">Abrirás el calendario para elegir día y hora. Primero revisaremos si TR4INER encaja con tu contexto.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="shift-scene" data-shift-scene="00:30" aria-labelledby="scene-guardia">
+            <span class="scene-time" aria-hidden="true">00:30</span>
+            <div class="scene-content">
+              <p class="scene-label">00:30 · Aquí es donde un plan rígido se rompe</p>
+              <h3 id="scene-guardia">Tu agenda cambia. Tu objetivo no tiene por qué desaparecer con ella.</h3>
+
+              <div class="decision-list" aria-label="Cómo continuar según cambie el día">
+                <div class="decision-row">
+                  <strong>Cuando el día sale como esperabas</strong>
+                  <p>Ejecutas la sesión y la alimentación que tenías previstas.</p>
+                </div>
+                <div class="decision-row">
+                  <strong>Cuando la consulta se alarga</strong>
+                  <p>Priorizas lo esencial y reorganizas la semana sin declararla perdida.</p>
+                </div>
+                <div class="decision-row">
+                  <strong>Cuando sales sin energía</strong>
+                  <p>No intentas compensar todo en una sola sesión. Descansas, retomas y continúas.</p>
+                </div>
+              </div>
+
+              <p class="scene-statement">La flexibilidad no significa hacer cualquier cosa. Significa saber qué decisión mantiene vivo el proceso.</p>
+            </div>
+          </article>
+
+          <article class="shift-scene" data-shift-scene="06:00" aria-labelledby="scene-ajustar">
+            <span class="scene-time" aria-hidden="true">06:00</span>
+            <div class="scene-content">
+              <p class="scene-label">06:00 · Ajustar y continuar</p>
+              <h3 id="scene-ajustar">No necesitas reiniciar. Necesitas saber qué ajustar.</h3>
+              <div class="scene-copy">
+                <p>Una guardia, un viaje o una semana difícil no borran lo que ya hiciste. El proceso se revisa, se ordena y continúa desde la realidad de hoy.</p>
+                <p>Tu compromiso no se mide por semanas perfectas, sino por tu capacidad de volver al siguiente paso útil.</p>
+              </div>
+              <p class="scene-statement">Menos decisiones. Más continuidad.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="reframe deferred-section" aria-labelledby="reframe-title">
+      <div class="container reframe-grid">
+        <div class="reframe-copy">
+          <p>Puedes leer, investigar y construir otra rutina. También puedes seguir calculando qué cambiar cada vez que no avanzas.</p>
+          <p>TR4INER existe para organizar esa parte. Tú haces tu parte; el equipo te ayuda a dejar de improvisar.</p>
+        </div>
+        <div class="reframe-main">
+          <p class="eyebrow">Conocimiento ≠ ejecución</p>
+          <h2 id="reframe-title">No necesitas que te expliquemos que debes cuidarte.</h2>
+          <span class="reframe-line">Necesitas dejar de resolverlo todo por tu cuenta.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="process deferred-section" aria-labelledby="process-title">
+      <div class="container">
+        <div class="process-head">
+          <div>
+            <p class="eyebrow">Tu ruta dentro de TR4INER</p>
+            <h2 class="section-heading" id="process-title" style="margin-top:30px">Un proceso claro para una agenda que no siempre puedes controlar.</h2>
+          </div>
+          <p class="process-intro">La llamada de evaluación es el primer filtro: entendemos tu contexto antes de explicarte el alcance, la duración y la inversión.</p>
+        </div>
+
+        <div class="process-list">
+          <article class="process-step">
+            <span class="step-number">01</span>
+            <h3>Evaluamos tu semana real</h3>
+            <p>Revisamos tu objetivo, experiencia entrenando, disponibilidad, guardias, intentos anteriores y cualquier limitación relevante para saber si el programa encaja contigo.</p>
+          </article>
+          <article class="process-step">
+            <span class="step-number">02</span>
+            <h3>Definimos qué debes priorizar</h3>
+            <p>No partes de una lista infinita de tareas. Sabes qué sesiones y acciones tienen mayor importancia cuando tu semana se complica.</p>
+          </article>
+          <article class="process-step">
+            <span class="step-number">03</span>
+            <h3>Ejecutas con una guía</h3>
+            <p>Accedes a tu rutina, demostraciones de ejercicios y herramientas de alimentación desde la aplicación, sin tener que inventar el siguiente paso.</p>
+          </article>
+          <article class="process-step">
+            <span class="step-number">04</span>
+            <h3>Revisamos y ajustamos</h3>
+            <p>Puedes compartir dudas, enviar videos para revisar técnica y utilizar las evaluaciones del proceso para decidir qué necesita cambiar.</p>
+          </article>
+        </div>
+
+        <p class="scope-note">TR4INER es una asesoría de entrenamiento y nutrición. No sustituye atención médica, fisioterapia, rehabilitación ni las indicaciones de tu profesional tratante.</p>
+
+        <div class="process-actions">
+          <a
+            class="cta js-calendly"
+            href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+            target="_blank"
+            rel="noopener"
+            aria-haspopup="dialog"
+            data-cta-location="proceso"
+          >Agendar mi llamada de evaluación</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="included deferred-section" aria-labelledby="included-title">
+      <div class="container included-grid">
+        <div class="included-sticky">
+          <p class="eyebrow">No compras más información</p>
+          <h2 id="included-title">Compras una ruta.</h2>
+          <p>Todo lo necesario para saber qué hacer y dejar de improvisar cada semana.</p>
+        </div>
+
+        <div>
+          <div class="included-list">
+            <article class="included-item">
+              <span class="included-icon" aria-hidden="true">01</span>
+              <div><h3>Rutina guiada</h3><p>Ejercicios organizados dentro de la aplicación con demostraciones para ejecutar cada sesión.</p></div>
+            </article>
+            <article class="included-item">
+              <span class="included-icon" aria-hidden="true">02</span>
+              <div><h3>Alimentación aplicable</h3><p>Herramientas para organizar porciones y alimentos que ya forman parte de tu vida, sin depender de comidas especiales.</p></div>
+            </article>
+            <article class="included-item">
+              <span class="included-icon" aria-hidden="true">03</span>
+              <div><h3>Revisión de técnica</h3><p>Puedes grabar tus ejercicios y solicitar feedback cuando necesites corregir la ejecución.</p></div>
+            </article>
+            <article class="included-item">
+              <span class="included-icon" aria-hidden="true">04</span>
+              <div><h3>Evaluación del progreso</h3><p>Un proceso de revisión para observar cambios y decidir qué necesita ajustarse.</p></div>
+            </article>
+            <article class="included-item">
+              <span class="included-icon" aria-hidden="true">05</span>
+              <div><h3>Acompañamiento</h3><p>Un equipo al que puedes consultar cuando una duda, ejercicio o cambio de contexto esté frenando tu avance.</p></div>
+            </article>
+          </div>
+          <p class="included-foot">El alcance, duración e inversión de la asesoría se explican con claridad durante la llamada, antes de que decidas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof deferred-section" aria-labelledby="proof-title">
+      <div class="container">
+        <p class="eyebrow">Médicos · horarios distintos · el mismo reto</p>
+        <h2 class="section-heading" id="proof-title" style="margin-top:30px">No esperaron a que su agenda se volviera perfecta.</h2>
+
+        <div class="quotes">
+          <figure class="quote">
+            <blockquote>“Aprendí que sí se puede y cómo organizarme.”</blockquote>
+            <figcaption>Nohemí Aguilar · Oftalmóloga</figcaption>
+          </figure>
+          <figure class="quote">
+            <blockquote>“Que no esperen a tener tiempo.”</blockquote>
+            <figcaption>Flor de María · Médica</figcaption>
+          </figure>
+          <figure class="quote">
+            <blockquote>“Puedes comer lo mismo que comen en tu casa y puedes comer rico.”</blockquote>
+            <figcaption>Víctor Dimas · Médico general</figcaption>
+          </figure>
+        </div>
+
+        <p class="proof-note">Cada proceso es diferente. Estos testimonios describen experiencias individuales y no garantizan resultados específicos.</p>
+      </div>
+    </section>
+
+    <section class="fit deferred-section" aria-labelledby="fit-title">
+      <div class="container">
+        <p class="eyebrow">Antes de agendar</p>
+        <h2 class="section-heading" id="fit-title" style="margin-top:30px">La llamada también sirve para decirte si esto no encaja contigo.</h2>
+
+        <div class="fit-grid">
+          <article class="fit-column">
+            <h3>Puede encajar contigo si…</h3>
+            <ul class="fit-list">
+              <li>Trabajas con guardias, consultas o turnos variables.</li>
+              <li>Ya intentaste entrenar o comer mejor, pero pierdes continuidad.</li>
+              <li>Quieres mejorar tu físico sin hacer del gimnasio el centro de tu vida.</li>
+              <li>Valoras una guía, seguimiento y criterios claros.</li>
+              <li>Estás dispuesto a ejecutar y comunicar lo que ocurre durante el proceso.</li>
+            </ul>
+          </article>
+
+          <article class="fit-column">
+            <h3>No es para ti si…</h3>
+            <ul class="fit-list">
+              <li>Buscas resultados garantizados o inmediatos.</li>
+              <li>Quieres un plan que funcione sin dedicarle tiempo ni esfuerzo.</li>
+              <li>Necesitas tratamiento médico, fisioterapia o rehabilitación.</li>
+              <li>No estás dispuesto a registrar, preguntar o participar en los ajustes.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq deferred-section" aria-labelledby="faq-title">
+      <div class="container faq-grid">
+        <div class="faq-heading">
+          <p class="eyebrow">Preguntas reales</p>
+          <h2 id="faq-title">Antes de elegir un horario.</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>¿Qué pasa si mis guardias cambian cada semana?</summary>
+            <div class="faq-answer"><p>La llamada comienza precisamente por ahí. Revisaremos cómo se distribuyen tus turnos, qué ventanas reales tienes y si el proceso puede adaptarse a ese nivel de variabilidad. No asumiremos que todos tus lunes se parecen.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Tengo que entrenar cinco o seis días?</summary>
+            <div class="faq-answer"><p>No partimos de un número universal. La frecuencia depende de tu objetivo, experiencia y disponibilidad real. La prioridad es que las sesiones tengan sentido y puedan sostenerse.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Tendré que seguir una dieta rígida?</summary>
+            <div class="faq-answer"><p>La asesoría trabaja con cantidades, elecciones y alimentos aplicables a tu contexto. No parte de obligarte a comer un menú especial ni de comprar suplementos por defecto.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Qué ocurre si ya entreno, pero no veo el cambio que espero?</summary>
+            <div class="faq-answer"><p>Ese es uno de los escenarios que revisamos. La llamada permite conocer qué estás haciendo, durante cuánto tiempo y dónde puede existir una desconexión entre entrenamiento, alimentación, recuperación y seguimiento.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Puedo solicitar correcciones de técnica?</summary>
+            <div class="faq-answer"><p>Sí. Dentro del acompañamiento puedes enviar videos de tus ejercicios para recibir observaciones sobre la ejecución.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Y si tengo una lesión o condición de salud?</summary>
+            <div class="faq-answer"><p>Debes informarla antes de comenzar. La asesoría no reemplaza evaluación médica ni rehabilitación, y podría requerirse autorización de tu profesional tratante. Si tu caso está fuera del alcance del programa, debe decírtelo con claridad.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Cómo sé si una asesoría online funcionará para mí?</summary>
+            <div class="faq-answer"><p>La llamada existe para comprobarlo antes de que decidas. Revisaremos tu nivel de autonomía, disponibilidad y el tipo de acompañamiento que necesitas.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary>¿Agendar la llamada me obliga a contratar?</summary>
+            <div class="faq-answer"><p>No. Primero conocerás cómo funciona el proceso, su alcance y la inversión. Después decides.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="schedule deferred-section" id="agenda" aria-labelledby="schedule-title">
+      <div class="container schedule-grid">
+        <div>
+          <p class="eyebrow">06:00 · Continuar</p>
+          <h2 id="schedule-title">No esperes a que tu agenda se calme.</h2>
+        </div>
+
+        <div class="schedule-copy">
+          <p>Puede que nunca ocurra. Empieza por descubrir qué proceso sí cabe dentro de la vida que ya tienes.</p>
+          <ul class="call-agenda" aria-label="Qué revisaremos durante la llamada">
+            <li>Qué quieres cambiar.</li>
+            <li>Cómo son actualmente tus turnos y guardias.</li>
+            <li>Qué has probado antes.</li>
+            <li>Qué te está impidiendo sostenerlo.</li>
+            <li>Si TR4INER es una opción adecuada para ti.</li>
+          </ul>
+
+          <div class="schedule-actions">
+            <a
+              class="cta js-calendly"
+              href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+              target="_blank"
+              rel="noopener"
+              aria-haspopup="dialog"
+              data-cta-location="cierre"
+            >Agendar mi llamada de evaluación</a>
+            <p class="schedule-assurance">Abrirás Calendly para elegir un horario disponible. Agendar la llamada no te obliga a contratar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="current-year">2026</span> TR4INER. Todos los derechos reservados.</span>
+      <nav class="footer-links" aria-label="Enlaces legales">
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+        <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="mobile-cta" id="mobile-cta">
+    <a
+      class="cta js-calendly"
+      href="https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner"
+      target="_blank"
+      rel="noopener"
+      aria-haspopup="dialog"
+      data-cta-location="mobile_sticky"
+    >Agendar llamada</a>
+  </div>
+
+  <p class="sr-only" id="calendar-status" aria-live="polite"></p>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var header = document.getElementById("site-header");
+      var mobileCta = document.getElementById("mobile-cta");
+      var hero = document.getElementById("inicio");
+      var schedule = document.getElementById("agenda");
+      var year = document.getElementById("current-year");
+      var status = document.getElementById("calendar-status");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var lastScrollY = window.scrollY;
+      var latestCtaLocation = "unknown";
+      var lastCalendarTrigger = null;
+      var calendarWasOpen = false;
+
+      if (year) year.textContent = String(new Date().getFullYear());
+
+      function pushEvent(name, params) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(Object.assign({ event: name }, params || {}));
+      }
+
+      function updateHeader() {
+        if (!header) return;
+        var y = window.scrollY;
+        header.classList.toggle("is-scrolled", y > 20);
+        if (!reduceMotion.matches && y > 180 && y > lastScrollY + 5) {
+          header.classList.add("is-hidden");
+        } else if (y < lastScrollY - 5 || y < 180) {
+          header.classList.remove("is-hidden");
+        }
+        lastScrollY = y;
+      }
+
+      updateHeader();
+      window.addEventListener("scroll", updateHeader, { passive: true });
+
+      if (mobileCta && hero && schedule && "IntersectionObserver" in window) {
+        var heroVisible = true;
+        var scheduleVisible = false;
+        var updateMobileCta = function () {
+          mobileCta.classList.toggle("is-visible", !heroVisible && !scheduleVisible);
+        };
+
+        new IntersectionObserver(function (entries) {
+          heroVisible = entries[0].isIntersecting;
+          updateMobileCta();
+        }, { threshold: 0.08 }).observe(hero);
+
+        new IntersectionObserver(function (entries) {
+          scheduleVisible = entries[0].isIntersecting;
+          updateMobileCta();
+        }, { threshold: 0.1 }).observe(schedule);
+      }
+
+      var scenes = Array.prototype.slice.call(document.querySelectorAll("[data-shift-scene]"));
+      var nodes = Array.prototype.slice.call(document.querySelectorAll("[data-shift-node]"));
+      var track = document.getElementById("shift-track");
+
+      function setActiveShift(time) {
+        var activeIndex = nodes.findIndex(function (node) {
+          return node.getAttribute("data-shift-node") === time;
+        });
+        if (activeIndex < 0) return;
+
+        nodes.forEach(function (node, index) {
+          var isActive = index === activeIndex;
+          node.classList.toggle("is-active", isActive);
+          node.classList.toggle("is-past", index < activeIndex);
+          if (isActive) node.setAttribute("aria-current", "step");
+          else node.removeAttribute("aria-current");
+        });
+
+        if (track) {
+          var progress = nodes.length > 1 ? activeIndex / (nodes.length - 1) : 0;
+          track.style.setProperty("--progress", String(progress));
+        }
+      }
+
+      if (scenes.length && "IntersectionObserver" in window) {
+        /* Cada escena se registra por separado para no secuestrar el scroll. */
+        var sceneObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) setActiveShift(entry.target.getAttribute("data-shift-scene"));
+          });
+        }, { rootMargin: "-32% 0px -48%", threshold: 0 });
+        scenes.forEach(function (scene) { sceneObserver.observe(scene); });
+      }
+
+      /* El video no hace ninguna petición hasta que exista una source real. */
+      var heroVideo = document.getElementById("hero-video");
+      var heroVideoToggle = document.getElementById("hero-video-toggle");
+      var configuredSource = heroVideo && heroVideo.querySelector("source[src]");
+      if (heroVideo && configuredSource && !reduceMotion.matches && "IntersectionObserver" in window) {
+        var videoObserver = new IntersectionObserver(function (entries, observer) {
+          if (!entries[0].isIntersecting) return;
+          observer.disconnect();
+          heroVideo.addEventListener("canplay", function () {
+            heroVideo.classList.add("is-ready");
+            if (heroVideoToggle) heroVideoToggle.hidden = false;
+          }, { once: true });
+          heroVideo.load();
+          heroVideo.play().catch(function () { /* El poster sigue visible. */ });
+        }, { rootMargin: "180px" });
+        videoObserver.observe(heroVideo);
+      }
+
+      if (heroVideo && heroVideoToggle) {
+        heroVideoToggle.addEventListener("click", function () {
+          if (heroVideo.paused) {
+            heroVideo.play().then(function () {
+              heroVideoToggle.classList.remove("is-paused");
+              heroVideoToggle.textContent = "Pausar video";
+              heroVideoToggle.setAttribute("aria-label", "Pausar video ambiental");
+            }).catch(function () { /* El poster permanece como alternativa. */ });
+          } else {
+            heroVideo.pause();
+            heroVideoToggle.classList.add("is-paused");
+            heroVideoToggle.textContent = "Reproducir video";
+            heroVideoToggle.setAttribute("aria-label", "Reproducir video ambiental");
+          }
+        });
+      }
+
+      var calendarBase = new URL("https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner");
+      calendarBase.searchParams.set("hide_event_type_details", "1");
+      calendarBase.searchParams.set("background_color", "f3f4ee");
+      calendarBase.searchParams.set("text_color", "0b1217");
+      calendarBase.searchParams.set("primary_color", "f5c518");
+
+      var canonicalParams = window.TR4Track
+        ? window.TR4Track.getCanonicalParams()
+        : new URLSearchParams(window.location.search);
+      var attribution = window.TR4Track ? window.TR4Track.getAttribution() : {};
+      var functionalKeys = ["email", "first_name", "name", "sexo", "video"];
+
+      canonicalParams.forEach(function (value, key) {
+        var shouldPass = key.indexOf("utm_") === 0 ||
+          functionalKeys.indexOf(key) !== -1 ||
+          (window.TR4Track && window.TR4Track.isAttributionKey(key));
+        if (value && shouldPass) calendarBase.searchParams.set(key, value);
+      });
+
+      Object.keys(attribution).forEach(function (key) {
+        if (attribution[key]) calendarBase.searchParams.set(key, attribution[key]);
+      });
+
+      var prefill = {};
+      var prefillName = canonicalParams.get("name") || canonicalParams.get("first_name");
+      var prefillEmail = canonicalParams.get("email");
+      if (prefillName) prefill.name = prefillName;
+      if (prefillEmail) prefill.email = prefillEmail;
+
+      function limitedParam(key) {
+        var value = calendarBase.searchParams.get(key);
+        return value ? value.slice(0, 254) : undefined;
+      }
+
+      var utm = {
+        utmSource: limitedParam("utm_source"),
+        utmMedium: limitedParam("utm_medium"),
+        utmCampaign: limitedParam("utm_campaign"),
+        utmContent: limitedParam("utm_content"),
+        utmTerm: limitedParam("utm_term")
+      };
+
+      Object.keys(utm).forEach(function (key) {
+        if (!utm[key]) delete utm[key];
+      });
+
+      var ctas = Array.prototype.slice.call(document.querySelectorAll(".js-calendly"));
+      ctas.forEach(function (cta) { cta.href = calendarBase.toString(); });
+
+      /* El widget no devuelve el foco por sí solo al cerrar con la X. */
+      if ("MutationObserver" in window) {
+        new MutationObserver(function () {
+          var calendarIsOpen = !!document.querySelector(".calendly-overlay");
+          if (calendarIsOpen) calendarWasOpen = true;
+          if (!calendarIsOpen && calendarWasOpen) {
+            calendarWasOpen = false;
+            if (lastCalendarTrigger && document.contains(lastCalendarTrigger)) {
+              lastCalendarTrigger.focus({ preventScroll: true });
+            }
+          }
+        }).observe(document.body, { childList: true });
+      }
+
+      var calendlyPromise;
+
+      function addPreconnect(origin) {
+        if (document.querySelector('link[data-calendly-preconnect="' + origin + '"]')) return;
+        var link = document.createElement("link");
+        link.rel = "preconnect";
+        link.href = origin;
+        link.crossOrigin = "anonymous";
+        link.setAttribute("data-calendly-preconnect", origin);
+        document.head.appendChild(link);
+      }
+
+      function loadStylesheet() {
+        var existing = document.querySelector("link[data-calendly-css]");
+        if (existing && existing.sheet) return Promise.resolve();
+        if (existing && existing._ready) return existing._ready;
+
+        var link = existing || document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://assets.calendly.com/assets/external/widget.css";
+        link.setAttribute("data-calendly-css", "");
+        link._ready = new Promise(function (resolve, reject) {
+          link.addEventListener("load", resolve, { once: true });
+          link.addEventListener("error", reject, { once: true });
+        });
+        if (!existing) document.head.appendChild(link);
+        return link._ready;
+      }
+
+      function loadScript() {
+        if (window.Calendly) return Promise.resolve();
+        var existing = document.querySelector("script[data-calendly-script]");
+        if (existing && existing._ready) return existing._ready;
+
+        var script = existing || document.createElement("script");
+        script.src = "https://assets.calendly.com/assets/external/widget.js";
+        script.async = true;
+        script.setAttribute("data-calendly-script", "");
+        script._ready = new Promise(function (resolve, reject) {
+          script.addEventListener("load", resolve, { once: true });
+          script.addEventListener("error", reject, { once: true });
+        });
+        if (!existing) document.head.appendChild(script);
+        return script._ready;
+      }
+
+      function loadCalendly() {
+        if (window.Calendly) return Promise.resolve();
+        if (calendlyPromise) return calendlyPromise;
+        addPreconnect("https://assets.calendly.com");
+        addPreconnect("https://calendly.com");
+        calendlyPromise = Promise.all([loadStylesheet(), loadScript()]).then(function () {
+          if (!window.Calendly) throw new Error("Calendly no quedó disponible");
+        });
+        return calendlyPromise;
+      }
+
+      function warmCalendly() {
+        loadCalendly().catch(function () { /* El enlace directo sigue disponible. */ });
+      }
+
+      ctas.forEach(function (cta) {
+        cta.addEventListener("pointerenter", warmCalendly, { once: true, passive: true });
+        cta.addEventListener("focus", warmCalendly, { once: true });
+        cta.addEventListener("pointerdown", warmCalendly, { once: true, passive: true });
+
+        cta.addEventListener("click", function (event) {
+          event.preventDefault();
+          lastCalendarTrigger = cta;
+          latestCtaLocation = cta.getAttribute("data-cta-location") || "unknown";
+          cta.setAttribute("aria-busy", "true");
+          if (status) status.textContent = "Cargando horarios disponibles…";
+          pushEvent("medicos_calendly_open", { cta_location: latestCtaLocation });
+
+          loadCalendly().then(function () {
+            window.Calendly.initPopupWidget({
+              url: calendarBase.toString(),
+              prefill: prefill,
+              utm: utm
+            });
+            if (status) status.textContent = "Calendario abierto.";
+          }).catch(function () {
+            if (status) status.textContent = "No pudimos abrir el calendario aquí. Abriendo Calendly en la misma pestaña.";
+            window.location.assign(cta.href);
+          }).finally(function () {
+            cta.removeAttribute("aria-busy");
+          });
+        });
+      });
+
+      window.addEventListener("message", function (event) {
+        if (event.origin !== "https://calendly.com") return;
+        if (!event.data || typeof event.data.event !== "string") return;
+        if (event.data.event.indexOf("calendly.") !== 0) return;
+
+        var eventMap = {
+          "calendly.profile_page_viewed": "medicos_calendly_profile_view",
+          "calendly.event_type_viewed": "medicos_calendly_event_view",
+          "calendly.date_and_time_selected": "medicos_calendly_time_selected",
+          "calendly.event_scheduled": "medicos_calendly_scheduled"
+        };
+        var mappedEvent = eventMap[event.data.event];
+        if (!mappedEvent) return;
+        pushEvent(mappedEvent, { cta_location: latestCtaLocation });
+        if (event.data.event === "calendly.event_scheduled" && status) {
+          status.textContent = "Tu llamada quedó agendada. Revisa tu correo para ver la confirmación y los detalles.";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
