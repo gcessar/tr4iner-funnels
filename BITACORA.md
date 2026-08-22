@@ -191,6 +191,24 @@ Se quitaron las dos lecturas de la cookie. **Dejar el evento fijo en C no alcanz
 `ce_copy_exposure_b` estando en la página C. Y `variant` del opt-in ahora viaja `null` como
 el orgánico — marcar «B» a quien vio C es peor que no marcar nada.
 
+### 🐞 Encontrado al publicar: la landing llevaba 5 días en `noindex`
+
+`index-salud.html` e `index-fuerza.html` se escribieron como **variantes de test**: sin
+metadatos sociales, sin JSON-LD y con `noindex`. Para una variante eso está **bien** — no debe
+competir como duplicado de la ruta canónica.
+
+El problema aparece al **promoverlas**: el `noindex` viaja con el contenido, así que
+`/casos-de-estudio` quedó fuera del índice desde el 17-ago, **contradiciendo al `sitemap.xml`
+que la declara**. Nadie lo notó porque el funnel vive de tráfico pago.
+
+Arreglado en el mismo movimiento: `index, follow`, y se portaron de `index.html` los `og:`,
+los `twitter:` y el JSON-LD (`Organization`, `Person`, `WebPage`, `BreadcrumbList`), adaptados
+al ángulo de C. El duplicado lo resuelve el `canonical`, que ya apuntaba a la ruta pública: no
+hacía falta `noindex`. `lastmod` del sitemap actualizado.
+
+**Regla para el próximo test:** promover una variante a canónica **no es sólo cambiar el
+rewrite** — hay que devolverle el paquete SEO que se le quitó por ser variante.
+
 ### 🔴 Confounder abierto: el tráfico se está desplomando otra vez
 
 | Día | Exposiciones |
