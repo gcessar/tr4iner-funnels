@@ -13,10 +13,11 @@ Páginas **HTML estáticas** de los funnels de TR4INER (coaching fitness de Anth
 
 ## Arquitectura acordada de funnels y dominio
 
-Este repo contiene **dos funnels distintos**, aunque compartan estilos, `track.js` y el mismo proyecto de Vercel:
+Este repo contiene **tres funnels distintos**, aunque compartan estilos, `attribution.js` y el mismo proyecto de Vercel:
 
 1. **Caso de Estudio:** adquisición y calificación. La landing principal registra nombre/email/sexo, muestra el VSL Flor o Dashiel, continúa a Typeform y luego al tramo de Calendly.
 2. **Biblioteca / Programa Cero:** lead magnet independiente para nutrir MQL. Vive completo bajo `/biblioteca/` (`registro → confirma → videos`). No confundir sus leads, webhook ni métricas con Caso de Estudio.
+3. **Médicos / Guardias:** landing de adquisición independiente bajo `/medicos/`. Presenta el método adaptable a consulta, familia y guardias; su conversión principal abre Calendly bajo demanda. No mezcla opt-ins ni métricas con los otros funnels.
 
 Decisión del 14-jul-2026: mantener ambos funnels en **un solo proyecto Vercel y un solo dominio**, con rutas claramente separadas. El dominio canónico futuro será `metodo.tr4iner.com` cuando termine la migración desde ClickFunnels. Mientras se prueba, todas las páginas deben funcionar igual bajo cualquier deployment de preview de Vercel.
 
@@ -32,6 +33,7 @@ Rutas objetivo del proyecto:
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
+- `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
 
 Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archivos `*-clickfunnels*` son compatibilidad temporal. **No son las versiones canónicas ni deben incluirse al decidir rutas o validar el funnel Vercel**, salvo pedido explícito.
 
@@ -47,9 +49,11 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
 | `biblioteca/` | Videoteca / recursos. |
+| `medicos/index.html` | Landing completa de **Médicos / Guardias** (`/medicos/`), con relato de 24 horas y Calendly diferido. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
 | `fit4/index.html`, `fit4-va/index.html` | VSL FIT4 públicas de Anthoni/compatibilidad y Veronika. La ruta VA siempre carga su video y eventos propios. |
 | `assets/va/` | Imagen del caso y tema compartido de Veronika. Usa Montserrat 900/300; no publicar los archivos Mont DEMO. |
+| `assets/medicos/` | Posters responsive del hero de Guardias; el futuro video debe conservarlos como fallback y LCP. |
 | `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |
 | `track.js` | Copia de compatibilidad antigua; no enlazar desde páginas nuevas porque algunos bloqueadores la interceptan. |
 | `BITACORA.md` | Changelog del funnel (registrar cada cambio con impacto en KPIs). |
