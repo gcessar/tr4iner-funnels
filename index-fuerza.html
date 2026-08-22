@@ -52,13 +52,100 @@
        `ce_copy_exposure_b` **estando en la página C** y ensuciado la serie del
        experimento ya cerrado. El próximo test estrena cookie Y etiqueta nuevas. -->
 
-  <!-- Página ganadora, servida por rewrite en /casos-de-estudio. La URL que ve el
-       visitante es siempre la canónica, así que /index-fuerza no debe indexarse por
-       su cuenta: sería contenido duplicado compitiendo con la ruta pública. -->
-  <meta name="robots" content="noindex, follow">
+  <!-- Indexable a propósito. El `noindex` que traía este archivo servía cuando era
+       UNA VARIANTE de un test: ahí sí había que evitar que /index-fuerza compitiera
+       como duplicado. Al pasar a ser la página que sirve la ruta canónica, ese
+       noindex viaja con el contenido y deja `/casos-de-estudio` fuera del índice
+       —contradiciendo al sitemap, que la declara—. Pasó inadvertido 5 días con
+       index-salud. El duplicado lo resuelve el `canonical` de abajo, que apunta a
+       la ruta pública: no hace falta noindex. -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <title>No se trata de los kilos | TR4INER</title>
   <meta name="description" content="Anthoni Montalván analiza, mes por mes, un caso real: qué se ordenó primero para que el cambio durara.">
   <link rel="canonical" href="https://metodo.tr4iner.com/casos-de-estudio">
+
+  <!-- Metadatos sociales y JSON-LD portados de index.html al promover esta página
+       a canónica. Se habían perdido al escribirla como variante de test: una
+       variante con noindex no los necesita, la landing pública sí. El ángulo se
+       adaptó al copy de C —fuerza y autonomía al envejecer— en vez del de pérdida
+       de grasa que traía el control. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_LA">
+  <meta property="og:site_name" content="TR4INER">
+  <meta property="og:url" content="https://metodo.tr4iner.com/casos-de-estudio">
+  <meta property="og:title" content="No se trata de los kilos, sino de cómo vas a llegar a los sesenta">
+  <meta property="og:description" content="Un caso real analizado mes a mes: qué se ordenó primero para conservar fuerza y autonomía, no sólo para bajar de peso.">
+  <meta property="og:image" content="https://metodo.tr4iner.com/10-platos/assets/anthoni-montalvan.webp">
+  <meta property="og:image:width" content="600">
+  <meta property="og:image:height" content="600">
+  <meta property="og:image:alt" content="Anthoni Montalván, entrenador y fundador de TR4INER">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="No se trata de los kilos: caso real">
+  <meta name="twitter:description" content="Anthoni Montalván analiza qué cambió mes a mes para llegar con fuerza a los sesenta.">
+  <meta name="twitter:image" content="https://metodo.tr4iner.com/10-platos/assets/anthoni-montalvan.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://tr4iner.com/#organization",
+        "name": "TR4INER",
+        "url": "https://tr4iner.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://metodo.tr4iner.com/10-platos/assets/favicon.png",
+          "width": 512,
+          "height": 512
+        }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://tr4iner.com/#anthoni-montalvan",
+        "name": "Anthoni Montalván",
+        "jobTitle": "Entrenador y educador de fitness",
+        "worksFor": { "@id": "https://tr4iner.com/#organization" },
+        "image": "https://metodo.tr4iner.com/10-platos/assets/anthoni-montalvan.webp"
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://metodo.tr4iner.com/casos-de-estudio#webpage",
+        "url": "https://metodo.tr4iner.com/casos-de-estudio",
+        "name": "No se trata de los kilos: caso real",
+        "description": "Análisis de un caso real centrado en conservar fuerza, masa muscular y autonomía al envejecer, en vez de perseguir el peso de la balanza.",
+        "inLanguage": "es-419",
+        "dateModified": "2026-08-22",
+        "author": { "@id": "https://tr4iner.com/#anthoni-montalvan" },
+        "publisher": { "@id": "https://tr4iner.com/#organization" },
+        "about": [
+          { "@type": "Thing", "name": "Fuerza y masa muscular" },
+          { "@type": "Thing", "name": "Envejecimiento saludable" },
+          { "@type": "Thing", "name": "Coaching fitness" }
+        ],
+        "breadcrumb": { "@id": "https://metodo.tr4iner.com/casos-de-estudio#breadcrumb" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://metodo.tr4iner.com/casos-de-estudio#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "TR4INER",
+            "item": "https://tr4iner.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Casos de estudio",
+            "item": "https://metodo.tr4iner.com/casos-de-estudio"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
