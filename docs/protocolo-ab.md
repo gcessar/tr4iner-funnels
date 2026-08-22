@@ -24,14 +24,14 @@ Lo que cambia afecta a los dos brazos por igual.
 
 ## Qué se mide y de dónde sale
 
-| Escalón | De dónde | Ojo con |
-|---|---|---|
-| **Exposiciones** | Google Analytics | Contar personas, no veces. Quien recarga tres veces es uno. |
-| **Registros** | CRM (tabla `OptIn`) | Volumen de arriba. Que suba no significa mejor. |
-| **Typeform** | Typeform | Acá aparece el teléfono. |
-| **Leads CRM** | CRM | **Filtrado a propósito:** entra a los 15 min y solo si no está en WhatsApp ni agendó directo. No es volumen. |
-| **Agendas** | Calendly + setter | Las de WhatsApp llegan sin campaña y sin correo: solo se cruzan por teléfono. |
-| **Ventas** | CRM | La mitad compra en 3 días, una de cada cuatro tarda más de 17. Antes de 3 semanas no hay lectura. |
+| Escalón | Qué es | De dónde sale | Ojo con |
+|---|---|---|---|
+| **Exposiciones** | Cuánta gente vio la página en cada brazo | Google Analytics | Contar personas, no veces. Quien recarga tres veces es uno. |
+| **Registros** | Dejaron nombre y correo en el formulario de la landing | CRM (tabla `OptIn`) | Volumen de arriba. Que suba no significa mejor. |
+| **Typeform** | Completaron el cuestionario largo | Typeform | Acá aparece el teléfono, que la landing no pide. |
+| **Leads CRM** | Los que el equipo efectivamente va a llamar | CRM | **Filtrado a propósito:** entra a los 15 min y solo si no está en WhatsApp ni agendó directo. No es volumen. |
+| **Agendas** | Sacaron turno para una llamada | Calendly + setter de WhatsApp | Las de WhatsApp llegan sin campaña y sin correo: solo se cruzan por teléfono. |
+| **Ventas** | Pagaron | CRM | La mitad compra en 3 días, una de cada cuatro tarda más de 17. Antes de 3 semanas no hay lectura. |
 
 **Dos cosas que cambian el resultado a la mitad:**
 
