@@ -3580,6 +3580,86 @@ La rama se integró en `main` mediante el merge `239dd68`. Vercel publicó el de
 
 ---
 
+## 2026-08-22 — Médicos pasa de agenda a registro para el caso de Flor (local)
+
+### Qué cambió
+
+`/medicos/` dejó de ser una landing larga centrada en guardias y Calendly. Ahora es una
+página corta de registro: explica de forma explícita la asesoría online de entrenamiento,
+nutrición y seguimiento de TR4INER, pide nombre, correo y sexo, y presenta el caso real de
+Flor de María como siguiente paso. El mensaje central pasó de un único contexto laboral a
+un deseo más amplio: recuperar el físico sin convertir el fitness en otro trabajo.
+
+El diseño conserva el lenguaje aprobado —poster médico, paleta nocturna, amarillo, tipografía
+Instrument Sans/JetBrains Mono y reloj—, pero la línea horaria quedó como firma visual en vez
+de conducir todo el argumento. En escritorio, copy y formulario conviven completos en el
+primer viewport. En móvil, el formulario sube antes del reloj. Se mantuvo preparado el
+reemplazo futuro del poster por video WebM/MP4. Se retiró por completo la barra superior con
+marca, descriptor y CTA, además del guion ornamental previo al descriptor del hero; el
+contenido ahora comienza sin una franja ni un espacio reservado invisibles.
+
+### Registro, atribución y redirección
+
+El formulario reutiliza el contrato canónico de Caso de Estudio: `nombre`, `email`, `sexo`,
+`video`, `utm`, `page_url`, `timestamp` y `variant`, y añade `funnel=medicos`. Envía al webhook
+existente de n8n y, en paralelo, conserva el backup `TR4Track.saveOptIn`. Bloquea dobles
+envíos, valida correo y dominios temporales, enfoca el primer error y expone estados de carga
+sin enviar datos personales a `dataLayer`.
+
+Tanto `Mujer` como `Hombre` redirigen a `/testimonio-flor` sobre el mismo origen. El salto
+conserva la query completa, `first_name`, correo con `@` literal, sexo, video, cualquier
+`utm_*`, identificadores publicitarios conocidos y parámetros desconocidos futuros. Se
+retiraron el SDK, enlaces y eventos de Calendly para no mezclar la medición anterior con el
+nuevo objetivo de registro. Médicos no hereda la cookie global `ab_ce`; solo conserva una
+`variant` enviada de forma explícita en la URL, evitando contaminar el experimento de Caso
+de Estudio.
+
+### Movimiento, SEO y accesibilidad
+
+GSAP 3.15.0 y ScrollTrigger cargan después del contenido y mueven únicamente el poster y el
+reloj en planos opuestos. La landing sigue operativa si el CDN falla; con
+`prefers-reduced-motion` no descarga GSAP y deja ambas capas inmóviles. La ruta conserva
+`noindex, nofollow`, canonical, metadatos sociales y JSON-LD de servicio. Incluye labels,
+fieldset semántico, foco visible, skip link, estados `aria-live`, targets táctiles de 52 px y
+anclas con margen de lectura convencional.
+
+### QA local
+
+Validado en 375 × 812, 768 × 1024 y 1280 × 900 px: cero overflow horizontal, controles de
+52 px, formulario completo en el primer viewport de escritorio, layout móvil correcto y
+parallax activo en los tres breakpoints. La validación vacía marcó y enfocó nombre, correo y
+sexo; el dominio temporal quedó bloqueado. Con el envío externo aislado durante la prueba,
+ambos sexos terminaron en `/testimonio-flor` y conservaron UTMs, `fbclid`/`gclid`, un
+`custom_id` sintético, nombre, correo, sexo y `funnel=medicos`; no se crearon leads reales.
+Los scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
+
+Después de retirar la barra superior y el guion ornamental se repitió el control visual en
+375 × 812, 768 × 1024 y 1280 × 900 px: el DOM ya no contiene el header ni su listener de
+scroll, el pseudoelemento del guion no genera contenido y se mantiene cero overflow.
+
+### Resultado esperado
+
+Reducir la fricción del primer paso, explicar qué se está ofreciendo antes de pedir datos y
+medir el avance desde registro médico hasta consumo del caso de Flor.
+
+### Estado
+
+El commit funcional `5ef520f` quedó aislado en `work/medicos-gsap-motion`. Generó el Preview
+`dpl_82ubgMDYzTWXcg116LLugnSEZfKL`, confirmado `Ready` el 22-ago-2026. La ruta protegida
+`/medicos/`, `attribution.js` y `/testimonio-flor` respondieron `200` mediante el acceso
+autenticado de Vercel. El usuario aprobó la publicación; producción seguía intacta al cerrar
+esta validación.
+
+### Publicación en producción
+
+La rama se integró en `main` mediante el merge `7c6227a`. Vercel publicó el deployment
+productivo `dpl_F6NX7LGy8YgdwbxzL7ErfW9SqGRN`, confirmado `Ready` el 22-ago-2026 a las
+11:28 (Lima), con `https://metodo.tr4iner.com` entre sus aliases. En el dominio canónico,
+`/medicos` mostró el formulario y el copy nuevos, sin barra superior ni guion ornamental,
+con la redirección a `/testimonio-flor` presente y cero overflow en la vista comprobada.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
