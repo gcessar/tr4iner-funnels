@@ -3549,6 +3549,14 @@ El commit funcional `5ef520f` quedó aislado en `work/medicos-gsap-motion`. Gene
 autenticado de Vercel. El usuario aprobó la publicación; producción seguía intacta al cerrar
 esta validación.
 
+### Publicación en producción
+
+La rama se integró en `main` mediante el merge `7c6227a`. Vercel publicó el deployment
+productivo `dpl_F6NX7LGy8YgdwbxzL7ErfW9SqGRN`, confirmado `Ready` el 22-ago-2026 a las
+11:28 (Lima), con `https://metodo.tr4iner.com` entre sus aliases. En el dominio canónico,
+`/medicos` mostró el formulario y el copy nuevos, sin barra superior ni guion ornamental,
+con la redirección a `/testimonio-flor` presente y cero overflow en la vista comprobada.
+
 ---
 
 <!-- TEMPLATE para próximas entradas:
