@@ -46,27 +46,15 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
-  <script>
-    // Mismo contrato del control: una exposición por vista asignada y evento
-    // distinto por brazo. El informe usa sesiones/usuarios, no eventCount.
-    (function () {
-      var match = /(?:^|;\s*)ab_copy=([BC])/.exec(document.cookie);
-      if (!match) return;
-      var variant = match[1];
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-      window.gtag('event', 'ce_copy_exposure_' + variant.toLowerCase(), {
-        send_to: 'G-CGWMFER9V4',
-        experiment_id: 'ce_copy_202608',
-        experiment_variant: variant,
-        non_interaction: true
-      });
-    })();
-  </script>
+  <!-- El evento de exposición `ce_copy_exposure_*` se quitó al cerrar el test el
+       22-ago-2026. No alcanzaba con dejarlo fijo en C: leía la cookie `ab_copy`,
+       que sigue viva 180 días, así que un visitante con `ab_copy=B` habría emitido
+       `ce_copy_exposure_b` **estando en la página C** y ensuciado la serie del
+       experimento ya cerrado. El próximo test estrena cookie Y etiqueta nuevas. -->
 
-  <!-- Variante B de un A/B servido por rewrite en /casos-de-estudio. La URL que ve
-       el visitante es siempre la canónica, así que /index-salud no debe indexarse por
-       su cuenta: sería contenido duplicado compitiendo con el control. -->
+  <!-- Página ganadora, servida por rewrite en /casos-de-estudio. La URL que ve el
+       visitante es siempre la canónica, así que /index-fuerza no debe indexarse por
+       su cuenta: sería contenido duplicado compitiendo con la ruta pública. -->
   <meta name="robots" content="noindex, follow">
   <title>No se trata de los kilos | TR4INER</title>
   <meta name="description" content="Anthoni Montalván analiza, mes por mes, un caso real: qué se ordenó primero para que el cambio durara.">
@@ -461,7 +449,11 @@
       });
     }
     var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
-    var abVariant = (/(?:^|;\s*)ab_copy=([BC])/.exec(document.cookie) || [])[1] || null;
+    // Cerrado el test, `variant` deja de viajar en el opt-in: sin dos brazos no hay
+    // nada que separar, y seguir leyendo la cookie `ab_copy` (viva 180 días) marcaría
+    // como "B" a registros que ya vieron C. Queda null hasta el próximo test, igual
+    // que venía quedando el tráfico orgánico.
+    var abVariant = null;
     // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
     if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
 
