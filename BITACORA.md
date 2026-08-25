@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
 - `2026-08-25` — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
 - `2026-08-25` — Médicos convierte la landing en la historia concreta de Flor (producción)
 - `2026-08-22` — C gana el test de copy y pasa a servirse a todo el tráfico
@@ -112,6 +113,62 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-25 — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
+
+### Qué cambió
+
+Quien confirma su acceso desde el correo ya no pasa por `/biblioteca/plan/`. Entra directo a
+`/biblioteca/videos/`.
+
+- `/biblioteca/verificar/`: el destino dejó de depender de `hasPlan`. Antes,
+  `hasPlan ? '/biblioteca/videos/' : '/biblioteca/plan/'`; ahora siempre la ruta.
+- `/biblioteca/videos/`: el programa deja de estar detrás del plan. Antes, sin plan la página
+  escondía `#program-content` entero y mostraba una tarjeta-muro («Antes de abrir tu ruta,
+  necesitamos tu punto de partida») cuyo único camino era el wizard. Ahora la ruta se abre
+  igual y el cálculo queda como **invitación** en el expediente: el chip pasa a decir
+  «Calcular mi punto de partida →» en vez de esconderse.
+- Sin plan, el expediente muestra «Sin calcular todavía · — · Elige por dónde empezar» en vez
+  de quedar con los textos de un plan que no existe.
+- **Bug que salió a la luz al desbloquear:** la regla `.next-card[hidden]` no aplicaba a nada
+  —el botón tiene `class="priority-guide"`, no `next-card`— y el `display:grid` le ganaba al
+  `hidden` del UA. Mientras el programa estuvo escondido no se notó; al abrirlo, la tarjeta
+  «RECOMENDADO PARA TI» aparecía vacía. Pasa a `#next-card[hidden]`.
+
+El orden de los bloques sin plan es el editorial por defecto (`comer → entrenar → grasa →
+músculo → hormonas → sostener`); con plan sigue mandando `plan.ruta`.
+
+### Por qué
+
+Pedir un test de macros antes de dejar ver nada es cobrar un peaje sobre algo que se prometió
+gratis, y encima en el momento de mayor intención: el clic recién hecho desde el correo. El
+test no desaparece —se va a ofrecer desde adentro, como recurso de los videos que lo ameriten
+(ver pendiente abajo).
+
+### Consecuencia que hay que vigilar
+
+Completar el test es lo que dispara, en `POST /api/genesis/plan` del CRM: `testDone`,
+`objetivo`, `kcal`, `peso`, `edad`, `situacion`, **+20 de score y el salto a `stage: MQL`**.
+Al dejar de ser obligatorio, **muchos menos leads van a llegar a MQL por esta vía y el
+expediente va a quedar sin esos campos**. Hay que decidir qué otra señal promueve a MQL antes
+de que el embudo del CRM quede leyéndose torcido.
+
+### Pendiente que abre este cambio
+
+Llevar el test de macros al editor de contenido del CRM (`/admin/genesis?tab=content`): poder
+editar un video ya publicado para agregarle texto descriptivo debajo y recursos con URL —al
+estilo Skool—, y colocar ahí el test solo en los videos elegidos.
+
+### Resultado esperado
+
+Más gente ve al menos una orientación en la primera sesión. El KPI es la proporción de accesos
+verificados que abren un video, contra la de hoy, que primero tienen que atravesar el wizard.
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 

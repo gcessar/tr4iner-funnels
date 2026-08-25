@@ -409,7 +409,7 @@
     .new-release-close { padding: 9px; background: transparent; color: var(--muted); font-size: 20px; }
 
     /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
-    .onboard[hidden], .next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
+    .onboard[hidden], #next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
     #program-content[hidden] { display: none !important; }
 
     @media (max-width: 640px) {
@@ -2958,7 +2958,7 @@
         var chip = document.getElementById('plan-chip');
         var program = document.getElementById('program-content');
         var activeLabel = document.getElementById('active-label');
-        program.hidden = gateActivo || !plan;
+        program.hidden = gateActivo;
         if (gateActivo) {
           // Con el portón abierto no personalizamos nada: primero la identidad.
           onboard.hidden = true;
@@ -2967,15 +2967,32 @@
           return;
         }
         if (!plan) {
-          document.getElementById('hero-eyebrow').textContent = 'Punto de partida · 2 minutos';
-          document.getElementById('headline').innerHTML = 'Antes de abrir tu ruta, <em>necesitamos tu punto de partida.</em>';
+          // Sin punto de partida la ruta se abre igual: el calculo pasa a ser una
+          // invitacion en el expediente, no una puerta antes de ver nada.
+          var sinPlanNombre = primerNombre(lead.nombre || nombre);
+          document.getElementById('hero-eyebrow').textContent = 'Tu ruta privada · RUTA TR4INER';
+          document.getElementById('headline').innerHTML =
+            (sinPlanNombre ? escapeHtml(sinPlanNombre) + ', ' : '') +
+            'no necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em>';
           document.getElementById('dek').textContent =
-            'Estima tus necesidades de alimentación y elige una sola señal prioritaria. Con eso ordenaremos qué conviene revisar primero.';
-          onboard.hidden = false;
-          onboard.classList.add('is-in');
-          document.getElementById('onboard-cta').href = planUrl();
-          chip.hidden = true;
+            'Empieza por donde quieras. Cuando calcules tu punto de partida ordenamos las orientaciones según tus números y la señal que elijas.';
+          onboard.hidden = true;
           activeLabel.hidden = true;
+          document.getElementById('profile-route').textContent = 'RUTA TR4INER · PERSONAL';
+          document.getElementById('profile-signal').textContent = 'Sin calcular todavía';
+          document.getElementById('profile-kcal').textContent = '—';
+          document.getElementById('profile-focus').textContent = 'Elige por dónde empezar';
+          document.getElementById('profile-dialog-route').textContent = 'RUTA TR4INER · PERSONAL';
+          document.getElementById('profile-dialog-signal').textContent = 'Sin calcular todavía';
+          document.getElementById('profile-dialog-kcal').textContent = '—';
+          document.getElementById('profile-dialog-focus').textContent = 'Elige por dónde empezar';
+          document.getElementById('profile-dialog-plan').href = planUrl();
+          document.getElementById('profile-dialog-plan').textContent = 'Calcular mi punto de partida →';
+          document.getElementById('mobile-profile-trigger-value').textContent = 'SIN CALCULAR';
+          chip.hidden = false;
+          chip.classList.add('is-in');
+          chip.href = planUrl();
+          document.getElementById('plan-chip-text').textContent = 'Calcular mi punto de partida →';
           return;
         }
         onboard.hidden = true;

@@ -75,8 +75,8 @@
           return response.json();
         }).then(function (session) {
           var video = verified.targetVideo || params.get('video');
-          var path = session.member && session.member.hasPlan ? '/biblioteca/videos/' : '/biblioteca/plan/';
-          var next = new URL(path, window.location.origin);
+          // El punto de partida ya no bloquea la entrada: se entra siempre a la ruta.
+          var next = new URL('/biblioteca/videos/', window.location.origin);
           copyAttribution(next);
           if (video) next.searchParams.set('video', video);
           window.location.replace(next.toString());
