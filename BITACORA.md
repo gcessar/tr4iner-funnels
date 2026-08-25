@@ -3735,8 +3735,9 @@ El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Gener�
 respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
 aprobación visual del usuario. La iteración de prueba visual y CRO móvil quedó en el commit
 `f32ade1`. El deployment `dpl_FNrCwtU6MoZ2m9o3TswszMHFaCHj` quedó `Ready` el 25-ago-2026
-y actualizó el alias de la rama. La tercera pasada de registro modal quedó en `63e302b` y
-espera su Preview. Producción continúa intacta.
+y actualizó el alias de la rama. La tercera pasada de registro modal quedó en `63e302b`; el
+deployment `dpl_AAaECBDK5w5o1PgW7N5x5htSH4da` quedó `Ready` el 25-ago-2026 y actualizó el
+alias de la rama. Producción continúa intacta.
 
 ---
 
