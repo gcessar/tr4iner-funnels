@@ -3678,6 +3678,39 @@ con la redirección a `/testimonio-flor` presente y cero overflow en la vista co
 
 ---
 
+## 2026-08-25 — Médicos convierte el hero en la historia concreta de Flor (local)
+
+### Qué cambió
+
+El hero de `/medicos/` dejó el mensaje general de asesoría y pasó a presentar desde la
+primera pantalla el caso de Flor de María. La etiqueta ahora la identifica como médica
+general; el titular muestra el recorrido declarado de 78 kg y 34% de grasa corporal a
+56 kg y 20% en 12 meses; y el texto explica el cardio, la dificultad para sostener el
+esfuerzo y los ajustes de alimentación, entrenamiento y planificación.
+
+El panel de registro pasó de «Conoce el caso» a «Accede al caso completo de Flor» y anticipa
+que el lector verá qué comía, cómo entrenaba, qué frenaba sus resultados y qué cambios se
+hicieron durante el proceso.
+
+### Alcance protegido
+
+No se tocaron formulario, validación, webhook, backup de `TR4Track`, atribución, redirección
+a `/testimonio-flor`, eventos, GSAP, poster, futuro video ni estructura de la página. La
+decisión SEO se mantiene en `noindex, nofollow` para esta ruta de adquisición.
+
+### QA local
+
+Validado en 375 × 812, 768 × 1024 y 1280 × 900 px: los cinco textos coinciden con las
+anotaciones, no hay overflow horizontal y la jerarquía se conserva sin crear un breakpoint
+nuevo. El titular ocupa cinco líneas en móvil y el formulario mantiene su ancho, campos y
+CTA. Los scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
+
+### Estado
+
+Cambio aislado en `work/medicos-copy-flor`, disponible en local. Producción no se tocó.
+
+---
+
 <!-- TEMPLATE para próximas entradas:
 
 ## AAAA-MM-DD — [Nombre del cambio]
