@@ -3721,7 +3721,8 @@ El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Gener�
 `dpl_J8hrG2a7ijDxooJD1UocHR8vuU4Y`, confirmado `Ready` el 25-ago-2026; `/medicos/`
 respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
 aprobación visual del usuario. La iteración de prueba visual y CRO móvil quedó en el commit
-`f32ade1`; su Preview actualizado queda pendiente de confirmación.
+`f32ade1`. El deployment `dpl_FNrCwtU6MoZ2m9o3TswszMHFaCHj` quedó `Ready` el 25-ago-2026
+y actualizó el alias de la rama. Producción continúa intacta.
 
 ---
 
