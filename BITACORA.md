@@ -3678,7 +3678,7 @@ con la redirección a `/testimonio-flor` presente y cero overflow en la vista co
 
 ---
 
-## 2026-08-25 — Médicos convierte el hero en la historia concreta de Flor (local)
+## 2026-08-25 — Médicos convierte la landing en la historia concreta de Flor (local)
 
 ### Qué cambió
 
@@ -3692,25 +3692,36 @@ El panel de registro pasó de «Conoce el caso» a «Accede al caso completo de 
 que el lector verá qué comía, cómo entrenaba, qué frenaba sus resultados y qué cambios se
 hicieron durante el proceso.
 
+La segunda pasada concreta la oferta en la sección de método, destaca las dos conclusiones
+clave del relato y añade el antes/después de Flor dentro del testimonio. La fotografía se
+publica en WebP responsive de 21 KB para móvil y 55 KB para escritorio, con dimensiones
+explícitas y carga diferida para no competir con el LCP del hero.
+
+En pantallas de hasta 640 px se añadió un CTA fijo hacia `#registro`. El botón mide 52 px,
+respeta el área segura del dispositivo, registra `medicos_mobile_sticky_click` y se oculta
+cuando el CTA real del formulario entra en pantalla para no presentar dos acciones rivales.
+
 ### Alcance protegido
 
-No se tocaron formulario, validación, webhook, backup de `TR4Track`, atribución, redirección
-a `/testimonio-flor`, eventos, GSAP, poster, futuro video ni estructura de la página. La
-decisión SEO se mantiene en `noindex, nofollow` para esta ruta de adquisición.
+No se tocaron campos, validación, webhook, backup de `TR4Track`, atribución, redirección a
+`/testimonio-flor`, GSAP, poster ni futuro video. El único evento nuevo mide el CTA fijo
+móvil. La decisión SEO se mantiene en `noindex, nofollow` para esta ruta de adquisición.
 
 ### QA local
 
-Validado en 375 × 812, 768 × 1024 y 1280 × 900 px: los cinco textos coinciden con las
-anotaciones, no hay overflow horizontal y la jerarquía se conserva sin crear un breakpoint
-nuevo. El titular ocupa cinco líneas en móvil y el formulario mantiene su ancho, campos y
-CTA. Los scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
+Validado en 375 × 812, 768 × 1024 y 1280 × 900 px: no hay overflow horizontal, las fuentes
+locales cargan y los targets reales miden 52 px. En móvil, al tocar el CTA fijo, el panel de
+registro completo queda entre 18 y 705 px de un viewport de 812 px; el CTA fijo se oculta y
+no tapa el envío. La variante móvil de la fotografía se seleccionó correctamente. Los
+scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
 
 ### Estado
 
 El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Generó el Preview
 `dpl_J8hrG2a7ijDxooJD1UocHR8vuU4Y`, confirmado `Ready` el 25-ago-2026; `/medicos/`
 respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
-aprobación visual del usuario.
+aprobación visual del usuario. La iteración de prueba visual y CRO móvil quedó en el commit
+`f32ade1`; su Preview actualizado queda pendiente de confirmación.
 
 ---
 
