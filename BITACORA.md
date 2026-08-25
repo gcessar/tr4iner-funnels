@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — Médicos convierte la landing en la historia concreta de Flor (producción)
 - `2026-08-22` — C gana el test de copy y pasa a servirse a todo el tráfico
 - `2026-08-19` — GENESIS pasa a llamarse Ruta Tr4iner
 - `2026-08-19` — Copy de la landing de GENESIS afinado desde Claude Design
@@ -3675,6 +3676,111 @@ productivo `dpl_F6NX7LGy8YgdwbxzL7ErfW9SqGRN`, confirmado `Ready` el 22-ago-2026
 11:28 (Lima), con `https://metodo.tr4iner.com` entre sus aliases. En el dominio canónico,
 `/medicos` mostró el formulario y el copy nuevos, sin barra superior ni guion ornamental,
 con la redirección a `/testimonio-flor` presente y cero overflow en la vista comprobada.
+
+---
+
+## 2026-08-25 — Médicos convierte la landing en la historia concreta de Flor (producción)
+
+### Qué cambió
+
+El hero de `/medicos/` dejó el mensaje general de asesoría y pasó a presentar desde la
+primera pantalla el caso de Flor de María. La etiqueta ahora la identifica como médica
+general; el titular muestra el recorrido declarado de 78 kg y 34% de grasa corporal a
+56 kg y 20% en 12 meses; y el texto explica el cardio, la dificultad para sostener el
+esfuerzo y los ajustes de alimentación, entrenamiento y planificación.
+
+El panel de registro pasó de «Conoce el caso» a «Accede al caso completo de Flor» y anticipa
+que el lector verá qué comía, cómo entrenaba, qué frenaba sus resultados y qué cambios se
+hicieron durante el proceso.
+
+La segunda pasada concreta la oferta en la sección de método, destaca las dos conclusiones
+clave del relato y añade el antes/después de Flor dentro del testimonio. La fotografía se
+publica en WebP responsive de 21 KB para móvil y 55 KB para escritorio, con dimensiones
+explícitas y carga diferida para no competir con el LCP del hero.
+
+La tercera pasada elimina el reloj de horarios completo y el rótulo repetido del testimonio.
+En pantallas de hasta 640 px, el antes/después pasa debajo del titular con un control de play;
+la explicación queda debajo de la imagen y termina en un CTA único. Tanto el play como el CTA
+abren el mismo formulario en un modal; el CTA fijo anterior se retiró.
+
+El formulario móvil conserva `autocomplete=name` y `autocomplete=email`, añade pistas nativas
+de teclado y deja que iOS/Android propongan los datos guardados sin cargar un SDK externo. En
+tablet y escritorio sigue visible dentro del hero.
+
+### Alcance protegido
+
+No se tocaron campos, validación, webhook, backup de `TR4Track`, atribución ni redirección a
+`/testimonio-flor`. El parallax del poster y el espacio para el futuro video se conservan;
+solo se retiró de GSAP la referencia al reloj eliminado. El modal mide su apertura mediante
+`medicos_registration_modal_open`. La decisión SEO se mantiene en `noindex, nofollow`.
+
+### QA local
+
+En la segunda pasada se validó en 375 × 812, 768 × 1024 y 1280 × 900 px: no hubo overflow
+horizontal, las fuentes
+locales cargan y los targets reales miden 52 px. En móvil, al tocar el CTA fijo, el panel de
+registro completo queda entre 18 y 705 px de un viewport de 812 px; el CTA fijo se oculta y
+no tapa el envío. La variante móvil de la fotografía se seleccionó correctamente. Los
+scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
+
+Tras convertir el registro en modal se repitió el control responsive: en móvil la imagen,
+descripción y CTA aparecen en ese orden, el formulario permanece fuera del árbol accesible
+hasta abrirse, cabe en el viewport, bloquea el fondo, cierra con botón, fondo o Escape y
+devuelve el foco al disparador. A 768 y 1280 px el formulario permanece inline, sin atributos
+de diálogo. No hay overflow ni referencias residuales al reloj, rótulo o CTA fijo.
+
+### Cuarta pasada: el modal salía recortado contra el borde del hero
+
+El panel de registro vivía dentro del hero, y el `overflow` que recorta el fondo
+cinematográfico recortaba también el modal: al abrirlo en móvil se cortaba contra el borde de
+la sección en vez de flotar sobre la página. Ahora, en móvil, el modal y su fondo se mueven al
+`<body>`, fuera de todo ancestro que recorte; al volver a escritorio regresan a su lugar
+original, marcado por el span vacío `#registration-home` para no alterar el orden del
+documento.
+
+El inset inferior pasó a `auto`: el panel se ancla arriba y toma solo el alto que necesita, en
+lugar de estirarse hasta el piso arrastrando una franja vacía. El `max-height` sigue en pie,
+así que en pantallas chicas conserva el scroll interno.
+
+### Dos etiquetas de copy
+
+El arranque del popup decía «Caso real · Médica general» dos renglones arriba de «Accede al
+caso completo de Flor», repitiendo el dato; quedó solo «Médica general». Y la sección de
+método dejó de anunciarse como «Qué es TR4INER» —que promete una definición de marca— para
+llamarse «Cómo trabajamos», que es lo que el lector encuentra debajo.
+
+### QA de la cuarta pasada
+
+Medido en el navegador contra el servidor local, con el modal abierto:
+
+- **430 × 932:** entra completo entre 12 y 679 px, con alto propio de 667 px y sin scroll
+  interno. Ningún ancestro lo recorta.
+- **375 × 812:** respeta el notch (arranca en 35 px vía `env(safe-area-inset-top)`), termina en
+  692 px y el CTA de envío queda a la vista.
+- **320 × 568:** el `max-height` lo limita a 544 px, se mantiene dentro del viewport y activa el
+  scroll interno (698 px de contenido en 539 px visibles); el CTA se alcanza scrolleando.
+- **Escritorio:** el panel vuelve a `.hero-inner` en el orden correcto (`#registration-home` →
+  fondo → panel), sin `role`, `aria-modal` ni `aria-hidden`, y el fondo queda en `display:none`.
+- **Cierre:** botón, fondo y Escape cierran; el foco vuelve al disparador que abrió el modal y
+  se libera el scroll del body. Los dos disparadores (play y CTA) abren.
+- El fondo cubre el viewport en z-80 bajo el panel en z-90. El HTML queda balanceado, los tres
+  scripts inline compilan, el JSON-LD parsea y la consola no reporta errores.
+
+**Pendiente menor:** a 320 × 568, con el panel scrolleado hasta abajo, el botón de cerrar —que
+es `absolute` dentro del panel— se va de la vista. Se recupera scrolleando hacia arriba, y
+Escape y el fondo siguen cerrando, así que no atrapa a nadie. Si molesta, la corrección es
+hacerlo `sticky`.
+
+### Estado
+
+El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Generó el Preview
+`dpl_J8hrG2a7ijDxooJD1UocHR8vuU4Y`, confirmado `Ready` el 25-ago-2026; `/medicos/`
+respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
+aprobación visual del usuario. La iteración de prueba visual y CRO móvil quedó en el commit
+`f32ade1`. El deployment `dpl_FNrCwtU6MoZ2m9o3TswszMHFaCHj` quedó `Ready` el 25-ago-2026
+y actualizó el alias de la rama. La tercera pasada de registro modal quedó en `63e302b`; el
+deployment `dpl_AAaECBDK5w5o1PgW7N5x5htSH4da` quedó `Ready` el 25-ago-2026 y actualizó el
+alias de la rama. Producción continúa intacta.
 
 ---
 
