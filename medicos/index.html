@@ -415,6 +415,11 @@
       line-height: 1.52;
     }
 
+    .hero-copy .lead strong {
+      color: var(--clinical);
+      font-weight: 700;
+    }
+
     .service-line {
       display: flex;
       flex-wrap: wrap;
@@ -829,6 +834,11 @@
       line-height: 1.62;
     }
 
+    .method-intro strong {
+      color: var(--night);
+      font-weight: 700;
+    }
+
     .method-list {
       margin: 0;
       padding: 0;
@@ -879,12 +889,52 @@
 
     .case-proof-inner {
       display: grid;
-      grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+      grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1fr);
       gap: clamp(38px, 8vw, 120px);
-      align-items: end;
+      align-items: center;
       padding-top: clamp(60px, 7vw, 96px);
       padding-bottom: clamp(60px, 7vw, 96px);
     }
+
+    .case-profile { min-width: 0; }
+
+    .case-visual {
+      position: relative;
+      max-width: 480px;
+      margin: 24px 0 0;
+      border-top: 4px solid var(--yellow);
+      background: var(--night-soft);
+      overflow: hidden;
+    }
+
+    .case-visual img {
+      width: 100%;
+      height: auto;
+    }
+
+    .case-visual-labels {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      pointer-events: none;
+    }
+
+    .case-visual-labels span {
+      padding: 10px 12px;
+      background: linear-gradient(180deg, rgba(11, 18, 23, 0.8), transparent);
+      color: var(--clinical);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .case-visual-labels span:last-child { text-align: right; }
 
     .case-meta { color: rgba(243, 244, 238, 0.62); }
 
@@ -944,6 +994,8 @@
     .footer-links { display: flex; gap: 22px; }
     .footer-links a { text-underline-offset: 4px; }
     .footer-links a:hover { color: var(--clinical); }
+
+    .mobile-registration-cta { display: none; }
 
     html[data-motion="gsap"] .hero-media,
     html[data-motion="gsap"] .hero-clock { will-change: transform; }
@@ -1127,8 +1179,10 @@
 
       .case-proof-inner {
         grid-template-columns: 1fr;
-        gap: 44px;
+        gap: 38px;
       }
+
+      .case-visual { max-width: none; margin-top: 20px; }
 
       .case-quote { font-size: clamp(31px, 9vw, 42px); }
 
@@ -1141,6 +1195,68 @@
 
       .hero-video { display: none; }
       .hero-video-toggle { display: none !important; }
+
+      body { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+
+      .mobile-registration-cta {
+        position: fixed;
+        z-index: 40;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 78px;
+        border-top: 1px solid rgba(243, 244, 238, 0.2);
+        padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+        background: rgba(11, 18, 23, 0.97);
+        color: var(--clinical);
+        transform: translateY(0);
+        transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+      }
+
+      .mobile-registration-cta.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+      }
+
+      .mobile-registration-cta p {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        line-height: 1.45;
+        text-transform: uppercase;
+      }
+
+      .mobile-registration-cta p span {
+        display: block;
+        color: rgba(243, 244, 238, 0.62);
+      }
+
+      .mobile-registration-cta a {
+        display: inline-flex;
+        min-height: 52px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--yellow);
+        padding: 12px 15px;
+        background: var(--yellow);
+        color: var(--night);
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .mobile-registration-cta a:hover { background: var(--yellow-bright); }
+      .mobile-registration-cta a:active { transform: translateY(1px); }
     }
 
     @media (max-width: 374px) {
@@ -1203,7 +1319,7 @@
         <div class="hero-copy">
           <p class="eyebrow">Flor de María · Médica general</p>
           <h1 id="hero-title">Mira cómo Flor pasó de 78 kg y 34% de grasa corporal a 56 kg y 20% en 12 meses.</h1>
-          <p class="lead">Flor hacía ejercicio, intentaba comer bien y llegó a hacer hasta 3–4 horas de cardio. El trabajo, los estudios y el hospital, le costaba mantener todo ese esfuerzo y terminaba volviendo al mismo punto. Mira qué estaba frenando sus resultados y cómo ajustamos su alimentación, entrenamiento y planificación para transformar su físico.</p>
+          <p class="lead">Flor hacía ejercicio, intentaba comer bien y llegó a hacer hasta 3–4 horas de cardio. El trabajo, los estudios y el hospital, le costaba mantener todo ese esfuerzo y terminaba volviendo al mismo punto. <strong>Mira qué estaba frenando sus resultados y cómo ajustamos su alimentación, entrenamiento y planificación para transformar su físico.</strong></p>
 
           <ul class="service-line" aria-label="Componentes de la asesoría">
             <li>Entrenamiento</li>
@@ -1287,27 +1403,27 @@
       <div class="container method-inner">
         <div>
           <p class="method-kicker">Qué es TR4INER</p>
-          <h2 id="method-title">Un sistema para ejecutar, no más información para acumular.</h2>
-          <p class="method-intro">La asesoría convierte lo que ya sabes que deberías hacer en una ruta clara que el equipo revisa y ajusta según tu progreso y tu contexto.</p>
+          <h2 id="method-title">Un plan claro que puedas ejecutar incluso cuando cambia tu semana.</h2>
+          <p class="method-intro">TR4INER organiza tu entrenamiento y alimentación alrededor de tu objetivo, tu disponibilidad y tu contexto. <strong>Revisamos tu progreso y hacemos los ajustes necesarios para que sepas qué mantener, qué cambiar y cómo continuar mientras avanzas.</strong></p>
         </div>
 
         <ol class="method-list">
           <li>
             <div>
-              <h3>Entrenamiento con estructura</h3>
-              <p>Rutinas organizadas, ejercicios explicados y una referencia clara para saber qué hacer cada vez que entrenas.</p>
+              <h3>Entrenamiento que se adapta a tu disponibilidad</h3>
+              <p>Rutinas organizadas, ejercicios explicados y una referencia clara para saber qué hacer aunque esa semana tengas menos tiempo para entrenar.</p>
             </div>
           </li>
           <li>
             <div>
               <h3>Nutrición que cabe en tu vida</h3>
-              <p>Criterios flexibles para trabajar con alimentos cotidianos, sin depender de una dieta rígida ni comer distinto a tu familia.</p>
+              <p>Cantidades y criterios claros para que puedas comer alimentos cotidianos sin depender de una dieta rígida ni comer distinto a tu familia.</p>
             </div>
           </li>
           <li>
             <div>
               <h3>Seguimiento humano</h3>
-              <p>Revisión técnica, respuestas y ajustes para que no tengas que decidir, probar y corregir todo por tu cuenta.</p>
+              <p>Revisamos cómo respondes al plan y ajustamos lo necesario según tu progreso, tus horarios y tu disponibilidad.</p>
             </div>
           </li>
         </ol>
@@ -1316,10 +1432,17 @@
 
     <section class="case-proof" aria-label="Testimonio de Flor de María">
       <div class="container case-proof-inner">
-        <div>
-          <p class="case-meta">Caso real · Cliente TR4INER</p>
+        <div class="case-profile">
+          <p class="case-meta">FLOR DE MARÍA · MÉDICA GENERAL</p>
           <p class="case-person">Flor de María</p>
           <p class="case-result">Médica general</p>
+          <figure class="case-visual">
+            <picture>
+              <source srcset="/assets/medicos/flor-medica-480.webp 480w, /assets/medicos/flor-medica.webp 838w" sizes="(max-width: 640px) calc(100vw - 40px), 480px" type="image/webp" />
+              <img src="/assets/medicos/flor-medica.webp" width="838" height="812" loading="lazy" decoding="async" alt="Antes y después de Flor de María durante su proceso con TR4INER" />
+            </picture>
+            <figcaption class="case-visual-labels"><span>Antes</span><span>12 meses</span></figcaption>
+          </figure>
         </div>
         <blockquote class="case-quote">No esperes a tener tiempo. Si esperas a tener tiempo, nunca lo vas a hacer.</blockquote>
       </div>
@@ -1335,6 +1458,11 @@
       </nav>
     </div>
   </footer>
+
+  <aside class="mobile-registration-cta" id="mobile-registration-cta" aria-label="Acceso al caso de Flor">
+    <p>Caso real<span>Acceso inmediato</span></p>
+    <a href="#registro" id="mobile-registration-link">Ver el caso</a>
+  </aside>
 
   <script src="/attribution.js"></script>
   <script>
@@ -1388,6 +1516,25 @@
       }
 
       setupHeroVideo();
+
+      (function setupMobileRegistrationCta() {
+        var stickyCta = document.getElementById("mobile-registration-cta");
+        var stickyLink = document.getElementById("mobile-registration-link");
+        var submitButton = document.getElementById("submit-button");
+        if (!stickyCta || !stickyLink || !submitButton) return;
+
+        stickyLink.addEventListener("click", function () {
+          pushEvent("medicos_mobile_sticky_click", { funnel_name: "medicos" });
+        });
+
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            stickyCta.classList.toggle("is-hidden", entry.isIntersecting);
+          });
+        }, { threshold: 0.35 });
+
+        observer.observe(submitButton);
+      })();
 
       (function setupRegistration() {
         var form = document.getElementById("medicos-form");
