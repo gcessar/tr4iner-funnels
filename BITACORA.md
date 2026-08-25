@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
 - `2026-08-25` — Médicos convierte la landing en la historia concreta de Flor (producción)
 - `2026-08-22` — C gana el test de copy y pasa a servirse a todo el tráfico
 - `2026-08-19` — GENESIS pasa a llamarse Ruta Tr4iner
@@ -111,6 +112,55 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-25 — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
+
+### Qué cambió
+
+La página que espera el clic en el correo (el DOI de Ruta Tr4iner) perdió todo lo que
+competía con ese único clic:
+
+- **Fuera las migas de pan** «Acceso solicitado → Correo enviado → Ruta activa», y con
+  ellas sus cuatro bloques de CSS, para no dejar reglas huérfanas.
+- **Fuera la etiqueta** «Expediente privado · RUTA TR4INER» de la pestaña del expediente.
+- **Fuera los botones** «Abrir Gmail» y «Abrir Outlook».
+- El estado **«Activación pendiente» queda centrado** y con un punto que late a 1,6 s.
+  Respeta `prefers-reduced-motion`.
+- El avatar del correo simulado deja de ser la inicial «A» y usa la **foto real**
+  (`/assets/team/anthoni-montalvan-92.webp`, la misma de la landing).
+- Dos textos: el asunto simulado pasa a «Tu Ruta Tr4iner ya está lista → empieza por
+  aquí» y el kicker de ayuda, de «Si no aparece» a «¿Aún no te llegó?».
+
+En el repo `crm-ventas`, el **correo real** que esa página simula (`src/lib/genesis-mail.ts`)
+se reescribió entero: asunto nuevo idéntico al de la maqueta, cuerpo nuevo, CTA «Entrar a mi
+Ruta Tr4iner», firma con la foto de Anthoni, y el remitente pasa de `equipo@tr4iner.com` a
+**`asesoria@tr4iner.com`** con nombre «Anthoni Montalván». La piel deja el crema `#f6f1e7` y
+Georgia serif por papel blanco, Instrument Sans y JetBrains Mono: la misma línea gráfica que
+`/biblioteca/`. La plantilla la comparten los tres envíos (registro, reenvío de enlace y
+campañas de contenido).
+
+### Por qué
+
+La página es un paso de espera, no una página de venta: cada elemento que no sea «abrí tu
+correo» le resta al único acto que importa. Las migas de pan describían un recorrido que la
+persona no eligió, y los botones a Gmail y Outlook mandaban a la bandeja genérica —no al
+correo— y en móvil suelen caer en la versión web de un cliente que la persona no usa.
+
+El asunto simulado y el real eran distintos, así que la maqueta perdía justamente el efecto
+que la justifica: reconocer en la bandeja el correo que la página acaba de describir. Ahora
+dicen lo mismo, letra por letra.
+
+### Resultado esperado
+
+Más clics en el enlace del correo por registro, y menos pedidos de reenvío. El KPI que
+importa es la tasa de verificación (registros que llegan a `/biblioteca/verificar/` con
+token válido sobre registros totales).
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 

@@ -92,8 +92,7 @@
     }
     .eyebrow,
     .section-code,
-    .file-tab,
-    .activation-path {
+    .file-tab {
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 600;
@@ -118,18 +117,6 @@
     .confirm-wrap {
       max-width: 760px;
       margin: 0 auto;
-    }
-    .activation-path {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 54px;
-      color: var(--muted);
-    }
-    .activation-path .done { text-decoration: line-through; }
-    .activation-path .current {
-      color: var(--ink);
-      background: linear-gradient(transparent 50%, var(--mark) 50%);
     }
     .eyebrow {
       margin-bottom: 20px;
@@ -215,13 +202,9 @@
     .mail-avatar {
       width: 42px;
       height: 42px;
-      display: grid;
-      place-items: center;
       border-radius: 50%;
-      background: var(--ink);
-      color: var(--mark);
-      font-family: var(--display);
-      font-size: 22px;
+      object-fit: cover;
+      background: var(--paper-deep);
     }
     .mail-meta {
       min-width: 0;
@@ -356,12 +339,6 @@
       }
       .page-frame { width: calc(100% - 36px); }
       .view { padding: 48px 0 60px; }
-      .activation-path {
-        gap: 6px;
-        margin-bottom: 42px;
-        font-size: 7.4px;
-        letter-spacing: 0.07em;
-      }
       .eyebrow {
         margin-bottom: 16px;
         font-size: 9px;
@@ -445,16 +422,6 @@
     h1, h2 { font-weight: 750; letter-spacing: -0.052em; }
     h1 em, h2 em { font-style: normal; font-weight: 750; }
     .view { padding: 68px 0 84px; }
-    .activation-path {
-      gap: 10px;
-      margin-bottom: 38px;
-      padding-bottom: 17px;
-      border-bottom: 1px solid var(--rule);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-    }
-    .activation-path .done { text-decoration: none; }
-    .activation-path .current { background: linear-gradient(transparent 66%, var(--mark) 66%); }
     .confirm-wrap h1 { max-width: 720px; margin-bottom: 24px; font-size: clamp(42px, 5vw, 60px); line-height: 1; }
     .lede { font-size: 18px; line-height: 1.55; }
     .file-sheet { overflow: hidden; border-color: var(--rule-strong); border-radius: 8px; box-shadow: none; }
@@ -462,7 +429,6 @@
     .mail-sheet { margin-top: 42px; background: #FAFAFA; }
     .file-tab { background: #FAFAFA; color: var(--ink); border-bottom: 1px solid var(--rule); }
     .file-tab b { color: var(--ink); background: var(--mark); padding: 3px 6px; }
-    .mail-avatar { background: var(--mark); color: var(--ink); font-family: var(--body); font-weight: 750; }
     .primary-button, .secondary-button { min-height: 54px; border-radius: 6px; font-weight: 700; }
     .primary-button:hover { background: #2B2B2B; }
     .secondary-button { background: var(--card); }
@@ -470,16 +436,38 @@
     .confirm-help h2 { font-size: 30px; }
     .security-note { border-radius: 6px; background: #FAFAFA; }
 
+    /* La pestaña quedó con un solo elemento: centrado y con pulso de alerta. */
+    .file-tab { justify-content: center; padding: 12px 20px; }
+    .file-tab b {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      letter-spacing: 0.17em;
+    }
+    .file-tab b::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ink);
+      content: "";
+      animation: latido-alerta 1.6s ease-in-out infinite;
+    }
+    @keyframes latido-alerta {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.68); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .file-tab b::before { animation: none; }
+    }
+    /* Sin botones abajo, el borde de la vista previa duplicaba el del expediente. */
+    .mail-preview:last-child { border-bottom: none; }
+
     @media (max-width: 560px) {
       body { background: var(--paper); }
       .view { padding: 34px 0 52px; }
-      .activation-path {
-        gap: 5px;
-        margin-bottom: 32px;
-        font-size: 8px;
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-      }
       .confirm-wrap h1 { margin-bottom: 18px; font-size: clamp(36px, 10.2vw, 42px); line-height: 1.01; }
       .lede { font-size: 16px; }
       .mail-sheet { margin-top: 32px; }
@@ -502,14 +490,6 @@
     <main id="contenido">
       <article class="view">
         <section class="confirm-wrap">
-          <div class="activation-path" aria-label="Estado de activación">
-            <span class="done">Acceso solicitado</span>
-            <i>→</i>
-            <span class="current">Correo enviado</span>
-            <i>→</i>
-            <span>Ruta activa</span>
-          </div>
-
           <p class="eyebrow">Acceso privado · Falta un paso</p>
           <h1>Ya reservamos tu acceso<span id="name-line"></span>. <em>Ahora confirma que eres tú.</em></h1>
           <p class="lede">
@@ -520,7 +500,6 @@
 
           <section class="file-sheet mail-sheet" aria-label="Correo que vas a recibir">
             <div class="file-tab">
-              <span>Expediente privado · RUTA TR4INER</span>
               <b>Activación pendiente</b>
             </div>
             <div class="mail-toolbar">
@@ -528,23 +507,19 @@
               <small>El correo suele llegar en menos de dos minutos.</small>
             </div>
             <div class="mail-preview">
-              <div class="mail-avatar" aria-hidden="true">A</div>
+              <img class="mail-avatar" src="/assets/team/anthoni-montalvan-92.webp" width="42" height="42" loading="lazy" decoding="async" alt="">
               <div class="mail-meta">
                 <strong>Anthoni Montalván <small>· ahora</small></strong>
-                <span>Tu acceso privado a tu Ruta Tr4iner</span>
+                <span>Tu Ruta Tr4iner ya está lista → empieza por aquí</span>
                 <p>Confirma tu correo para abrir tu ruta y guardar tus próximos pasos.</p>
               </div>
               <span class="mail-star" aria-hidden="true">☆</span>
-            </div>
-            <div class="mail-actions">
-              <a class="primary-button" href="https://mail.google.com/mail/u/0/" target="_blank" rel="noopener">Abrir Gmail <i>→</i></a>
-              <a class="secondary-button" href="https://outlook.live.com/mail/" target="_blank" rel="noopener">Abrir Outlook</a>
             </div>
           </section>
 
           <section class="confirm-help">
             <div>
-              <p class="section-code">Si no aparece</p>
+              <p class="section-code">¿Aún no te llegó?</p>
               <h2>Revisa Spam y Promociones.</h2>
               <p>Si lo encuentras allí, muévelo a Principal para no perder mensajes relacionados con tu acceso.</p>
             </div>
