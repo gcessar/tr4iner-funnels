@@ -3697,23 +3697,36 @@ clave del relato y añade el antes/después de Flor dentro del testimonio. La fo
 publica en WebP responsive de 21 KB para móvil y 55 KB para escritorio, con dimensiones
 explícitas y carga diferida para no competir con el LCP del hero.
 
-En pantallas de hasta 640 px se añadió un CTA fijo hacia `#registro`. El botón mide 52 px,
-respeta el área segura del dispositivo, registra `medicos_mobile_sticky_click` y se oculta
-cuando el CTA real del formulario entra en pantalla para no presentar dos acciones rivales.
+La tercera pasada elimina el reloj de horarios completo y el rótulo repetido del testimonio.
+En pantallas de hasta 640 px, el antes/después pasa debajo del titular con un control de play;
+la explicación queda debajo de la imagen y termina en un CTA único. Tanto el play como el CTA
+abren el mismo formulario en un modal; el CTA fijo anterior se retiró.
+
+El formulario móvil conserva `autocomplete=name` y `autocomplete=email`, añade pistas nativas
+de teclado y deja que iOS/Android propongan los datos guardados sin cargar un SDK externo. En
+tablet y escritorio sigue visible dentro del hero.
 
 ### Alcance protegido
 
-No se tocaron campos, validación, webhook, backup de `TR4Track`, atribución, redirección a
-`/testimonio-flor`, GSAP, poster ni futuro video. El único evento nuevo mide el CTA fijo
-móvil. La decisión SEO se mantiene en `noindex, nofollow` para esta ruta de adquisición.
+No se tocaron campos, validación, webhook, backup de `TR4Track`, atribución ni redirección a
+`/testimonio-flor`. El parallax del poster y el espacio para el futuro video se conservan;
+solo se retiró de GSAP la referencia al reloj eliminado. El modal mide su apertura mediante
+`medicos_registration_modal_open`. La decisión SEO se mantiene en `noindex, nofollow`.
 
 ### QA local
 
-Validado en 375 × 812, 768 × 1024 y 1280 × 900 px: no hay overflow horizontal, las fuentes
+En la segunda pasada se validó en 375 × 812, 768 × 1024 y 1280 × 900 px: no hubo overflow
+horizontal, las fuentes
 locales cargan y los targets reales miden 52 px. En móvil, al tocar el CTA fijo, el panel de
 registro completo queda entre 18 y 705 px de un viewport de 812 px; el CTA fijo se oculta y
 no tapa el envío. La variante móvil de la fotografía se seleccionó correctamente. Los
 scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
+
+Tras convertir el registro en modal se repitió el control responsive: en móvil la imagen,
+descripción y CTA aparecen en ese orden, el formulario permanece fuera del árbol accesible
+hasta abrirse, cabe en el viewport, bloquea el fondo, cierra con botón, fondo o Escape y
+devuelve el foco al disparador. A 768 y 1280 px el formulario permanece inline, sin atributos
+de diálogo. No hay overflow ni referencias residuales al reloj, rótulo o CTA fijo.
 
 ### Estado
 
@@ -3722,7 +3735,8 @@ El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Gener�
 respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
 aprobación visual del usuario. La iteración de prueba visual y CRO móvil quedó en el commit
 `f32ade1`. El deployment `dpl_FNrCwtU6MoZ2m9o3TswszMHFaCHj` quedó `Ready` el 25-ago-2026
-y actualizó el alias de la rama. Producción continúa intacta.
+y actualizó el alias de la rama. La tercera pasada de registro modal quedó en `63e302b` y
+espera su Preview. Producción continúa intacta.
 
 ---
 
