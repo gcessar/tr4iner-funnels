@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — Médicos convierte la landing en la historia concreta de Flor (producción)
 - `2026-08-22` — C gana el test de copy y pasa a servirse a todo el tráfico
 - `2026-08-19` — GENESIS pasa a llamarse Ruta Tr4iner
 - `2026-08-19` — Copy de la landing de GENESIS afinado desde Claude Design
@@ -3678,7 +3679,7 @@ con la redirección a `/testimonio-flor` presente y cero overflow en la vista co
 
 ---
 
-## 2026-08-25 — Médicos convierte la landing en la historia concreta de Flor (local)
+## 2026-08-25 — Médicos convierte la landing en la historia concreta de Flor (producción)
 
 ### Qué cambió
 
@@ -3727,6 +3728,48 @@ descripción y CTA aparecen en ese orden, el formulario permanece fuera del árb
 hasta abrirse, cabe en el viewport, bloquea el fondo, cierra con botón, fondo o Escape y
 devuelve el foco al disparador. A 768 y 1280 px el formulario permanece inline, sin atributos
 de diálogo. No hay overflow ni referencias residuales al reloj, rótulo o CTA fijo.
+
+### Cuarta pasada: el modal salía recortado contra el borde del hero
+
+El panel de registro vivía dentro del hero, y el `overflow` que recorta el fondo
+cinematográfico recortaba también el modal: al abrirlo en móvil se cortaba contra el borde de
+la sección en vez de flotar sobre la página. Ahora, en móvil, el modal y su fondo se mueven al
+`<body>`, fuera de todo ancestro que recorte; al volver a escritorio regresan a su lugar
+original, marcado por el span vacío `#registration-home` para no alterar el orden del
+documento.
+
+El inset inferior pasó a `auto`: el panel se ancla arriba y toma solo el alto que necesita, en
+lugar de estirarse hasta el piso arrastrando una franja vacía. El `max-height` sigue en pie,
+así que en pantallas chicas conserva el scroll interno.
+
+### Dos etiquetas de copy
+
+El arranque del popup decía «Caso real · Médica general» dos renglones arriba de «Accede al
+caso completo de Flor», repitiendo el dato; quedó solo «Médica general». Y la sección de
+método dejó de anunciarse como «Qué es TR4INER» —que promete una definición de marca— para
+llamarse «Cómo trabajamos», que es lo que el lector encuentra debajo.
+
+### QA de la cuarta pasada
+
+Medido en el navegador contra el servidor local, con el modal abierto:
+
+- **430 × 932:** entra completo entre 12 y 679 px, con alto propio de 667 px y sin scroll
+  interno. Ningún ancestro lo recorta.
+- **375 × 812:** respeta el notch (arranca en 35 px vía `env(safe-area-inset-top)`), termina en
+  692 px y el CTA de envío queda a la vista.
+- **320 × 568:** el `max-height` lo limita a 544 px, se mantiene dentro del viewport y activa el
+  scroll interno (698 px de contenido en 539 px visibles); el CTA se alcanza scrolleando.
+- **Escritorio:** el panel vuelve a `.hero-inner` en el orden correcto (`#registration-home` →
+  fondo → panel), sin `role`, `aria-modal` ni `aria-hidden`, y el fondo queda en `display:none`.
+- **Cierre:** botón, fondo y Escape cierran; el foco vuelve al disparador que abrió el modal y
+  se libera el scroll del body. Los dos disparadores (play y CTA) abren.
+- El fondo cubre el viewport en z-80 bajo el panel en z-90. El HTML queda balanceado, los tres
+  scripts inline compilan, el JSON-LD parsea y la consola no reporta errores.
+
+**Pendiente menor:** a 320 × 568, con el panel scrolleado hasta abajo, el botón de cerrar —que
+es `absolute` dentro del panel— se va de la vista. Se recupera scrolleando hacia arriba, y
+Escape y el fondo siguen cerrando, así que no atrapa a nadie. Si molesta, la corrección es
+hacerlo `sticky`.
 
 ### Estado
 
