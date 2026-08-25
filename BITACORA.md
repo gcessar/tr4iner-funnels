@@ -3811,8 +3811,15 @@ etiquetas de copy). Con la aprobación del usuario, `work/medicos-copy-flor` se 
 `dpl_qtMmmhcv1WcDp9tbjm3xjc7oeC12`, `Ready` el 25-ago-2026 en 17 s, con alias
 `metodo.tr4iner.com`. Verificado en vivo sobre `https://metodo.tr4iner.com/medicos/`: responde
 `200`, el modal abre a 430 × 932 sin ningún ancestro que lo recorte, y los dos rótulos nuevos
-(«Médica general» y «Cómo trabajamos») salen servidos desde producción. La rama sigue viva por
-si hace falta revertir.
+(«Médica general» y «Cómo trabajamos») salen servidos desde producción.
+
+El latido del play quedó en `2be3ac6`, se integró a `main` con el merge `f738fa9` y publicó el
+deployment `dpl_EA3Lj4uT4A63w6kpbBjuXC8XzMfE`, `Ready` el 25-ago-2026 en 7 s. Verificado en
+vivo sobre `https://metodo.tr4iner.com/medicos/` a 430 px: la animación `hero-play-pulse` corre
+en bucle de 2 s sobre `.hero-case-play::after` y el anillo se ve alrededor del botón.
+
+Las dos ramas (`work/medicos-copy-flor` y `work/medicos-play-pulse`) siguen vivas por si hace
+falta revertir.
 
 ---
 
