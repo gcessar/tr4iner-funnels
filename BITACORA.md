@@ -3707,7 +3707,10 @@ CTA. Los scripts inline compilan, JSON-LD parsea y `git diff --check` pasa.
 
 ### Estado
 
-Cambio aislado en `work/medicos-copy-flor`, disponible en local. Producción no se tocó.
+El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Generó el Preview
+`dpl_J8hrG2a7ijDxooJD1UocHR8vuU4Y`, confirmado `Ready` el 25-ago-2026; `/medicos/`
+respondió `200` mediante el acceso autenticado de Vercel. Producción no se tocó y espera
+aprobación visual del usuario.
 
 ---
 
