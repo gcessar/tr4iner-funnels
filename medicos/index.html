@@ -1111,7 +1111,7 @@
       .registration-panel {
         position: fixed;
         z-index: 90;
-        inset: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+        inset: max(12px, env(safe-area-inset-top)) 12px auto;
         width: auto;
         max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
         margin: 0;
@@ -1297,6 +1297,7 @@
           </ul>
         </div>
 
+        <span id="registration-home" hidden></span>
         <button class="registration-modal-backdrop" id="registration-modal-backdrop" type="button" aria-label="Cerrar formulario de registro"></button>
         <aside class="registration-panel" id="registro" aria-labelledby="registration-title">
           <button class="registration-close" id="registration-close" type="button" aria-label="Cerrar formulario"><span aria-hidden="true">×</span></button>
@@ -1478,13 +1479,28 @@
         var media = window.matchMedia("(max-width: 640px)");
         var panel = document.getElementById("registro");
         var backdrop = document.getElementById("registration-modal-backdrop");
+        var home = document.getElementById("registration-home");
         var closeButton = document.getElementById("registration-close");
         var triggers = document.querySelectorAll(".registration-popup-trigger");
         var activeTrigger = null;
-        if (!panel || !backdrop || !closeButton || !triggers.length) return;
+        if (!panel || !backdrop || !home || !closeButton || !triggers.length) return;
+
+        function moveModalToBody() {
+          if (panel.parentNode === document.body) return;
+          document.body.appendChild(backdrop);
+          document.body.appendChild(panel);
+        }
+
+        function restoreModalHome() {
+          if (panel.parentNode !== document.body) return;
+          home.insertAdjacentElement("afterend", backdrop);
+          backdrop.insertAdjacentElement("afterend", panel);
+        }
 
         function setMobileState() {
           if (media.matches) {
+            // Fuera del hero, el overflow cinematográfico ya no puede recortar el modal.
+            moveModalToBody();
             if (!panel.classList.contains("is-open")) panel.setAttribute("aria-hidden", "true");
             return;
           }
@@ -1495,6 +1511,7 @@
           panel.removeAttribute("role");
           panel.removeAttribute("aria-modal");
           panel.removeAttribute("aria-hidden");
+          restoreModalHome();
         }
 
         function openModal(source, trigger) {
