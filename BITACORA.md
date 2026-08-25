@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — El popup del video muestra descripción y recursos editables desde el CMS
 - `2026-08-25` — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
 - `2026-08-25` — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
 - `2026-08-25` — Médicos convierte la landing en la historia concreta de Flor (producción)
@@ -113,6 +114,41 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-25 — El popup del video muestra descripción y recursos editables desde el CMS
+
+### Qué cambió
+
+`/biblioteca/videos/`: el popup del reproductor deja de ser solo video + título. Debajo de la
+barra aparece una ficha con la **descripción** del video y sus **recursos** —enlaces con texto,
+al estilo de Skool—, ambos editables desde `/admin/genesis?tab=content` en el CRM.
+
+- El catálogo (`/api/genesis/catalog`) ahora trae `description`, `resources` y `titleEdited`.
+- **El título del CMS solo manda si alguien lo editó.** Las filas de la base guardan el título
+  de YouTube, que es de captación; la página usa su mapa `EDITORIAL_TITLES`. Con `titleEdited`
+  en false —el estado de todo el catálogo hoy— no cambia ni un título.
+- Los enlaces se filtran otra vez en el navegador (`^https?://`), aunque el backend ya
+  normaliza: la ficha llega por API y no se pinta como `href` sin revisar.
+- El popup pasa a `max-height` con scroll propio (92vh en escritorio, 88vh en móvil): con
+  ficha larga antes se habría salido de la pantalla.
+
+### Por qué
+
+Es lo que abre la puerta a mover el test de macros adentro de la ruta —como recurso de los
+videos que lo ameriten— en vez de cobrarlo como peaje al confirmar el registro (ver la entrada
+de hoy sobre `/verificar/`).
+
+### Resultado esperado
+
+Que un video pueda cerrar con un paso concreto en vez de terminar en el vacío. El KPI es el
+clic en recurso sobre reproducciones, cuando se declare el evento.
+
+### Resultado medido (completar después)
+
+Pendiente. Hoy **no se emite ningún evento** al hacer clic en un recurso: agregar uno sin
+declararlo en n8n repetiría el incidente de eventos no declarados del 25-ago.
 
 ---
 
