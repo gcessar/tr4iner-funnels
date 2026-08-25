@@ -3771,6 +3771,29 @@ es `absolute` dentro del panel— se va de la vista. Se recupera scrolleando hac
 Escape y el fondo siguen cerrando, así que no atrapa a nadie. Si molesta, la corrección es
 hacerlo `sticky`.
 
+### Quinta pasada: el play falso late
+
+El botón de play sobre el antes/después era estático y no pedía el click. Ahora tiene el
+mismo anillo que late hacia afuera que usa el reproductor: nace en el borde del botón, crece
+25 px y se desvanece en ciclos de 2 s.
+
+Va como `box-shadow` animado sobre `::after` —`::before` ya dibuja el triángulo— y al ser
+sombra exterior nunca pisa la cara amarilla ni tapa el triángulo. El tamaño queda
+parametrizado en `--play-pulse-size: 25px`, espejando el `--vid-pulse-size: 24.96px` de la
+referencia. El amarillo va literal en los keyframes porque `currentColor` en el botón es la
+tinta del triángulo, no el amarillo; se usó `--yellow` (#F5C518), el del botón, y no el
+`rgb(255, 184, 0)` del snippet original, que al lado se leía como un amarillo distinto.
+
+Con `prefers-reduced-motion: reduce` el latido se apaga.
+
+**Alcance:** el play falso solo existe en móvil (`.hero-case-visual` es `display:none` en el
+CSS base y solo aparece bajo 640 px), así que el latido se ve únicamente ahí.
+
+Medido: la curva va de 0 a 25 px de spread con la opacidad de 0.55 a 0; el layout no se mueve
+y la figura no gana scroll propio; el botón conserva sus 68 px de área clickeable y sigue
+abriendo y cerrando el modal. HTML balanceado, CSS con las llaves parejas, JS y JSON-LD sin
+errores.
+
 ### Estado
 
 El commit funcional `4063f97` quedó aislado en `work/medicos-copy-flor`. Generó el Preview
