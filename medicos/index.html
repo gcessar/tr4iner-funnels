@@ -363,8 +363,8 @@
       z-index: 4;
       display: grid;
       min-height: max(100svh, 800px);
-      grid-template-columns: minmax(0, 1fr) minmax(72px, 100px) minmax(390px, 420px);
-      grid-template-areas: "copy clock form";
+      grid-template-columns: minmax(0, 1fr) minmax(390px, 420px);
+      grid-template-areas: "copy form";
       align-items: center;
       align-content: center;
       column-gap: clamp(22px, 2.5vw, 34px);
@@ -379,8 +379,7 @@
 
     .eyebrow,
     .panel-kicker,
-    .method-kicker,
-    .case-meta {
+    .method-kicker {
       margin: 0;
       font-family: var(--mono);
       font-size: 10px;
@@ -420,6 +419,9 @@
       font-weight: 700;
     }
 
+    .hero-case-visual,
+    .hero-registration-button { display: none; }
+
     .service-line {
       display: flex;
       flex-wrap: wrap;
@@ -449,70 +451,6 @@
       content: "";
     }
 
-    .hero-clock {
-      position: relative;
-      display: grid;
-      width: 100%;
-      height: 520px;
-      grid-area: clock;
-      align-self: center;
-      align-content: space-between;
-      justify-self: end;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .hero-clock::before {
-      position: absolute;
-      top: 12px;
-      bottom: 12px;
-      left: 8px;
-      width: 1px;
-      background: rgba(243, 244, 238, 0.38);
-      content: "";
-    }
-
-    .hero-clock li {
-      position: relative;
-      display: grid;
-      grid-template-columns: 18px 1fr;
-      align-items: start;
-      gap: 17px;
-      color: rgba(243, 244, 238, 0.58);
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      line-height: 1.45;
-      text-transform: uppercase;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .hero-clock li::before {
-      position: relative;
-      z-index: 1;
-      width: 17px;
-      height: 17px;
-      border: 2px solid currentColor;
-      border-radius: 50%;
-      background: var(--night);
-      content: "";
-    }
-
-    .hero-clock li.is-active { color: var(--yellow); }
-
-    .hero-clock li.is-active::before {
-      border: 4px solid var(--night);
-      background: var(--yellow);
-      box-shadow: 0 0 0 2px var(--yellow);
-    }
-
-    .hero-clock span,
-    .hero-clock strong { display: block; }
-
-    .hero-clock strong { color: inherit; font-weight: 600; }
-
     .registration-panel {
       position: relative;
       grid-area: form;
@@ -535,6 +473,9 @@
       font-weight: 600;
       letter-spacing: 0.1em;
     }
+
+    .registration-close,
+    .registration-modal-backdrop { display: none; }
 
     .panel-head {
       display: grid;
@@ -936,8 +877,6 @@
 
     .case-visual-labels span:last-child { text-align: right; }
 
-    .case-meta { color: rgba(243, 244, 238, 0.62); }
-
     .case-person {
       margin: 14px 0 0;
       font-size: 19px;
@@ -995,32 +934,16 @@
     .footer-links a { text-underline-offset: 4px; }
     .footer-links a:hover { color: var(--clinical); }
 
-    .mobile-registration-cta { display: none; }
-
-    html[data-motion="gsap"] .hero-media,
-    html[data-motion="gsap"] .hero-clock { will-change: transform; }
+    html[data-motion="gsap"] .hero-media { will-change: transform; }
 
     @media (max-width: 1120px) {
       .hero,
       .hero-inner { min-height: max(100svh, 800px); }
 
       .hero-inner {
-        grid-template-columns: minmax(0, 1fr) 32px minmax(360px, 390px);
-        column-gap: 20px;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 390px);
+        column-gap: 28px;
       }
-
-      .hero-clock {
-        width: 32px;
-        height: 500px;
-      }
-
-      .hero-clock li {
-        grid-template-columns: 18px;
-        gap: 0;
-        font-size: 0;
-      }
-
-      .hero-clock li div { display: none; }
     }
 
     @media (max-width: 820px) {
@@ -1045,8 +968,7 @@
         grid-template-columns: minmax(0, 1fr);
         grid-template-areas:
           "copy"
-          "form"
-          "clock";
+          "form";
         gap: 26px;
         padding-top: calc(40px + env(safe-area-inset-top));
         padding-bottom: 64px;
@@ -1056,36 +978,6 @@
       .hero-copy h1 { max-width: 640px; font-size: clamp(46px, 9vw, 68px); }
       .hero-copy .lead { max-width: 620px; }
 
-      .hero-clock {
-        display: grid;
-        width: 100%;
-        height: auto;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        align-items: start;
-        gap: 0;
-        justify-self: stretch;
-      }
-
-      .hero-clock::before {
-        top: 8px;
-        right: 8px;
-        bottom: auto;
-        left: 8px;
-        width: auto;
-        height: 1px;
-      }
-
-      .hero-clock li {
-        display: grid;
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 8px;
-        font-size: 9px;
-        text-align: center;
-      }
-
-      .hero-clock li::before { background: var(--night); }
-      .hero-clock li div { display: block; }
       .registration-panel { width: min(100%, 700px); }
       .panel-head { grid-template-columns: 1fr 1fr; }
       .method-inner { grid-template-columns: 1fr; }
@@ -1111,29 +1003,157 @@
         line-height: 0.94;
       }
 
+      .hero-case-visual {
+        position: relative;
+        display: block;
+        margin: 24px 0 0;
+        border-top: 4px solid var(--yellow);
+        background: var(--night-soft);
+        overflow: hidden;
+      }
+
+      .hero-case-visual img {
+        width: 100%;
+        height: auto;
+      }
+
+      .hero-case-play {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        left: 50%;
+        display: grid;
+        width: 68px;
+        height: 68px;
+        place-items: center;
+        border: 2px solid var(--clinical);
+        border-radius: 50%;
+        padding: 0;
+        background: var(--yellow);
+        color: var(--night);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+        transition: background-color 180ms ease, transform 180ms ease;
+      }
+
+      .hero-case-play::before {
+        width: 0;
+        height: 0;
+        margin-left: 5px;
+        border-top: 11px solid transparent;
+        border-bottom: 11px solid transparent;
+        border-left: 17px solid currentColor;
+        content: "";
+      }
+
+      .hero-case-play:hover { background: var(--yellow-bright); }
+      .hero-case-play:active { transform: translate(-50%, -50%) scale(0.96); }
+
       .hero-copy .lead {
         margin-top: 20px;
         font-size: 16px;
         line-height: 1.5;
       }
 
-      .service-line {
-        display: flex;
-        gap: 7px 12px;
-        margin-top: 18px;
+      .hero-registration-button {
+        display: inline-flex;
+        width: 100%;
+        min-height: 54px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 22px;
+        border: 1px solid var(--yellow);
+        padding: 13px 16px;
+        background: var(--yellow);
+        color: var(--night);
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-align: left;
+        text-transform: uppercase;
+        cursor: pointer;
       }
 
-      .hero-clock li { font-size: 0; }
-      .hero-clock li strong { font-size: 8px; }
-      .hero-clock li span { display: none; }
+      .hero-registration-button::after {
+        content: "→";
+        font-family: var(--sans);
+        font-size: 20px;
+        font-weight: 400;
+      }
+
+      .hero-registration-button:hover { background: var(--yellow-bright); }
+      .service-line { display: none; }
+
+      body.registration-modal-open { overflow: hidden; }
+
+      .registration-modal-backdrop {
+        position: fixed;
+        z-index: 80;
+        inset: 0;
+        display: block;
+        border: 0;
+        padding: 0;
+        background: rgba(5, 10, 13, 0.8);
+        opacity: 0;
+        visibility: hidden;
+        cursor: pointer;
+        transition: opacity 200ms ease, visibility 200ms ease;
+      }
+
+      .registration-modal-backdrop.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
 
       .registration-panel {
-        width: calc(100% + 8px);
-        margin-left: -4px;
+        position: fixed;
+        z-index: 90;
+        inset: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+        width: auto;
+        max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        margin: 0;
         padding: 25px 20px 22px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(18px) scale(0.985);
+        transition: opacity 200ms ease, transform 200ms ease, visibility 200ms ease;
       }
 
-      .registration-panel::after { top: 12px; right: 12px; }
+      .registration-panel.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+      }
+
+      .registration-panel::after { display: none; }
+
+      .registration-close {
+        position: absolute;
+        z-index: 2;
+        top: 10px;
+        right: 10px;
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border: 1px solid rgba(11, 18, 23, 0.24);
+        padding: 0;
+        background: transparent;
+        color: var(--night);
+        font-family: var(--sans);
+        font-size: 27px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .registration-close:hover { background: rgba(35, 70, 74, 0.08); }
 
       .panel-head {
         grid-template-columns: 1fr;
@@ -1182,7 +1202,7 @@
         gap: 38px;
       }
 
-      .case-visual { max-width: none; margin-top: 20px; }
+      .case-visual { display: none; }
 
       .case-quote { font-size: clamp(31px, 9vw, 42px); }
 
@@ -1195,68 +1215,6 @@
 
       .hero-video { display: none; }
       .hero-video-toggle { display: none !important; }
-
-      body { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
-
-      .mobile-registration-cta {
-        position: fixed;
-        z-index: 40;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 14px;
-        min-height: 78px;
-        border-top: 1px solid rgba(243, 244, 238, 0.2);
-        padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-        background: rgba(11, 18, 23, 0.97);
-        color: var(--clinical);
-        transform: translateY(0);
-        transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
-      }
-
-      .mobile-registration-cta.is-hidden {
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(100%);
-      }
-
-      .mobile-registration-cta p {
-        margin: 0;
-        font-family: var(--mono);
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        line-height: 1.45;
-        text-transform: uppercase;
-      }
-
-      .mobile-registration-cta p span {
-        display: block;
-        color: rgba(243, 244, 238, 0.62);
-      }
-
-      .mobile-registration-cta a {
-        display: inline-flex;
-        min-height: 52px;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--yellow);
-        padding: 12px 15px;
-        background: var(--yellow);
-        color: var(--night);
-        font-family: var(--mono);
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 0.07em;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-
-      .mobile-registration-cta a:hover { background: var(--yellow-bright); }
-      .mobile-registration-cta a:active { transform: translateY(1px); }
     }
 
     @media (max-width: 374px) {
@@ -1275,7 +1233,6 @@
       }
 
       .hero-media { top: 0; height: 100%; transform: none !important; }
-      .hero-clock { transform: none !important; }
       .submit-button[aria-busy="true"]::after { animation: none; }
     }
   </style>
@@ -1319,7 +1276,19 @@
         <div class="hero-copy">
           <p class="eyebrow">Flor de María · Médica general</p>
           <h1 id="hero-title">Mira cómo Flor pasó de 78 kg y 34% de grasa corporal a 56 kg y 20% en 12 meses.</h1>
+
+          <figure class="hero-case-visual">
+            <picture>
+              <source srcset="/assets/medicos/flor-medica-480.webp 480w, /assets/medicos/flor-medica.webp 838w" sizes="calc(100vw - 40px)" type="image/webp" />
+              <img src="/assets/medicos/flor-medica-480.webp" width="480" height="466" fetchpriority="high" decoding="async" alt="Antes y después de Flor de María durante su proceso con TR4INER" />
+            </picture>
+            <figcaption class="case-visual-labels"><span>Antes</span><span>12 meses</span></figcaption>
+            <button class="hero-case-play registration-popup-trigger" type="button" data-popup-source="play" aria-label="Abrir el registro para ver el caso de Flor" aria-haspopup="dialog" aria-controls="registro"></button>
+          </figure>
+
           <p class="lead">Flor hacía ejercicio, intentaba comer bien y llegó a hacer hasta 3–4 horas de cardio. El trabajo, los estudios y el hospital, le costaba mantener todo ese esfuerzo y terminaba volviendo al mismo punto. <strong>Mira qué estaba frenando sus resultados y cómo ajustamos su alimentación, entrenamiento y planificación para transformar su físico.</strong></p>
+
+          <button class="hero-registration-button registration-popup-trigger" type="button" data-popup-source="cta" aria-haspopup="dialog" aria-controls="registro">Ver el caso completo de Flor</button>
 
           <ul class="service-line" aria-label="Componentes de la asesoría">
             <li>Entrenamiento</li>
@@ -1328,15 +1297,9 @@
           </ul>
         </div>
 
-        <ol class="hero-clock" aria-hidden="true">
-          <li class="is-active"><div><strong>06:30</strong><span>Tú</span></div></li>
-          <li><div><strong>08:00</strong><span>Pacientes</span></div></li>
-          <li><div><strong>14:00</strong><span>Comida</span></div></li>
-          <li><div><strong>20:30</strong><span>Entrenar</span></div></li>
-          <li><div><strong>23:00</strong><span>Ajustar</span></div></li>
-        </ol>
-
+        <button class="registration-modal-backdrop" id="registration-modal-backdrop" type="button" aria-label="Cerrar formulario de registro"></button>
         <aside class="registration-panel" id="registro" aria-labelledby="registration-title">
+          <button class="registration-close" id="registration-close" type="button" aria-label="Cerrar formulario"><span aria-hidden="true">×</span></button>
           <div class="panel-head">
             <div>
               <p class="panel-kicker">Caso real · Médica general</p>
@@ -1345,7 +1308,7 @@
             <p class="panel-copy">Vas a ver qué comía, cómo entrenaba, qué estaba frenando sus resultados y los cambios que fuimos haciendo mientras avanzaba.</p>
           </div>
 
-          <form class="registration-form" id="medicos-form" novalidate>
+          <form class="registration-form" id="medicos-form" autocomplete="on" novalidate>
             <div class="honeypot" aria-hidden="true" inert>
               <label for="website">Deja este campo vacío</label>
               <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" />
@@ -1354,13 +1317,13 @@
             <div class="form-grid">
               <div class="field" id="field-nombre">
                 <label class="field-label" for="nombre">Nombre</label>
-                <input class="text-input" type="text" id="nombre" name="nombre" autocomplete="name" placeholder="Tu nombre…" aria-describedby="error-nombre" />
+                <input class="text-input" type="text" id="nombre" name="nombre" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder="Tu nombre…" aria-describedby="error-nombre" />
                 <p class="field-error" id="error-nombre" role="alert">Ingresa tu nombre.</p>
               </div>
 
               <div class="field" id="field-email">
                 <label class="field-label" for="email">Correo electrónico</label>
-                <input class="text-input" type="email" id="email" name="email" autocomplete="email" inputmode="email" spellcheck="false" placeholder="ana@correo.com…" aria-describedby="error-email" />
+                <input class="text-input" type="email" id="email" name="email" autocomplete="email" autocapitalize="none" enterkeyhint="next" inputmode="email" spellcheck="false" placeholder="ana@correo.com…" aria-describedby="error-email" />
                 <p class="field-error" id="error-email" role="alert">Ingresa un correo válido.</p>
               </div>
             </div>
@@ -1433,7 +1396,6 @@
     <section class="case-proof" aria-label="Testimonio de Flor de María">
       <div class="container case-proof-inner">
         <div class="case-profile">
-          <p class="case-meta">FLOR DE MARÍA · MÉDICA GENERAL</p>
           <p class="case-person">Flor de María</p>
           <p class="case-result">Médica general</p>
           <figure class="case-visual">
@@ -1458,11 +1420,6 @@
       </nav>
     </div>
   </footer>
-
-  <aside class="mobile-registration-cta" id="mobile-registration-cta" aria-label="Acceso al caso de Flor">
-    <p>Caso real<span>Acceso inmediato</span></p>
-    <a href="#registro" id="mobile-registration-link">Ver el caso</a>
-  </aside>
 
   <script src="/attribution.js"></script>
   <script>
@@ -1517,23 +1474,88 @@
 
       setupHeroVideo();
 
-      (function setupMobileRegistrationCta() {
-        var stickyCta = document.getElementById("mobile-registration-cta");
-        var stickyLink = document.getElementById("mobile-registration-link");
-        var submitButton = document.getElementById("submit-button");
-        if (!stickyCta || !stickyLink || !submitButton) return;
+      (function setupMobileRegistrationModal() {
+        var media = window.matchMedia("(max-width: 640px)");
+        var panel = document.getElementById("registro");
+        var backdrop = document.getElementById("registration-modal-backdrop");
+        var closeButton = document.getElementById("registration-close");
+        var triggers = document.querySelectorAll(".registration-popup-trigger");
+        var activeTrigger = null;
+        if (!panel || !backdrop || !closeButton || !triggers.length) return;
 
-        stickyLink.addEventListener("click", function () {
-          pushEvent("medicos_mobile_sticky_click", { funnel_name: "medicos" });
+        function setMobileState() {
+          if (media.matches) {
+            if (!panel.classList.contains("is-open")) panel.setAttribute("aria-hidden", "true");
+            return;
+          }
+
+          document.body.classList.remove("registration-modal-open");
+          panel.classList.remove("is-open");
+          backdrop.classList.remove("is-open");
+          panel.removeAttribute("role");
+          panel.removeAttribute("aria-modal");
+          panel.removeAttribute("aria-hidden");
+        }
+
+        function openModal(source, trigger) {
+          if (!media.matches) return;
+          activeTrigger = trigger;
+          document.body.classList.add("registration-modal-open");
+          panel.classList.add("is-open");
+          backdrop.classList.add("is-open");
+          panel.setAttribute("role", "dialog");
+          panel.setAttribute("aria-modal", "true");
+          panel.removeAttribute("aria-hidden");
+          pushEvent("medicos_registration_modal_open", {
+            funnel_name: "medicos",
+            source: source
+          });
+          window.setTimeout(function () { closeButton.focus(); }, 150);
+        }
+
+        function closeModal() {
+          if (!media.matches || !panel.classList.contains("is-open")) return;
+          document.body.classList.remove("registration-modal-open");
+          panel.classList.remove("is-open");
+          backdrop.classList.remove("is-open");
+          panel.setAttribute("aria-hidden", "true");
+          panel.removeAttribute("role");
+          panel.removeAttribute("aria-modal");
+          if (activeTrigger) activeTrigger.focus();
+        }
+
+        Array.prototype.forEach.call(triggers, function (trigger) {
+          trigger.addEventListener("click", function () {
+            openModal(trigger.getAttribute("data-popup-source") || "unknown", trigger);
+          });
         });
 
-        var observer = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            stickyCta.classList.toggle("is-hidden", entry.isIntersecting);
-          });
-        }, { threshold: 0.35 });
+        backdrop.addEventListener("click", closeModal);
+        closeButton.addEventListener("click", closeModal);
 
-        observer.observe(submitButton);
+        panel.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeModal();
+            return;
+          }
+          if (event.key !== "Tab") return;
+
+          var focusable = panel.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]');
+          if (!focusable.length) return;
+          var first = focusable[0];
+          var last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        });
+
+        if (media.addEventListener) media.addEventListener("change", setMobileState);
+        else media.addListener(setMobileState);
+        setMobileState();
       })();
 
       (function setupRegistration() {
@@ -1783,7 +1805,6 @@
           var ScrollTrigger = window.ScrollTrigger;
           var hero = document.querySelector(".hero");
           var heroMedia = document.querySelector(".hero-media");
-          var heroClock = document.querySelector(".hero-clock");
           if (!hero || !heroMedia) return;
 
           gsap.registerPlugin(ScrollTrigger);
@@ -1801,19 +1822,6 @@
                 scrub: 0.65
               }
             });
-
-            if (heroClock) {
-              gsap.to(heroClock, {
-                yPercent: -12,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: hero,
-                  start: "top top",
-                  end: "bottom top",
-                  scrub: 0.8
-                }
-              });
-            }
           });
 
           media.add("(max-width: 820px)", function () {
