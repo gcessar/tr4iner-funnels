@@ -3780,7 +3780,16 @@ aprobación visual del usuario. La iteración de prueba visual y CRO móvil qued
 `f32ade1`. El deployment `dpl_FNrCwtU6MoZ2m9o3TswszMHFaCHj` quedó `Ready` el 25-ago-2026
 y actualizó el alias de la rama. La tercera pasada de registro modal quedó en `63e302b`; el
 deployment `dpl_AAaECBDK5w5o1PgW7N5x5htSH4da` quedó `Ready` el 25-ago-2026 y actualizó el
-alias de la rama. Producción continúa intacta.
+alias de la rama.
+
+La cuarta pasada quedó en `d5b5e0a` (el modal sale del hero), `83b1a64` y `3265e7d` (las dos
+etiquetas de copy). Con la aprobación del usuario, `work/medicos-copy-flor` se integró en
+`main` mediante el merge `af35fb4`, y el push publicó **producción**: deployment
+`dpl_qtMmmhcv1WcDp9tbjm3xjc7oeC12`, `Ready` el 25-ago-2026 en 17 s, con alias
+`metodo.tr4iner.com`. Verificado en vivo sobre `https://metodo.tr4iner.com/medicos/`: responde
+`200`, el modal abre a 430 × 932 sin ningún ancestro que lo recorte, y los dos rótulos nuevos
+(«Médica general» y «Cómo trabajamos») salen servidos desde producción. La rama sigue viva por
+si hace falta revertir.
 
 ---
 
