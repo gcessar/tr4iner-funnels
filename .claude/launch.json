@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4599"],
       "port": 4599
+    },
+    {
+      "name": "ruta",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4601"],
+      "port": 4601
     }
   ]
 }
