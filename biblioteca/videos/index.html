@@ -688,6 +688,8 @@
     /* ── Reproductor ── */
     dialog.player {
       width: min(92vw, 920px);
+      max-height: 92vh;
+      overflow-y: auto;
       margin: auto;
       border: none;
       border-radius: 14px;
@@ -748,6 +750,50 @@
       transition: background 0.16s ease, border-color 0.16s ease;
     }
     .player-close:hover { background: rgba(244, 239, 230, 0.12); border-color: rgba(244, 239, 230, 0.5); }
+    .player-sheet {
+      padding: 16px 18px 18px;
+      border-top: 1px solid rgba(244, 239, 230, 0.14);
+    }
+    .player-sheet[hidden] { display: none !important; }
+    .player-desc {
+      margin: 0;
+      color: rgba(244, 239, 230, 0.72);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .player-desc[hidden], .player-resources[hidden] { display: none !important; }
+    .player-desc + .player-resources { margin-top: 16px; }
+    .player-resources-code {
+      margin: 0 0 8px;
+      color: rgba(244, 239, 230, 0.42);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .player-resources ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .player-resources li + li { margin-top: 6px; }
+    .player-resources a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 13px;
+      border: 1px solid rgba(244, 239, 230, 0.18);
+      border-radius: 8px;
+      color: var(--paper);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+    .player-resources a:hover { background: rgba(244, 239, 230, 0.08); border-color: rgba(244, 239, 230, 0.42); }
+    .player-resources a i { font-style: normal; color: var(--mark); }
     .player-close svg { width: 13px; height: 13px; }
 
     /* ── Enfoque móvil + expediente bajo demanda ── */
@@ -1606,10 +1652,12 @@
         inset: 50% auto auto 50%;
         width: min(calc(100% - 24px), 520px);
         max-width: none;
+        max-height: 88vh;
         margin: 0;
         transform: translate(-50%, -50%);
         border-radius: 12px;
       }
+      .player-sheet { padding: 14px 14px 16px; }
       .player-bar { padding: 12px 14px; }
       .conversion-bridge { grid-template-columns: 1fr; min-height: 0; margin-top: 54px; }
       .bridge-case { height: 126px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
@@ -2038,6 +2086,13 @@
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
       </button>
     </div>
+    <div class="player-sheet" id="player-sheet" hidden>
+      <p class="player-desc" id="player-desc" hidden></p>
+      <div class="player-resources" id="player-resources" hidden>
+        <p class="player-resources-code">RECURSOS DE ESTA ORIENTACIÓN</p>
+        <ul id="player-resources-list"></ul>
+      </div>
+    </div>
   </dialog>
 
   <dialog class="profile-dialog" id="profile-dialog" aria-labelledby="profile-dialog-title">
@@ -2217,7 +2272,13 @@
                     id: content.youtubeId,
                     bloque: module.slug,
                     sexo: content.audience === 'WOMEN' ? 'mujer' : (content.audience === 'MEN' ? 'hombre' : 'all'),
-                    title: EDITORIAL_TITLES[content.youtubeId] || content.title,
+                    // Los titulos de la base son los de YouTube, de captacion.
+                    // Solo mandan cuando alguien los edito desde el CMS.
+                    title: content.titleEdited
+                      ? content.title
+                      : (EDITORIAL_TITLES[content.youtubeId] || content.title),
+                    description: content.description || '',
+                    resources: Array.isArray(content.resources) ? content.resources : [],
                     intentLevel: content.intentLevel
                   });
                 });
@@ -2773,12 +2834,38 @@
           '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
       }
 
+      // Ficha del video: descripcion y recursos que se editan desde el CMS.
+      function renderPlayerSheet(v) {
+        var sheet = document.getElementById('player-sheet');
+        var desc = document.getElementById('player-desc');
+        var box = document.getElementById('player-resources');
+        var list = document.getElementById('player-resources-list');
+        var texto = (v.description || '').trim();
+        desc.textContent = texto;
+        desc.hidden = !texto;
+        var recursos = (v.resources || []).filter(function (r) {
+          return r && typeof r.url === 'string' && /^https?:\/\//i.test(r.url);
+        });
+        list.innerHTML = '';
+        recursos.forEach(function (r) {
+          var item = document.createElement('li');
+          item.innerHTML =
+            '<a href="' + escapeHtml(r.url) + '" target="_blank" rel="noopener noreferrer">' +
+            '<span>' + escapeHtml(r.label || 'Abrir recurso') + '</span>' +
+            '<i aria-hidden="true">→</i></a>';
+          list.appendChild(item);
+        });
+        box.hidden = recursos.length === 0;
+        sheet.hidden = !texto && recursos.length === 0;
+      }
+
       function openPlayer(v, b) {
         var myOpen = ++openId;
         playerLastFocus = document.activeElement;
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
+        renderPlayerSheet(v);
         playerFrame.innerHTML = '<div id="yt-target"></div>';
         document.body.classList.add('mobile-video-playing');
         player.showModal();
