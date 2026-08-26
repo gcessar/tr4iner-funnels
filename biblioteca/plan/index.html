@@ -160,13 +160,6 @@
       transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
     }
     .is-in .mk::before, .mk.is-in::before { transform: rotate(-0.7deg) scaleX(1); }
-    .head .dek {
-      max-width: 720px;
-      margin: 0;
-      color: var(--ink-soft);
-      font-size: 17px;
-      text-wrap: pretty;
-    }
 
     /* ── Progreso ── */
     .progress {
@@ -321,6 +314,24 @@
     .opt-card.selected .tick { border-color: var(--ink); background: var(--mark); }
     .opt-card.selected .tick svg { opacity: 1; }
     .opt-card .opt-body { min-width: 0; }
+    /* Variante con simbolo: el icono ancla la lectura y el tick pasa al final. */
+    .opts-icon .opt-card { padding: 15px; gap: 14px; }
+    .opts-icon .opt-body { flex: 1 1 auto; }
+    .opts-icon .tick { margin-left: auto; }
+    .opt-icon {
+      width: 38px;
+      height: 38px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      background: var(--paper-deep);
+      color: var(--ink-soft);
+      transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+    .opt-icon svg { width: 18px; height: 18px; }
+    .opt-card.selected .opt-icon { border-color: var(--ink); background: var(--mark); color: var(--ink); }
     .opt-card .opt-title { display: block; font-weight: 600; letter-spacing: -0.005em; }
     .opt-card .opt-desc { display: block; margin-top: 1px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
@@ -383,6 +394,15 @@
       margin-bottom: 6px;
     }
     .field-head > label { margin-bottom: 0; }
+    /* Los tres campos arrancan a la misma altura: la etiqueta de Edad no lleva
+       selector de unidad y sin esto quedaba desalineada de Altura y Peso. */
+    .num-grid .field > label,
+    .num-grid .field-head {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
     .unit-toggle {
       display: inline-grid;
       grid-auto-flow: column;
@@ -469,9 +489,7 @@
       grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
       align-items: center;
       gap: 20px;
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px dashed var(--rule);
+      margin-top: 4px;
     }
     .grasa-visual {
       position: relative;
@@ -511,7 +529,7 @@
     .grasa-range {
       width: 100%;
       height: 44px;
-      margin: 14px 0 2px;
+      margin: 0 0 2px;
       accent-color: var(--mark);
       cursor: pointer;
     }
@@ -519,11 +537,32 @@
     .grasa-scale {
       display: flex;
       justify-content: space-between;
+      margin: 12px 2px 0;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10px;
       font-weight: 500;
       letter-spacing: 0.08em;
+    }
+
+    .route-next {
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+    }
+    .route-next h2 {
+      margin: 6px 0 6px;
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+    .route-next p:last-child { color: var(--muted); font-size: 15px; line-height: 1.5; }
+
+    /* Confeti del resultado: lienzo propio, encima de todo y sin capturar clics. */
+    #confeti {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      pointer-events: none;
     }
 
     /* Navegación del wizard */
@@ -756,7 +795,6 @@
       }
       .progress-track { height: 3px; }
       h1 { font-size: clamp(30px, 9vw, 40px); line-height: 1.06; }
-      .head .dek { font-size: 16px; }
       .ficha {
         padding: 76px 20px 28px;
         border-radius: 0;
@@ -848,7 +886,6 @@
       box-decoration-break: clone;
     }
     .mk::before { display: none; }
-    .head .dek { font-size: 17px; }
     .progress { min-width: 0; margin: 0; font-size: 9px; letter-spacing: 0.09em; }
     .progress-track { height: 5px; border: 0; }
     .ficha { padding: 34px 32px; border-color: var(--rule-strong); border-radius: 10px; box-shadow: none; }
@@ -881,7 +918,6 @@
       .head { margin-bottom: 28px; }
       .head .eyebrow { display: none; }
       h1 { font-size: clamp(36px, 10.5vw, 43px); }
-      .head .dek { font-size: 16px; }
       .ficha { padding: 4px 0 0; border: 0; border-radius: 0; }
       .q { font-size: 27px; }
       .signal-step .q { font-size: 29px; }
@@ -919,13 +955,9 @@
       </div>
     </div>
 
-    <header class="head">
+    <header class="head" id="head">
       <p class="eyebrow" id="hero-eyebrow">Tu expediente privado</p>
-      <h1 id="headline">Diseñemos <span class="mk">tu punto de partida</span><span id="saludo"></span>.</h1>
-      <p class="dek">
-        Reúne tu objetivo, tus números y la señal que hoy merece más atención.
-        Solo te tomará unos minutos.
-      </p>
+      <h1 id="headline">Vamos a personalizar <span class="mk">tus macros y calorías</span><span id="saludo"></span>.</h1>
     </header>
 
     <section class="ficha" id="ficha" data-tab="PERFIL INICIAL · 01" aria-live="polite">
@@ -954,30 +986,31 @@
 
       <!-- Paso 1: objetivo -->
       <div class="step" data-step="objetivo">
-        <p class="q-label">Tu objetivo</p>
         <h2 class="q">¿Qué cambio quieres priorizar?</h2>
-        <p class="q-hint">Esto ajusta la referencia de energía y macronutrientes.</p>
-        <div class="opts" role="group" aria-label="Objetivo">
-          <button type="button" class="opt-card" data-value="PG">
-            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
-            <span class="opt-body">
-              <span class="opt-title">Reducir grasa corporal</span>
-              <span class="opt-desc">Crear una tendencia gradual mientras conservas masa muscular.</span>
-            </span>
-          </button>
+        <div class="opts opts-icon" role="group" aria-label="Objetivo">
           <button type="button" class="opt-card" data-value="MM">
-            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 1.5 3 9h3.5L7.5 14.5 13 7H9.5z"/></svg></span>
             <span class="opt-body">
-              <span class="opt-title">Desarrollar masa muscular</span>
-              <span class="opt-desc">Dar a tu cuerpo energía y estímulo para construir fuerza y tejido.</span>
+              <span class="opt-title">Ganar músculo</span>
+              <span class="opt-desc">Gana tejido muscular mientras controlas tus niveles de grasa.</span>
             </span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
           </button>
           <button type="button" class="opt-card" data-value="MA">
-            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+            <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9M2.5 8a5.5 5.5 0 0 1 9.4-3.9"/><path d="M2.5 12.5V9h3.5M13.5 3.5V7H10"/></svg></span>
             <span class="opt-body">
-              <span class="opt-title">Mejorar mi composición corporal</span>
-              <span class="opt-desc">Reducir grasa mientras mantienes o mejoras tu masa muscular.</span>
+              <span class="opt-title">Recomposición corporal</span>
+              <span class="opt-desc">Reduce grasa corporal mientras mantienes o mejoras tu masa muscular.</span>
             </span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
+          </button>
+          <button type="button" class="opt-card" data-value="PG">
+            <span class="opt-icon" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5s3.5 3 3.5 6a3.5 3.5 0 1 1-7 0c0-1.2.6-2.3 1.2-3 .2 1 .8 1.6 1.4 1.6.9 0 1.2-1 .9-4.6z"/></svg></span>
+            <span class="opt-body">
+              <span class="opt-title">Perder grasa</span>
+              <span class="opt-desc">Pierde grasa más rápido a la vez que mantienes o aumentas músculo.</span>
+            </span>
+            <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
           </button>
         </div>
         <div class="wiz-nav">
@@ -1010,7 +1043,7 @@
           </button>
         </div>
         <div class="privacy-note">
-          <strong>Esta respuesta orienta tu ruta; no es una evaluación médica.</strong>
+          <strong>Esto no es una evaluación médica.</strong>
           <span>Se guarda en tu perfil privado y no se envía en URLs ni a plataformas publicitarias.</span>
         </div>
       </div>
@@ -1058,19 +1091,7 @@
             <input class="control" id="peso" name="peso" type="number" inputmode="decimal" autocomplete="off" min="35" max="200" step="0.1" placeholder="72" aria-label="Peso en kilogramos" />
           </div>
         </div>
-        <div class="grasa-selector" id="grasa-selector">
-          <div class="grasa-visual" id="grasa-visual" role="img" aria-label="Referencia visual del porcentaje de grasa seleccionado">
-            <output class="grasa-value" id="grasa-value" for="grasa">Elige</output>
-          </div>
-          <div class="grasa-control">
-            <label for="grasa">¿Con qué porcentaje te identificas?</label>
-            <p>Mueve el control y compárate con la referencia. Este dato permite estimar tu masa libre de grasa.</p>
-            <input class="grasa-range" id="grasa" name="grasa" type="range" step="1" autocomplete="off" aria-describedby="grasa-note" />
-            <div class="grasa-scale"><span id="grasa-min"></span><span id="grasa-max"></span></div>
-            <p id="grasa-note">Es una estimación visual, no una medición clínica.</p>
-          </div>
-        </div>
-        <p class="err" id="err-datos">Revisa edad, altura y peso, y mueve el control para elegir tu porcentaje de grasa.</p>
+        <p class="err" id="err-datos">Revisa edad, altura y peso.</p>
         <div class="wiz-nav">
           <button type="button" class="wiz-back">← Atrás</button>
           <button type="button" class="wiz-next" id="datos-next">
@@ -1080,7 +1101,31 @@
         </div>
       </div>
 
-      <!-- Paso 4: actividad -->
+      <!-- Paso 4: porcentaje de grasa (paso propio: junto a los numeros obligaba a hacer scroll) -->
+      <div class="step" data-step="grasa">
+        <h2 class="q">¿Con qué porcentaje te identificas?</h2>
+        <div class="grasa-selector" id="grasa-selector">
+          <div class="grasa-visual" id="grasa-visual" role="img" aria-label="Referencia visual del porcentaje de grasa seleccionado">
+            <output class="grasa-value" id="grasa-value" for="grasa">Elige</output>
+          </div>
+          <div class="grasa-control">
+            <p>Mueve el control y compárate con la referencia. Este dato permite estimar tu porcentaje de grasa.</p>
+            <div class="grasa-scale"><span id="grasa-min"></span><span id="grasa-max"></span></div>
+            <input class="grasa-range" id="grasa" name="grasa" type="range" step="1" autocomplete="off" aria-describedby="grasa-note" />
+            <p id="grasa-note">Es una estimación visual, no una medición clínica.</p>
+          </div>
+        </div>
+        <p class="err" id="err-grasa">Mueve el control para elegir tu porcentaje de grasa.</p>
+        <div class="wiz-nav">
+          <button type="button" class="wiz-back">← Atrás</button>
+          <button type="button" class="wiz-next" id="grasa-next">
+            Continuar
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paso 5: actividad -->
       <div class="step" data-step="actividad">
         <p class="q-label">Tu semana real</p>
         <h2 class="q">¿Cuánto te mueves en una semana normal?</h2>
@@ -1104,7 +1149,7 @@
             <span class="tick"><svg aria-hidden="true" viewBox="0 0 14 14" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-6.5"/></svg></span>
             <span class="opt-body">
               <span class="opt-title">Activo</span>
-              <span class="opt-desc">Entreno de 3 a 6 veces por semana.</span>
+              <span class="opt-desc">Entreno de 4 a 6 veces por semana.</span>
             </span>
           </button>
         </div>
@@ -1144,14 +1189,16 @@
           <dl class="macro-grid" id="macros"></dl>
         </div>
 
-        <div class="signal-result">
+        <!-- Oculto a pedido del 25-ago-2026 hasta nuevo aviso. Se reactiva quitando
+             el atributo `hidden` de estos dos bloques; el JS los sigue llenando. -->
+        <div class="signal-result" hidden>
           <p class="section-code">Lo que más te preocupa</p>
           <h2 id="signal-label"></h2>
           <p id="signal-guidance"></p>
           <span class="coach-mark" id="signal-priority"></span>
         </div>
 
-        <div class="route-start">
+        <div class="route-start" hidden>
           <p class="section-code">Tu ruta empieza así</p>
           <div>
             <span>01</span>
@@ -1170,8 +1217,14 @@
           </div>
         </div>
 
+        <div class="route-next">
+          <p class="section-code">Lo que sigue</p>
+          <h2>Ahora te toca el paso 1 de tu ruta.</h2>
+          <p>Tu punto de partida quedó guardado. Empieza por la primera orientación.</p>
+        </div>
+
         <a class="res-cta" id="res-cta" href="/biblioteca/videos/">
-          Entrar a mi Ruta Tr4iner
+          Ver el paso 1 de mi ruta
           <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
         </a>
         <p class="res-note">
@@ -1265,7 +1318,7 @@
       // Los pasos condicionales solo aparecen si falta el dato.
       var FLOW = [];
       if (!datos.sexo) FLOW.push('sexo');
-      FLOW.push('objetivo', 'senal', 'datos', 'actividad');
+      FLOW.push('objetivo', 'senal', 'datos', 'grasa', 'actividad');
       var necesitaEmail = !lead.email;
       if (necesitaEmail) FLOW.push('email');
 
@@ -1291,31 +1344,19 @@
         return nombre ? nombre.split(' ')[0] : '';
       }
 
+      // La cabecera es la portada del test: se muestra al abrirlo y al cerrarlo.
+      // En las preguntas del medio (edad, altura, peso…) estorba y empuja la
+      // pregunta fuera de la pantalla.
       function renderDefaultHero() {
         var headline = document.getElementById('headline');
         headline.textContent = '';
-        headline.appendChild(document.createTextNode('Diseñemos '));
+        headline.appendChild(document.createTextNode('Vamos a personalizar '));
         var mark = document.createElement('span');
         mark.className = 'mk is-in';
-        mark.textContent = 'tu punto de partida';
+        mark.textContent = 'tus macros y calorías';
         headline.appendChild(mark);
         headline.appendChild(document.createTextNode((firstName() ? ', ' + firstName() : '') + '.'));
         document.getElementById('hero-eyebrow').textContent = 'Tu expediente privado';
-        document.querySelector('.head .dek').textContent =
-          'Reúne tu objetivo, tus números y la señal que hoy merece más atención. Solo te tomará unos minutos.';
-      }
-
-      function renderSignalHero() {
-        var headline = document.getElementById('headline');
-        headline.textContent = '';
-        headline.appendChild(document.createTextNode('Lo que ves en el espejo '));
-        var emphasis = document.createElement('em');
-        emphasis.textContent = 'es solo una parte';
-        headline.appendChild(emphasis);
-        headline.appendChild(document.createTextNode('.'));
-        document.getElementById('hero-eyebrow').textContent = 'Tu expediente · señal principal';
-        document.querySelector('.head .dek').textContent =
-          'Queremos entender qué aspecto está afectando más tu día a día.';
       }
 
       function showStep(i) {
@@ -1336,7 +1377,9 @@
           ? 'PERFIL INICIAL' + (firstName() ? ' · ' + firstName().toUpperCase() : '')
           : 'PERFIL INICIAL · ' + String(i + 1).padStart(2, '0'));
         document.getElementById('file-status').textContent = isSignal ? 'Dato privado' : '';
-        if (isSignal) renderSignalHero(); else renderDefaultHero();
+        var esPrimero = i === 0;
+        document.getElementById('head').hidden = !esPrimero;
+        if (esPrimero) renderDefaultHero();
         ficha.scrollIntoView({
           block: 'nearest',
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
@@ -1537,9 +1580,7 @@
         var edad = parseFloat(document.getElementById('edad').value);
         var altura = readHeightCm();
         var peso = readWeightKg();
-        var cfg = GRASA_CONFIG[datos.sexo];
-        var grasaOk = datos.grasa >= cfg.min && datos.grasa <= cfg.max;
-        var ok = edad >= 16 && edad <= 80 && altura >= 130 && altura <= 220 && peso >= 35 && peso <= 200 && grasaOk;
+        var ok = edad >= 16 && edad <= 80 && altura >= 130 && altura <= 220 && peso >= 35 && peso <= 200;
         document.getElementById('err-datos').classList.toggle('visible', !ok);
         ['f-edad', 'f-altura', 'f-peso'].forEach(function (id, idx) {
           var v = [edad, altura, peso][idx];
@@ -1551,6 +1592,14 @@
         datos.altura = altura;
         datos.peso = peso;
         next();
+      });
+
+      document.getElementById('grasa-next').addEventListener('click', function () {
+        marcarInicio();
+        var cfg = GRASA_CONFIG[datos.sexo];
+        var ok = Boolean(cfg) && datos.grasa >= cfg.min && datos.grasa <= cfg.max;
+        document.getElementById('err-grasa').classList.toggle('visible', !ok);
+        if (ok) next();
       });
 
       // Paso de email (solo cross-device sin expediente local)
@@ -1714,14 +1763,13 @@
         ficha.setAttribute('data-tab', 'EXPEDIENTE PRIVADO' + (firstName() ? ' · ' + firstName().toUpperCase() : ''));
         document.getElementById('file-status').textContent = 'Lectura inicial';
         document.getElementById('progress').hidden = true;
+        document.getElementById('head').hidden = false;
         document.getElementById('hero-eyebrow').textContent = 'Punto de partida · listo';
         document.getElementById('headline').textContent =
-          'Ya no estás empezando a ciegas' + (firstName() ? ', ' + firstName() : '') + '.';
-        document.querySelector('.head .dek').textContent =
-          'Estos números son una referencia inicial para ordenar alimentación y entrenamiento. No son una dieta cerrada ni una evaluación clínica.';
+          'Estas son tus calorías y macronutrientes' + (firstName() ? ', ' + firstName() : '') + '.';
 
         var macros = [
-          { name: 'Proteína', val: r.proteinas },
+          { name: 'Proteínas', val: r.proteinas },
           { name: 'Carbohidratos', val: r.carbohidratos },
           { name: 'Grasas', val: r.grasas }
         ];
@@ -1782,6 +1830,72 @@
           setTimeout(function () { kcalEl.textContent = target.toLocaleString('es'); }, DUR + 200);
         }
         window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+        lanzarConfeti();
+      }
+
+      // Confeti propio en vez de una libreria externa: son cuarenta lineas, no
+      // agrega una dependencia de CDN a una pagina que se sirve entera inline,
+      // y usa los colores de la marca.
+      //
+      // La posicion se calcula por tiempo transcurrido, no por cuadro: si el
+      // navegador limita requestAnimationFrame —pestaña en segundo plano, o el
+      // visor de desarrollo— la fisica sigue avanzando igual en vez de
+      // congelarse a la espera de cuadros que no llegan.
+      function lanzarConfeti() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var lienzo = document.createElement('canvas');
+        lienzo.id = 'confeti';
+        lienzo.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(lienzo);
+        var ctx = lienzo.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var ancho = window.innerWidth;
+        var alto = window.innerHeight;
+        lienzo.width = ancho * dpr;
+        lienzo.height = alto * dpr;
+        lienzo.style.width = ancho + 'px';
+        lienzo.style.height = alto + 'px';
+        ctx.scale(dpr, dpr);
+
+        var COLORES = ['#F2C744', '#FFE9A3', '#16130E', '#FFFFFF', '#C9A227'];
+        var piezas = [];
+        for (var i = 0; i < 130; i++) {
+          piezas.push({
+            x0: ancho * (0.08 + Math.random() * 0.84),
+            y0: alto * 0.22 - Math.random() * alto * 0.75,
+            w: 5 + Math.random() * 6,
+            h: 8 + Math.random() * 8,
+            color: COLORES[i % COLORES.length],
+            vy: 260 + Math.random() * 320,
+            vx: (Math.random() - 0.5) * 150,
+            giro0: Math.random() * Math.PI,
+            vGiro: (Math.random() - 0.5) * 9
+          });
+        }
+
+        var inicio = null;
+        var DURACION = 2800;
+        function cuadro(t) {
+          if (!inicio) inicio = t;
+          var ms = t - inicio;
+          var seg = ms / 1000;
+          ctx.clearRect(0, 0, ancho, alto);
+          ctx.globalAlpha = Math.max(0, 1 - Math.max(0, ms - 1900) / 900);
+          piezas.forEach(function (pieza) {
+            var x = pieza.x0 + pieza.vx * seg;
+            var y = pieza.y0 + pieza.vy * seg;
+            if (y > alto + 20) return;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(pieza.giro0 + pieza.vGiro * seg);
+            ctx.fillStyle = pieza.color;
+            ctx.fillRect(-pieza.w / 2, -pieza.h / 2, pieza.w, pieza.h);
+            ctx.restore();
+          });
+          if (ms < DURACION) requestAnimationFrame(cuadro);
+          else lienzo.remove();
+        }
+        requestAnimationFrame(cuadro);
       }
 
       // ── Enlaces de vuelta con parámetros ──

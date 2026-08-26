@@ -755,6 +755,42 @@
       border-top: 1px solid rgba(244, 239, 230, 0.14);
     }
     .player-sheet[hidden] { display: none !important; }
+    .player-hint {
+      margin-bottom: 16px;
+      padding: 13px 14px;
+      border: 1px solid rgba(242, 199, 68, 0.42);
+      border-left: 3px solid var(--mark);
+      border-radius: 8px;
+      background: rgba(242, 199, 68, 0.08);
+    }
+    .player-hint[hidden] { display: none !important; }
+    .player-hint-code {
+      margin: 0 0 6px;
+      color: var(--mark);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+    .player-hint p + p, #player-hint-text {
+      margin: 0;
+      color: rgba(244, 239, 230, 0.86);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    .player-hint-cta {
+      margin-top: 10px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--mark);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
     .player-desc {
       margin: 0;
       color: rgba(244, 239, 230, 0.72);
@@ -1061,12 +1097,10 @@
 
     /* ── Ruta editorial ──────────────────────────────── */
     .library-hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: 50px;
-      margin-bottom: 64px;
-      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 26px;
     }
     .library-hero .hero-eyebrow {
       justify-content: flex-start;
@@ -1238,16 +1272,43 @@
       background: var(--ink);
       color: var(--card);
     }
-    .guide-visual::before,
+    .guide-visual img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Velo para que el rotulo se lea sobre cualquier miniatura. */
     .guide-visual::after {
       position: absolute;
-      border: 1px solid rgba(255, 253, 246, .16);
+      inset: 0;
+      background: linear-gradient(180deg, rgba(17, 17, 17, .62) 0%, rgba(17, 17, 17, .12) 42%, rgba(17, 17, 17, .38) 100%);
       content: "";
     }
-    .guide-visual::before { width: 220px; height: 220px; transform: rotate(9deg); }
-    .guide-visual::after { width: 156px; height: 156px; transform: rotate(-12deg); }
+    .guide-play {
+      position: relative;
+      z-index: 1;
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mark);
+      color: var(--ink);
+    }
+    .guide-play svg { width: 19px; height: 21px; margin-left: 3px; fill: currentColor; }
+    .guide-play::after {
+      position: absolute;
+      inset: -7px;
+      border: 2px solid var(--mark);
+      border-radius: 50%;
+      content: "";
+      animation: focus-play-pulse 2s ease-out infinite;
+    }
     .guide-kicker {
       position: absolute;
+      z-index: 1;
       top: 20px;
       left: 20px;
       color: var(--mark);
@@ -1255,23 +1316,6 @@
       font-size: 9px;
       font-weight: 600;
       letter-spacing: .12em;
-    }
-    .guide-symbol { z-index: 1; text-align: center; }
-    .guide-symbol i {
-      width: 68px;
-      height: 5px;
-      display: block;
-      margin: 10px auto;
-      background: var(--mark);
-    }
-    .guide-symbol i:nth-child(2) { width: 106px; }
-    .guide-symbol i:nth-child(3) { width: 42px; }
-    .guide-symbol b {
-      display: block;
-      margin-top: 24px;
-      font-family: var(--serif);
-      font-size: 34px;
-      font-weight: 560;
     }
     .guide-copy { padding: 38px 34px; }
     .guide-copy h2 {
@@ -1398,62 +1442,13 @@
     .vmeta { letter-spacing: .09em; }
 
     .conversion-bridge {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      min-height: 410px;
+      display: block;
       margin-top: 88px;
       background: var(--ink);
       color: var(--card);
       border-radius: 0;
       padding: 0;
       text-align: left;
-    }
-    .bridge-case {
-      position: relative;
-      overflow: hidden;
-      border-right: 1px solid rgba(255, 253, 246, .22);
-      background: var(--mark);
-      color: var(--ink);
-    }
-    .bridge-case::after {
-      position: absolute;
-      right: -42px;
-      bottom: -58px;
-      width: 170px;
-      height: 170px;
-      border: 1px solid rgba(22, 19, 14, .35);
-      content: "";
-      transform: rotate(18deg);
-    }
-    .bridge-case span,
-    .bridge-case small {
-      position: absolute;
-      left: 24px;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: .12em;
-    }
-    .bridge-case span { top: 28px; }
-    .bridge-case small { right: 20px; bottom: 26px; line-height: 1.5; }
-    .bridge-case strong {
-      position: absolute;
-      top: 92px;
-      left: 24px;
-      font-family: var(--serif);
-      font-size: 43px;
-      font-weight: 560;
-      letter-spacing: -.04em;
-      line-height: .94;
-    }
-    .bridge-case > i {
-      position: absolute;
-      top: 230px;
-      left: 24px;
-      font-family: var(--serif);
-      font-size: 58px;
-      font-style: normal;
-      line-height: 1;
     }
     .bridge-copy { padding: 48px 52px; }
     .section-code.light { color: #c7bdab; }
@@ -1488,13 +1483,12 @@
     @media (max-width: 860px) {
       .library-hero,
       .library-layout { grid-template-columns: 1fr; }
-      .library-hero { align-items: start; }
       .active-label { width: max-content; }
       .profile-summary { order: 2; }
       .route-content { order: 1; }
     }
     @media (max-width: 560px) {
-      .library-hero { gap: 26px; margin-bottom: 44px; }
+      .library-hero { margin-bottom: 20px; }
       .library-hero h1 { font-size: 40px; }
       .active-label { min-width: 178px; padding: 12px 14px; font-size: 8px; }
       .library-layout { gap: 44px; }
@@ -1514,12 +1508,52 @@
       .route-group-body { padding-left: 12px; }
       .route-group-body .grid { grid-template-columns: 1fr; }
       .conversion-bridge { grid-template-columns: 1fr; margin-top: 64px; }
-      .bridge-case { height: 280px; border-right: 0; border-bottom: 1px solid rgba(255, 253, 246, .22); }
-      .bridge-case strong { top: 80px; font-size: 47px; }
-      .bridge-case > i { top: 178px; }
       .bridge-copy { padding: 34px 24px 38px; }
       .bridge-copy h2 { font-size: 31px; }
     }
+
+    /* Dos ofertas en la bisagra: ver el metodo, o pedir ayuda directo. */
+    .bridge-offer + .bridge-offer {
+      margin-top: 26px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 253, 246, 0.18);
+    }
+    .bridge-offer h2 {
+      margin: 0 0 18px;
+      font-size: clamp(21px, 2.3vw, 27px);
+      line-height: 1.2;
+      text-wrap: pretty;
+    }
+    .bridge-offer small {
+      display: block;
+      margin-top: 12px;
+      color: rgba(255, 253, 246, 0.55);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .bridge-offer .yellow-button {
+      background: var(--card);
+      border-color: var(--card);
+      color: var(--ink);
+    }
+    .bridge-offer .yellow-button:hover { background: #EDE9E1; border-color: #EDE9E1; }
+    .bridge-offer .yellow-button i { color: var(--ink); }
+    .ghost-button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 253, 246, 0.55);
+      border-radius: 6px;
+      color: var(--card);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.16s ease, border-color 0.16s ease;
+    }
+    .ghost-button:hover { background: rgba(255, 253, 246, 0.1); border-color: var(--card); }
+    .ghost-button i { color: var(--mark); font-style: normal; }
 
     /* Ruta Tr4iner: el contenido se lee como una ruta personal, no como una revista. */
     :root {
@@ -1542,7 +1576,7 @@
     .page { padding-top: calc(48px + env(safe-area-inset-top)); }
     .rv, .vcard, .rv.is-in, .vcard.is-in { opacity: 1; transform: none; transition: none; }
 
-    .library-hero { align-items: end; gap: 32px; margin-bottom: 48px; }
+    .library-hero { margin-bottom: 22px; }
     .library-hero .hero-eyebrow { margin-bottom: 14px; font-size: 9.5px; letter-spacing: 0.16em; }
     .library-hero h1 { max-width: 860px; margin-bottom: 18px; font-size: clamp(44px, 6vw, 64px); font-weight: 750; letter-spacing: -0.052em; line-height: 0.99; }
     .library-hero h1 em { font-style: normal; font-weight: 750; }
@@ -1583,7 +1617,6 @@
     #program-content .priority-guide { min-height: 300px; overflow: hidden; border-radius: 8px; box-shadow: none; }
     #program-content .priority-guide:hover { transform: none; border-color: var(--ink); }
     .guide-visual { background: var(--ink); }
-    .guide-symbol b { font-weight: 750; }
     .guide-copy { padding: 34px; }
     .guide-copy .nx-title { font-size: clamp(28px, 3.6vw, 36px); font-weight: 750; letter-spacing: -0.045em; }
     .primary-button, .yellow-button { min-height: 54px; border-radius: 6px; font-weight: 750; }
@@ -1604,15 +1637,14 @@
     .tour-next { min-height: 48px; border-radius: 6px; }
 
     .conversion-bridge { min-height: 360px; border-radius: 8px; overflow: hidden; }
-    .bridge-case strong, .bridge-copy h2 { font-weight: 750; }
-    .bridge-copy h2 { letter-spacing: -0.045em; }
+    .bridge-copy h2 { font-weight: 750; letter-spacing: -0.045em; }
 
     @media (max-width: 860px) {
       .library-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 560px) {
       .page { padding: calc(28px + env(safe-area-inset-top)) 18px calc(44px + env(safe-area-inset-bottom)); }
-      .library-hero { gap: 18px; margin-bottom: 32px; }
+      .library-hero { margin-bottom: 16px; }
       .library-hero h1 { font-size: clamp(38px, 11vw, 45px); }
       .library-hero .dek { font-size: 16px; }
       .active-label { width: 100%; padding: 11px 12px; font-size: 8px; }
@@ -1660,15 +1692,15 @@
       .player-sheet { padding: 14px 14px 16px; }
       .player-bar { padding: 12px 14px; }
       .conversion-bridge { grid-template-columns: 1fr; min-height: 0; margin-top: 54px; }
-      .bridge-case { height: 126px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
-      .bridge-case span { top: 18px; left: 18px; }
-      .bridge-case strong { top: 48px; left: 18px; font-size: 38px; }
-      .bridge-case > i { top: 44px; right: 18px; left: auto; font-size: 42px; }
-      .bridge-case small { display: none; }
       .bridge-copy { padding: 28px 20px 32px; }
       .bridge-copy h2 { font-size: 29px; }
       .yellow-button { width: 100%; }
       footer { margin-top: 36px; }
+    }
+    @keyframes focus-play-pulse {
+      0% { opacity: .85; transform: scale(1); }
+      70% { opacity: 0; transform: scale(1.5); }
+      100% { opacity: 0; transform: scale(1.5); }
     }
     @keyframes mobile-focus-in {
       from { opacity: 0; transform: translateY(12px); }
@@ -1769,13 +1801,52 @@
         display: block;
         padding: 22px 18px 18px;
         border: 1px solid var(--rule-strong);
-        border-left: 5px solid var(--mark);
         border-radius: 8px;
         background: var(--card);
         color: var(--ink);
         cursor: pointer;
         font-family: var(--sans);
         text-align: left;
+      }
+      .mobile-focus-thumb {
+        position: relative;
+        display: block;
+        margin: 0 0 16px;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 6px;
+        background: var(--paper-deep);
+      }
+      .mobile-focus-thumb img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+      /* Play falso: el clic lo maneja la tarjeta entera. El latido es la
+         invitacion; sin el, la miniatura se lee como una foto cualquiera. */
+      .mobile-focus-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: var(--mark);
+        color: var(--ink);
+      }
+      .mobile-focus-play svg { width: 17px; height: 19px; margin-left: 3px; fill: currentColor; }
+      .mobile-focus-play::after {
+        position: absolute;
+        inset: -6px;
+        border: 2px solid var(--mark);
+        background: transparent;
+        border-radius: 50%;
+        content: "";
+        animation: focus-play-pulse 2s ease-out infinite;
       }
       .mobile-focus-kicker {
         display: block;
@@ -1827,19 +1898,58 @@
         font-weight: 750;
       }
       .mobile-focus-cta i { color: var(--mark); font-size: 18px; font-style: normal; }
+      /* Baraja abierta: las miniaturas de lo que viene, en abanico. */
       .mobile-show-library {
+        width: 100%;
         min-height: 44px;
-        display: block;
-        margin: 8px auto 0;
-        padding: 8px 12px;
-        border: 0;
-        background: transparent;
-        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 14px 0 0;
+        padding: 12px 14px;
+        border: 1px solid var(--rule-strong);
+        border-radius: 8px;
+        background: var(--card);
+        color: var(--ink);
         cursor: pointer;
         font-family: var(--sans);
-        font-size: 13px;
-        text-decoration: underline;
-        text-underline-offset: 4px;
+        text-align: left;
+      }
+      .mobile-show-library .deck {
+        position: relative;
+        width: 88px;
+        height: 54px;
+        flex: none;
+      }
+      .mobile-show-library .deck i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 52px;
+        height: 35px;
+        overflow: hidden;
+        border: 1.5px solid var(--card);
+        border-radius: 4px;
+        background: var(--paper-deep) center / cover no-repeat;
+        box-shadow: 0 2px 8px rgba(22, 19, 14, 0.18);
+      }
+      .mobile-show-library .deck i:nth-child(1) { transform: translate(-50%, -50%) rotate(-13deg) translateX(-13px); }
+      .mobile-show-library .deck i:nth-child(2) { transform: translate(-50%, -50%) rotate(0deg); z-index: 2; }
+      .mobile-show-library .deck i:nth-child(3) { transform: translate(-50%, -50%) rotate(13deg) translateX(13px); }
+      .mobile-show-library .deck-copy { flex: 1 1 auto; min-width: 0; }
+      .mobile-show-library .deck-copy strong { display: block; font-size: 15px; font-weight: 700; }
+      .mobile-show-library .deck-copy small {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: .1em;
+      }
+      .mobile-show-library > i { color: var(--muted); font-size: 17px; font-style: normal; }
+      @media (prefers-reduced-motion: reduce) {
+        .mobile-focus-play::after { animation: none; }
       }
       .mobile-focus.is-ready .mobile-focus-eyebrow,
       .mobile-focus.is-ready h1,
@@ -1854,7 +1964,19 @@
       .mobile-focus.is-ready .mobile-show-library { animation-delay: .14s; }
 
       body.mobile-library-mode .page { padding-top: calc(24px + env(safe-area-inset-top)); }
-      body.mobile-library-mode .mobile-focus { display: none !important; }
+      /* Con la biblioteca abierta el video de hoy se queda arriba, en version
+         compacta: es el aula, no dos pantallas que se turnan. */
+      body.mobile-library-mode .mobile-focus:not([hidden]) { display: block; margin-bottom: 30px; }
+      body.mobile-library-mode .mobile-focus-eyebrow,
+      body.mobile-library-mode .mobile-focus h1,
+      body.mobile-library-mode .mobile-focus-lead,
+      body.mobile-library-mode .mobile-focus-description,
+      body.mobile-library-mode .mobile-focus-meta,
+      body.mobile-library-mode .mobile-show-library { display: none !important; }
+      body.mobile-library-mode .mobile-focus-card { padding: 14px; }
+      body.mobile-library-mode .mobile-focus-card strong { font-size: 21px; }
+      body.mobile-library-mode .mobile-focus-thumb { margin-bottom: 12px; }
+      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px; font-size: 13.5px; }
       body.mobile-library-mode .mobile-profile-trigger:not([hidden]) { margin-bottom: 28px; }
       body.mobile-library-mode .profile-summary,
       body.mobile-library-mode #next-card { display: none !important; }
@@ -1875,6 +1997,7 @@
       .mobile-focus-meta { margin: 14px 0 12px; }
     }
     @media (prefers-reduced-motion: reduce) {
+      .guide-play::after { animation: none; }
       .rv, .vcard, .thumb img, .play, .weekly-progress > div i,
       .mobile-focus,
       .mobile-focus.is-ready .mobile-focus-eyebrow,
@@ -1896,13 +2019,6 @@
   <main class="page is-in" id="contenido">
 
     <header class="library-hero">
-      <div>
-        <p class="hero-eyebrow rv" style="--i:0" id="hero-eyebrow">Tu ruta privada · RUTA TR4INER</p>
-        <h1 class="rv" style="--i:1" id="headline" tabindex="-1">No necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em><span id="saludo"></span></h1>
-        <p class="dek rv" style="--i:2" id="dek">
-          Tu punto de partida queda guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.
-        </p>
-      </div>
       <div class="active-label rv" id="active-label" hidden>
         <span>RUTA ACTIVA</span>
         <b id="active-label-value">RUTA TR4INER</b>
@@ -1956,6 +2072,12 @@
         <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
         <p class="mobile-focus-lead">No necesitas verlo todo hoy. Abre este video y llévate una sola acción clara.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
+          <span class="mobile-focus-thumb" id="mobile-focus-thumb">
+            <img id="mobile-focus-img" src="" alt="" width="640" height="360" loading="lazy" decoding="async" />
+            <span class="mobile-focus-play" aria-hidden="true">
+              <svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
+            </span>
+          </span>
           <span class="mobile-focus-kicker">TU SIGUIENTE ENFOQUE</span>
           <strong id="mobile-focus-recommendation">Tu orientación de hoy</strong>
           <span class="mobile-focus-description" id="mobile-focus-description">Empieza por una idea que puedas aplicar desde hoy.</span>
@@ -1965,13 +2087,19 @@
           </span>
           <span class="mobile-focus-cta">Ver esta orientación <i aria-hidden="true">→</i></span>
         </button>
-        <button type="button" class="mobile-show-library" id="mobile-show-library">Ver todos los videos</button>
+        <button type="button" class="mobile-show-library" id="mobile-show-library">
+          <span class="deck" id="mobile-deck" aria-hidden="true"></span>
+          <span class="deck-copy">
+            <strong>Ver siguientes pasos</strong>
+            <small id="mobile-deck-count"></small>
+          </span>
+          <i aria-hidden="true">→</i>
+        </button>
       </section>
 
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
-          <small>TU PUNTO DE PARTIDA</small>
-          <strong id="mobile-profile-trigger-value">RUTA ACTIVA</strong>
+          <strong id="mobile-profile-trigger-value">EXPEDIENTE</strong>
         </span>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </button>
@@ -2007,10 +2135,10 @@
         <div class="route-content">
           <button type="button" class="priority-guide rv" id="next-card" hidden>
             <span class="guide-visual" aria-hidden="true">
+              <img id="guide-img" src="" alt="" width="640" height="360" loading="lazy" decoding="async" />
               <span class="guide-kicker">RECOMENDADO PARA TI</span>
-              <span class="guide-symbol">
-                <i></i><i></i><i></i>
-                <b>HOY</b>
+              <span class="guide-play">
+                <svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
               </span>
             </span>
             <span class="guide-copy">
@@ -2046,20 +2174,21 @@
       </div>
 
       <section class="conversion-bridge bridge rv" aria-label="Conoce un proceso acompañado">
-        <div class="bridge-case" id="bridge-case" aria-label="Caso de estudio">
-          <span>CASO DE ESTUDIO</span>
-          <strong id="bridge-case-name">Dashiel</strong>
-          <i>→</i>
-          <small>UN PROCESO REAL · PASO A PASO</small>
-        </div>
         <div class="bridge-copy">
-          <p class="section-code light" id="bridge-eyebrow">EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN</p>
-          <h2 id="bridge-title">Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.</h2>
-          <p id="bridge-text">Conoce un caso real y qué cambió cuando dejó de depender de consejos sueltos antes de decidir si quieres orientación para tu caso.</p>
-          <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
-            <span id="bridge-cta-label">Ver el caso de Dashiel</span> <i>→</i>
-          </a>
-          <small>Al final del caso podrás responder una evaluación y conocer el siguiente paso que corresponde.</small>
+          <div class="bridge-offer">
+            <h2>¿Quieres ver cómo funciona nuestro método en la transformación completa de una persona, y aplicarlo en tu cambio físico?</h2>
+            <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
+              <span>Míralo aquí</span> <i>→</i>
+            </a>
+            <small>Al final del caso podrás responder una evaluación y conocer el siguiente paso que corresponde.</small>
+          </div>
+          <div class="bridge-offer">
+            <h2>¿Quieres que te ayude a estar en forma?</h2>
+            <a class="ghost-button bridge-advisory" id="bridge-advisory" href="https://api.whatsapp.com/send?phone=17439014239&amp;text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa." target="_blank" rel="noopener">
+              <span>Aplica a mi asesoría aquí</span> <i>→</i>
+            </a>
+            <small>Hablas directo con el equipo por WhatsApp.</small>
+          </div>
         </div>
       </section>
 
@@ -2087,6 +2216,11 @@
       </button>
     </div>
     <div class="player-sheet" id="player-sheet" hidden>
+      <div class="player-hint" id="player-hint" hidden>
+        <p class="player-hint-code">TE LO RECOMENDAMOS EN ORDEN</p>
+        <p id="player-hint-text"></p>
+        <button type="button" class="player-hint-cta" id="player-hint-cta"></button>
+      </div>
       <p class="player-desc" id="player-desc" hidden></p>
       <div class="player-resources" id="player-resources" hidden>
         <p class="player-resources-code">RECURSOS DE ESTA ORIENTACIÓN</p>
@@ -2650,6 +2784,14 @@
 
           var section = document.createElement('details');
           section.className = 'route-group';
+          // Acordeon de uno a la vez: con varios grupos abiertos la ruta deja de
+          // leerse como una secuencia y hay que hacer scroll para volver arriba.
+          section.addEventListener('toggle', function () {
+            if (!section.open) return;
+            libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+              if (otro !== section) otro.open = false;
+            });
+          });
           section.setAttribute('aria-label', 'Orientación ' + String(orden + 1).padStart(2, '0') + ': ' + b.name);
           if (b.id === firstPendingBlockId) section.classList.add('recommended');
 
@@ -2834,6 +2976,46 @@
           '" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
       }
 
+      // La ruta entera en orden, para saber que viene antes que que.
+      function rutaOrdenada() {
+        var lista = [];
+        bloquesOrdenados().forEach(function (b) {
+          videosDe(b.id).forEach(function (v) { lista.push({ v: v, b: b }); });
+        });
+        return lista;
+      }
+
+      // Primera orientacion pendiente por delante de la que se esta abriendo.
+      // No bloquea nada: solo alimenta el aviso de recomendacion del popup.
+      function pendienteAntesDe(id) {
+        var lista = rutaOrdenada();
+        var indice = -1;
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].v.id === id) { indice = i; break; }
+        }
+        if (indice <= 0) return null;
+        var primera = null;
+        for (var j = 0; j < indice && !primera; j++) {
+          if (!isDone(lista[j].v.id)) primera = lista[j];
+        }
+        return primera ? { item: primera } : null;
+      }
+
+      function renderPlayerHint(v) {
+        var caja = document.getElementById('player-hint');
+        var previo = pendienteAntesDe(v.id);
+        if (!previo) { caja.hidden = true; return; }
+        document.getElementById('player-hint-text').textContent =
+          'Para entender mejor qué necesitas para tu objetivo, te recomendamos ver primero los pasos previos de tu ruta. Puedes seguir con este ahora si prefieres.';
+        var cta = document.getElementById('player-hint-cta');
+        cta.textContent = 'Ver «' + previo.item.v.title + '» →';
+        cta.onclick = function () {
+          closePlayer();
+          openPlayer(previo.item.v, previo.item.b);
+        };
+        caja.hidden = false;
+      }
+
       // Ficha del video: descripcion y recursos que se editan desde el CMS.
       function renderPlayerSheet(v) {
         var sheet = document.getElementById('player-sheet');
@@ -2856,7 +3038,7 @@
           list.appendChild(item);
         });
         box.hidden = recursos.length === 0;
-        sheet.hidden = !texto && recursos.length === 0;
+        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden;
       }
 
       function openPlayer(v, b) {
@@ -2865,6 +3047,7 @@
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
+        renderPlayerHint(v);
         renderPlayerSheet(v);
         playerFrame.innerHTML = '<div id="yt-target"></div>';
         document.body.classList.add('mobile-video-playing');
@@ -2925,7 +3108,7 @@
         } else if (document.body.classList.contains('mobile-library-mode')) {
           setTimeout(function () { document.getElementById('route-index-title').focus({ preventScroll: true }); }, 0);
         } else {
-          setTimeout(function () { document.getElementById('headline').focus({ preventScroll: true }); }, 0);
+          setTimeout(function () { document.getElementById('route-index-title').focus({ preventScroll: true }); }, 0);
         }
       });
       document.getElementById('player-close').addEventListener('click', closePlayer);
@@ -3056,13 +3239,6 @@
         if (!plan) {
           // Sin punto de partida la ruta se abre igual: el calculo pasa a ser una
           // invitacion en el expediente, no una puerta antes de ver nada.
-          var sinPlanNombre = primerNombre(lead.nombre || nombre);
-          document.getElementById('hero-eyebrow').textContent = 'Tu ruta privada · RUTA TR4INER';
-          document.getElementById('headline').innerHTML =
-            (sinPlanNombre ? escapeHtml(sinPlanNombre) + ', ' : '') +
-            'no necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em>';
-          document.getElementById('dek').textContent =
-            'Empieza por donde quieras. Cuando calcules tu punto de partida ordenamos las orientaciones según tus números y la señal que elijas.';
           onboard.hidden = true;
           activeLabel.hidden = true;
           document.getElementById('profile-route').textContent = 'RUTA TR4INER · PERSONAL';
@@ -3075,7 +3251,6 @@
           document.getElementById('profile-dialog-focus').textContent = 'Elige por dónde empezar';
           document.getElementById('profile-dialog-plan').href = planUrl();
           document.getElementById('profile-dialog-plan').textContent = 'Calcular mi punto de partida →';
-          document.getElementById('mobile-profile-trigger-value').textContent = 'SIN CALCULAR';
           chip.hidden = false;
           chip.classList.add('is-in');
           chip.href = planUrl();
@@ -3093,12 +3268,6 @@
 
         var signal = SIGNAL_INFO[currentSignal()];
         var first = primerNombre(lead.nombre || nombre);
-        document.getElementById('hero-eyebrow').textContent = 'Tu ruta privada · RUTA TR4INER';
-        document.getElementById('headline').innerHTML =
-          (first ? escapeHtml(first) + ', ' : '') +
-          'no necesitas verlo todo. <em>Necesitas saber qué hacer ahora.</em>';
-        document.getElementById('dek').textContent =
-          'Tu punto de partida ya está guardado. Aquí verás primero las orientaciones que conectan con tu objetivo, tus números y la señal que elegiste.';
         document.getElementById('active-label-value').textContent =
           (state.sexo ? state.sexo.toUpperCase() + ' · ' : '') + signal.short;
         var routeLabel =
@@ -3116,7 +3285,6 @@
         document.getElementById('profile-dialog-kcal').textContent = kcalLabel;
         document.getElementById('profile-dialog-focus').textContent = signal.focus;
         document.getElementById('profile-dialog-plan').href = planUrl();
-        document.getElementById('mobile-profile-trigger-value').textContent = signal.short;
       }
 
       // ── Siguiente orientación: primera pendiente de la ruta ──
@@ -3131,6 +3299,40 @@
       var profileLastFocus = null;
       var nextVideo = null;
       var nextBloque = null;
+      function urlMiniatura(id, alta) {
+        return 'https://i.ytimg.com/vi/' + id + '/' + (alta ? 'maxresdefault' : 'hqdefault') + '.jpg';
+      }
+
+      function pintarMiniatura(img, id) {
+        img.onerror = function () { img.onerror = null; img.src = urlMiniatura(id, false); };
+        img.src = urlMiniatura(id, true);
+      }
+
+      // Las tres siguientes orientaciones, en abanico, como acceso a lo que viene.
+      function pintarBaraja() {
+        var deck = document.getElementById('mobile-deck');
+        var cuenta = document.getElementById('mobile-deck-count');
+        if (!deck) return;
+        var lista = rutaOrdenada();
+        var desde = 0;
+        if (nextVideo) {
+          for (var i = 0; i < lista.length; i++) {
+            if (lista[i].v.id === nextVideo.id) { desde = i + 1; break; }
+          }
+        }
+        var siguientes = lista.slice(desde, desde + 3);
+        deck.innerHTML = '';
+        siguientes.forEach(function (item) {
+          var carta = document.createElement('i');
+          carta.style.backgroundImage = 'url("' + urlMiniatura(item.v.id, false) + '")';
+          deck.appendChild(carta);
+        });
+        var restantes = lista.length - desde;
+        cuenta.textContent = restantes > 0
+          ? restantes + (restantes === 1 ? ' ORIENTACIÓN MÁS' : ' ORIENTACIONES MÁS')
+          : 'TODA TU RUTA';
+      }
+
       function renderNextCard() {
         if (!plan) {
           nextCardEl.hidden = true;
@@ -3164,6 +3366,9 @@
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
+        pintarMiniatura(document.getElementById('guide-img'), nextVideo.id);
+        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo.id);
+        pintarBaraja();
         mobileFocusOpen.setAttribute('aria-label', 'Ver orientación: ' + nextVideo.title);
       }
       nextCardEl.addEventListener('click', function () {
@@ -3201,7 +3406,8 @@
       function showMobileLibrary(moveFocus) {
         if (moveFocus) mobileLibraryRequested = true;
         mobileFocusActive = false;
-        mobileFocusEl.hidden = true;
+        // El paso de hoy sigue arriba: solo deja de ocupar la pantalla entera.
+        mobileFocusEl.hidden = !nextVideo;
         document.body.classList.remove('mobile-focus-mode');
         document.body.classList.add('mobile-video-experience', 'mobile-library-mode');
         routeIndexTitle.setAttribute('role', 'heading');
@@ -3270,23 +3476,11 @@
 
       function updateBridge() {
         var estado = estadoBisagra();
-        var eyebrow = document.getElementById('bridge-eyebrow');
-        var h2 = document.getElementById('bridge-title');
-        var para = document.getElementById('bridge-text');
         var cta = document.getElementById('bridge-cta');
         var esMujer = state.sexo === 'Mujer';
-        var testigo = esMujer ? 'Flor de María' : 'Dashiel';
 
-        eyebrow.textContent = 'EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN';
-        h2.textContent = esMujer
-          ? 'Cuando quieras dejar de hacerlo sola, mira cómo se construye un proceso acompañado.'
-          : 'Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.';
-        para.textContent = esMujer
-          ? 'Flor de María hacía horas de cardio y comía muy poco. Adelgazaba, pero no estaba construyendo un proceso sostenible. Mira qué cambió paso a paso antes de decidir si quieres orientación para tu caso.'
-          : 'Dashiel también necesitaba algo más que consejos sueltos. Mira cómo construyó un proceso acompañado antes de decidir si quieres orientación para tu caso.';
-        document.getElementById('bridge-case-name').innerHTML = esMujer ? 'Flor<br>de María' : 'Dashiel';
-        document.getElementById('bridge-case').setAttribute('aria-label', 'Caso de estudio de ' + testigo);
-        document.getElementById('bridge-cta-label').textContent = 'Ver el caso de ' + testigo;
+        // El copy de las dos ofertas es fijo; lo unico que cambia por sexo es
+        // a que caso entra el primer boton.
 
         var base = new URL(
           state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',

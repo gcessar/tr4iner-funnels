@@ -329,8 +329,19 @@
       const casesLink = document.getElementById("cases-link");
 
       advisoryLink.href = "https://api.whatsapp.com/send?phone=" + phone + "&text=" + whatsappMessage;
-      genesisLink.href = window.location.origin + "/biblioteca/inicio/" + queryString;
-      casesLink.href = window.location.origin + (isVa ? "/casos-de-estudio-va" : "/casos-de-estudio") + queryString;
+
+      // La ruta que fallo viaja con la persona. Sin esto, quien se registra
+      // despues de caer aca queda sin rastro de que enlace roto lo trajo: el
+      // dataLayer lo sabe, pero el CRM nunca se entera.
+      function conOrigen(path) {
+        var url = new URL(path, window.location.origin);
+        params.forEach(function (value, key) { url.searchParams.set(key, value); });
+        url.searchParams.set("ruta_404", window.location.pathname);
+        return url.toString();
+      }
+
+      genesisLink.href = conOrigen("/biblioteca/inicio/");
+      casesLink.href = conOrigen(isVa ? "/casos-de-estudio-va" : "/casos-de-estudio");
 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({

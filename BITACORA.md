@@ -17,6 +17,9 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-26` — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
+- `2026-08-26` — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
+- `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
 - `2026-08-25` — El popup del video muestra descripción y recursos editables desde el CMS
 - `2026-08-25` — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
 - `2026-08-25` — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
@@ -114,6 +117,236 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-26 — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
+
+### El diagnóstico
+
+GA4 (propiedad `Tr4iner`, 258197833) muestra **64 rutas distintas cayendo en el 404 en los
+últimos 60 días**. Las que más pesan:
+
+| URL rota | Vistas | Usuarios |
+|---|---|---|
+| `/empezar` | 167 | 117 |
+| `/ofert2a-metodo` | 127 | 53 |
+| `/recetas-100desayunos` | 82 | 61 |
+| `/agendar-va` | 71 | 51 |
+| `/gluteosfuertes-b` | 66 | 48 |
+| `/macros-a` | 40 | 36 |
+| `/agendar` · `/agendar-b` · `/agendar-va-b` | 100 | 69 |
+| `/optin-blackfriday` | 36 | 26 |
+
+**Las cuatro variantes de `/agendar*` suman 171 vistas y 120 usuarios**: gente que hizo clic
+para agendar una llamada y encontró una página de error. Es la parte más cara del embudo.
+
+Dos hallazgos que no eran «enlaces viejos» sino **enlaces mal publicados**:
+
+1. `/biblioteca/inicio/utm_source=Instagram-AN-perfil&…` — **le falta el `?`**. Está así en el
+   link de la bio de Instagram, en dos campañas (`GENESIS` y `Caso_Estudio`). Cada clic desde
+   la bio cae en 404. El redirect lo rescata, pero **el arreglo de fondo es corregir el enlace
+   publicado**: los UTMs de esos clics se pierden igual.
+2. `/testimonio-rosita-va ` con un espacio al final. No se redirige —una fuente con espacio es
+   frágil—; hay que corregir dónde esté publicado.
+
+### Qué cambió
+
+**47 redirects nuevos en `vercel.json`.** El destino es el equivalente vivo más cercano; sin
+equivalente, el funnel que coincide con la intención del clic:
+
+- Lead magnets muertos y entradas genéricas → `/biblioteca/inicio/`
+- Recetas → `/10platospg`
+- Ofertas y VSL → `/casos-de-estudio`
+- `/agendar*` → `/calendly-an` · `/calendly-va`
+- FIT4 → `/fit4` · `/fit4-va`
+
+**Son temporales (307) a propósito.** Son slugs de campaña que se reciclan y un 308 queda
+cacheado en el navegador para siempre; ninguna estaba indexada —el tráfico viene de bios,
+correos y WhatsApp—, así que no hay SEO que perder. Las tres erratas de tipeo sí son
+permanentes: `/medico` → `/medicos`, `/biblioteca/video/` → `/biblioteca/videos/`,
+`/gracias-fit4` → `/gracias-fit4-challenge`.
+
+`/macros-*` **no** va a `/biblioteca/plan/`: el test pide sesión de miembro y sin ella la
+página carga vacía. Va a la entrada.
+
+Se dejaron caer a propósito las rutas basura (`/adsd`, `/aosdoasod`, `/greeeasdasd`,
+`/oadsad`): son bots y tipeos.
+
+### El origen 404 ahora viaja con la persona
+
+El `404.html` empujaba `legacy_route_recovery_view` con `missing_path` al dataLayer, pero
+**nadie lo escuchaba**: se revisaron los 27 nombres de evento de la propiedad y ninguno de los
+dos existe en GA4. GTM no tiene tag ni trigger. Se estaban escribiendo al vacío.
+
+Y el enlace de recuperación reenviaba solo el query string, no la ruta que falló. Ahora:
+
+- `404.html` agrega `ruta_404=<path>` a los dos enlaces de recuperación.
+- `attribution.js` suma `ruta_404` a `UTM_KEYS`, así viaja como un identificador más.
+- El CRM lo persiste en `BibliotecaLead.legacyPath` (migración
+  `20260826120000_biblioteca_lead_origen_404`) y lo muestra bajo el origen del miembro.
+
+Es **primer contacto**: volver después por un enlace sano no lo pisa.
+
+### Resultado esperado
+
+Recuperar los ~600 usuarios cada 60 días que hoy terminan en una página de error, y saber por
+cuál enlace roto entró cada lead. El KPI es la caída de vistas del 404 y, en el panel, qué
+proporción de miembros nuevos trae `legacyPath`.
+
+### Resultado medido (completar después)
+
+Pendiente.
+
+---
+
+## 2026-08-26 — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
+
+### Qué cambió en `/biblioteca/videos/`
+
+- **Fuera la portada.** El bloque de eyebrow + titular + bajada desapareció: la página abre
+  directo en el paso 1. La cabecera queda solo con el chip de estado, alineado a la derecha.
+  El foco al cerrar el reproductor pasa al índice de la ruta, que antes iba al titular.
+- **Acordeón de uno a la vez.** Abrir un grupo cierra el resto. Con varios abiertos la ruta
+  dejaba de leerse como secuencia y obligaba a hacer scroll para volver arriba.
+- **Recomendación de orden, sin candado.** Al abrir una orientación que tiene pasos previos
+  sin ver, el popup muestra un aviso —«Para entender mejor qué necesitas para tu objetivo, te
+  recomendamos ver primero los pasos previos de tu ruta»— con un enlace directo al primer
+  paso pendiente. **No bloquea nada:** se puede seguir con ese video.
+- **Móvil, tarjeta de foco:** ahora abre con la miniatura del video y un botón de play falso
+  con anillo que late. El clic lo maneja la tarjeta entera, como antes.
+- **Móvil, acceso al resto:** el enlace subrayado «Ver todos los videos» pasa a ser una
+  baraja en abanico con las miniaturas de las tres orientaciones siguientes, el rótulo «Ver
+  siguientes pasos» y el conteo de lo que queda.
+
+### Por qué se descartó el candado
+
+La pedida original era bloquear cada paso hasta ver el anterior. Al revisarlo aparecieron dos
+problemas: el check de «marcar como aplicada» que ya existe en cada tarjeta lo abría en dos
+clics —el bloqueo no habría significado nada— y contar los pendientes daba números de dos
+dígitos («hay 18 pasos anteriores»), que se lee como reproche y no como recomendación. Se
+decidió recomendar en vez de obligar, y nombrar el paso concreto en vez de contar.
+
+### La bisagra pasa a tener dos salidas
+
+El bloque del caso de estudio deja de ser un solo CTA y pasa a ofrecer dos:
+
+1. «¿Quieres ver cómo funciona nuestro método en la transformación completa de una persona, y
+   aplicarlo en tu cambio físico?» → **Míralo aquí**, al caso de estudio de siempre
+   (`/testimonio-flor` o `/testimonio-dashiel` según sexo), con toda la atribución.
+2. «¿Quieres que te ayude a estar en forma?» → **Aplica a mi asesoría aquí**, a WhatsApp.
+
+El bloque quedó **sin la placa amarilla** con el nombre del testigo y sin el eyebrow: es texto
+y botón sobre negro, porque con la placa competía con el contenido de la ruta. El botón del
+caso dejó de ser amarillo —sobre negro gritaba— y pasó a blanco; el de asesoría es de
+contorno. Se borraron las 16 reglas de `.bridge-case`, que quedaban sin dueño.
+
+El número es el mismo que ya usaba `404.html` para asesoría 1 a 1 (`17439014239`, el de AN).
+El mensaje precargado dice «vengo de mi Ruta Tr4iner» porque es lo único que le va a decir al
+equipo de dónde salió ese chat: **no se emite ningún evento nuevo** en ese clic, para no
+repetir el incidente de eventos no declarados en n8n. El `bisagra_click` sigue existiendo,
+sin cambios, solo en el CTA del caso.
+
+Como el copy de las dos ofertas es fijo, `updateBridge()` dejó de reescribir eyebrow, título,
+texto y etiqueta del botón. Solo sigue resolviendo el nombre de la placa y el destino.
+
+En móvil, `mobile-profile-trigger` pasa a decir **EXPEDIENTE** en vez de «TU PUNTO DE
+PARTIDA». Sigue abriendo el expediente al tocarlo.
+
+### Móvil: aula virtual en vez de dos pantallas que se turnan
+
+Antes, abrir la biblioteca escondía el video del día (`body.mobile-library-mode .mobile-focus
+{ display: none }`) y las dos vistas se alternaban. Ahora **el paso de hoy se queda arriba**,
+en versión compacta —sin eyebrow, sin titular, sin descripción ni meta—, y debajo aparece el
+acordeón. El play de la miniatura pasa a amarillo.
+
+### Vista «visto»
+
+Sigue siendo la del sistema: 85 % del video, que es lo que marca `completedAt` en
+`POST /api/genesis/progress`. El check manual no cuenta para el aviso.
+
+### Resultado esperado
+
+Menos fricción para llegar al primer video y un orden sugerido que no encierra la biblioteca.
+El KPI es la proporción de sesiones que abren al menos un video.
+
+### Resultado medido (completar después)
+
+Pendiente.
+
+---
+
+## 2026-08-25 — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
+
+### Qué cambió en `/biblioteca/plan/`
+
+**Portada y cabecera**
+
+1. El titular pasa de «Diseñemos tu punto de partida, {nombre}» a **«Vamos a personalizar tus
+   macros y calorías, {nombre}»**.
+2. Se retira la bajada («Reúne tu objetivo, tus números y la señal…»), y con ella sus reglas
+   de CSS.
+3. La cabecera **solo aparece en la primera pregunta y en el resultado**. En los pasos del
+   medio empujaba la pregunta fuera de la pantalla. Se retira `renderSignalHero()`, que ya no
+   tiene dónde escribir.
+
+**Paso de objetivo**
+
+4. Fuera el rótulo «TU OBJETIVO» y la ayuda «Esto ajusta la referencia de energía y
+   macronutrientes».
+5. Opciones nuevas, con símbolo a la izquierda y el tick al final: **Ganar músculo**,
+   **Recomposición corporal**, **Perder grasa**. Los `data-value` (`MM`, `MA`, `PG`) **no se
+   tocaron**: el cálculo de macros y el orden de la ruta dependen de ellos.
+
+**Paso de señal**
+
+6. La nota de privacidad pasa a **«Esto no es una evaluación médica.»**
+
+**Números y porcentaje de grasa**
+
+7. El paso de datos queda **solo con edad, altura y peso**, en tres columnas alineadas. Antes
+   arrastraba abajo el selector de grasa y obligaba a hacer scroll.
+8. El selector de grasa es ahora **un paso propio** (`data-step="grasa"`), con su propia
+   validación (`#grasa-next`). El flujo pasa a `objetivo → senal → datos → grasa → actividad`.
+9. El texto de ayuda dice «…permite estimar **tu porcentaje de grasa**» en vez de «tu masa
+   libre de grasa».
+10. Los topes (12% / 55%) van **arriba de la barra** y pegados a ella.
+
+**Actividad**
+
+11. «Activo» pasa a **«Entreno de 4 a 6 veces por semana»** (antes 3 a 6).
+
+**Resultado**
+
+12. El titular pasa a **«Estas son tus calorías y macronutrientes, {nombre}»**, y al llegar
+    se lanza **confeti**. Se implementó en el propio archivo, no con una librería de CDN: son
+    cuarenta líneas y la página se sirve entera inline. La física va **por tiempo
+    transcurrido y no por cuadro**, para que no se congele si el navegador limita
+    `requestAnimationFrame`. Respeta `prefers-reduced-motion`.
+13. «Proteína» pasa a **«Proteínas»**.
+14. **Se ocultan** los bloques «Lo que más te preocupa» (`.signal-result`) y «Tu ruta empieza
+    así» (`.route-start`). En su lugar queda una sola línea —«Ahora te toca el paso 1 de tu
+    ruta»— y el botón, que ahora dice **«Ver el paso 1 de mi ruta»**.
+
+### Lo oculto está oculto, no borrado
+
+Los dos bloques conservan su marcado y el JS los sigue llenando; solo llevan el atributo
+`hidden`. **Reactivarlos es quitar ese atributo.** Es una decisión del 25-ago-2026 y está
+**pendiente de nuevo aviso** — no es un cierre.
+
+### Regla de trabajo que pidió el usuario
+
+**Todo cambio que se haga en este test hay que recordárselo**, además de anotarlo acá.
+
+### Resultado esperado
+
+Menos abandono dentro del wizard: la portada deja de repetirse, cada pantalla tiene una sola
+tarea y el paso de números entra sin scroll. El KPI es la proporción de tests iniciados que
+llegan al resultado.
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 

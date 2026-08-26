@@ -11,7 +11,11 @@
     'utm_source', 'utm_medium', 'utm_campaign',
     'utm_term', 'utm_content', 'utm_id',
     'fbclid', 'gclid', 'fbc', 'fbp', 'fbc_id', 'h_ad_id',
-    'ttclid', 'msclkid', 'wbraid', 'gbraid', 'ctwa_clid'
+    'ttclid', 'msclkid', 'wbraid', 'gbraid', 'ctwa_clid',
+    // Ruta que devolvio 404 y desde la cual la persona se recupero. No es una
+    // fuente de trafico, pero viaja igual que una: es el unico dato que dice
+    // que enlace roto la trajo.
+    'ruta_404'
   ];
 
   // Índice de subdominio del formato fbc de Meta: 0=.com, 1=tr4iner.com,

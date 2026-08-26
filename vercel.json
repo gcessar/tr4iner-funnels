@@ -27,6 +27,266 @@
       "source": "/calendly-an-optimizado",
       "destination": "/calendly-an",
       "permanent": true
+    },
+    {
+      "source": "/empezar",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/empezar-ads",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/new",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/proximamente",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/uuss",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/diagnostico",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/newsletter",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/waitlist150",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/taller",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/taller-gluteos-registro",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/optin-blackfriday",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/otp-desinflama-abdomen",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/bono-inflamacion",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/bono-comer-en-fiestas-sin-culpa",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/lm-plan30d",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/gluteosfuertes-b",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/macros-a",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/macros-c",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/macrostr4iner",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
+    },
+    {
+      "source": "/recetas-100desayunos",
+      "destination": "/10platospg",
+      "permanent": false
+    },
+    {
+      "source": "/recetas-100airfrier",
+      "destination": "/10platospg",
+      "permanent": false
+    },
+    {
+      "source": "/ofert2a-metodo",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/ofert2b",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/oferta-reset",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/oferta-reset-off",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/vsl1-h",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/vs1m-b",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/2a5-kilos-por-mes-h",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/reserva-2enero",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/reserva-2e",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/casos-de-estudio-b",
+      "destination": "/casos-de-estudio",
+      "permanent": false
+    },
+    {
+      "source": "/registro-va",
+      "destination": "/casos-de-estudio-va",
+      "permanent": false
+    },
+    {
+      "source": "/agendar",
+      "destination": "/calendly-an",
+      "permanent": false
+    },
+    {
+      "source": "/agendar-b",
+      "destination": "/calendly-an",
+      "permanent": false
+    },
+    {
+      "source": "/agendar-va",
+      "destination": "/calendly-va",
+      "permanent": false
+    },
+    {
+      "source": "/agendar-va-b",
+      "destination": "/calendly-va",
+      "permanent": false
+    },
+    {
+      "source": "/fit4challenge",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4challenge-22",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4-ad",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4-many",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/winners-fit4",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/winners-gpc",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4-ofertwiners",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4-payment-12m",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4-payment-3m",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/redictfit4",
+      "destination": "/fit4",
+      "permanent": false
+    },
+    {
+      "source": "/fit4challenge-va",
+      "destination": "/fit4-va",
+      "permanent": false
+    },
+    {
+      "source": "/fit4challenge-va-sp",
+      "destination": "/fit4-va",
+      "permanent": false
+    },
+    {
+      "source": "/medico",
+      "destination": "/medicos",
+      "permanent": true
+    },
+    {
+      "source": "/biblioteca/video/",
+      "destination": "/biblioteca/videos/",
+      "permanent": true
+    },
+    {
+      "source": "/gracias-fit4",
+      "destination": "/gracias-fit4-challenge",
+      "permanent": true
+    },
+    {
+      "source": "/biblioteca/inicio/utm_source=:rest",
+      "destination": "/biblioteca/inicio/",
+      "permanent": false
     }
   ],
   "rewrites": [
