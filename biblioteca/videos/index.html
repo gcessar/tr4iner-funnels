@@ -1272,16 +1272,43 @@
       background: var(--ink);
       color: var(--card);
     }
-    .guide-visual::before,
+    .guide-visual img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Velo para que el rotulo se lea sobre cualquier miniatura. */
     .guide-visual::after {
       position: absolute;
-      border: 1px solid rgba(255, 253, 246, .16);
+      inset: 0;
+      background: linear-gradient(180deg, rgba(17, 17, 17, .62) 0%, rgba(17, 17, 17, .12) 42%, rgba(17, 17, 17, .38) 100%);
       content: "";
     }
-    .guide-visual::before { width: 220px; height: 220px; transform: rotate(9deg); }
-    .guide-visual::after { width: 156px; height: 156px; transform: rotate(-12deg); }
+    .guide-play {
+      position: relative;
+      z-index: 1;
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--mark);
+      color: var(--ink);
+    }
+    .guide-play svg { width: 19px; height: 21px; margin-left: 3px; fill: currentColor; }
+    .guide-play::after {
+      position: absolute;
+      inset: -7px;
+      border: 2px solid var(--mark);
+      border-radius: 50%;
+      content: "";
+      animation: focus-play-pulse 2s ease-out infinite;
+    }
     .guide-kicker {
       position: absolute;
+      z-index: 1;
       top: 20px;
       left: 20px;
       color: var(--mark);
@@ -1289,23 +1316,6 @@
       font-size: 9px;
       font-weight: 600;
       letter-spacing: .12em;
-    }
-    .guide-symbol { z-index: 1; text-align: center; }
-    .guide-symbol i {
-      width: 68px;
-      height: 5px;
-      display: block;
-      margin: 10px auto;
-      background: var(--mark);
-    }
-    .guide-symbol i:nth-child(2) { width: 106px; }
-    .guide-symbol i:nth-child(3) { width: 42px; }
-    .guide-symbol b {
-      display: block;
-      margin-top: 24px;
-      font-family: var(--serif);
-      font-size: 34px;
-      font-weight: 560;
     }
     .guide-copy { padding: 38px 34px; }
     .guide-copy h2 {
@@ -1607,7 +1617,6 @@
     #program-content .priority-guide { min-height: 300px; overflow: hidden; border-radius: 8px; box-shadow: none; }
     #program-content .priority-guide:hover { transform: none; border-color: var(--ink); }
     .guide-visual { background: var(--ink); }
-    .guide-symbol b { font-weight: 750; }
     .guide-copy { padding: 34px; }
     .guide-copy .nx-title { font-size: clamp(28px, 3.6vw, 36px); font-weight: 750; letter-spacing: -0.045em; }
     .primary-button, .yellow-button { min-height: 54px; border-radius: 6px; font-weight: 750; }
@@ -1687,6 +1696,11 @@
       .bridge-copy h2 { font-size: 29px; }
       .yellow-button { width: 100%; }
       footer { margin-top: 36px; }
+    }
+    @keyframes focus-play-pulse {
+      0% { opacity: .85; transform: scale(1); }
+      70% { opacity: 0; transform: scale(1.5); }
+      100% { opacity: 0; transform: scale(1.5); }
     }
     @keyframes mobile-focus-in {
       from { opacity: 0; transform: translateY(12px); }
@@ -1833,11 +1847,6 @@
         border-radius: 50%;
         content: "";
         animation: focus-play-pulse 2s ease-out infinite;
-      }
-      @keyframes focus-play-pulse {
-        0% { opacity: .85; transform: scale(1); }
-        70% { opacity: 0; transform: scale(1.5); }
-        100% { opacity: 0; transform: scale(1.5); }
       }
       .mobile-focus-kicker {
         display: block;
@@ -1988,6 +1997,7 @@
       .mobile-focus-meta { margin: 14px 0 12px; }
     }
     @media (prefers-reduced-motion: reduce) {
+      .guide-play::after { animation: none; }
       .rv, .vcard, .thumb img, .play, .weekly-progress > div i,
       .mobile-focus,
       .mobile-focus.is-ready .mobile-focus-eyebrow,
@@ -2125,10 +2135,10 @@
         <div class="route-content">
           <button type="button" class="priority-guide rv" id="next-card" hidden>
             <span class="guide-visual" aria-hidden="true">
+              <img id="guide-img" src="" alt="" width="640" height="360" loading="lazy" decoding="async" />
               <span class="guide-kicker">RECOMENDADO PARA TI</span>
-              <span class="guide-symbol">
-                <i></i><i></i><i></i>
-                <b>HOY</b>
+              <span class="guide-play">
+                <svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
               </span>
             </span>
             <span class="guide-copy">
@@ -3356,6 +3366,7 @@
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
+        pintarMiniatura(document.getElementById('guide-img'), nextVideo.id);
         pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo.id);
         pintarBaraja();
         mobileFocusOpen.setAttribute('aria-label', 'Ver orientación: ' + nextVideo.title);
