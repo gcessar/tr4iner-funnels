@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-26` — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
 - `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
 - `2026-08-25` — El popup del video muestra descripción y recursos editables desde el CMS
 - `2026-08-25` — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
@@ -115,6 +116,49 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-26 — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
+
+### Qué cambió en `/biblioteca/videos/`
+
+- **Fuera la portada.** El bloque de eyebrow + titular + bajada desapareció: la página abre
+  directo en el paso 1. La cabecera queda solo con el chip de estado, alineado a la derecha.
+  El foco al cerrar el reproductor pasa al índice de la ruta, que antes iba al titular.
+- **Acordeón de uno a la vez.** Abrir un grupo cierra el resto. Con varios abiertos la ruta
+  dejaba de leerse como secuencia y obligaba a hacer scroll para volver arriba.
+- **Recomendación de orden, sin candado.** Al abrir una orientación que tiene pasos previos
+  sin ver, el popup muestra un aviso —«Para entender mejor qué necesitas para tu objetivo, te
+  recomendamos ver primero los pasos previos de tu ruta»— con un enlace directo al primer
+  paso pendiente. **No bloquea nada:** se puede seguir con ese video.
+- **Móvil, tarjeta de foco:** ahora abre con la miniatura del video y un botón de play falso
+  con anillo que late. El clic lo maneja la tarjeta entera, como antes.
+- **Móvil, acceso al resto:** el enlace subrayado «Ver todos los videos» pasa a ser una
+  baraja en abanico con las miniaturas de las tres orientaciones siguientes, el rótulo «Ver
+  siguientes pasos» y el conteo de lo que queda.
+
+### Por qué se descartó el candado
+
+La pedida original era bloquear cada paso hasta ver el anterior. Al revisarlo aparecieron dos
+problemas: el check de «marcar como aplicada» que ya existe en cada tarjeta lo abría en dos
+clics —el bloqueo no habría significado nada— y contar los pendientes daba números de dos
+dígitos («hay 18 pasos anteriores»), que se lee como reproche y no como recomendación. Se
+decidió recomendar en vez de obligar, y nombrar el paso concreto en vez de contar.
+
+### Vista «visto»
+
+Sigue siendo la del sistema: 85 % del video, que es lo que marca `completedAt` en
+`POST /api/genesis/progress`. El check manual no cuenta para el aviso.
+
+### Resultado esperado
+
+Menos fricción para llegar al primer video y un orden sugerido que no encierra la biblioteca.
+El KPI es la proporción de sesiones que abren al menos un video.
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 
