@@ -1432,62 +1432,13 @@
     .vmeta { letter-spacing: .09em; }
 
     .conversion-bridge {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      min-height: 410px;
+      display: block;
       margin-top: 88px;
       background: var(--ink);
       color: var(--card);
       border-radius: 0;
       padding: 0;
       text-align: left;
-    }
-    .bridge-case {
-      position: relative;
-      overflow: hidden;
-      border-right: 1px solid rgba(255, 253, 246, .22);
-      background: var(--mark);
-      color: var(--ink);
-    }
-    .bridge-case::after {
-      position: absolute;
-      right: -42px;
-      bottom: -58px;
-      width: 170px;
-      height: 170px;
-      border: 1px solid rgba(22, 19, 14, .35);
-      content: "";
-      transform: rotate(18deg);
-    }
-    .bridge-case span,
-    .bridge-case small {
-      position: absolute;
-      left: 24px;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: .12em;
-    }
-    .bridge-case span { top: 28px; }
-    .bridge-case small { right: 20px; bottom: 26px; line-height: 1.5; }
-    .bridge-case strong {
-      position: absolute;
-      top: 92px;
-      left: 24px;
-      font-family: var(--serif);
-      font-size: 43px;
-      font-weight: 560;
-      letter-spacing: -.04em;
-      line-height: .94;
-    }
-    .bridge-case > i {
-      position: absolute;
-      top: 230px;
-      left: 24px;
-      font-family: var(--serif);
-      font-size: 58px;
-      font-style: normal;
-      line-height: 1;
     }
     .bridge-copy { padding: 48px 52px; }
     .section-code.light { color: #c7bdab; }
@@ -1547,9 +1498,6 @@
       .route-group-body { padding-left: 12px; }
       .route-group-body .grid { grid-template-columns: 1fr; }
       .conversion-bridge { grid-template-columns: 1fr; margin-top: 64px; }
-      .bridge-case { height: 280px; border-right: 0; border-bottom: 1px solid rgba(255, 253, 246, .22); }
-      .bridge-case strong { top: 80px; font-size: 47px; }
-      .bridge-case > i { top: 178px; }
       .bridge-copy { padding: 34px 24px 38px; }
       .bridge-copy h2 { font-size: 31px; }
     }
@@ -1573,6 +1521,13 @@
       font-size: 12.5px;
       line-height: 1.45;
     }
+    .bridge-offer .yellow-button {
+      background: var(--card);
+      border-color: var(--card);
+      color: var(--ink);
+    }
+    .bridge-offer .yellow-button:hover { background: #EDE9E1; border-color: #EDE9E1; }
+    .bridge-offer .yellow-button i { color: var(--ink); }
     .ghost-button {
       min-height: 52px;
       display: inline-flex;
@@ -1673,8 +1628,7 @@
     .tour-next { min-height: 48px; border-radius: 6px; }
 
     .conversion-bridge { min-height: 360px; border-radius: 8px; overflow: hidden; }
-    .bridge-case strong, .bridge-copy h2 { font-weight: 750; }
-    .bridge-copy h2 { letter-spacing: -0.045em; }
+    .bridge-copy h2 { font-weight: 750; letter-spacing: -0.045em; }
 
     @media (max-width: 860px) {
       .library-layout { grid-template-columns: 1fr; }
@@ -1729,11 +1683,6 @@
       .player-sheet { padding: 14px 14px 16px; }
       .player-bar { padding: 12px 14px; }
       .conversion-bridge { grid-template-columns: 1fr; min-height: 0; margin-top: 54px; }
-      .bridge-case { height: 126px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
-      .bridge-case span { top: 18px; left: 18px; }
-      .bridge-case strong { top: 48px; left: 18px; font-size: 38px; }
-      .bridge-case > i { top: 44px; right: 18px; left: auto; font-size: 42px; }
-      .bridge-case small { display: none; }
       .bridge-copy { padding: 28px 20px 32px; }
       .bridge-copy h2 { font-size: 29px; }
       .yellow-button { width: 100%; }
@@ -1873,14 +1822,15 @@
         place-items: center;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        background: var(--ink);
-        color: var(--card);
+        background: var(--mark);
+        color: var(--ink);
       }
       .mobile-focus-play svg { width: 17px; height: 19px; margin-left: 3px; fill: currentColor; }
       .mobile-focus-play::after {
         position: absolute;
         inset: -6px;
         border: 2px solid var(--mark);
+        background: transparent;
         border-radius: 50%;
         content: "";
         animation: focus-play-pulse 2s ease-out infinite;
@@ -2006,7 +1956,19 @@
       .mobile-focus.is-ready .mobile-show-library { animation-delay: .14s; }
 
       body.mobile-library-mode .page { padding-top: calc(24px + env(safe-area-inset-top)); }
-      body.mobile-library-mode .mobile-focus { display: none !important; }
+      /* Con la biblioteca abierta el video de hoy se queda arriba, en version
+         compacta: es el aula, no dos pantallas que se turnan. */
+      body.mobile-library-mode .mobile-focus:not([hidden]) { display: block; margin-bottom: 30px; }
+      body.mobile-library-mode .mobile-focus-eyebrow,
+      body.mobile-library-mode .mobile-focus h1,
+      body.mobile-library-mode .mobile-focus-lead,
+      body.mobile-library-mode .mobile-focus-description,
+      body.mobile-library-mode .mobile-focus-meta,
+      body.mobile-library-mode .mobile-show-library { display: none !important; }
+      body.mobile-library-mode .mobile-focus-card { padding: 14px; }
+      body.mobile-library-mode .mobile-focus-card strong { font-size: 21px; }
+      body.mobile-library-mode .mobile-focus-thumb { margin-bottom: 12px; }
+      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px; font-size: 13.5px; }
       body.mobile-library-mode .mobile-profile-trigger:not([hidden]) { margin-bottom: 28px; }
       body.mobile-library-mode .profile-summary,
       body.mobile-library-mode #next-card { display: none !important; }
@@ -2204,14 +2166,7 @@
       </div>
 
       <section class="conversion-bridge bridge rv" aria-label="Conoce un proceso acompañado">
-        <div class="bridge-case" id="bridge-case" aria-label="Caso de estudio">
-          <span>CASO DE ESTUDIO</span>
-          <strong id="bridge-case-name">Dashiel</strong>
-          <i>→</i>
-          <small>UN PROCESO REAL · PASO A PASO</small>
-        </div>
         <div class="bridge-copy">
-          <p class="section-code light">EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN</p>
           <div class="bridge-offer">
             <h2>¿Quieres ver cómo funciona nuestro método en la transformación completa de una persona, y aplicarlo en tu cambio físico?</h2>
             <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
@@ -3444,7 +3399,8 @@
       function showMobileLibrary(moveFocus) {
         if (moveFocus) mobileLibraryRequested = true;
         mobileFocusActive = false;
-        mobileFocusEl.hidden = true;
+        // El paso de hoy sigue arriba: solo deja de ocupar la pantalla entera.
+        mobileFocusEl.hidden = !nextVideo;
         document.body.classList.remove('mobile-focus-mode');
         document.body.classList.add('mobile-video-experience', 'mobile-library-mode');
         routeIndexTitle.setAttribute('role', 'heading');
@@ -3515,12 +3471,9 @@
         var estado = estadoBisagra();
         var cta = document.getElementById('bridge-cta');
         var esMujer = state.sexo === 'Mujer';
-        var testigo = esMujer ? 'Flor de María' : 'Dashiel';
 
         // El copy de las dos ofertas es fijo; lo unico que cambia por sexo es
-        // el caso al que se entra y el nombre de la placa.
-        document.getElementById('bridge-case-name').innerHTML = esMujer ? 'Flor<br>de María' : 'Dashiel';
-        document.getElementById('bridge-case').setAttribute('aria-label', 'Caso de estudio de ' + testigo);
+        // a que caso entra el primer boton.
 
         var base = new URL(
           state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',

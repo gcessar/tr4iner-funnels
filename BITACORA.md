@@ -155,6 +155,11 @@ El bloque del caso de estudio deja de ser un solo CTA y pasa a ofrecer dos:
    (`/testimonio-flor` o `/testimonio-dashiel` según sexo), con toda la atribución.
 2. «¿Quieres que te ayude a estar en forma?» → **Aplica a mi asesoría aquí**, a WhatsApp.
 
+El bloque quedó **sin la placa amarilla** con el nombre del testigo y sin el eyebrow: es texto
+y botón sobre negro, porque con la placa competía con el contenido de la ruta. El botón del
+caso dejó de ser amarillo —sobre negro gritaba— y pasó a blanco; el de asesoría es de
+contorno. Se borraron las 16 reglas de `.bridge-case`, que quedaban sin dueño.
+
 El número es el mismo que ya usaba `404.html` para asesoría 1 a 1 (`17439014239`, el de AN).
 El mensaje precargado dice «vengo de mi Ruta Tr4iner» porque es lo único que le va a decir al
 equipo de dónde salió ese chat: **no se emite ningún evento nuevo** en ese clic, para no
@@ -166,6 +171,13 @@ texto y etiqueta del botón. Solo sigue resolviendo el nombre de la placa y el d
 
 En móvil, `mobile-profile-trigger` pasa a decir **EXPEDIENTE** en vez de «TU PUNTO DE
 PARTIDA». Sigue abriendo el expediente al tocarlo.
+
+### Móvil: aula virtual en vez de dos pantallas que se turnan
+
+Antes, abrir la biblioteca escondía el video del día (`body.mobile-library-mode .mobile-focus
+{ display: none }`) y las dos vistas se alternaban. Ahora **el paso de hoy se queda arriba**,
+en versión compacta —sin eyebrow, sin titular, sin descripción ni meta—, y debajo aparece el
+acordeón. El play de la miniatura pasa a amarillo.
 
 ### Vista «visto»
 
