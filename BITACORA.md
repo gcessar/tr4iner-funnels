@@ -146,6 +146,27 @@ clics —el bloqueo no habría significado nada— y contar los pendientes daba 
 dígitos («hay 18 pasos anteriores»), que se lee como reproche y no como recomendación. Se
 decidió recomendar en vez de obligar, y nombrar el paso concreto en vez de contar.
 
+### La bisagra pasa a tener dos salidas
+
+El bloque del caso de estudio deja de ser un solo CTA y pasa a ofrecer dos:
+
+1. «¿Quieres ver cómo funciona nuestro método en la transformación completa de una persona, y
+   aplicarlo en tu cambio físico?» → **Míralo aquí**, al caso de estudio de siempre
+   (`/testimonio-flor` o `/testimonio-dashiel` según sexo), con toda la atribución.
+2. «¿Quieres que te ayude a estar en forma?» → **Aplica a mi asesoría aquí**, a WhatsApp.
+
+El número es el mismo que ya usaba `404.html` para asesoría 1 a 1 (`17439014239`, el de AN).
+El mensaje precargado dice «vengo de mi Ruta Tr4iner» porque es lo único que le va a decir al
+equipo de dónde salió ese chat: **no se emite ningún evento nuevo** en ese clic, para no
+repetir el incidente de eventos no declarados en n8n. El `bisagra_click` sigue existiendo,
+sin cambios, solo en el CTA del caso.
+
+Como el copy de las dos ofertas es fijo, `updateBridge()` dejó de reescribir eyebrow, título,
+texto y etiqueta del botón. Solo sigue resolviendo el nombre de la placa y el destino.
+
+En móvil, `mobile-profile-trigger` pasa a decir **EXPEDIENTE** en vez de «TU PUNTO DE
+PARTIDA». Sigue abriendo el expediente al tocarlo.
+
 ### Vista «visto»
 
 Sigue siendo la del sistema: 85 % del video, que es lo que marca `completedAt` en

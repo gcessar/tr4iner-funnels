@@ -1554,6 +1554,42 @@
       .bridge-copy h2 { font-size: 31px; }
     }
 
+    /* Dos ofertas en la bisagra: ver el metodo, o pedir ayuda directo. */
+    .bridge-offer + .bridge-offer {
+      margin-top: 26px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 253, 246, 0.18);
+    }
+    .bridge-offer h2 {
+      margin: 0 0 18px;
+      font-size: clamp(21px, 2.3vw, 27px);
+      line-height: 1.2;
+      text-wrap: pretty;
+    }
+    .bridge-offer small {
+      display: block;
+      margin-top: 12px;
+      color: rgba(255, 253, 246, 0.55);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .ghost-button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 253, 246, 0.55);
+      border-radius: 6px;
+      color: var(--card);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.16s ease, border-color 0.16s ease;
+    }
+    .ghost-button:hover { background: rgba(255, 253, 246, 0.1); border-color: var(--card); }
+    .ghost-button i { color: var(--mark); font-style: normal; }
+
     /* Ruta Tr4iner: el contenido se lee como una ruta personal, no como una revista. */
     :root {
       --paper: #FFFFFF;
@@ -2092,7 +2128,7 @@
 
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
-          <small>TU PUNTO DE PARTIDA</small>
+          <small>EXPEDIENTE</small>
           <strong id="mobile-profile-trigger-value">RUTA ACTIVA</strong>
         </span>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
@@ -2175,13 +2211,21 @@
           <small>UN PROCESO REAL · PASO A PASO</small>
         </div>
         <div class="bridge-copy">
-          <p class="section-code light" id="bridge-eyebrow">EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN</p>
-          <h2 id="bridge-title">Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.</h2>
-          <p id="bridge-text">Conoce un caso real y qué cambió cuando dejó de depender de consejos sueltos antes de decidir si quieres orientación para tu caso.</p>
-          <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
-            <span id="bridge-cta-label">Ver el caso de Dashiel</span> <i>→</i>
-          </a>
-          <small>Al final del caso podrás responder una evaluación y conocer el siguiente paso que corresponde.</small>
+          <p class="section-code light">EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN</p>
+          <div class="bridge-offer">
+            <h2>¿Quieres ver cómo funciona nuestro método en la transformación completa de una persona, y aplicarlo en tu cambio físico?</h2>
+            <a class="yellow-button bridge-cta" id="bridge-cta" href="/testimonio-dashiel">
+              <span>Míralo aquí</span> <i>→</i>
+            </a>
+            <small>Al final del caso podrás responder una evaluación y conocer el siguiente paso que corresponde.</small>
+          </div>
+          <div class="bridge-offer">
+            <h2>¿Quieres que te ayude a estar en forma?</h2>
+            <a class="ghost-button bridge-advisory" id="bridge-advisory" href="https://api.whatsapp.com/send?phone=17439014239&amp;text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa." target="_blank" rel="noopener">
+              <span>Aplica a mi asesoría aquí</span> <i>→</i>
+            </a>
+            <small>Hablas directo con el equipo por WhatsApp.</small>
+          </div>
         </div>
       </section>
 
@@ -3469,23 +3513,14 @@
 
       function updateBridge() {
         var estado = estadoBisagra();
-        var eyebrow = document.getElementById('bridge-eyebrow');
-        var h2 = document.getElementById('bridge-title');
-        var para = document.getElementById('bridge-text');
         var cta = document.getElementById('bridge-cta');
         var esMujer = state.sexo === 'Mujer';
         var testigo = esMujer ? 'Flor de María' : 'Dashiel';
 
-        eyebrow.textContent = 'EL SIGUIENTE PASO NO ES MÁS INFORMACIÓN';
-        h2.textContent = esMujer
-          ? 'Cuando quieras dejar de hacerlo sola, mira cómo se construye un proceso acompañado.'
-          : 'Cuando quieras dejar de hacerlo solo, mira cómo se construye un proceso acompañado.';
-        para.textContent = esMujer
-          ? 'Flor de María hacía horas de cardio y comía muy poco. Adelgazaba, pero no estaba construyendo un proceso sostenible. Mira qué cambió paso a paso antes de decidir si quieres orientación para tu caso.'
-          : 'Dashiel también necesitaba algo más que consejos sueltos. Mira cómo construyó un proceso acompañado antes de decidir si quieres orientación para tu caso.';
+        // El copy de las dos ofertas es fijo; lo unico que cambia por sexo es
+        // el caso al que se entra y el nombre de la placa.
         document.getElementById('bridge-case-name').innerHTML = esMujer ? 'Flor<br>de María' : 'Dashiel';
         document.getElementById('bridge-case').setAttribute('aria-label', 'Caso de estudio de ' + testigo);
-        document.getElementById('bridge-cta-label').textContent = 'Ver el caso de ' + testigo;
 
         var base = new URL(
           state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
