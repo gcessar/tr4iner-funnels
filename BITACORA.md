@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-26` — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
 - `2026-08-26` — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
 - `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
 - `2026-08-25` — El popup del video muestra descripción y recursos editables desde el CMS
@@ -116,6 +117,86 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-26 — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
+
+### El diagnóstico
+
+GA4 (propiedad `Tr4iner`, 258197833) muestra **64 rutas distintas cayendo en el 404 en los
+últimos 60 días**. Las que más pesan:
+
+| URL rota | Vistas | Usuarios |
+|---|---|---|
+| `/empezar` | 167 | 117 |
+| `/ofert2a-metodo` | 127 | 53 |
+| `/recetas-100desayunos` | 82 | 61 |
+| `/agendar-va` | 71 | 51 |
+| `/gluteosfuertes-b` | 66 | 48 |
+| `/macros-a` | 40 | 36 |
+| `/agendar` · `/agendar-b` · `/agendar-va-b` | 100 | 69 |
+| `/optin-blackfriday` | 36 | 26 |
+
+**Las cuatro variantes de `/agendar*` suman 171 vistas y 120 usuarios**: gente que hizo clic
+para agendar una llamada y encontró una página de error. Es la parte más cara del embudo.
+
+Dos hallazgos que no eran «enlaces viejos» sino **enlaces mal publicados**:
+
+1. `/biblioteca/inicio/utm_source=Instagram-AN-perfil&…` — **le falta el `?`**. Está así en el
+   link de la bio de Instagram, en dos campañas (`GENESIS` y `Caso_Estudio`). Cada clic desde
+   la bio cae en 404. El redirect lo rescata, pero **el arreglo de fondo es corregir el enlace
+   publicado**: los UTMs de esos clics se pierden igual.
+2. `/testimonio-rosita-va ` con un espacio al final. No se redirige —una fuente con espacio es
+   frágil—; hay que corregir dónde esté publicado.
+
+### Qué cambió
+
+**47 redirects nuevos en `vercel.json`.** El destino es el equivalente vivo más cercano; sin
+equivalente, el funnel que coincide con la intención del clic:
+
+- Lead magnets muertos y entradas genéricas → `/biblioteca/inicio/`
+- Recetas → `/10platospg`
+- Ofertas y VSL → `/casos-de-estudio`
+- `/agendar*` → `/calendly-an` · `/calendly-va`
+- FIT4 → `/fit4` · `/fit4-va`
+
+**Son temporales (307) a propósito.** Son slugs de campaña que se reciclan y un 308 queda
+cacheado en el navegador para siempre; ninguna estaba indexada —el tráfico viene de bios,
+correos y WhatsApp—, así que no hay SEO que perder. Las tres erratas de tipeo sí son
+permanentes: `/medico` → `/medicos`, `/biblioteca/video/` → `/biblioteca/videos/`,
+`/gracias-fit4` → `/gracias-fit4-challenge`.
+
+`/macros-*` **no** va a `/biblioteca/plan/`: el test pide sesión de miembro y sin ella la
+página carga vacía. Va a la entrada.
+
+Se dejaron caer a propósito las rutas basura (`/adsd`, `/aosdoasod`, `/greeeasdasd`,
+`/oadsad`): son bots y tipeos.
+
+### El origen 404 ahora viaja con la persona
+
+El `404.html` empujaba `legacy_route_recovery_view` con `missing_path` al dataLayer, pero
+**nadie lo escuchaba**: se revisaron los 27 nombres de evento de la propiedad y ninguno de los
+dos existe en GA4. GTM no tiene tag ni trigger. Se estaban escribiendo al vacío.
+
+Y el enlace de recuperación reenviaba solo el query string, no la ruta que falló. Ahora:
+
+- `404.html` agrega `ruta_404=<path>` a los dos enlaces de recuperación.
+- `attribution.js` suma `ruta_404` a `UTM_KEYS`, así viaja como un identificador más.
+- El CRM lo persiste en `BibliotecaLead.legacyPath` (migración
+  `20260826120000_biblioteca_lead_origen_404`) y lo muestra bajo el origen del miembro.
+
+Es **primer contacto**: volver después por un enlace sano no lo pisa.
+
+### Resultado esperado
+
+Recuperar los ~600 usuarios cada 60 días que hoy terminan en una página de error, y saber por
+cuál enlace roto entró cada lead. El KPI es la caída de vistas del 404 y, en el panel, qué
+proporción de miembros nuevos trae `legacyPath`.
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 
