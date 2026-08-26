@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
 - `2026-08-25` — El popup del video muestra descripción y recursos editables desde el CMS
 - `2026-08-25` — El test de macros deja de ser paso obligado: del correo se entra directo a la ruta
 - `2026-08-25` — `/biblioteca/confirma/` se despeja y el correo de acceso cambia de piel
@@ -114,6 +115,80 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-25 — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
+
+### Qué cambió en `/biblioteca/plan/`
+
+**Portada y cabecera**
+
+1. El titular pasa de «Diseñemos tu punto de partida, {nombre}» a **«Vamos a personalizar tus
+   macros y calorías, {nombre}»**.
+2. Se retira la bajada («Reúne tu objetivo, tus números y la señal…»), y con ella sus reglas
+   de CSS.
+3. La cabecera **solo aparece en la primera pregunta y en el resultado**. En los pasos del
+   medio empujaba la pregunta fuera de la pantalla. Se retira `renderSignalHero()`, que ya no
+   tiene dónde escribir.
+
+**Paso de objetivo**
+
+4. Fuera el rótulo «TU OBJETIVO» y la ayuda «Esto ajusta la referencia de energía y
+   macronutrientes».
+5. Opciones nuevas, con símbolo a la izquierda y el tick al final: **Ganar músculo**,
+   **Recomposición corporal**, **Perder grasa**. Los `data-value` (`MM`, `MA`, `PG`) **no se
+   tocaron**: el cálculo de macros y el orden de la ruta dependen de ellos.
+
+**Paso de señal**
+
+6. La nota de privacidad pasa a **«Esto no es una evaluación médica.»**
+
+**Números y porcentaje de grasa**
+
+7. El paso de datos queda **solo con edad, altura y peso**, en tres columnas alineadas. Antes
+   arrastraba abajo el selector de grasa y obligaba a hacer scroll.
+8. El selector de grasa es ahora **un paso propio** (`data-step="grasa"`), con su propia
+   validación (`#grasa-next`). El flujo pasa a `objetivo → senal → datos → grasa → actividad`.
+9. El texto de ayuda dice «…permite estimar **tu porcentaje de grasa**» en vez de «tu masa
+   libre de grasa».
+10. Los topes (12% / 55%) van **arriba de la barra** y pegados a ella.
+
+**Actividad**
+
+11. «Activo» pasa a **«Entreno de 4 a 6 veces por semana»** (antes 3 a 6).
+
+**Resultado**
+
+12. El titular pasa a **«Estas son tus calorías y macronutrientes, {nombre}»**, y al llegar
+    se lanza **confeti**. Se implementó en el propio archivo, no con una librería de CDN: son
+    cuarenta líneas y la página se sirve entera inline. La física va **por tiempo
+    transcurrido y no por cuadro**, para que no se congele si el navegador limita
+    `requestAnimationFrame`. Respeta `prefers-reduced-motion`.
+13. «Proteína» pasa a **«Proteínas»**.
+14. **Se ocultan** los bloques «Lo que más te preocupa» (`.signal-result`) y «Tu ruta empieza
+    así» (`.route-start`). En su lugar queda una sola línea —«Ahora te toca el paso 1 de tu
+    ruta»— y el botón, que ahora dice **«Ver el paso 1 de mi ruta»**.
+
+### Lo oculto está oculto, no borrado
+
+Los dos bloques conservan su marcado y el JS los sigue llenando; solo llevan el atributo
+`hidden`. **Reactivarlos es quitar ese atributo.** Es una decisión del 25-ago-2026 y está
+**pendiente de nuevo aviso** — no es un cierre.
+
+### Regla de trabajo que pidió el usuario
+
+**Todo cambio que se haga en este test hay que recordárselo**, además de anotarlo acá.
+
+### Resultado esperado
+
+Menos abandono dentro del wizard: la portada deja de repetirse, cada pantalla tiene una sola
+tarea y el paso de números entra sin scroll. El KPI es la proporción de tests iniciados que
+llegan al resultado.
+
+### Resultado medido (completar después)
+
+Pendiente.
 
 ---
 
