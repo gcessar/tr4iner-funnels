@@ -1787,7 +1787,6 @@
         display: block;
         padding: 22px 18px 18px;
         border: 1px solid var(--rule-strong);
-        border-left: 5px solid var(--mark);
         border-radius: 8px;
         background: var(--card);
         color: var(--ink);
@@ -2090,8 +2089,7 @@
 
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
-          <small>EXPEDIENTE</small>
-          <strong id="mobile-profile-trigger-value">RUTA ACTIVA</strong>
+          <strong id="mobile-profile-trigger-value">EXPEDIENTE</strong>
         </span>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </button>
@@ -3243,7 +3241,6 @@
           document.getElementById('profile-dialog-focus').textContent = 'Elige por dónde empezar';
           document.getElementById('profile-dialog-plan').href = planUrl();
           document.getElementById('profile-dialog-plan').textContent = 'Calcular mi punto de partida →';
-          document.getElementById('mobile-profile-trigger-value').textContent = 'SIN CALCULAR';
           chip.hidden = false;
           chip.classList.add('is-in');
           chip.href = planUrl();
@@ -3278,7 +3275,6 @@
         document.getElementById('profile-dialog-kcal').textContent = kcalLabel;
         document.getElementById('profile-dialog-focus').textContent = signal.focus;
         document.getElementById('profile-dialog-plan').href = planUrl();
-        document.getElementById('mobile-profile-trigger-value').textContent = signal.short;
       }
 
       // ── Siguiente orientación: primera pendiente de la ruta ──
