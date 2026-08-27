@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <script>
+    /*
+      Instagram puede agregar sus propios UTMs a un enlace que ya los trae.
+      Normalizamos antes de GTM para que analítica y los hidden de Typeform
+      lean una sola fuente: gana el primer valor no vacío de cada dato.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view durante la migración. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T88G63P');
+  </script>
+
+  <!-- Paso operativo del funnel: no se indexa (regla SEO/GEO de AGENTS.md). -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <title>Empieza aquí · TR4INER</title>
+  <meta name="description" content="Mira el video y cuéntanos tu situación. El equipo de TR4INER lee cada respuesta antes de contactarte." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/empezar" />
+
+  <!-- El video es el contenido principal: la conexión con Vidalytics se abre
+       de entrada. A Typeform solo le adelantamos el handshake, porque su
+       embed.js recién se pide cuando el formulario se acerca a la pantalla. -->
+  <link rel="preconnect" href="https://fast.vidalytics.com" crossorigin />
+  <link rel="dns-prefetch" href="https://fast.vidalytics.com" />
+  <link rel="preconnect" href="https://embed.typeform.com" crossorigin />
+  <link rel="dns-prefetch" href="https://embed.typeform.com" />
+
+  <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 peticiones
+       a Google y el mismo lenguaje visual. Se precargan las dos que dibujan la
+       primera pantalla (título y cuerpo); la mono entra con swap. -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
+  <style>
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 600;font-display:swap;src:url("/assets/fonts/jetbrains-mono-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  </style>
+
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-deeper: #FAFBFC;
+      --ink: #16181A;
+      --ink-soft: #575F67;
+      --muted: #6E757D;
+      --muted-2: #6B7278;
+      --rule: #DDE1E5;
+      --rule-strong: #C6CDD4;
+      --rust: #A85E40;
+      --max: 620px;
+      --serif: "Stack Sans Headline", -apple-system, "Helvetica Neue", sans-serif;
+      --sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display-weight: 700;
+      --meta-size: 10.5px;
+      --meta-weight: 500;
+      --meta-tracking: 0.14em;
+    }
+
+    /* Ni Stack Sans Headline ni Lexend traen itálica: sin esto el navegador
+       inclina las letras a la fuerza y se ve mecánico. El énfasis lo llevan
+       el color y el peso. */
+    em, i { font-style: normal; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a:focus-visible { outline: 2px solid var(--rust); outline-offset: 4px; }
+
+    .page {
+      position: relative;
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 20px 14px 48px;
+    }
+
+    .video-shell { position: relative; margin-bottom: 14px; }
+
+    .video-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: var(--meta-size);
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: var(--meta-tracking);
+      text-transform: uppercase;
+    }
+
+    .video-label .left::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      margin: 0 9px 1px 0;
+      border-radius: 50%;
+      background: rgba(184, 115, 85, 0.65);
+    }
+
+    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada:
+       el bloque de abajo no salta cuando el reproductor entra (CLS 0). */
+    .video-container {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 1px solid var(--rule-strong);
+      border-radius: 2px;
+      background: #111;
+      box-shadow: 0 12px 40px -10px rgba(10, 10, 10, 0.22);
+    }
+
+    .video-container > div { width: 100%; height: 100%; min-height: 0; }
+
+    .application-card {
+      overflow: hidden;
+      border: 1px solid var(--rule-strong);
+      border-radius: 2px;
+      background: var(--bg-deeper);
+    }
+
+    .application-header {
+      position: relative;
+      margin: 8px 10px 0;
+      padding: 28px 18px 20px;
+      border-top: 2px solid rgba(184, 115, 85, 0.72);
+    }
+
+    .application-header::after {
+      content: "";
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      width: 8px;
+      height: 8px;
+      border-top: 1px solid rgba(184, 115, 85, 0.72);
+      border-right: 1px solid rgba(184, 115, 85, 0.72);
+    }
+
+    .cta-kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+      color: var(--rust);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .cta-kicker::before {
+      content: "";
+      width: 25px;
+      height: 1px;
+      flex: 0 0 auto;
+      background: rgba(184, 115, 85, 0.58);
+    }
+
+    .cta-title {
+      max-width: 480px;
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-variation-settings: "opsz" 100;
+      font-size: clamp(29px, 6vw, 36px);
+      font-weight: var(--display-weight);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .cta-title em { color: var(--rust); font-weight: 500; }
+
+    .cta-subtitle {
+      max-width: 49ch;
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .cta-typeform-frame { padding: 8px 20px 12px; background: transparent; }
+
+    .cta-typeform-frame [data-tf-live] {
+      min-height: 350px;
+      height: auto;
+      background: transparent;
+    }
+
+    /* Typeform mete un div propio entre el contenedor y su widget, y ese div corta
+       la cadena de `min-height: inherit` con la que el widget baja el piso hasta el
+       iframe. Sin esto el iframe se queda en el alto que calcula Typeform (288px en
+       la pregunta de SI/NO) y su layout apila el boton sobre la ultima opcion. */
+    .cta-typeform-frame [data-tf-live] > div,
+    .cta-typeform-frame [data-tf-live] .tf-v1-widget,
+    .cta-typeform-frame [data-tf-live] iframe {
+      min-height: inherit;
+    }
+
+    /* Ocupa el mismo alto que va a ocupar el embed, así el hueco reservado no
+       cambia cuando Typeform reemplaza el placeholder. */
+    .loading-form {
+      display: grid;
+      min-height: 350px;
+      place-items: center;
+      padding: 42px 20px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 54px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .trust-avatar {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      border-radius: 50%;
+      background: var(--bg-deeper);
+    }
+
+    .trust-avatar img { display: block; width: 46px; height: 46px; object-fit: cover; }
+
+    .trust-label {
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      line-height: 1.25;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .trust-name { color: var(--ink); font-size: 13.5px; font-weight: 500; line-height: 1.35; }
+    .trust-name .sub { color: var(--muted); font-weight: 400; }
+
+    .fine-print {
+      width: 100%;
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted-2);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      line-height: 1.8;
+      letter-spacing: 0.1em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .fine-print a { color: var(--muted); text-decoration: none; }
+    .fine-print a:hover { color: var(--ink); }
+    .fine-print .divider { margin: 0 8px; color: var(--rule-strong); }
+
+    @media (max-width: 720px) {
+      .page { padding: 20px 10px 36px; }
+      .cta-typeform-frame { padding: 0 0 12px; }
+    }
+
+    /* En pantalla angosta el titular desperdiciaba casi la mitad del ancho:
+       el <br> partia "Cuentanos tu situacion," y text-wrap:balance igualaba
+       las lineas a lo mas corto. Aca el salto se anula, el texto fluye y baja
+       un punto de cuerpo para que cada linea llegue al borde derecho. */
+    @media (max-width: 600px) {
+      .cta-title {
+        font-size: 24px;
+        letter-spacing: -0.018em;
+        line-height: 1.12;
+        text-wrap: pretty;
+      }
+
+      .cta-title br { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
+
+  <main class="page" id="inicio">
+    <section class="video-shell" aria-labelledby="video-title">
+      <div class="video-label">
+        <span class="left" id="video-title">Video</span>
+        <span>Activa el sonido</span>
+      </div>
+
+      <div class="video-container">
+        <div id="vidalytics_embed_o1Hu8Smxc1TpaN4k"></div>
+      </div>
+    </section>
+
+    <section id="typeform-cta" aria-labelledby="application-title">
+      <div class="application-card">
+        <div class="application-header">
+          <div class="cta-kicker">Siguiente paso</div>
+          <h1 class="cta-title" id="application-title">Cuéntanos tu situación, <br>en tus <em>propias palabras.</em></h1>
+          <p class="cta-subtitle">
+            El equipo lee cada respuesta antes de contactarte. Esto evita que recibas un pitch genérico — lo que te llegue va a ser específico para tu situación.
+          </p>
+        </div>
+
+        <div class="cta-typeform-frame">
+          <div class="loading-form" id="form-loader">Cargando aplicación…</div>
+          <div
+            id="tf-embed"
+            data-tf-live="01KHA5RZHGV02HW971F4227939"
+            data-tf-inline-on-mobile
+            data-tf-auto-resize
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="trust">
+        <div class="trust-avatar">
+          <img
+            src="/assets/team/anthoni-montalvan-92.webp"
+            width="46"
+            height="46"
+            loading="lazy"
+            decoding="async"
+            alt="Anthoni Montalván"
+          />
+        </div>
+        <div class="trust-text">
+          <div class="trust-label">Producción · TR4INER</div>
+          <div class="trust-name">Anthoni Montalván <span class="sub">· Coach</span></div>
+        </div>
+      </div>
+
+      <div class="fine-print">
+        © 2026 TR4INER · BodyMindFitCo LLC
+        <br />
+        <a href="#">Privacidad</a><span class="divider">|</span><a href="#">Términos</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function (v, i, d, a, l, y, t, c, s) {
+      y = "_" + d.toLowerCase();
+      c = d + "L";
+      if (!v[d]) { v[d] = {}; }
+      if (!v[c]) { v[c] = {}; }
+      if (!v[y]) { v[y] = {}; }
+      var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
+      if (!vsl) {
+        vsl = function (u, cb) {
+          if (t) { cb(); return; }
+          s = i.createElement("script");
+          s.type = "text/javascript";
+          s.async = true;
+          s.src = u;
+          if (s.readyState) {
+            s.onreadystatechange = function () {
+              if (s.readyState === "loaded" || s.readyState === "complete") {
+                s.onreadystatechange = null;
+                vlf = 1;
+                cb();
+              }
+            };
+          } else {
+            s.onload = function () {
+              vlf = 1;
+              cb();
+            };
+          }
+          i.getElementsByTagName("head")[0].appendChild(s);
+        };
+      }
+      vsl(l + "loader.min.js", function () {
+        if (!vli) {
+          var vlc = v[c][vl];
+          vli = new vlc();
+        }
+        vli.loadScript(l + "player.min.js", function () {
+          var vec = v[d][ve];
+          t = new vec();
+          t.run(a);
+        });
+      });
+    })(window, document, "Vidalytics", "vidalytics_embed_o1Hu8Smxc1TpaN4k", "https://fast.vidalytics.com/embeds/IoH8SL8U/o1Hu8Smxc1TpaN4k/");
+  </script>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var tf = document.getElementById("tf-embed");
+      var loader = document.getElementById("form-loader");
+      var section = document.getElementById("typeform-cta");
+      var typeformLoaded = false;
+
+      function setHiddenFields() {
+        /*
+          Hidden fields enviados a Typeform. Misma lista que las páginas de
+          caso de estudio: si agregas o quitas campos ocultos en Typeform,
+          hay que editarla en las cuatro páginas.
+        */
+        var identityFields = ["first_name", "name", "email", "sexo", "video", "variant"];
+        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+        var hiddenFields = [];
+        params.forEach(function (value, key) {
+          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
+          if (!allowed || !value) return;
+          // El @ literal evita que el workflow reciba correos con %40.
+          var encoded = encodeURIComponent(value).replace(/%40/gi, "@");
+          hiddenFields.push(key + "=" + encoded);
+        });
+
+        // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
+        // se construye desde el fbclid del primer aterrizaje. Sin ellos Meta no
+        // puede emparejar el Lead del servidor con el clic del anuncio.
+        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
+          ? window.TR4Track.getMetaIds()
+          : {};
+        Object.keys(metaIds).forEach(function (key) {
+          hiddenFields.push(key + "=" + encodeURIComponent(metaIds[key]));
+        });
+
+        var hidden = hiddenFields.join(",");
+
+        // Typeform lee data-tf-hidden cuando carga su embed.js.
+        if (tf && hidden) {
+          tf.setAttribute("data-tf-hidden", hidden);
+        }
+      }
+
+      function loadTypeform() {
+        if (typeformLoaded) return;
+        typeformLoaded = true;
+        setHiddenFields();
+
+        var script = document.createElement("script");
+        script.src = "https://embed.typeform.com/next/embed.js";
+        script.async = true;
+        script.onload = function () {
+          if (loader) loader.style.display = "none";
+        };
+        document.head.appendChild(script);
+      }
+
+      /*
+        embed.js pesa más que todo el resto de la página junta, así que se pide
+        recién cuando el formulario entra en pantalla: mientras tanto no le
+        compite ancho de banda al video, que es lo que la persona vino a ver.
+
+        OJO con el rootMargin: tiene que ser 0. El auto-resize de Typeform mide
+        el alto del formulario al arrancar, y si arranca con el contenedor fuera
+        de la pantalla no mide nada — el iframe se queda clavado en el
+        min-height del CSS (350px) y su layout apila el botón "Aceptar" sobre la
+        última opción. Medido: cargando fuera de pantalla da 350px; cargando en
+        pantalla da 557px en móvil, igual que las páginas de caso de estudio.
+        Precargarlo antes de tiempo rompe el formulario, no lo acelera.
+      */
+      function armLazyLoad() {
+        if (!section || !("IntersectionObserver" in window)) {
+          loadTypeform();
+          return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          io.disconnect();
+          loadTypeform();
+        }, { rootMargin: "0px" });
+
+        io.observe(section);
+      }
+
+      if (document.readyState === "complete") {
+        armLazyLoad();
+      } else {
+        window.addEventListener("load", armLazyLoad, { once: true });
+      }
+
+      // Función manual para pruebas desde consola: window.TR4INER_SHOW_TYPEFORM()
+      window.TR4INER_SHOW_TYPEFORM = loadTypeform;
+    })();
+  </script>
+</body>
+</html>

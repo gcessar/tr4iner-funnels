@@ -29,11 +29,6 @@
       "permanent": true
     },
     {
-      "source": "/empezar",
-      "destination": "/biblioteca/inicio/",
-      "permanent": false
-    },
-    {
       "source": "/empezar-ads",
       "destination": "/biblioteca/inicio/",
       "permanent": false
