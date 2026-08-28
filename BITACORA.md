@@ -17,6 +17,8 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-27` — `/empezar` deja de ser un redirect y pasa a ser página propia: VSL + aplicación
+- `2026-08-27` — La ruta no mostraba el video arriba a quien no hizo el test
 - `2026-08-26` — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
 - `2026-08-26` — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
 - `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
@@ -117,6 +119,103 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-27 — `/empezar` deja de ser un redirect y pasa a ser página propia: VSL + aplicación
+
+### Qué cambió
+
+**Página nueva `empezar/index.html`, servida en `/empezar`** (directorio + `cleanUrls`, sin
+rewrite). Dos bloques y nada más: el VSL de Vidalytics `o1Hu8Smxc1TpaN4k` (embed
+`IoH8SL8U`) y, debajo, el mismo bloque de aplicación de las páginas de caso de estudio —
+Typeform `01KHA5RZHGV02HW971F4227939`, idéntico copy («Siguiente paso» / «Cuéntanos tu
+situación, en tus propias palabras»), misma tarjeta y mismo pie.
+
+**Se eliminó el redirect `/empezar → /biblioteca/inicio/`** de `vercel.json`. Era del rescate
+de 404 del 26-ago y ahora tapaba la página. `/empezar-ads` sigue apuntando a la biblioteca:
+si también tiene que caer en esta página, es un cambio de una línea.
+
+La página **no lleva cabecera ni titular**: se probó con masthead, kicker y titular editorial,
+y el usuario los sacó. El h1 del documento es el título del formulario.
+
+### Por qué
+
+`/empezar` es **la ruta muerta con más tráfico del proyecto**: 167 vistas y 117 usuarios en 60
+días (GA4, ver entrada del 26-ago). El redirect a la biblioteca evitaba el error pero mandaba
+a esa gente a un lead magnet, no a la oferta. Ahora aterrizan en video + aplicación, que es el
+paso que convierte.
+
+### Cómo se resolvió la velocidad
+
+El pedido era máximo rendimiento de carga:
+
+- **CSS recortado a lo que la página usa** y tipografías auto-hospedadas (0 peticiones a
+  Google). Se precargan solo las dos que dibujan la primera pantalla.
+- **`embed.js` de Typeform se pide recién cuando el formulario entra en pantalla**, no al
+  abrir la página: mientras tanto no le compite ancho de banda al video.
+- **Sin CLS**: `aspect-ratio: 16/9` reserva el alto del video y el placeholder «Cargando
+  aplicación…» reserva 350px del formulario.
+
+### La trampa del lazy-load (documentada en el código)
+
+El `rootMargin` del IntersectionObserver **tiene que ser 0**. El auto-resize de Typeform mide
+el alto del formulario cuando arranca, y si arranca con el contenedor fuera de pantalla **no
+mide**: el iframe se queda clavado en el `min-height` del CSS y su layout apila el botón
+«Aceptar» encima de la última opción. Medido en móvil 375px: precargando fuera de pantalla,
+350px y opción C tapada; cargando en pantalla, **557px — exactamente el mismo alto que
+`/testimonio-flor`**. Adelantar la carga rompe el formulario, no lo acelera.
+
+### Atribución
+
+Los hidden de Typeform son los mismos que en caso de estudio y se verificaron con UTMs
+sintéticas: viajan todos los `utm_*`, `first_name`, `email` (con `@` literal, no `%40`),
+`sexo`, `video`, `variant`, los ad ids, y el `fbc` que reconstruye TR4Track. La página además
+normaliza UTMs duplicadas antes de GTM, igual que `index-fuerza.html`.
+
+### SEO
+
+`noindex, nofollow`: es un paso operativo del funnel, no contenido indexable.
+
+### Resultado esperado
+
+Los ~117 usuarios/60 días que hoy caen en la biblioteca pasan a ver el VSL y la aplicación.
+Al ser una entrada sin UTMs propias, la mayoría llega sin atribución: el Typeform es el único
+punto donde se los puede identificar.
+
+### Resultado medido (completar después)
+
+Pendiente: aplicaciones de Typeform con origen `/empezar` a 14 días.
+
+---
+
+## 2026-08-27 — La ruta no mostraba el video arriba a quien no hizo el test
+
+### Qué pasaba
+
+Un registro real entró desde el correo a `/biblioteca/videos/` y vio el índice pelado: sin la
+tarjeta del video de hoy, sin el play, sin la baraja. Justo lo que se había construido el
+26-ago.
+
+**Es un descuido del cambio del 25-ago.** Ese día el test de macros dejó de ser paso obligado,
+pero la recomendación siguió pidiendo plan: `renderNextCard()` cortaba con `if (!plan)` y
+`setupMobileExperience()` exigía `!!plan` para encender el modo foco de móvil. Resultado: la
+experiencia nueva solo existía para quien había hecho el test —que desde el 25-ago es la
+minoría— y todos los demás caían en la lista.
+
+### Qué cambió
+
+Se quitó `plan` de las dos condiciones. Sin plan, el orden es el editorial por defecto, que
+`bloquesOrdenados()` ya resolvía, y la señal cae en `prevencion` por el fallback que ya
+existía. No hizo falta tocar nada más.
+
+Verificado con sesión sin plan: en móvil aparece la miniatura con el play amarillo, «Ver
+siguientes pasos» y el expediente; en escritorio, la tarjeta de recomendación con el video.
+
+### Resultado esperado
+
+Que el 100 % de quienes entran desde el correo vean el primer video arriba, no solo quienes
+hicieron el test.
 
 ---
 
