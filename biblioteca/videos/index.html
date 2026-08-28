@@ -3334,11 +3334,6 @@
       }
 
       function renderNextCard() {
-        if (!plan) {
-          nextCardEl.hidden = true;
-          mobileFocusOpen.disabled = true;
-          return;
-        }
         nextVideo = null;
         nextBloque = null;
         bloquesOrdenados().some(function (b) {
@@ -3376,7 +3371,7 @@
       });
 
       function setupMobileExperience() {
-        var enabled = mobileViewport.matches && !!plan && !gateActivo && !params.get('video');
+        var enabled = mobileViewport.matches && !gateActivo && !params.get('video');
         document.body.classList.toggle('mobile-video-experience', enabled);
         mobileProfileTrigger.hidden = !enabled;
         if (!enabled) {

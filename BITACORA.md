@@ -18,6 +18,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 **Agosto 2026**
 
 - `2026-08-27` — `/empezar` deja de ser un redirect y pasa a ser página propia: VSL + aplicación
+- `2026-08-27` — La ruta no mostraba el video arriba a quien no hizo el test
 - `2026-08-26` — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
 - `2026-08-26` — La ruta abre en el paso 1: sin portada, acordeón de uno y recomendación de orden
 - `2026-08-25` — El test de macros se rehace: 14 cambios y una sección oculta hasta nuevo aviso
@@ -185,6 +186,36 @@ punto donde se los puede identificar.
 ### Resultado medido (completar después)
 
 Pendiente: aplicaciones de Typeform con origen `/empezar` a 14 días.
+
+---
+
+## 2026-08-27 — La ruta no mostraba el video arriba a quien no hizo el test
+
+### Qué pasaba
+
+Un registro real entró desde el correo a `/biblioteca/videos/` y vio el índice pelado: sin la
+tarjeta del video de hoy, sin el play, sin la baraja. Justo lo que se había construido el
+26-ago.
+
+**Es un descuido del cambio del 25-ago.** Ese día el test de macros dejó de ser paso obligado,
+pero la recomendación siguió pidiendo plan: `renderNextCard()` cortaba con `if (!plan)` y
+`setupMobileExperience()` exigía `!!plan` para encender el modo foco de móvil. Resultado: la
+experiencia nueva solo existía para quien había hecho el test —que desde el 25-ago es la
+minoría— y todos los demás caían en la lista.
+
+### Qué cambió
+
+Se quitó `plan` de las dos condiciones. Sin plan, el orden es el editorial por defecto, que
+`bloquesOrdenados()` ya resolvía, y la señal cae en `prevencion` por el fallback que ya
+existía. No hizo falta tocar nada más.
+
+Verificado con sesión sin plan: en móvil aparece la miniatura con el play amarillo, «Ver
+siguientes pasos» y el expediente; en escritorio, la tarjeta de recomendación con el video.
+
+### Resultado esperado
+
+Que el 100 % de quienes entran desde el correo vean el primer video arriba, no solo quienes
+hicieron el test.
 
 ---
 
