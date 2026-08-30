@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-30` — Las UTMs llegaban rotas a Calendly y al sheet AGENDAS: el Typeform guardaba el texto encodeado
 - `2026-08-27` — `/empezar` deja de ser un redirect y pasa a ser página propia: VSL + aplicación
 - `2026-08-27` — La ruta no mostraba el video arriba a quien no hizo el test
 - `2026-08-26` — 47 rutas muertas de ClickFunnels dejan de ser 404, y el origen viaja con el lead
@@ -119,6 +120,71 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-30 — Las UTMs llegaban rotas a Calendly y al sheet AGENDAS: el Typeform guardaba el texto encodeado
+
+### Qué cambió
+
+**`attribution.js`** suma dos helpers: `decodeUtmValue()` (mismo motor que `decodeUtmValue` del
+CRM en `src/lib/utm.ts`) y `hiddenFieldValue()`, que prepara un valor para `data-tf-hidden`
+escapando **solo la coma** —el separador del atributo— con `\,`.
+
+**Las 6 páginas que alimentan el Typeform** (`registro-typeform-optimizado[-B]`,
+`registro-typeform-flor[-B]`, `registro-typeform-flor-va`, `empezar/`) dejan de pasar los
+campos ocultos por `encodeURIComponent`. Ahora van crudos, y con un decode previo por si el
+valor ya venía doble-encodeado de afuera. Con eso desaparece también el parche del `%40` del
+correo, que era este mismo bug visto por un solo agujero.
+
+**Las 4 páginas de Calendly** (`calendly-an-optimizado[-B]`, `calendly-va/index[-B]`) cargan
+`attribution.js` y decodifican el valor antes de ponerlo en la URL del iframe. Es la última
+barrera: lo que Calendly registra ahí es lo que después aparece en el sheet AGENDAS y en el
+CAPI, y de ahí ya no se puede arreglar. Cubre a quien abrió la página antes del deploy y
+agenda después.
+
+### Por qué
+
+Las agendas de Meta Ads venían llegando al sheet con la campaña ilegible:
+`%5BTR4INER%5D%20%5BCE%5D%20%5BCOLD%5D%20%5BLATAM-US-CA%5D%20%5BB3%5D%20%5BMEDICOS%5D` en vez
+de `[TR4INER] [CE] [COLD] [LATAM-US-CA] [B3] [MEDICOS]`.
+
+La causa está en el embed de Typeform: **no decodifica** lo que lee de `data-tf-hidden`. Su
+parser (`embed.typeform.com/next/embed.js`) parte el atributo por comas, se queda con todo lo
+que hay después del primer `=` y lo guarda **tal cual**; recién lo encodea una vez al armar la
+URL de su iframe. Nuestro `encodeURIComponent` era entonces un encoding de más: Typeform
+guardaba el literal `%5B…`, su redirect lo volvía a encodear (`%255B…`), y la página de
+Calendly —que decodifica una vez con `URLSearchParams`— le entregaba `%5B…` a Calendly como si
+fuera el nombre de la campaña.
+
+Comprobado con datos de producción, no por deducción: en la ejecución `515330` de n8n el
+`hidden` del Typeform trae `utm_campaign: "%5BTR4INER26%5D%20%5B09%5D%20…"`, y en la `515205`
+el `tracking.utm_campaign` que manda Calendly trae exactamente el mismo texto.
+
+**Alcance medido:** 70 de las 2.742 filas del sheet AGENDAS, todas desde el 8-jul-2026 —
+**49 de las 114 agendas de agosto (43%)**. En el CRM, 20 leads `agenda-import` quedaron con la
+campaña ilegible (5 de ellos con venta) y 49 filas de `AgendaEvent`. Una campaña que no cruza
+por nombre contra el Ads Manager no suma su agenda ni su venta al ROAS de la campaña real.
+
+El mismo bug rompía **cualquier valor con espacio o acento**: un `first_name` de "José María"
+llegaba al CRM como `Jos%C3%A9%20Mar%C3%ADa` (17 leads así en julio).
+
+### Cómo se verificó
+
+- Simulación de la cadena entera (landing → `data-tf-hidden` → parser real de Typeform →
+  redirect → página de Calendly) con el `attribution.js` de esta rama: en modo "antes"
+  reproduce el texto exacto que se ve hoy en producción; en modo "después" devuelve
+  `[TR4INER] [CE] [COLD] [LATAM-US-CA] [B3] [MEDICOS]`.
+- Las 6 páginas servidas en local con la URL del anuncio real: `data-tf-hidden` sale limpio en
+  las 6, y el parser de Typeform lee bien campaña, `utm_content` con corchetes, nombre con
+  acento y correo con `@`.
+- Página de Calendly cargada con una URL doble-encodeada a propósito (el caso de quien ya
+  estaba navegando): el iframe recibe la campaña limpia.
+
+### Pendiente
+
+El histórico ya escrito no se arregla solo: el sheet AGENDAS (70 filas) y las tablas del CRM
+(`crm-ventas/scripts/backfill-utm-percent-encoding.ts`, dry run listo).
 
 ---
 

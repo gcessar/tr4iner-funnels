@@ -139,6 +139,13 @@ las agendas de WhatsApp — sin él se subcuenta más de la mitad. Script de lec
 - **Commits:** convencional (`feat(scope):`, `fix(scope):`, `docs`, `chore`).
 - **No crear archivos `.md`/README** salvo que el usuario lo pida (excepción: entradas en `BITACORA.md`).
 - **Al cambiar algo con impacto en conversión/atribución:** dejar entrada en `BITACORA.md` (hay TEMPLATE al final del archivo).
+- **`data-tf-hidden` va CRUDO — nunca `encodeURIComponent`.** Typeform no decodifica lo que lee
+  de ese atributo: guarda el texto tal cual y recién lo encodea al armar la URL de su iframe.
+  Encodear del lado nuestro dejaba la campaña guardada como `%5BTR4INER%5D%20%5BCE%5D…` dentro
+  del Typeform, y ese literal seguía viaje al redirect, a **Calendly**, al sheet AGENDAS y al
+  `custom_data` del CAPI de Meta — donde ya no hay forma de arreglarlo. Lo único que rompe el
+  formato del atributo es la coma (es el separador) y se escapa con `\,`. Helpers en
+  `attribution.js`: `hiddenFieldValue()` y `decodeUtmValue()`. Ver la entrada del 2026-08-30.
 
 ## Método de trabajo Codex + Claude Code
 

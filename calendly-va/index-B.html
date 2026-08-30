@@ -776,6 +776,7 @@
     })(window, document, "Vidalytics", "vidalytics_embed_2s1vpHRi_hOARyIm", "https://fast.vidalytics.com/embeds/IoH8SL8U/2s1vpHRi_hOARyIm/");
   </script>
 
+  <script src="/attribution.js"></script>
   <script>
     (function () {
       var qp = new URLSearchParams(window.location.search);
@@ -786,10 +787,19 @@
       var calendarClose = document.querySelector(".calendar-modal-close");
       var calendarLoaded = false;
 
+      // attribution.js expone el decode; si no cargó, el valor pasa como hoy.
+      var limpiar = (window.TR4Track && window.TR4Track.decodeUtmValue)
+        || function (v) { return v == null ? "" : String(v); };
+
       qp.forEach(function (value, key) {
         var passthrough = ["email", "first_name", "name", "sexo", "video", "fbclid", "gclid", "fbc_id", "h_ad_id"];
         if (key.indexOf("utm_") === 0 || passthrough.indexOf(key) !== -1) {
-          calendlyUrl.searchParams.set(key, value);
+          // Última barrera antes de Calendly: lo que Calendly guarda acá es lo
+          // que después aparece en el sheet AGENDAS y en el CAPI de Meta, y de
+          // ahí ya no hay forma de arreglarlo. `URLSearchParams` ya decodificó
+          // una vez, así que un "%5B" que sobrevive es doble encoding de algún
+          // salto anterior (era el caso del Typeform hasta ago-2026).
+          calendlyUrl.searchParams.set(key, limpiar(value));
         }
       });
 

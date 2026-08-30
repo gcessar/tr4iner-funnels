@@ -757,6 +757,14 @@
           El script toma cada valor desde la URL, por ejemplo:
           ?first_name=Juan&email=juan@email.com&utm_source=facebook
         */
+        // Helpers compartidos de attribution.js. Si el archivo no cargó
+        // (bloqueador), el valor viaja crudo igual — que es lo que Typeform
+        // espera; solo se pierde el escape de comas.
+        var tr4 = window.TR4Track || {};
+        var crudo = function (v) { return v == null ? "" : String(v); };
+        var limpiar = tr4.decodeUtmValue || crudo;
+        var paraTypeform = tr4.hiddenFieldValue || crudo;
+
         // `variant` identifica el brazo del A/B de /casos-de-estudio. Typeform
         // también debe tener ese URL parameter declarado y publicado.
         var identityFields = ["first_name", "name", "email", "sexo", "video", "variant"];
@@ -765,9 +773,14 @@
         params.forEach(function (value, key) {
           var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
           if (!allowed || !value) return;
-          // El @ literal evita que el workflow reciba correos con %40.
-          var encoded = encodeURIComponent(value).replace(/%40/gi, "@");
-          hiddenFields.push(key + "=" + encoded);
+          // El valor viaja CRUDO. Typeform NO decodifica lo que lee de
+          // data-tf-hidden: lo guarda tal cual y recién lo encodea al armar la
+          // URL de su iframe. Encodear acá era el bug: la campaña quedaba
+          // guardada como el literal "%5BTR4INER%5D%20%5BCE%5D…" y ese texto se
+          // arrastraba al redirect del Typeform, a Calendly, al sheet AGENDAS y
+          // al CAPI de Meta. El decode previo limpia lo que ya haya llegado
+          // doble-encodeado desde afuera.
+          hiddenFields.push(key + "=" + paraTypeform(limpiar(value)));
         });
 
         // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
@@ -777,7 +790,7 @@
           ? window.TR4Track.getMetaIds()
           : {};
         Object.keys(metaIds).forEach(function (key) {
-          hiddenFields.push(key + "=" + encodeURIComponent(metaIds[key]));
+          hiddenFields.push(key + "=" + paraTypeform(metaIds[key]));
         });
 
         var hidden = hiddenFields.join(",");
