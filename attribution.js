@@ -114,6 +114,48 @@
     return stored || '';
   }
 
+  // Tope de vueltas del decode: hubo casos de doble encoding (`%255B`), pero
+  // más de eso es señal de basura, no de un nombre real. Mismo motor que
+  // `decodeUtmValue` en el CRM (src/lib/utm.ts): si cambia uno, cambia el otro.
+  var MAX_DECODE_PASSES = 3;
+
+  /**
+   * Devuelve el valor legible de un parámetro que llegó percent-encoded.
+   *
+   * `URLSearchParams` ya decodifica una vez, así que un `%5B` que sobrevive es
+   * doble encoding: alguien reenvió el crudo de la URL en vez del valor. Es
+   * idempotente —un valor limpio vuelve igual— y un `%` que no sea un escape
+   * válido (`"50% OFF"`) se deja tal cual en vez de romper.
+   */
+  function decodeUtmValue(value) {
+    var out = value == null ? '' : String(value);
+    for (var i = 0; i < MAX_DECODE_PASSES; i++) {
+      if (!/%[0-9A-Fa-f]{2}/.test(out)) break;
+      var next;
+      try { next = decodeURIComponent(out); } catch (e) { break; }
+      if (next === out) break;
+      out = next;
+    }
+    return out;
+  }
+
+  /**
+   * Prepara un valor para el atributo `data-tf-hidden`.
+   *
+   * Typeform NO decodifica lo que lee de ahí: parte el atributo por comas,
+   * toma todo lo que hay después del primer `=` y lo guarda TAL CUAL; recién
+   * lo encodea una vez al armar la URL de su iframe. O sea que encodear acá
+   * era el bug: la campaña quedaba guardada como el literal
+   * `%5BTR4INER%5D%20%5BCE%5D…` y ese texto se arrastraba al redirect del
+   * Typeform, a Calendly, al sheet AGENDAS y al `custom_data` del CAPI.
+   *
+   * Lo único que rompe el formato es la coma, que es el separador; el propio
+   * embed la desescapa con `\,`. Corchetes, espacios y acentos viajan crudos.
+   */
+  function hiddenFieldValue(value) {
+    return (value == null ? '' : String(value)).replace(/,/g, '\\,');
+  }
+
   /** Identificadores de Meta listos para viajar como hidden fields. */
   function getMetaIds() {
     var out = {};
@@ -219,6 +261,8 @@
     UTM_KEYS: UTM_KEYS,
     isAttributionKey: isAttributionKey,
     getCanonicalParams: getCanonicalParams,
+    decodeUtmValue: decodeUtmValue,
+    hiddenFieldValue: hiddenFieldValue,
     getVideo: getVideo,
     getUTMs: getUTMs,
     getFbp: getFbp,
