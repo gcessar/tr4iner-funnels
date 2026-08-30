@@ -181,10 +181,15 @@ llegaba al CRM como `Jos%C3%A9%20Mar%C3%ADa` (17 leads así en julio).
 - Página de Calendly cargada con una URL doble-encodeada a propósito (el caso de quien ya
   estaba navegando): el iframe recibe la campaña limpia.
 
-### Pendiente
+### Publicado y reparado el mismo día
 
-El histórico ya escrito no se arregla solo: el sheet AGENDAS (70 filas) y las tablas del CRM
-(`crm-ventas/scripts/backfill-utm-percent-encoding.ts`, dry run listo).
+Merge `1e4bf2d` en `main`. Verificado en vivo sobre `metodo.tr4iner.com/testimonio-dashiel`
+con la URL real del anuncio: el iframe del Typeform recibe
+`utm_campaign=[TR4INER] [CE] [COLD] [LATAM-US-CA] [B3] [MEDICOS]`.
+
+El histórico también quedó limpio, con OK del usuario: 92 celdas en 70 filas del sheet AGENDAS
+(verificación posterior: 0 sucias sobre 2.742) y, del lado del CRM, 20 leads, 20 touchpoints y
+49 `AgendaEvent`. Scripts y detalle en la bitácora de `crm-ventas`, entrada del 30-ago.
 
 ---
 
