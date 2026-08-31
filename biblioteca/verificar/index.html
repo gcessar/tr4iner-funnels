@@ -42,7 +42,13 @@
     (function () {
       'use strict';
       var params = new URLSearchParams(window.location.search);
-      var token = params.get('token');
+      // El correo manda `?token=…`. El botón del WhatsApp no puede: WhatsApp
+      // encodea lo que se le concatena al final de la URL del botón, así que un
+      // `?` o una `/` llegan como %3F/%2F y el enlace muere. Por eso el WhatsApp
+      // entra por `/r/<token>`: base64url no trae ningún carácter reservado.
+      var fromPath = (window.location.pathname.match(/^\/r\/([A-Za-z0-9_-]+)\/?$/) || [])[1];
+      var token = params.get('token') || fromPath || '';
+
       function copyAttribution(target) {
         params.forEach(function (value, key) {
           var isAttribution = /^utm_/i.test(key) ||
@@ -50,7 +56,14 @@
           if (isAttribution && value) target.searchParams.set(key, value);
         });
       }
-      function fail(message) {
+      function enterRoute(video) {
+        // El punto de partida ya no bloquea la entrada: se entra siempre a la ruta.
+        var next = new URL('/biblioteca/videos/', window.location.origin);
+        copyAttribution(next);
+        if (video) next.searchParams.set('video', video);
+        window.location.replace(next.toString());
+      }
+      function showError(message) {
         document.getElementById('card').classList.add('error');
         document.getElementById('title').textContent = 'Este enlace ya no abre.';
         document.getElementById('message').textContent = message;
@@ -60,6 +73,16 @@
         retry.href = access.toString();
         retry.hidden = false;
       }
+      // El token es de un solo uso y el botón se queda en el chat para siempre:
+      // al segundo clic hay que entrar con la sesión de 30 días, no mandar al
+      // portón a quien ya está adentro.
+      function fail(message) {
+        fetch('/api/genesis/me').then(function (response) {
+          if (response.ok) { enterRoute(params.get('video')); return; }
+          showError(message);
+        }).catch(function () { showError(message); });
+      }
+
       if (!token) { fail('Falta el código de acceso. Solicita uno nuevo.'); return; }
 
       fetch('/api/genesis/verify', {
@@ -73,13 +96,8 @@
         return fetch('/api/genesis/me').then(function (response) {
           if (!response.ok) throw new Error('No se pudo abrir la sesión.');
           return response.json();
-        }).then(function (session) {
-          var video = verified.targetVideo || params.get('video');
-          // El punto de partida ya no bloquea la entrada: se entra siempre a la ruta.
-          var next = new URL('/biblioteca/videos/', window.location.origin);
-          copyAttribution(next);
-          if (video) next.searchParams.set('video', video);
-          window.location.replace(next.toString());
+        }).then(function () {
+          enterRoute(verified.targetVideo || params.get('video'));
         });
       }).catch(function (error) { fail(error.message || 'Solicita un enlace nuevo.'); });
     })();
