@@ -179,13 +179,37 @@ server estático, borrada después):
 El rewrite en sí **sólo se comprueba en el Preview de Vercel**: `python -m http.server` no lee
 `vercel.json`.
 
-### Lo que falta afuera — sin esto el botón sigue roto
+### n8n: la causa real no era la que decía la bitácora del CRM
 
-1. **n8n**, sub-workflow `zIs9F846ykP5kIjt`: activar `Pedir token al CRM` y corregir su URL a
-   `https://hub.tr4iner.com/api/genesis/whatsapp-token`. Hoy apunta a `crm.tr4iner.com`, que **no
-   resuelve** (`curl` devuelve `000`); está así desde el 19-ago.
-2. **n8n**: `ce_ruta_path` pasa a ser **sólo el token**, nunca una URL. Sin token, `acceso`.
-3. **ManyChat**, plantilla del botón *Ver mi Ruta*: la URL base pasa a
+El pendiente anotado el 27-ago —«activar `Pedir token al CRM` y corregirle la URL»— **ya estaba
+resuelto**: el nodo está activo y apunta bien a `https://hub.tr4iner.com/api/genesis/whatsapp-token`.
+La bitácora del CRM quedó desactualizada y mandó a buscar donde no era.
+
+**El problema es la credencial.** El nodo autentica con **«CRM Webhook Secret»**, que manda
+`x-webhook-secret` con el `WEBHOOK_SECRET`. Pero `/api/genesis/whatsapp-token` valida
+`x-genesis-internal-secret` contra `GENESIS_INTERNAL_SECRET`: otro header y otro secreto. El CRM
+devuelve **401**, el nodo tiene `onError: continueRegularOutput`, y la ejecución figura **en
+verde** mientras el token llega vacío. Es el mismo patrón de fallo silencioso del 27-ago.
+
+Comprobado en la ejecución `516695` (31-ago 20:21): `Pedir token al CRM` →
+`401 - {"error":"No autorizado"}`; `Armar enlace de la ruta` → `tieneToken: false`;
+`Escribir campos` → `success`. De los cuatro nodos del sistema que usan esa credencial, es el
+único que apunta a un endpoint `/api/genesis/*`; los otros tres van a `/api/webhook/*` y
+`/api/leads/sync-refund`, donde sí corresponde.
+
+### Qué se cambió en n8n hoy
+
+`Armar enlace de la ruta` deja de armar una URL y escribe **sólo el token**, con `acceso` de
+fallback. Publicado y vivo: `versionId === activeVersionId`, contador 50 → 51. Esa comprobación
+es obligatoria — n8n separa la versión guardada de la publicada, y el 27-ago un cambio quedó en
+borrador mientras el workflow seguía corriendo la versión vieja sin ningún error a la vista.
+
+### Lo que falta afuera — sin esto el botón no entra directo
+
+1. **n8n**: crear una credencial Header Auth `x-genesis-internal-secret` con el
+   `GENESIS_INTERNAL_SECRET` del CRM y apuntar `Pedir token al CRM` a ella. Sin esto el token
+   sigue vacío y el botón cae siempre al portón.
+2. **ManyChat**, plantilla del botón *Ver mi Ruta*: la URL base pasa a
    `https://metodo.tr4iner.com/r/` con `ce_ruta_path` al final. La muestra de ejemplo tiene que
    ser un token de 43 caracteres, no `?token=…`.
 
