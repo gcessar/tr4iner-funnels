@@ -143,6 +143,16 @@ estados y arrastra al botón:
 El rótulo de escritorio reemplaza a «RECOMENDADO PARA TI»: ocupaba exactamente ese lugar dentro
 de `.guide-visual` y dos etiquetas encimadas en la misma esquina no se leen.
 
+Tipografía: **JetBrains Mono, versalitas, tracking abierto**, o sea la misma receta que ya usan
+`RUTA ACTIVA`, `TU SIGUIENTE ENFOQUE` y el resto de los rótulos de estado de la página. El primer
+intento fue Instrument Sans en caja mixta y quedaba como el único objeto de su clase fuera del
+sistema. El botón sí sigue en Instrument Sans: mono para el estado, sans para la acción.
+
+De paso se arregló un defecto anterior: entre 861 y 1000 px conviven las dos columnas del
+expediente con las dos de la tarjeta, y la miniatura se aplastaba hasta **68 px de ancho**. El
+rótulo viejo no lo delataba porque se salía del contenedor y quedaba recortado. En esa franja la
+tarjeta ahora se apila, con la imagen arriba a 220 px.
+
 La condición vive en `esPasoUno()` y se pinta desde `renderNextCard()`, que ya corría al entrar,
 al completarse un video (≥85 %, `completarAuto`) y al marcarlo a mano (`toggleDone`). No hay
 estado nuevo que guardar: sale del progreso que ya existía. Si dejó el video a medias
@@ -167,9 +177,12 @@ Pendiente.
 ### Verificación
 
 Probado contra el servidor estático local con la sesión de miembro simulada por `/api/genesis/me`,
-en los dos estados y a 1440, 1000, 800, 700, 620, 540 y 390 px. El relevo a los 640 px queda
-limpio: arriba se ve la tarjeta de escritorio con su rótulo, abajo la de teléfono con el suyo, sin
-ningún ancho que se quede sin rótulo y sin desborde horizontal. Falta verificar en producción.
+en los dos estados y a 320, 360, 390, 430, 540, 620, 650, 700, 768, 860, 880, 900, 960, 1000, 1024,
+1120 y 1440 px. El relevo a los 640 px queda limpio: arriba la tarjeta de escritorio con su rótulo,
+abajo la de teléfono con el suyo, sin ningún ancho que se quede sin rótulo y sin desborde
+horizontal. El rótulo largo entra en **una sola línea en todos los anchos**, con dos escalones de
+tamaño (10,5 px de base y 9 px por debajo de 1120 px, donde la columna de la miniatura se angosta).
+Falta verificar en producción.
 
 ---
 
