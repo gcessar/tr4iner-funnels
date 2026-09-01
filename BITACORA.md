@@ -186,6 +186,20 @@ resultado) en teléfono y escritorio, con el resultado calculando bien (2.044 kc
 **Pendiente:** en el teléfono, los pasos de «señal» (1.034 px de alto contra 844 de pantalla) y
 «grasa» (859 px) siguen pidiendo scroll. No se tocaron en esta entrada.
 
+### Publicación
+
+Integrado a `main` el 1-sep-2026 (avance directo de `18519d8` a `932dbe2`, tres archivos:
+`BITACORA.md`, `biblioteca/plan/index.html` y `biblioteca/videos/index.html`). Deployment de
+producción `dpl_6P9oGKFgB96F2LzsiKMHELFpG8Sn`, `Ready` en 8 s, alias `https://metodo.tr4iner.com`.
+
+Verificado en vivo con una sesión de miembro real, recorriendo el test entero desde el teléfono: el
+resultado dio 1.632 kcal · 131 g / 154 g / 51 g y el popup del expediente muestra exactamente esos
+números, titulado «Tus macros.», con el botón «CONOCE TUS MACROS», el CTA «Actualizar mis macros →»
+y la fila «Base estimada» oculta. El paso de los números sale en dos columnas (edad a lo ancho,
+altura y peso a la par) y sin scroll. Sin errores de consola.
+
+La rama `work/videos-rotulo-paso` sigue viva por si hace falta revertir.
+
 ---
 
 ## 2026-09-01 — La ruta dice en qué paso está: rótulo del paso y botón que cambia
@@ -242,7 +256,8 @@ en los dos estados y a 320, 360, 390, 430, 540, 620, 650, 700, 768, 860, 880, 90
 abajo la de teléfono con el suyo, sin ningún ancho que se quede sin rótulo y sin desborde
 horizontal. El rótulo largo entra en **una sola línea en todos los anchos**, con dos escalones de
 tamaño (10,5 px de base y 9 px por debajo de 1120 px, donde la columna de la miniatura se angosta).
-Falta verificar en producción.
+Verificado en producción el 1-sep-2026 sobre `https://metodo.tr4iner.com/biblioteca/videos/` con una
+sesión de miembro real: el rótulo dice «Este es el Paso 1» y el botón «Ver Paso 1».
 
 ---
 
