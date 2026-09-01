@@ -204,14 +204,28 @@ fallback. Publicado y vivo: `versionId === activeVersionId`, contador 50 → 51.
 es obligatoria — n8n separa la versión guardada de la publicada, y el 27-ago un cambio quedó en
 borrador mientras el workflow seguía corriendo la versión vieja sin ningún error a la vista.
 
-### Lo que falta afuera — sin esto el botón no entra directo
+### Cerrado el mismo día
 
-1. **n8n**: crear una credencial Header Auth `x-genesis-internal-secret` con el
-   `GENESIS_INTERNAL_SECRET` del CRM y apuntar `Pedir token al CRM` a ella. Sin esto el token
-   sigue vacío y el botón cae siempre al portón.
-2. **ManyChat**, plantilla del botón *Ver mi Ruta*: la URL base pasa a
-   `https://metodo.tr4iner.com/r/` con `ce_ruta_path` al final. La muestra de ejemplo tiene que
-   ser un token de 43 caracteres, no `?token=…`.
+**El secreto no se pudo reusar.** `GENESIS_INTERNAL_SECRET` quedó cargado en Vercel como
+variable sensible: `vercel env pull` la lista con el valor vacío y el dashboard tampoco lo
+muestra, en los **dos** proyectos. Se resolvió con un secreto propio de n8n
+(`GENESIS_N8N_SECRET`, header `x-genesis-n8n-secret`), aceptado sólo por
+`/api/genesis/whatsapp-token`. Detalle en la bitácora del CRM, entrada `2026-09-01`.
+
+- **Producción del funnel:** merge `540b39c`. `/r/<token>` responde 200 y `/r/acceso` 307 al
+  portón, los dos con el `?fbclid=…` que agrega WhatsApp intacto.
+- **n8n:** `Pedir token al CRM` apunta a la credencial `GENESIS n8n Secret`; publicado,
+  contador 52.
+- **ManyChat:** botón con base `https://metodo.tr4iner.com/r/` y `ce_ruta_path` al final.
+- **CRM:** merge `e3331ed`, deployment `Ready`.
+
+**Verificado contra producción, no simulado:** pedir token como lo hace n8n → 43 caracteres
+base64url; canjearlo por `/api/genesis/verify` → 200 con `Set-Cookie` de sesión de 30 días.
+
+⚠️ **El `fbclid` de WhatsApp valida la decisión de poner el token en el path.** Meta le pega su
+parámetro de clic al final de la URL del botón. Con `verificar/?token=XYZ` la URL habría quedado
+con dos `?` y el token se habría leído como `XYZ?fbclid=…`. Con `/r/<token>`, el `fbclid` cae en
+la query, no estorba, y encima viaja como atribución a la ruta.
 
 ⚠️ Si alguien renombra o borra `ce_ruta_path` en ManyChat, `Escribir campos` falla entero, el
 botón sale vacío y la ejecución igual figura en verde. Anotado también en la bitácora del CRM
