@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Septiembre 2026**
 
+- `2026-09-01` — El expediente muestra los macros y el test vuelve a dos columnas en el teléfono
 - `2026-09-01` — La ruta dice en qué paso está: rótulo del paso y botón que cambia
 
 **Agosto 2026**
@@ -125,6 +126,65 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-09-01 — El expediente muestra los macros y el test vuelve a dos columnas en el teléfono
+
+### Qué cambió
+
+**En `/biblioteca/videos/`:**
+
+- El botón del expediente en teléfono pasa de «EXPEDIENTE» a **«CONOCE TUS MACROS»**.
+- El popup abre titulado **«Tus macros.»** y estrena una tarjeta con la base diaria en kcal y los
+  tres macros en gramos, con la misma lectura que la pantalla de resultado del test. Cuando la
+  tarjeta está a la vista se oculta la fila «Base estimada», que repetía el mismo número.
+- La tarjeta va **también en la columna del expediente en escritorio**, donde ese popup no existe:
+  sin eso, quien entra desde una computadora no podía ver sus macros en ningún lado. Ahí se leen
+  como filas, porque la columna mide unos 280 px y «carbohidratos» no entra en una celda de tres.
+- Los dos accesos al test cambian según el estado: **«Calcular mis macros →»** sin test hecho y
+  **«Actualizar mis macros →»** con test hecho. Antes decían «Calcular / Ver o actualizar mi punto
+  de partida». Sin plan, el popup sigue titulándose «Tu punto de partida.» y la tarjeta queda oculta.
+- No se muestran porcentajes a propósito: la fórmula recorta carbohidratos en PG después de
+  repartir las calorías, así que los tres macros no vuelven a sumar el total y los porcentajes
+  darían menos de 100.
+
+**En `/biblioteca/plan/`:**
+
+- El paso de los números vuelve a **dos columnas en el teléfono**: la edad a lo ancho, altura y peso
+  a la par. La regla ya estaba escrita en el corte de 480 px, pero el bloque de 700 px la pisaba por
+  venir después en la hoja, así que en el teléfono se veía **una sola columna** y el paso quedaba más
+  largo de lo necesario. En pies/pulgadas altura y peso vuelven a ocupar todo el ancho.
+
+### Por qué
+
+El expediente guardaba las calorías pero nunca mostraba proteínas, carbohidratos ni grasas: el lead
+hacía el test, veía el resultado una vez y no había forma de volver a consultarlo sin rehacer todo.
+El botón tampoco decía qué había adentro; «EXPEDIENTE» no le promete nada a nadie.
+
+### Resultado esperado
+
+Más aperturas del expediente y menos tests repetidos solo para volver a mirar los números. El test
+de números, un paso más corto en el teléfono.
+
+### Resultado medido (completar después)
+
+Pendiente.
+
+### Verificación
+
+Contra el servidor estático local con la sesión de miembro simulada, en los cuatro estados (con plan
+y sin plan × teléfono y escritorio): el botón, el título, el texto del CTA, los gramos y la fila que
+se oculta salen como corresponde y sin errores de consola. Las etiquetas del bloque entran en su
+celda a 390, 430, 768, 1024 y 1440 px.
+
+El test de macros se recorrió entero (sexo → objetivo → señal → números → grasa → actividad →
+resultado) en teléfono y escritorio, con el resultado calculando bien (2.044 kcal · 164 g / 193 g /
+64 g para el caso de prueba). El paso de números entra sin scroll y en dos columnas a 320, 360, 390,
+430 y 600 px, y en tres a 900 y 1440 px.
+
+**Pendiente:** en el teléfono, los pasos de «señal» (1.034 px de alto contra 844 de pantalla) y
+«grasa» (859 px) siguen pidiendo scroll. No se tocaron en esta entrada.
 
 ---
 

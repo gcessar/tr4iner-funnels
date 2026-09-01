@@ -924,8 +924,15 @@
       .signal-step .wiz-nav, .wiz-nav { display: grid; grid-template-columns: 1fr; gap: 10px; }
       .wiz-next { grid-row: 1; width: 100%; justify-content: center; }
       .wiz-back { grid-row: 2; justify-self: center; }
-      .num-grid { grid-template-columns: 1fr; gap: 16px; }
-      .num-grid .field:first-child, .num-grid.height-imperial #f-altura, .num-grid.height-imperial #f-peso { grid-column: auto; }
+      /* Dos columnas: la edad ocupa el ancho completo y altura y peso van a la
+         par. Así los tres campos entran en pantalla sin obligar a hacer scroll.
+         Esta regla estaba escrita más arriba, en el corte de 480px, pero este
+         bloque la pisaba por venir después y en el teléfono se veía una sola
+         columna. En pulgadas altura y peso vuelven a ocupar todo el ancho. */
+      .num-grid { grid-template-columns: 1fr 1fr; gap: 12px 10px; }
+      .num-grid .field:first-child { grid-column: 1 / -1; }
+      .num-grid.height-imperial #f-altura,
+      .num-grid.height-imperial #f-peso { grid-column: 1 / -1; }
       .grasa-selector { grid-template-columns: 1fr; }
       .grasa-visual { width: min(66vw, 220px); margin: 0 auto; }
       .result-top { grid-template-columns: 1fr; gap: 18px; }

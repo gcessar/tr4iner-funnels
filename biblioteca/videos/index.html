@@ -911,6 +911,83 @@
     .profile-dialog-progress > div { height: 5px; margin: 10px 0 8px; background: var(--paper-deep); }
     .profile-dialog-progress i { width: 0; height: 100%; display: block; background: var(--mark); }
     .profile-dialog-progress p { color: var(--ink-soft); font-size: 13px; }
+    /* Los macros del test dentro del expediente. Se lee igual que la pantalla
+       de resultado del test: las calorías arriba y los tres macros en gramos,
+       sin porcentajes (la fórmula recorta carbos en PG y no sumarían 100). */
+    .macros-card {
+      margin: 22px 0 0;
+      padding: 16px 18px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--paper-deep);
+    }
+    .macros-card[hidden] { display: none !important; }
+    .macros-code {
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .macros-kcal {
+      margin: 7px 0 0;
+      font-family: var(--sans);
+      font-size: 30px;
+      font-weight: 750;
+      letter-spacing: -.03em;
+      line-height: 1;
+    }
+    .macros-kcal small { color: var(--muted); font-size: 14px; font-weight: 600; letter-spacing: 0; }
+    .macros-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 15px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--rule);
+    }
+    /* El expediente y el popup ya estilan `dl div`, `dt` y `dd`; sin el prefijo
+       de la tarjeta esas reglas ganaban por orden y devolvían bordes, padding y
+       un cuerpo de letra que hacía chocar «CARBOHIDRATOS» con «GRASAS». */
+    .macros-card .macros-grid > div { margin: 0; padding: 0; border: 0; }
+    .macros-card .macros-grid dt {
+      margin: 0;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+    .macros-card .macros-grid dd {
+      margin: 5px 0 0;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 19px;
+      font-weight: 750;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+    .macros-card .macros-grid dd small { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0; }
+    .macros-note { margin: 14px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    [data-kcal-row][hidden] { display: none !important; }
+    /* La columna del expediente mide unos 280px: en tres columnas «carbohidratos»
+       no entra en su celda. Ahí los macros se leen como filas. */
+    .profile-summary .macros-card .macros-grid { grid-template-columns: 1fr; gap: 0; }
+    .profile-summary .macros-card .macros-grid > div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 0;
+      border-top: 1px solid var(--rule);
+    }
+    .profile-summary .macros-card .macros-grid > div:first-child { padding-top: 0; border-top: 0; }
+    .profile-summary .macros-card .macros-grid dd { margin: 0; font-size: 17px; }
+
     .profile-dialog-plan {
       min-height: 50px;
       display: flex;
@@ -2147,7 +2224,7 @@
 
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
-          <strong id="mobile-profile-trigger-value">EXPEDIENTE</strong>
+          <strong id="mobile-profile-trigger-value">CONOCE TUS MACROS</strong>
         </span>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </button>
@@ -2162,9 +2239,20 @@
           <h2>Tu punto de partida.</h2>
           <dl>
             <div><dt>Señal principal</dt><dd id="profile-signal">Punto de partida guardado</dd></div>
-            <div><dt>Base estimada</dt><dd id="profile-kcal">—</dd></div>
+            <div data-kcal-row><dt>Base estimada</dt><dd id="profile-kcal">—</dd></div>
             <div><dt>Foco actual</dt><dd id="profile-focus">Construir una base sostenible</dd></div>
           </dl>
+
+          <div class="macros-card" data-macros hidden>
+            <p class="macros-code">Tu base diaria estimada</p>
+            <p class="macros-kcal"><b data-macro="kcal">0</b> <small>kcal</small></p>
+            <dl class="macros-grid">
+              <div><dt>Proteínas</dt><dd><b data-macro="proteinas">0</b> <small>g</small></dd></div>
+              <div><dt>Carbohidratos</dt><dd><b data-macro="carbohidratos">0</b> <small>g</small></dd></div>
+              <div><dt>Grasas</dt><dd><b data-macro="grasas">0</b> <small>g</small></dd></div>
+            </dl>
+            <p class="macros-note">Calculado con los datos que diste en el test. Es una referencia para empezar, no un número que perseguir.</p>
+          </div>
           <div class="weekly-progress">
             <span>AVANCE DE TU RUTA</span>
             <div><i id="profile-progress-fill"></i></div>
@@ -2287,9 +2375,21 @@
     <div class="profile-dialog-body">
       <p class="profile-dialog-route" id="profile-dialog-route">RUTA TR4INER · PERSONAL</p>
       <h2 id="profile-dialog-title">Tu punto de partida.</h2>
+
+      <div class="macros-card" data-macros hidden>
+        <p class="macros-code">Tu base diaria estimada</p>
+        <p class="macros-kcal"><b data-macro="kcal">0</b> <small>kcal</small></p>
+        <dl class="macros-grid">
+          <div><dt>Proteínas</dt><dd><b data-macro="proteinas">0</b> <small>g</small></dd></div>
+          <div><dt>Carbohidratos</dt><dd><b data-macro="carbohidratos">0</b> <small>g</small></dd></div>
+          <div><dt>Grasas</dt><dd><b data-macro="grasas">0</b> <small>g</small></dd></div>
+        </dl>
+        <p class="macros-note">Calculado con los datos que diste en el test. Es una referencia para empezar, no un número que perseguir.</p>
+      </div>
+
       <dl>
         <div><dt>Señal principal</dt><dd id="profile-dialog-signal">Punto de partida guardado</dd></div>
-        <div><dt>Base estimada</dt><dd id="profile-dialog-kcal">—</dd></div>
+        <div data-kcal-row><dt>Base estimada</dt><dd id="profile-dialog-kcal">—</dd></div>
         <div><dt>Foco actual</dt><dd id="profile-dialog-focus">Construir una base sostenible</dd></div>
       </dl>
       <div class="profile-dialog-progress">
@@ -3271,6 +3371,27 @@
         return SIGNAL_INFO[raw] ? raw : 'prevencion';
       }
 
+      // Separador de miles en español: 2180 → 2.180
+      function miles(n) {
+        return String(Math.round(Number(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      }
+
+      // El expediente vive en dos lugares —columna en escritorio, popup en
+      // teléfono— así que los dos paneles se pintan de una sola pasada.
+      function pintarMacros(datosPlan) {
+        var completo = !!(datosPlan && datosPlan.kcal && datosPlan.proteinas &&
+          datosPlan.carbohidratos && datosPlan.grasas);
+        document.querySelectorAll('[data-macros]').forEach(function (panel) {
+          panel.hidden = !completo;
+          if (!completo) return;
+          ['kcal', 'proteinas', 'carbohidratos', 'grasas'].forEach(function (campo) {
+            panel.querySelector('[data-macro="' + campo + '"]').textContent = miles(datosPlan[campo]);
+          });
+        });
+        // Con los macros a la vista, «Base estimada» repetiría el mismo número.
+        document.querySelectorAll('[data-kcal-row]').forEach(function (fila) { fila.hidden = completo; });
+      }
+
       function renderOnboard() {
         var onboard = document.getElementById('onboard');
         var chip = document.getElementById('plan-chip');
@@ -3297,12 +3418,14 @@
           document.getElementById('profile-dialog-signal').textContent = 'Sin calcular todavía';
           document.getElementById('profile-dialog-kcal').textContent = '—';
           document.getElementById('profile-dialog-focus').textContent = 'Elige por dónde empezar';
+          document.getElementById('profile-dialog-title').textContent = 'Tu punto de partida.';
           document.getElementById('profile-dialog-plan').href = planUrl();
-          document.getElementById('profile-dialog-plan').textContent = 'Calcular mi punto de partida →';
+          document.getElementById('profile-dialog-plan').textContent = 'Calcular mis macros →';
+          pintarMacros(null);
           chip.hidden = false;
           chip.classList.add('is-in');
           chip.href = planUrl();
-          document.getElementById('plan-chip-text').textContent = 'Calcular mi punto de partida →';
+          document.getElementById('plan-chip-text').textContent = 'Calcular mis macros →';
           return;
         }
         onboard.hidden = true;
@@ -3312,7 +3435,7 @@
         chip.hidden = false;
         chip.classList.add('is-in');
         chip.href = planUrl();
-        document.getElementById('plan-chip-text').textContent = 'Ver o actualizar mi punto de partida →';
+        document.getElementById('plan-chip-text').textContent = 'Actualizar mis macros →';
 
         var signal = SIGNAL_INFO[currentSignal()];
         var first = primerNombre(lead.nombre || nombre);
@@ -3332,7 +3455,10 @@
         document.getElementById('profile-dialog-signal').textContent = signal.label;
         document.getElementById('profile-dialog-kcal').textContent = kcalLabel;
         document.getElementById('profile-dialog-focus').textContent = signal.focus;
+        document.getElementById('profile-dialog-title').textContent = 'Tus macros.';
         document.getElementById('profile-dialog-plan').href = planUrl();
+        document.getElementById('profile-dialog-plan').textContent = 'Actualizar mis macros →';
+        pintarMacros(plan);
       }
 
       // ── Siguiente orientación: primera pendiente de la ruta ──
