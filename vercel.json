@@ -269,6 +269,16 @@
       "permanent": true
     },
     {
+      "source": "/r/acceso",
+      "destination": "/biblioteca/acceso/",
+      "permanent": false
+    },
+    {
+      "source": "/r",
+      "destination": "/biblioteca/acceso/",
+      "permanent": false
+    },
+    {
       "source": "/biblioteca/video/",
       "destination": "/biblioteca/videos/",
       "permanent": true
@@ -304,6 +314,10 @@
     {
       "source": "/calendly-an",
       "destination": "/calendly-an-optimizado"
+    },
+    {
+      "source": "/r/:token",
+      "destination": "/biblioteca/verificar/"
     }
   ]
 }

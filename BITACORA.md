@@ -17,6 +17,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Agosto 2026**
 
+- `2026-08-31` — El botón del WhatsApp abre la ruta: entrada por `/r/<token>`
 - `2026-08-30` — Las UTMs llegaban rotas a Calendly y al sheet AGENDAS: el Typeform guardaba el texto encodeado
 - `2026-08-27` — `/empezar` deja de ser un redirect y pasa a ser página propia: VSL + aplicación
 - `2026-08-27` — La ruta no mostraba el video arriba a quien no hizo el test
@@ -120,6 +121,101 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-08-31 — El botón del WhatsApp abre la ruta: entrada por `/r/<token>`
+
+### Qué pasaba
+
+Un registro de prueba recibió el WhatsApp de bienvenida con el botón **Ver mi Ruta** apuntando a
+`https://metodo.tr4iner.com/biblioteca/https://metodo.tr4iner.com/biblioteca/acceso`. Comprobado
+con `curl`: 308 → `https:/metodo…` (con una sola barra) → **404**.
+
+Son dos fallas encimadas:
+
+1. **La plantilla concatena.** WhatsApp sólo admite la variable al final de una URL estática, y
+   la plantilla de ManyChat tiene `https://metodo.tr4iner.com/biblioteca/` como base más
+   `{{ce_ruta_path}}`. Con `ce_ruta_path` guardando la URL **absoluta**
+   (`https://metodo.tr4iner.com/biblioteca/acceso`), el resultado es la URL pegada dos veces.
+2. **Aun sin el 404, iba al portón.** `/biblioteca/acceso/` vuelve a pedir el correo y manda otro
+   enlace: quien acaba de registrarse tendría que pedir acceso de nuevo para entrar.
+
+El token de 24 horas que resuelve esto **ya existe en el CRM** desde el 27-ago
+(`POST /api/genesis/whatsapp-token`; verificado hoy: `hub.tr4iner.com` devuelve 401 sin el
+secreto, o sea está desplegado y vivo). Lo que faltaba era **por dónde entra ese token**.
+
+### Qué cambió
+
+**Ruta nueva `/r/<token>`.** `vercel.json` la **reescribe** —no redirige— a
+`/biblioteca/verificar/`, y `biblioteca/verificar/index.html` ahora lee el token del último tramo
+del path además de `?token=`. El correo sigue entrando por `?token=` sin cambios.
+
+**Por qué el token va en el path y no en la query.** WhatsApp encodea lo que se le concatena al
+final de la URL del botón: un `?` llega como `%3F` y una `/` como `%2F` —el mismo `%2F` que ya
+rompió el enlace el 27-ago—. El token es `base64url` (`randomBytes(32).toString("base64url")`),
+o sea sólo `A-Z a-z 0-9 - _`: **no hay nada que encodear**. Es la única forma de URL que sobrevive
+a la plantilla pase lo que pase con el encoding.
+
+**El segundo clic ya no expulsa.** El token es de un solo uso, pero el botón se queda en el chat
+para siempre. Antes el segundo clic mostraba «Este enlace ya no abre»; ahora `fail()` consulta
+primero `/api/genesis/me` y, si la sesión de 30 días sigue viva, entra a la ruta igual.
+
+**Fallback sin token.** Si el CRM devuelve `token: null` —no encuentra el lead—, n8n escribe
+`acceso` y `/r/acceso` redirige al portón. `/r` a secas también.
+
+### Cómo se verificó
+
+En local, con el rewrite de Vercel simulado (copia de la página en `r/<token>/index.html` sobre el
+server estático, borrada después):
+
+- `/r/TESTTOKEN-abc_123/` dispara `POST /api/genesis/verify`. Ese POST **sólo** sale si hubo
+  token, así que la extracción desde el path funciona.
+- `/biblioteca/verificar/?token=…` lo sigue disparando: el camino del correo quedó intacto.
+- `/biblioteca/verificar/` sin nada **no** dispara el POST y va derecho a comprobar la sesión.
+- El regex `^\/r\/([A-Za-z0-9_-]+)\/?$` contra 8 casos: acepta con y sin barra final, rechaza
+  `/r/`, `/r/uno/dos` y cualquier valor con `%2F`.
+
+El rewrite en sí **sólo se comprueba en el Preview de Vercel**: `python -m http.server` no lee
+`vercel.json`.
+
+### n8n: la causa real no era la que decía la bitácora del CRM
+
+El pendiente anotado el 27-ago —«activar `Pedir token al CRM` y corregirle la URL»— **ya estaba
+resuelto**: el nodo está activo y apunta bien a `https://hub.tr4iner.com/api/genesis/whatsapp-token`.
+La bitácora del CRM quedó desactualizada y mandó a buscar donde no era.
+
+**El problema es la credencial.** El nodo autentica con **«CRM Webhook Secret»**, que manda
+`x-webhook-secret` con el `WEBHOOK_SECRET`. Pero `/api/genesis/whatsapp-token` valida
+`x-genesis-internal-secret` contra `GENESIS_INTERNAL_SECRET`: otro header y otro secreto. El CRM
+devuelve **401**, el nodo tiene `onError: continueRegularOutput`, y la ejecución figura **en
+verde** mientras el token llega vacío. Es el mismo patrón de fallo silencioso del 27-ago.
+
+Comprobado en la ejecución `516695` (31-ago 20:21): `Pedir token al CRM` →
+`401 - {"error":"No autorizado"}`; `Armar enlace de la ruta` → `tieneToken: false`;
+`Escribir campos` → `success`. De los cuatro nodos del sistema que usan esa credencial, es el
+único que apunta a un endpoint `/api/genesis/*`; los otros tres van a `/api/webhook/*` y
+`/api/leads/sync-refund`, donde sí corresponde.
+
+### Qué se cambió en n8n hoy
+
+`Armar enlace de la ruta` deja de armar una URL y escribe **sólo el token**, con `acceso` de
+fallback. Publicado y vivo: `versionId === activeVersionId`, contador 50 → 51. Esa comprobación
+es obligatoria — n8n separa la versión guardada de la publicada, y el 27-ago un cambio quedó en
+borrador mientras el workflow seguía corriendo la versión vieja sin ningún error a la vista.
+
+### Lo que falta afuera — sin esto el botón no entra directo
+
+1. **n8n**: crear una credencial Header Auth `x-genesis-internal-secret` con el
+   `GENESIS_INTERNAL_SECRET` del CRM y apuntar `Pedir token al CRM` a ella. Sin esto el token
+   sigue vacío y el botón cae siempre al portón.
+2. **ManyChat**, plantilla del botón *Ver mi Ruta*: la URL base pasa a
+   `https://metodo.tr4iner.com/r/` con `ce_ruta_path` al final. La muestra de ejemplo tiene que
+   ser un token de 43 caracteres, no `?token=…`.
+
+⚠️ Si alguien renombra o borra `ce_ruta_path` en ManyChat, `Escribir campos` falla entero, el
+botón sale vacío y la ejecución igual figura en verde. Anotado también en la bitácora del CRM
+(27-ago).
 
 ---
 
