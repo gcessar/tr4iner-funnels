@@ -15,6 +15,10 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ## Índice por fecha
 
+**Septiembre 2026**
+
+- `2026-09-01` — La ruta dice en qué paso está: rótulo del paso y botón que cambia
+
 **Agosto 2026**
 
 - `2026-08-31` — El botón del WhatsApp abre la ruta: entrada por `/r/<token>`
@@ -121,6 +125,51 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - `2026-05-22` — Incidente: webhook Typeform → CRM desactivado durante ~67h
 - `2026-05-18` — Setup inicial del proyecto
 - `2026-05-18` — Funnel #1: Casos de Estudio (BRIDGE V3)
+
+---
+
+## 2026-09-01 — La ruta dice en qué paso está: rótulo del paso y botón que cambia
+
+### Qué cambió
+
+En `/biblioteca/videos/`, la tarjeta de la orientación recomendada estrena un rótulo amarillo:
+sobre la miniatura en escritorio, montado sobre el borde de la tarjeta en teléfono. Tiene dos
+estados y arrastra al botón:
+
+- Sin ninguna orientación terminada y sin el video empezado → **«Este es el Paso 1»**, botón
+  **«Ver Paso 1»**.
+- En cualquier otro caso → **«Continuar viendo donde te quedaste»**, botón **«Continuar viendo»**.
+
+El rótulo de escritorio reemplaza a «RECOMENDADO PARA TI»: ocupaba exactamente ese lugar dentro
+de `.guide-visual` y dos etiquetas encimadas en la misma esquina no se leen.
+
+La condición vive en `esPasoUno()` y se pinta desde `renderNextCard()`, que ya corría al entrar,
+al completarse un video (≥85 %, `completarAuto`) y al marcarlo a mano (`toggleDone`). No hay
+estado nuevo que guardar: sale del progreso que ya existía. Si dejó el video a medias
+(`lastPositionSeconds > 5`) el rótulo también dice «continuar», porque el reproductor retoma solo
+donde iba y prometer «empezar» sería mentira.
+
+### Por qué
+
+Quien entraba por primera vez no sabía qué se esperaba de él. La tarjeta decía «Ver esta
+orientación» tanto el primer día como el décimo, así que el lead tenía que deducir en qué punto de
+la ruta estaba. El rótulo nombra el paso y el botón dice la acción.
+
+### Resultado esperado
+
+Más aperturas del video recomendado, sobre todo en la primera sesión, y menos gente que entra,
+mira la tarjeta y se va sin abrir nada.
+
+### Resultado medido (completar después)
+
+Pendiente.
+
+### Verificación
+
+Probado contra el servidor estático local con la sesión de miembro simulada por `/api/genesis/me`,
+en los dos estados y a 1440, 1000, 800, 700, 620, 540 y 390 px. El relevo a los 640 px queda
+limpio: arriba se ve la tarjeta de escritorio con su rótulo, abajo la de teléfono con el suyo, sin
+ningún ancho que se quede sin rótulo y sin desborde horizontal. Falta verificar en producción.
 
 ---
 

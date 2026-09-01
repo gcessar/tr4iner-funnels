@@ -1306,16 +1306,24 @@
       content: "";
       animation: focus-play-pulse 2s ease-out infinite;
     }
+    /* Rótulo del paso: montado sobre la miniatura, es lo primero que se lee.
+       Le dice al lead si está empezando la ruta o retomando donde la dejó, que
+       es la duda que lo frena al abrir la página. */
     .guide-kicker {
       position: absolute;
       z-index: 1;
-      top: 20px;
-      left: 20px;
-      color: var(--mark);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: .12em;
+      top: 16px;
+      left: 16px;
+      max-width: calc(100% - 32px);
+      padding: 6px 11px;
+      border-radius: 5px;
+      background: var(--mark);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      line-height: 1.2;
     }
     .guide-copy { padding: 38px 34px; }
     .guide-copy h2 {
@@ -1362,6 +1370,9 @@
       text-decoration: none;
     }
     .primary-button { border: 1px solid var(--ink); background: var(--ink); color: var(--card); }
+    /* El rótulo del botón va en su propio span para poder cambiarlo por JS, y
+       en flex el espacio en blanco entre elementos se pierde: de ahí el gap. */
+    .guide-copy .primary-button { gap: 7px; }
 
     .editorial-index { margin-top: 48px; }
     .index-head {
@@ -1798,8 +1809,10 @@
         text-wrap: pretty;
       }
       .mobile-focus-card {
+        position: relative;
         width: 100%;
         display: block;
+        margin-top: 12px;
         padding: 22px 18px 18px;
         border: 1px solid var(--rule-strong);
         border-radius: 8px;
@@ -1808,6 +1821,24 @@
         cursor: pointer;
         font-family: var(--sans);
         text-align: left;
+      }
+      /* Mismo rótulo que en escritorio, montado sobre el borde de la tarjeta:
+         empezar la ruta y retomarla no se leen igual. */
+      .mobile-focus-badge {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 14px;
+        max-width: calc(100% - 28px);
+        padding: 6px 11px;
+        transform: translateY(-50%);
+        border-radius: 5px;
+        background: var(--mark);
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: -.01em;
+        line-height: 1.2;
       }
       .mobile-focus-thumb {
         position: relative;
@@ -2073,6 +2104,7 @@
         <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
         <p class="mobile-focus-lead">No necesitas verlo todo hoy. Abre este video y llévate una sola acción clara.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
+          <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
           <span class="mobile-focus-thumb" id="mobile-focus-thumb">
             <img id="mobile-focus-img" src="" alt="" width="640" height="360" loading="lazy" decoding="async" />
             <span class="mobile-focus-play" aria-hidden="true">
@@ -2086,7 +2118,7 @@
             <span id="mobile-focus-category">TU RUTA</span>
             <span>APLICACIÓN INMEDIATA</span>
           </span>
-          <span class="mobile-focus-cta">Ver esta orientación <i aria-hidden="true">→</i></span>
+          <span class="mobile-focus-cta"><span id="mobile-focus-cta-text">Ver Paso 1</span> <i aria-hidden="true">→</i></span>
         </button>
         <button type="button" class="mobile-show-library" id="mobile-show-library">
           <span class="deck" id="mobile-deck" aria-hidden="true"></span>
@@ -2137,7 +2169,7 @@
           <button type="button" class="priority-guide rv" id="next-card" hidden>
             <span class="guide-visual" aria-hidden="true">
               <img id="guide-img" src="" alt="" width="640" height="360" loading="lazy" decoding="async" />
-              <span class="guide-kicker">RECOMENDADO PARA TI</span>
+              <span class="guide-kicker" id="guide-kicker">Este es el Paso 1</span>
               <span class="guide-play">
                 <svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>
               </span>
@@ -2150,7 +2182,7 @@
                 <span id="nx-category">TU RUTA</span>
                 <span>APLICACIÓN INMEDIATA</span>
               </span>
-              <span class="primary-button">Abrir esta orientación <i>→</i></span>
+              <span class="primary-button"><span id="nx-cta-text">Ver Paso 1</span> <i>→</i></span>
             </span>
           </button>
 
@@ -3334,6 +3366,15 @@
           : 'TODA TU RUTA';
       }
 
+      // Paso 1 = todavía no terminó ninguna orientación y tampoco dejó esta
+      // empezada. Si la dejó a medias el reproductor retoma solo donde iba, así
+      // que ahí el rótulo tiene que decir «continuar» y no «empezar».
+      function esPasoUno() {
+        if (progreso.length) return false;
+        var guardado = nextVideo && remoteProgress[nextVideo.id];
+        return !(guardado && guardado.lastPositionSeconds > 5);
+      }
+
       function renderNextCard() {
         nextVideo = null;
         nextBloque = null;
@@ -3354,6 +3395,13 @@
         nextCardEl.classList.add('is-in');
         var signal = SIGNAL_INFO[currentSignal()];
         var first = primerNombre(lead.nombre || nombre);
+        var pasoUno = esPasoUno();
+        var rotulo = pasoUno ? 'Este es el Paso 1' : 'Continuar viendo donde te quedaste';
+        var accion = pasoUno ? 'Ver Paso 1' : 'Continuar viendo';
+        document.getElementById('guide-kicker').textContent = rotulo;
+        document.getElementById('mobile-focus-badge').textContent = rotulo;
+        document.getElementById('nx-cta-text').textContent = accion;
+        document.getElementById('mobile-focus-cta-text').textContent = accion;
         document.getElementById('nx-meta').textContent = 'TU SIGUIENTE ENFOQUE';
         document.getElementById('nx-title').textContent = signal.title;
         document.getElementById('nx-description').textContent = signal.description;
@@ -3365,7 +3413,7 @@
         pintarMiniatura(document.getElementById('guide-img'), nextVideo.id);
         pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo.id);
         pintarBaraja();
-        mobileFocusOpen.setAttribute('aria-label', 'Ver orientación: ' + nextVideo.title);
+        mobileFocusOpen.setAttribute('aria-label', accion + ': ' + nextVideo.title);
       }
       nextCardEl.addEventListener('click', function () {
         if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
