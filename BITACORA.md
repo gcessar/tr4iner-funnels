@@ -49,6 +49,7 @@ mismo día (ver más abajo y `docs/protocolo-ab.md`).
 |---|---|---|---|
 | **Decide** | opt-in rate: registros / exposiciones | p < 0,05 | **D+7** |
 | **Guardarraíl** | Typeform completos / exposiciones | no cae más de 20% | D+7 |
+| **Decide si grita** | agendas por 1.000 exposiciones | un brazo dobla al otro | D+7 |
 | **Ratificación** | venta por exposición, cohorte del ganador | si cae, se revierte | D+90 post-publicación |
 
 Con 430 exposiciones por brazo y por día, a D+7 hay 3.010 por brazo. Qué puede ver cada
@@ -58,8 +59,8 @@ escalón con esa muestra:
 |---|---|---|---|
 | Opt-in rate (22%) | ~662 | 14% relativo | decide |
 | Typeform / exposición (8%) | ~241 | 26% relativo | guardarraíl |
-| Agenda / exposición (0,476%) | ~14 | 135% | **no sirve a D+7** |
-| Venta / exposición (0,259%) | ~8 | 200% | **no sirve a D+7** |
+| Agenda / exposición (0,476%) | ~14 | 135% | decide **sólo si dobla** |
+| Venta / exposición (0,259%) | ~8 | 200% | **no alcanza**, ratifica después |
 
 ⚠️ **Criterio revisado dos veces antes de arrancar**: primero D+14 con las agendas como
 veto, después D+5, y finalmente **D+7** a pedido del usuario — los dos días extra compran
@@ -68,6 +69,18 @@ agendas y ventas no cambian nada. Es legítimo porque **el test todavía no hab�
 existía ni un dato**: la rama estaba sin integrar a `main`. A partir del momento en que corra,
 este criterio no se toca — cambiarlo con datos a la vista es el error que ya se cometió en
 D+3 del test 1.
+
+**Las agendas sólo hablan si gritan.** Se simularon dos versiones **idénticas** para ver qué
+produce la casualidad sola con 14 casos por brazo: una diferencia del 30% aparece el **43% de
+las veces**, la del 50% el 20%, y la del 100% sólo el **4,7%** — por debajo del umbral de
+azar que aceptamos. De ahí la regla: **si un brazo saca el doble de agendas, eso decide**;
+cualquier diferencia menor no se mira, porque casi la mitad de las veces existe sin que haya
+diferencia real. Con las ventas (8 casos) ni siquiera el 100% alcanza: sale por azar el 11,7%
+de las veces.
+
+El error que esto evita es intuitivo y razonable: «la agenda ocurre a los 3 días, así que en
+7 ya puedo compararlas». Las agendas **sí ocurren** — el problema no es el tiempo sino la
+cantidad.
 
 **Por qué el guardarraíl es el Typeform y no la agenda.** A 7 días la agenda deja 14 casos
 por brazo: cualquier diferencia es ruido y exigirle un veto sería decidir por azar creyendo

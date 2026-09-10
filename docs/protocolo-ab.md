@@ -61,8 +61,8 @@ Con 430 personas por brazo por día, a los 7 días hay 3.010 por brazo:
 |---|---|---|---|
 | Opt-in rate | ~662 | 14% | **decide** |
 | Typeform por exposición | ~241 | 26% | **guardarraíl** |
-| Agenda por exposición | ~14 | 135% | no sirve a 7 días |
-| Venta por exposición | ~8 | 200% | no sirve a 7 días |
+| Agenda por exposición | ~14 | 135% | decide **sólo si un brazo dobla al otro** |
+| Venta por exposición | ~8 | 200% | no alcanza; ratifica después |
 
 **1. Decide el opt-in rate.** Es el único escalón con gente suficiente para dar una respuesta
 en 7 días.
@@ -73,9 +73,28 @@ el opt-in no veía. La regla es numérica y se fija antes: **si el retador gana 
 baja el Typeform más de un 20%, no se publica**, aunque esa caída no sea estadísticamente
 significativa. Es una regla de decisión, no una prueba.
 
-**3. Agendas y ventas NO pueden vetar en 7 días.** Con 14 y 8 casos por brazo, cualquier
-diferencia es ruido. Exigirles un veredicto sería decidir por azar creyendo que se decide por
-caja. Pasan a la fase siguiente.
+**3. Las agendas sólo hablan si gritan.** Con 14 casos por brazo, una diferencia moderada es
+indistinguible del azar — pero una enorme, no. Se simularon dos versiones **idénticas** para
+ver qué produce la casualidad sola con esa muestra:
+
+| Diferencia observada | Probabilidad de verla por puro azar |
+|---|---|
+| 30% o más | 43% de las veces |
+| 50% o más | 20% de las veces |
+| **100% o más** | **4,7% de las veces** |
+
+Por eso: **si un brazo saca el doble de agendas que el otro, eso decide.** Cualquier
+diferencia menor no se mira para decidir, porque casi la mitad de las veces aparece sin que
+haya ninguna diferencia real.
+
+**4. Las ventas no deciden ni así.** Con 8 casos por brazo, incluso una diferencia del 100%
+sale por azar el 11,7% de las veces. Se miran, se anotan, pero no votan. Pasan a la
+ratificación.
+
+**El error que esto evita.** Lo intuitivo es pensar: «las agendas ocurren en 3 días, así que
+en 7 ya puedo compararlas». Las agendas efectivamente ocurren — el problema no es el tiempo
+sino la cantidad. Catorce números son tan pocos que el azar fabrica diferencias grandes todo
+el tiempo.
 
 ## Después de publicar: ratificación a 90 días
 

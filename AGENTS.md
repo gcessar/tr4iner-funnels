@@ -127,11 +127,14 @@ declarado.**
 |---|---|---|---|
 | **Decide** | opt-in rate | p < 0,05 | D+7 |
 | **Guardarraíl** | Typeform / exposiciones | no cae más de 20% | D+7 |
+| **Decide si grita** | agendas por 1.000 exposiciones | un brazo dobla al otro | D+7 |
 | **Ratificación** | venta por exposición del ganador | si cae, se revierte | D+90 post-publicación |
 
 A D+7 hay 3.010 exposiciones por brazo: el opt-in detecta un 14% relativo y el Typeform un
-26%, pero **agendas (14 casos/brazo) y ventas (8) no pueden vetar nada** — medido, la venta
-por exposición es 0,259% y detectar un 30% pediría 179 días. Por eso las ventas ratifican
+26%. Las **agendas (14 casos/brazo) sólo deciden si un brazo dobla al otro**: simulando dos
+versiones idénticas, una diferencia del 30% aparece por azar el 43% de las veces y la del
+100% sólo el 4,7%. Las **ventas (8 casos) no alcanzan ni así** — la venta por exposición es
+0,259% y detectar un 30% pediría 179 días. Por eso las ventas ratifican
 después de publicar en vez de decidir durante el test.
 
 **Dentro de un test no se usa first ni last touch:** la asignación al brazo es aleatoria en la
