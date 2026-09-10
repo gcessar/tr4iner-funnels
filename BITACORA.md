@@ -140,10 +140,48 @@ fuera del índice contradiciendo al sitemap. Los metadatos SEO (`title`, `descri
 JSON-LD) se dejaron **idénticos a los del control a propósito**, para no mezclar una
 variable de SEO dentro de un test de conversión.
 
-### Pendiente
+### ✅ PUBLICADO Y VERIFICADO EN PRODUCCIÓN
 
-- **Verificar el rewrite en el Preview** antes de integrar a `main`. Es lo único que no se
-  pudo probar en local: `python3 -m http.server` no ejecuta `vercel.json`.
+Autorizado por el usuario. `main` en `f52c8fb`, publicado el 10-sep 16:08 de Lima
+(21:08 UTC). Verificado **contra el dominio real**, no en Preview — el Preview tiene
+protección de acceso y pide login de Vercel.
+
+El ruteo se comprobó con `curl`, que **no ejecuta JavaScript** y por lo tanto no ensucia el
+test con exposiciones falsas:
+
+| Comprobación | Resultado |
+|---|---|
+| Orgánico sin UTMs | ve el control, **sin** cookie |
+| Pago, 8 visitas | reparte y sirve la página que corresponde a cada cookie |
+| `ab_hero=MET` ×10 | MET las 10 veces |
+| `ab_hero=RES` ×10 | RES las 10 veces |
+| Con cookie ya puesta | no la reescribe |
+| Redirects | **cero** `Location`, siempre 200, URL intacta |
+| Cookies `ab_ce`/`ab_copy` viejas | entra fresco al test nuevo |
+
+En navegador, las dos variantes: titular y bajada correctos, cookie coherente con la página
+servida, evento con su `experiment_id`, las cuatro fotos cargando, formulario presente, cero
+errores de consola. A 375px ambas dan 3 líneas de titular y el botón a la misma altura
+(y=791). El control conserva `index, follow` y sus 10 etiquetas sociales; el retador sale
+`noindex` por ser variante.
+
+**Eventos confirmados llegando a GA4**: `ce_hero_exposure_met` visible en Realtime a los 4
+minutos del deploy. ⚠️ No se pudo verificar desde el navegador de trabajo porque **bloquea
+Google Tag Manager**: ninguna petición a `googletagmanager.com` sale de él, así que las
+visitas de prueba no enviaron nada. La confirmación vino de tráfico real.
+
+### 🔴 T0 DEL EXPERIMENTO: **11-sep**, no el 10
+
+El día del deploy está contaminado, **igual que el 17-ago**. A las 21:13 UTC —cinco minutos
+después de publicar— entró un opt-in de `/casos-de-estudio` con `utm_source=MetaAds` y
+`variant=null`: cargó la página **antes** de que el test estuviera vivo y se registró
+después, así que nunca recibió cookie. Va a haber más casos así durante la transición.
+
+**Toda lectura del test arranca el 11-sep.** Si se toma el 10, el brazo de control queda
+inflado con registros sin variante y la comparación se rompe por el mismo mecanismo que hizo
+ilegible el 17-ago.
+
+### Pendiente
 - **Abrir la cohorte de ratificación** el día que se publique al ganador, y leerla a D+90.
 - Se agrega una configuración `libre` con `autoPort` a `.claude/launch.json`: los puertos
   fijos 4599 y 4601 estaban ocupados por servidores del usuario y no se tocaron.
