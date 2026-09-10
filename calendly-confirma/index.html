@@ -335,6 +335,27 @@
       text-wrap: balance;
     }
 
+    .conditions-card {
+      border-left: 3px solid var(--gold);
+      background: #FFFCF0;
+    }
+
+    .conditions-card > p,
+    .conditions-list {
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .conditions-list {
+      display: grid;
+      gap: 12px;
+      padding-left: 20px;
+      margin-top: 18px;
+    }
+
+    .conditions-list strong { color: var(--ink); font-weight: 500; }
+
     .session-list {
       display: grid;
       gap: 10px;
@@ -516,6 +537,19 @@
           <span id="event-start-time"></span>
         </div>
       </div>
+    </section>
+
+    <section id="martin-conditions" class="session-card conditions-card" aria-labelledby="conditions-title" hidden>
+      <div class="section-label">Antes de tu llamada</div>
+      <h2 id="conditions-title">Para aprovechar tu asesoría</h2>
+      <p>Queremos entender tu situación y evaluar contigo si el programa puede ayudarte. Para aprovechar bien este espacio, te pedimos:</p>
+      <ul class="conditions-list">
+        <li><strong>Reserva al menos 30 minutos</strong>, sin interrupciones.</li>
+        <li><strong>Busca un lugar privado y tranquilo</strong>, con buena conexión. Evita conectarte mientras conduces, trabajas o estás en un espacio público.</li>
+        <li><strong>Ten Google Meet listo</strong> antes de la llamada.</li>
+        <li><strong>Si la decisión depende de alguien más</strong>, procura que esa persona esté presente.</li>
+      </ul>
+      <p class="session-note">La idea es que puedas resolver tus dudas y decidir con claridad si el programa encaja contigo, sin presión.</p>
     </section>
 
     <section class="session-card" aria-label="Que veremos en la sesion">
@@ -721,6 +755,9 @@
       }
 
       updatePageData();
+      // Compará el nombre completo para no mostrar las condiciones a otro asesor.
+      const assignedCloser = getUrlParams().assigned_to.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().replace(/\s+/g, " ").toLowerCase();
+      document.getElementById("martin-conditions").hidden = assignedCloser !== "martin michelucci";
       const whatsappLink = document.getElementById("whatsapp-link");
       if (whatsappLink) whatsappLink.href = generateWhatsAppURL();
 

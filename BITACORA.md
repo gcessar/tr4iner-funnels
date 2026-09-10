@@ -13,6 +13,12 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-10 — Condiciones de asesoría exclusivas de Martín (revisión local)
+
+- Rama `work/condiciones-martin`. Se añade un bloque informativo bajo los datos de agenda en `calendly-confirma/index.html`, con el resumen aprobado: 30 minutos, lugar privado y tranquilo, Google Meet listo y presencia de quien participe en la decisión.
+- Visible solo cuando `assigned_to` coincide con el nombre completo `Martin Michelucci`, normalizando mayúsculas, tildes y espacios. Oculto por defecto; sin aceptación obligatoria. Se conservan selección AN/VA, WhatsApp, tracking, atribución, canonical y `noindex, nofollow` de este paso operativo.
+- QA local en navegador: bloque visible con Martín y ausente con David; WhatsApp conserva el número de cada asesor. Revisión visual de escritorio correcta. Sin envío de mensajes. Vista local en puerto 4601; pendiente revisión del usuario y QA móvil antes de publicar. No se ha publicado en producción ni medido impacto en asistencia.
+
 ## 2026-09-08 — Producción verificada: opt-in por edad y cuatro casos
 
 - Publicado por autorización del usuario mediante [PR #1](https://github.com/gcessar/tr4iner-funnels/pull/1), integrado en `main` como `1b9bb0c0fb554cb05bdfe1aa992deb9439e78920` el 8-sep a las 18:46 de Lima. Incluye los commits de `work/optin-edad`; el contenido funcional coincide con el Preview validado. El último Preview documental `320f399` también tuvo checks Vercel exitosos (`dpl_FnZzEgaKknqvXgY7SkBCQ2J1GP6r`).
