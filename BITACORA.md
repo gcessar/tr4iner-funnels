@@ -13,6 +13,14 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-10 — Producción: condiciones informativas exclusivas de Martín
+
+- El usuario aprobó la propuesta local y solicitó publicar. `work/condiciones-martin` integrado por avance rápido en `main`, commit funcional `2a800bd`. Sin otros cambios de producto.
+- Preview `dpl_7D2SyhNzVYxjbRLLYNz85yDBQAyM` **READY**: revisión visual móvil a 375px, sin desbordamiento; condiciones visibles con Martín y ocultas con David, otro Martín o sin asesor. La variante VA mantiene su vídeo; cada asesor conserva su WhatsApp. Sin mensajes ni formularios enviados.
+- Producción **READY** `dpl_CTg2Ud34DXxYfXf3yhkobnGmZTHM`, Git SHA `2a800bd`, alias `metodo.tr4iner.com` sin error. URL inmutable `https://tr4iner-funnels-9ohskwxuo-metodotr4iners-projects.vercel.app`.
+- Verificación en el dominio real: bloque visible con `assigned_to=Martin%20Michelucci`, oculto con David y sin parámetro. Martín VA conserva `Mb4FA69mwzRO27Er`; AN conserva `eSFGvAyB_NIHVP9e`. WhatsApp apunta al número previsto en ambos casos. Se mantiene `noindex, nofollow`; no hay aceptación obligatoria ni cambios de atribución. No se ha medido impacto en asistencia.
+- Este cierre solo actualiza la bitácora y se sincroniza en la misma rama y `main`. El deployment funcional verificado es el citado arriba; comprobar también **READY** del deployment documental final. No se borran ramas ni worktrees.
+
 ## 2026-09-10 — Condiciones de asesoría exclusivas de Martín (revisión local)
 
 - Rama `work/condiciones-martin`. Se añade un bloque informativo bajo los datos de agenda en `calendly-confirma/index.html`, con el resumen aprobado: 30 minutos, lugar privado y tranquilo, Google Meet listo y presencia de quien participe en la decisión.
