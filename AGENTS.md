@@ -43,7 +43,9 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 
 | Archivo | Función |
 |---|---|
-| `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite). Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. Sin A/B activo. |
+| `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite) y **control `RES`** del test de hero. Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. |
+| `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
+| `middleware.ts` | Split 50/50 en el edge para el test de hero. Rewrite (nunca redirect), cookie `ab_hero` de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
 | `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
 | `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer`, UTMs VA de respaldo y redirige a `/testimonio-flor-va`. |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
@@ -108,15 +110,26 @@ Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CG
 
 ## A/B testing de la landing
 
-**Al 8-sep-2026 NO hay ningún test corriendo.** `/casos-de-estudio` sirve `index-fuerza.html`
-(«Mira cómo alguien como tú transformó su cuerpo», con selector de edad y cuatro casos)
-a **todo el tráfico, orgánico y pago**, vía el rewrite de `vercel.json`. No hay
-middleware. `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin
-ruta**: revertir es cambiar una línea, no restaurar archivos.
+**Al 10-sep-2026 CORRE el test de HERO** (`ce_hero_202609`), sólo contra tráfico pago:
 
-Se corrieron dos tests, los dos cortados por decisión de negocio antes de alcanzar
-significancia. Ver `BITACORA.md` (11, 15, 17 y 22-ago) y
-[`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md) para la mecánica del split.
+| Brazo | Archivo | Promesa |
+|---|---|---|
+| `RES` (control) | `index-fuerza.html` | el RESULTADO: «Mira cómo alguien como tú transformó su cuerpo.» |
+| `MET` (retador) | `index-metodo.html` | el MÉTODO: «Mira qué hizo, mes a mes, alguien que empezó como tú.» |
+
+Cookie `ab_hero`, evento `ce_hero_exposure_res|met`. El orgánico ve el control y no entra al
+split. **Decide el opt-in rate a D+14 (~24-sep); las agendas por 1.000 exposiciones son veto,
+no juez** — con base ~1,2% harían falta 38 días para detectar un 30%. Criterio completo en la
+entrada del 10-sep de `BITACORA.md`. **Mientras corre: no tocar campañas de Meta, ni las
+páginas del funnel, ni el KPI declarado.**
+
+`index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin ruta**:
+revertir es cambiar una línea, no restaurar archivos.
+
+Los dos tests anteriores se cortaron por decisión de negocio antes de alcanzar significancia.
+Ver `BITACORA.md` (11, 15, 17 y 22-ago) y
+[`docs/ab-casos-de-estudio.md`](docs/ab-casos-de-estudio.md) para la mecánica del split, y
+[`docs/protocolo-ab.md`](docs/protocolo-ab.md) para el método en lenguaje llano.
 
 Lo que hay que respetar al montar el próximo (definir etiquetas nuevas para las versiones que se comparen):
 

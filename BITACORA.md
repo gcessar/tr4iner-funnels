@@ -13,6 +13,110 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-10 — Arranca el test de HERO: promesa de resultado contra promesa de método
+
+Rama `work/ab-titulo-descripcion`. **Tercer A/B de `/casos-de-estudio`.** `ce_hero_202609`.
+
+### Qué se compara
+
+**La promesa del hero: título y descripción como UNA sola unidad**, decidido así por el
+usuario antes de ver datos. El resultado se adjudica al conjunto: **no se va a poder saber
+si pesó el título o la bajada**, y eso queda aceptado a cambio de no gastar el doble de
+tráfico en un factorial de cuatro brazos.
+
+| | Título | Descripción |
+|---|---|---|
+| **RES** (control) | «Mira cómo *alguien como tú* transformó su cuerpo.» | «Selecciona tu sexo y rango de edad para ver el caso y conocer qué hizo, paso a paso.» |
+| **MET** (retador) | «Mira *qué hizo, mes a mes*, alguien que empezó como tú.» | «El caso completo: qué cambió y en qué orden. Elige tu sexo y edad para ver el tuyo.» |
+
+**Por qué MET.** El activo real del funnel son cuatro **análisis paso a paso**, no cuatro
+antes/después; el control promete el resultado y no el método. Y la bajada del control es
+una **instrucción de interfaz**, no una propuesta de valor — la propia entrada del 8-sep lo
+dejó anotado como pendiente. El obstáculo #1 declarado por los 837 compradores del estudio
+fue «no tengo una estructura clara» (44%), y en el test 1 la ganadora levantó ese segmento
+de 18,7% a 30,4%.
+
+Los dos archivos son idénticos salvo el hero: **39.510 contra 39.492 bytes**. Medido en el
+navegador a 375px, ambos rinden **titular de 3 líneas, botón a y=794px y cero overflow**:
+lo único que cambia entre brazos es el texto, no el layout ni la altura del CTA.
+
+### ▶ Criterio — DECLARADO ANTES DE VER UN SOLO NÚMERO
+
+| Rol | Métrica | Lectura |
+|---|---|---|
+| **Decide** | opt-in rate: registros / exposiciones | **~24-sep (D+14)** |
+| **Veto** | agendas por 1.000 exposiciones | D+21 |
+
+**Por qué D+14 y no D+7.** Con 859 sesiones MetaAds/día (430 por brazo) y un opt-in base
+del ~22%, la muestra necesaria es:
+
+| Detectar | n por brazo | Días |
+|---|---|---|
+| 10% relativo | 5.754 | 13,4 |
+| 15% relativo | 2.599 | 6,1 |
+| 30% relativo | 680 | 1,6 |
+
+A D+7 sólo se detectaría un efecto del 15% o más; si el efecto real es del 10%, el test
+terminaría en empate y no se aprendería nada. **D+14 es el primer plazo que el tráfico
+actual sostiene para una lectura honesta.**
+
+⚠️ **Las agendas por exposición NO pueden decidir este test.** Con una base de ~1,2%
+harían falta **38 días para detectar un efecto del 30%** y 83 para uno del 20%. Por eso
+entran como **veto y no como juez**: no se les va a exigir significancia, pero si MET gana
+el opt-in y las agendas se hunden de forma visible, **no se publica**. Es la lección del
+test 1, donde el brazo que duplicó registros traía leads que valían 43% menos.
+
+Reglas que se mantienen: no espiar para cortar al ver ventaja, **empate deja el control**
+(RES), no decidir por CPL ni por volumen de registros, no leer `form_start`, y no tocar las
+campañas de Meta ni el resto del funnel mientras corre.
+
+### Cookie y etiquetas ESTRENADAS
+
+`ab_hero` con valores `RES`/`MET`. **No se reusa ninguna etiqueta anterior**: los tests 1 y
+2 compartieron el nombre «B» —se estrenó cookie pero no el nombre del brazo— y el día del
+cruce quedó ilegible; incluyéndolo ganaba uno y excluyéndolo el otro. `RES`/`MET` no se
+usaron nunca, no se confunden entre sí ni con A/B/C, y se leen de un vistazo en la columna
+`variant` de `OptIn`. Las cookies `ab_ce` y `ab_copy` siguen vivas 180 días en navegadores
+viejos: se verificó que un visitante que las trae **entra fresco** al test nuevo.
+
+Evento propio `ce_hero_exposure_res|met` con `experiment_id: ce_hero_202609`. El
+instrumental de variante, que se había apagado al cerrar el test anterior, vuelve a estar
+activo en **las dos** páginas y el bloque es idéntico en ambas.
+
+### Verificación
+
+**Middleware, 13 comprobaciones automatizadas sobre el archivo real** (`@vercel/edge`
+cargado, no una reimplementación): 40 visitas orgánicas y ninguna marcada; 2.000 visitas
+pagas repartidas 49,1%/50,9%; cookie pegajosa en los dos sentidos y sin re-setear; cookies
+de tests viejos no contaminan; `?utm_source=&utm_source=MetaAds` de Instagram entra al
+split; y **cero `Location` en los tres casos** (rewrite, nunca redirect).
+
+Páginas: JS y JSON-LD válidos en ambas; `variant` viajando en el payload del opt-in;
+revisión visual a 375px sin overflow.
+
+⚠️ **Lo que NO está verificado:** el enrutado real del rewrite `/casos-de-estudio →
+/index-metodo`, que necesita el edge de Vercel. `python3 -m http.server` no ejecuta
+`vercel.json`. **Comprobarlo en el Preview antes de publicar.**
+
+### SEO
+
+`index-metodo.html` sale con `noindex, follow` y canonical a `/casos-de-estudio`, que es lo
+correcto **para una variante**. ⚠️ **Si MET gana, hay que quitarle el noindex al
+promoverla**: el 17-ago se promovió una variante sin hacerlo y la landing quedó 5 días
+fuera del índice contradiciendo al sitemap. Los metadatos SEO (`title`, `description`, `og`,
+JSON-LD) se dejaron **idénticos a los del control a propósito**, para no mezclar una
+variable de SEO dentro de un test de conversión.
+
+### Pendiente
+
+- **Verificar el rewrite en el Preview** antes de integrar a `main`.
+- El script de lectura `crm-ventas/scripts/ab-copy-variant-embudo.ts` está cableado a los
+  brazos `B`/`C`; hay que generalizarlo a etiquetas arbitrarias antes de la lectura de D+14.
+- Se agrega una configuración `libre` con `autoPort` a `.claude/launch.json`: los puertos
+  fijos 4599 y 4601 estaban ocupados por servidores del usuario y no se tocaron.
+
+---
+
 ## 2026-09-10 — Producción: condiciones informativas exclusivas de Martín
 
 - El usuario aprobó la propuesta local y solicitó publicar. `work/condiciones-martin` integrado por avance rápido en `main`, commit funcional `2a800bd`. Sin otros cambios de producto.
@@ -120,6 +224,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Septiembre 2026**
 
+- `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
 - `2026-09-08` — Producción verificada: opt-in por edad y cuatro casos
 - `2026-09-08` — Cierre de opt-in por edad y cuatro testimonios para publicación (incluye iteraciones locales)
 - `2026-09-01` — El expediente muestra los macros y el test vuelve a dos columnas en el teléfono
