@@ -121,16 +121,16 @@ Cookie `ab_hero`, evento `ce_hero_exposure_res|met`. El orgánico ve el control 
 split. **Mientras corre: no tocar campañas de Meta, ni las páginas del funnel, ni el KPI
 declarado.**
 
-**Protocolo vigente desde el 10-sep — decisión en 5 días, tres niveles:**
+**Protocolo vigente desde el 10-sep — decisión en 7 días, tres niveles:**
 
 | Rol | Métrica | Umbral | Cuándo |
 |---|---|---|---|
-| **Decide** | opt-in rate | p < 0,05 | D+5 |
-| **Guardarraíl** | Typeform / exposiciones | no cae más de 20% | D+5 |
+| **Decide** | opt-in rate | p < 0,05 | D+7 |
+| **Guardarraíl** | Typeform / exposiciones | no cae más de 20% | D+7 |
 | **Ratificación** | venta por exposición del ganador | si cae, se revierte | D+90 post-publicación |
 
-A D+5 hay 2.150 exposiciones por brazo: el opt-in detecta un 17% relativo y el Typeform un
-31%, pero **agendas (10 casos/brazo) y ventas (6) no pueden vetar nada** — medido, la venta
+A D+7 hay 3.010 exposiciones por brazo: el opt-in detecta un 14% relativo y el Typeform un
+26%, pero **agendas (14 casos/brazo) y ventas (8) no pueden vetar nada** — medido, la venta
 por exposición es 0,259% y detectar un 30% pediría 179 días. Por eso las ventas ratifican
 después de publicar en vez de decidir durante el test.
 
@@ -138,7 +138,7 @@ después de publicar en vez de decidir durante el test.
 landing y rige intención de tratar. Last-touch sacaría gente del experimento y rompería la
 aleatorización.
 
-Corolario de Fase 0: como sólo se detectan efectos ≥17%, **un cambio que no pueda mover tanto
+Corolario de Fase 0: como sólo se detectan efectos ≥14%, **un cambio que no pueda mover tanto
 no se testea** — se publica directo o se propone algo más grande.
 
 Criterio completo en la entrada del 10-sep de `BITACORA.md`; método en lenguaje llano en

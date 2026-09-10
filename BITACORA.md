@@ -42,34 +42,36 @@ lo único que cambia entre brazos es el texto, no el layout ni la altura del CTA
 
 ### ▶ Criterio — DECLARADO ANTES DE VER UN SOLO NÚMERO
 
-**Plazo de decisión: 5 días**, por pedido del usuario. Se aplica el protocolo revisado ese
+**Plazo de decisión: 7 días**, por pedido del usuario. Se aplica el protocolo revisado ese
 mismo día (ver más abajo y `docs/protocolo-ab.md`).
 
 | Rol | Métrica | Umbral | Lectura |
 |---|---|---|---|
-| **Decide** | opt-in rate: registros / exposiciones | p < 0,05 | **D+5** |
-| **Guardarraíl** | Typeform completos / exposiciones | no cae más de 20% | D+5 |
+| **Decide** | opt-in rate: registros / exposiciones | p < 0,05 | **D+7** |
+| **Guardarraíl** | Typeform completos / exposiciones | no cae más de 20% | D+7 |
 | **Ratificación** | venta por exposición, cohorte del ganador | si cae, se revierte | D+90 post-publicación |
 
-Con 430 exposiciones por brazo y por día, a D+5 hay 2.150 por brazo. Qué puede ver cada
+Con 430 exposiciones por brazo y por día, a D+7 hay 3.010 por brazo. Qué puede ver cada
 escalón con esa muestra:
 
 | Escalón | Casos por brazo | Detecta | Rol |
 |---|---|---|---|
-| Opt-in rate (22%) | ~473 | 17% relativo | decide |
-| Typeform / exposición (8%) | ~172 | 31% relativo | guardarraíl |
-| Agenda / exposición (0,476%) | ~10 | 167% | **no sirve a D+5** |
-| Venta / exposición (0,259%) | ~6 | 251% | **no sirve a D+5** |
+| Opt-in rate (22%) | ~662 | 14% relativo | decide |
+| Typeform / exposición (8%) | ~241 | 26% relativo | guardarraíl |
+| Agenda / exposición (0,476%) | ~14 | 135% | **no sirve a D+7** |
+| Venta / exposición (0,259%) | ~8 | 200% | **no sirve a D+7** |
 
-⚠️ **Cambio de criterio respecto de la versión anterior de esta entrada**, que declaraba
-D+14 con las agendas como veto. Es legítimo porque **el test todavía no había arrancado y no
+⚠️ **Criterio revisado dos veces antes de arrancar**: primero D+14 con las agendas como
+veto, después D+5, y finalmente **D+7** a pedido del usuario — los dos días extra compran
+sensibilidad en el opt-in (de 17% a 14%), que es el único escalón que puede decidir; para
+agendas y ventas no cambian nada. Es legítimo porque **el test todavía no había arrancado y no
 existía ni un dato**: la rama estaba sin integrar a `main`. A partir del momento en que corra,
 este criterio no se toca — cambiarlo con datos a la vista es el error que ya se cometió en
 D+3 del test 1.
 
-**Por qué el guardarraíl es el Typeform y no la agenda.** A 5 días la agenda deja 10 casos
+**Por qué el guardarraíl es el Typeform y no la agenda.** A 7 días la agenda deja 14 casos
 por brazo: cualquier diferencia es ruido y exigirle un veto sería decidir por azar creyendo
-que se decide por caja. El Typeform por exposición deja 172, es el primer paso que separa al
+que se decide por caja. El Typeform por exposición deja 241, es el primer paso que separa al
 curioso del interesado, y es exactamente donde el test 2 mostró la diferencia que el opt-in
 no veía (49,0% contra 40,5%). El umbral del 20% es una **regla de decisión, no una prueba**:
 se aplica aunque la caída no sea significativa.
@@ -127,11 +129,24 @@ variable de SEO dentro de un test de conversión.
 
 ### Pendiente
 
-- **Verificar el rewrite en el Preview** antes de integrar a `main`.
-- El script de lectura `crm-ventas/scripts/ab-copy-variant-embudo.ts` está cableado a los
-  brazos `B`/`C`; hay que generalizarlo a etiquetas arbitrarias antes de la lectura de D+14.
+- **Verificar el rewrite en el Preview** antes de integrar a `main`. Es lo único que no se
+  pudo probar en local: `python3 -m http.server` no ejecuta `vercel.json`.
+- **Abrir la cohorte de ratificación** el día que se publique al ganador, y leerla a D+90.
 - Se agrega una configuración `libre` con `autoPort` a `.claude/launch.json`: los puertos
   fijos 4599 y 4601 estaban ocupados por servidores del usuario y no se tocaron.
+
+### Instrumento de lectura, ya listo
+
+`crm-ventas/scripts/ab-copy-variant-embudo.ts` estaba cableado a los brazos `B`/`C` —y su
+normalización habría colapsado `RES` y `MET` a su inicial—. Queda generalizado a etiquetas
+arbitrarias, con el z-test incorporado a la tabla de tasas para no volver a calcularlo a
+mano. Rama `work/ab-lector-generalizado` del repo `crm-ventas`, commit `f2ed505`, **sin
+mergear**. Lectura del test:
+
+```
+TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
+  --brazos RES,MET --desde <día siguiente al deploy> --expo <n_RES>,<n_MET>
+```
 
 ---
 

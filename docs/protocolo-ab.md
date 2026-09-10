@@ -31,7 +31,7 @@ Lo que cambia afecta a los dos brazos por igual.
 | **Typeform** | Completaron el cuestionario largo | Typeform | Acá aparece el teléfono, que la landing no pide. |
 | **Leads CRM** | Los que el equipo efectivamente va a llamar | CRM | **Filtrado a propósito:** entra a los 15 min y solo si no está en WhatsApp ni agendó directo. No es volumen. |
 | **Agendas** | Sacaron turno para una llamada | Calendly + setter de WhatsApp | Las de WhatsApp llegan sin campaña y sin correo: solo se cruzan por teléfono. |
-| **Ventas** | Pagaron | CRM | La mitad compra en 3 días, una de cada cuatro tarda más de 17. Antes de 3 semanas no hay lectura. |
+| **Ventas** | Pagaron | CRM | Una cada 386 personas que ven la landing. La mitad compra en 3 días, pero el 10% tarda más de 34 y el 5% más de 82. |
 
 **Dos cosas que cambian el resultado a la mitad:**
 
@@ -42,33 +42,30 @@ Lo que cambia afecta a los dos brazos por igual.
    y se los sigue hacia abajo sin límite de tiempo. Contar "agendas ocurridas durante el test"
    da siempre cero: maduran después.
 
-## Qué número decide
+## Qué NO decide
 
-**Agendas por cada mil personas que vieron la página.** Como los dos brazos reciben el mismo
-tráfico, eso compara cuánto rinde cada peso invertido.
+Ni el costo por lead ni la cantidad de registros. En el test de agosto la versión que duplicó
+los registros trajo leads 43% peores: más volumen arriba con peor calidad abajo puede dejarte
+igual o peor.
 
-No decide el costo por lead ni la cantidad de registros: en el test de agosto la versión que
-duplicó los registros trajo leads 43% peores. Tampoco decide el registro solo — quedó empatado
-mientras la diferencia real estaba dos escalones más abajo.
-
-Se elige **antes** de ver datos y no se cambia después.
+Lo que decide se elige **antes** de ver datos y no se cambia después.
 
 ## Los tres niveles de decisión
 
-El plazo de decisión es de **5 días**. Eso define qué puede y qué no puede decidir, porque
+El plazo de decisión es de **7 días**. Eso define qué puede y qué no puede decidir, porque
 cada escalón del embudo es más chico que el anterior y necesita más gente para dar señal.
 
-Con 430 personas por brazo por día, a los 5 días hay 2.150 por brazo:
+Con 430 personas por brazo por día, a los 7 días hay 3.010 por brazo:
 
 | Escalón | Casos por brazo | Cambio mínimo que detecta | Rol |
 |---|---|---|---|
-| Opt-in rate | ~473 | 17% | **decide** |
-| Typeform por exposición | ~172 | 31% | **guardarraíl** |
-| Agenda por exposición | ~10 | 167% | no sirve a 5 días |
-| Venta por exposición | ~6 | 251% | no sirve a 5 días |
+| Opt-in rate | ~662 | 14% | **decide** |
+| Typeform por exposición | ~241 | 26% | **guardarraíl** |
+| Agenda por exposición | ~14 | 135% | no sirve a 7 días |
+| Venta por exposición | ~8 | 200% | no sirve a 7 días |
 
 **1. Decide el opt-in rate.** Es el único escalón con gente suficiente para dar una respuesta
-en 5 días.
+en 7 días.
 
 **2. El guardarraíl es el Typeform por exposición**, no la agenda. Es el primer paso que
 separa al curioso del interesado, y es donde el test de agosto mostró la diferencia real que
@@ -76,7 +73,7 @@ el opt-in no veía. La regla es numérica y se fija antes: **si el retador gana 
 baja el Typeform más de un 20%, no se publica**, aunque esa caída no sea estadísticamente
 significativa. Es una regla de decisión, no una prueba.
 
-**3. Agendas y ventas NO pueden vetar en 5 días.** Con 10 y 6 casos por brazo, cualquier
+**3. Agendas y ventas NO pueden vetar en 7 días.** Con 14 y 8 casos por brazo, cualquier
 diferencia es ruido. Exigirles un veredicto sería decidir por azar creyendo que se decide por
 caja. Pasan a la fase siguiente.
 
@@ -94,12 +91,12 @@ sabe si el ganador de un test sirvió: es lo que pasó con los dos primeros.
 
 ## Antes de arrancar: ¿vale la pena este test?
 
-Como el plazo es de 5 días, **sólo se pueden detectar cambios que muevan el opt-in un 17% o
+Como el plazo es de 7 días, **sólo se pueden detectar cambios que muevan el opt-in un 14% o
 más**. Si el cambio propuesto no puede mover tanto, el test va a terminar en empate y no se
 va a aprender nada.
 
 Cambios de una palabra o de color de botón no llegan. Cambios de ángulo, de promesa, de
-estructura o de cantidad de pasos, sí. **Si no esperás un 17%, no lo testees: publicalo
+estructura o de cantidad de pasos, sí. **Si no esperás un 14%, no lo testees: publicalo
 directo o probá algo más grande.**
 
 ## Cuándo el resultado es real
@@ -122,7 +119,7 @@ No llegar a 0,05 **no prueba que las versiones sean iguales**: prueba que todav�
 4. No tocar campañas, presupuesto ni páginas siguientes mientras corre.
 5. Una sola variable por test.
 6. Nombre de variante nuevo en cada test.
-7. Revisar el volumen diario. Los 5 días suponen 430 personas por brazo por día; si el
+7. Revisar el volumen diario. Los 7 días suponen 430 personas por brazo por día; si el
    tráfico cae, el plazo se estira. En los dos primeros tests cayó hasta 65% en tres días sin
    que nadie lo notara.
 8. **Al promover al ganador, devolverle el paquete SEO.** Las variantes salen sin indexar y
