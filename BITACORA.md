@@ -42,29 +42,47 @@ lo único que cambia entre brazos es el texto, no el layout ni la altura del CTA
 
 ### ▶ Criterio — DECLARADO ANTES DE VER UN SOLO NÚMERO
 
-| Rol | Métrica | Lectura |
-|---|---|---|
-| **Decide** | opt-in rate: registros / exposiciones | **~24-sep (D+14)** |
-| **Veto** | agendas por 1.000 exposiciones | D+21 |
+**Plazo de decisión: 5 días**, por pedido del usuario. Se aplica el protocolo revisado ese
+mismo día (ver más abajo y `docs/protocolo-ab.md`).
 
-**Por qué D+14 y no D+7.** Con 859 sesiones MetaAds/día (430 por brazo) y un opt-in base
-del ~22%, la muestra necesaria es:
+| Rol | Métrica | Umbral | Lectura |
+|---|---|---|---|
+| **Decide** | opt-in rate: registros / exposiciones | p < 0,05 | **D+5** |
+| **Guardarraíl** | Typeform completos / exposiciones | no cae más de 20% | D+5 |
+| **Ratificación** | venta por exposición, cohorte del ganador | si cae, se revierte | D+90 post-publicación |
 
-| Detectar | n por brazo | Días |
-|---|---|---|
-| 10% relativo | 5.754 | 13,4 |
-| 15% relativo | 2.599 | 6,1 |
-| 30% relativo | 680 | 1,6 |
+Con 430 exposiciones por brazo y por día, a D+5 hay 2.150 por brazo. Qué puede ver cada
+escalón con esa muestra:
 
-A D+7 sólo se detectaría un efecto del 15% o más; si el efecto real es del 10%, el test
-terminaría en empate y no se aprendería nada. **D+14 es el primer plazo que el tráfico
-actual sostiene para una lectura honesta.**
+| Escalón | Casos por brazo | Detecta | Rol |
+|---|---|---|---|
+| Opt-in rate (22%) | ~473 | 17% relativo | decide |
+| Typeform / exposición (8%) | ~172 | 31% relativo | guardarraíl |
+| Agenda / exposición (0,476%) | ~10 | 167% | **no sirve a D+5** |
+| Venta / exposición (0,259%) | ~6 | 251% | **no sirve a D+5** |
 
-⚠️ **Las agendas por exposición NO pueden decidir este test.** Con una base de ~1,2%
-harían falta **38 días para detectar un efecto del 30%** y 83 para uno del 20%. Por eso
-entran como **veto y no como juez**: no se les va a exigir significancia, pero si MET gana
-el opt-in y las agendas se hunden de forma visible, **no se publica**. Es la lección del
-test 1, donde el brazo que duplicó registros traía leads que valían 43% menos.
+⚠️ **Cambio de criterio respecto de la versión anterior de esta entrada**, que declaraba
+D+14 con las agendas como veto. Es legítimo porque **el test todavía no había arrancado y no
+existía ni un dato**: la rama estaba sin integrar a `main`. A partir del momento en que corra,
+este criterio no se toca — cambiarlo con datos a la vista es el error que ya se cometió en
+D+3 del test 1.
+
+**Por qué el guardarraíl es el Typeform y no la agenda.** A 5 días la agenda deja 10 casos
+por brazo: cualquier diferencia es ruido y exigirle un veto sería decidir por azar creyendo
+que se decide por caja. El Typeform por exposición deja 172, es el primer paso que separa al
+curioso del interesado, y es exactamente donde el test 2 mostró la diferencia que el opt-in
+no veía (49,0% contra 40,5%). El umbral del 20% es una **regla de decisión, no una prueba**:
+se aplica aunque la caída no sea significativa.
+
+**Por qué las ventas no deciden.** Medido sobre la cohorte real del 12→31 ago (2.124 opt-ins
+pagos): venta por exposición 0,259%, una cada 386 personas. Detectar un 30% pediría 179 días
+y un 15%, 1,8 años. Además la señal tarda: sobre 637 ventas, mediana 3 días pero p90 34 y p95
+82. Por eso pasan a **ratificación post-publicación**, no a decisión.
+
+**Atribución dentro del test: ni first ni last touch.** La asignación al brazo es aleatoria y
+ocurre en la landing, así que rige intención de tratar — todo lo que haga esa persona cuenta
+para su brazo. Last-touch reasignaría ventas a otros funnels y sacaría gente del experimento,
+rompiendo la aleatorización que es lo único que hace válida la comparación.
 
 Reglas que se mantienen: no espiar para cortar al ver ventaja, **empate deja el control**
 (RES), no decidir por CPL ni por volumen de registros, no leer `form_start`, y no tocar las

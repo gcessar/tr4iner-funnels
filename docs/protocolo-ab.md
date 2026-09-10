@@ -53,6 +53,55 @@ mientras la diferencia real estaba dos escalones más abajo.
 
 Se elige **antes** de ver datos y no se cambia después.
 
+## Los tres niveles de decisión
+
+El plazo de decisión es de **5 días**. Eso define qué puede y qué no puede decidir, porque
+cada escalón del embudo es más chico que el anterior y necesita más gente para dar señal.
+
+Con 430 personas por brazo por día, a los 5 días hay 2.150 por brazo:
+
+| Escalón | Casos por brazo | Cambio mínimo que detecta | Rol |
+|---|---|---|---|
+| Opt-in rate | ~473 | 17% | **decide** |
+| Typeform por exposición | ~172 | 31% | **guardarraíl** |
+| Agenda por exposición | ~10 | 167% | no sirve a 5 días |
+| Venta por exposición | ~6 | 251% | no sirve a 5 días |
+
+**1. Decide el opt-in rate.** Es el único escalón con gente suficiente para dar una respuesta
+en 5 días.
+
+**2. El guardarraíl es el Typeform por exposición**, no la agenda. Es el primer paso que
+separa al curioso del interesado, y es donde el test de agosto mostró la diferencia real que
+el opt-in no veía. La regla es numérica y se fija antes: **si el retador gana el opt-in pero
+baja el Typeform más de un 20%, no se publica**, aunque esa caída no sea estadísticamente
+significativa. Es una regla de decisión, no una prueba.
+
+**3. Agendas y ventas NO pueden vetar en 5 días.** Con 10 y 6 casos por brazo, cualquier
+diferencia es ruido. Exigirles un veredicto sería decidir por azar creyendo que se decide por
+caja. Pasan a la fase siguiente.
+
+## Después de publicar: ratificación a 90 días
+
+Ganar un test no prueba que el cambio sirva para vender. Al publicar al ganador se abre una
+cohorte y se la sigue **90 días**, midiendo venta por exposición contra el período anterior.
+
+Hace falta esa ventana porque la venta tarda: sobre 637 ventas reales, la mitad ocurre en 3
+días, pero el 10% tarda más de 34 y el 5% más de 82.
+
+**Si la venta por exposición cae, se revierte.** No es un test —no hay grupo de control una
+vez publicado— y por eso no prueba causalidad; es un control de daño. Sin este paso nunca se
+sabe si el ganador de un test sirvió: es lo que pasó con los dos primeros.
+
+## Antes de arrancar: ¿vale la pena este test?
+
+Como el plazo es de 5 días, **sólo se pueden detectar cambios que muevan el opt-in un 17% o
+más**. Si el cambio propuesto no puede mover tanto, el test va a terminar en empate y no se
+va a aprender nada.
+
+Cambios de una palabra o de color de botón no llegan. Cambios de ángulo, de promesa, de
+estructura o de cantidad de pasos, sí. **Si no esperás un 17%, no lo testees: publicalo
+directo o probá algo más grande.**
+
 ## Cuándo el resultado es real
 
 Se calcula la probabilidad de ver esa diferencia si las dos versiones fueran idénticas:
@@ -65,19 +114,21 @@ Se calcula la probabilidad de ver esa diferencia si las dos versiones fueran id�
 
 No llegar a 0,05 **no prueba que las versiones sean iguales**: prueba que todavía no sabemos.
 
-Muestra necesaria: una diferencia del 50% se detecta con ~3.500 personas por brazo; una del
-10% necesita diez veces más. Si la cuenta da más de un mes, conviene probar otra cosa.
-
 ## Reglas
 
-1. Declarar la métrica antes de ver datos.
+1. Declarar las métricas y el umbral del guardarraíl antes de ver datos.
 2. No espiar para cortar. Se mira para detectar fallas técnicas, no para decidir.
 3. Empate deja lo que ya estaba.
 4. No tocar campañas, presupuesto ni páginas siguientes mientras corre.
 5. Una sola variable por test.
 6. Nombre de variante nuevo en cada test.
-7. Revisar el volumen diario. En los dos tests el tráfico cayó hasta 65% en tres días sin que
-   nadie lo notara, y sin muestra el test no decide por más que lo dejes correr.
+7. Revisar el volumen diario. Los 5 días suponen 430 personas por brazo por día; si el
+   tráfico cae, el plazo se estira. En los dos primeros tests cayó hasta 65% en tres días sin
+   que nadie lo notara.
+8. **Al promover al ganador, devolverle el paquete SEO.** Las variantes salen sin indexar y
+   sin metadatos sociales —correcto mientras son variantes—; si se promueven así, la landing
+   queda fuera de Google.
+9. Abrir la cohorte de ratificación el día que se publica.
 
 ## Errores ya cometidos
 
@@ -87,3 +138,15 @@ Muestra necesaria: una diferencia del 50% se detecta con ~3.500 personas por bra
 | Reusar el nombre «B» en dos tests seguidos | El día del cambio quedó ilegible: incluyéndolo ganaba una versión, excluyéndolo la otra. |
 | Probar paquetes enteros (test 1: estructura + formulario + peso + título) | Ganó, pero no sabemos por qué. |
 | Leer sin cruzar por teléfono | Más de la mitad de las agendas quedaban sin dueño. |
+| Publicar sin seguir la cohorte | De los dos ganadores publicados no sabemos si vendieron más. Por eso existe la ratificación. |
+| Promover una variante con su `noindex` de variante | La landing quedó 5 días fuera de Google contradiciendo al sitemap. |
+
+## Una advertencia sobre atribución
+
+Para leer un test **no se usa first ni last touch**. La asignación al brazo es aleatoria y
+ocurre al ver la landing: todo lo que haga después esa persona cuenta para su brazo, entró
+por donde entró.
+
+Aplicar last-touch reasigna ventas a otros funnels y saca gente del experimento, que es
+justamente lo que rompe la comparación. First y last touch sirven para repartir presupuesto
+entre funnels; adentro de un test, manda la asignación del test.
