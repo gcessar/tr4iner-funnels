@@ -47,16 +47,9 @@
   </script>
 
   <script>
-    // Test de HERO (10-sep-2026): promesa de RESULTADO (esta página) contra promesa
-    // de MÉTODO (`index-metodo.html`). Una exposición por vista asignada.
-    //
-    // Cookie y etiquetas ESTRENADAS a propósito. Los dos tests anteriores compartieron
-    // el nombre «B» y el día del cruce quedó ilegible: incluyéndolo ganaba uno,
-    // excluyéndolo el otro. `RES`/`MET` no se usaron nunca y no se confunden con
-    // A/B/C ni entre sí. La cookie `ab_hero` tampoco: `ab_ce` y `ab_copy` siguen
-    // vivas 180 días en navegadores de visitantes viejos.
-    //
-    // El informe usa usuarios/sesiones que contienen el evento, NUNCA eventCount.
+    // Mismo contrato de exposición que el control (`index-fuerza.html`): el bloque
+    // es idéntico byte a byte para que la única diferencia medible entre los dos
+    // brazos sea la promesa del hero, no el instrumental.
     (function () {
       var match = /(?:^|;\s*)ab_hero=(RES|MET)/.exec(document.cookie);
       if (!match) return;
@@ -72,14 +65,12 @@
     })();
   </script>
 
-  <!-- Indexable a propósito. El `noindex` que traía este archivo servía cuando era
-       UNA VARIANTE de un test: ahí sí había que evitar que /index-fuerza compitiera
-       como duplicado. Al pasar a ser la página que sirve la ruta canónica, ese
-       noindex viaja con el contenido y deja `/casos-de-estudio` fuera del índice
-       —contradiciendo al sitemap, que la declara—. Pasó inadvertido 5 días con
-       index-salud. El duplicado lo resuelve el `canonical` de abajo, que apunta a
-       la ruta pública: no hace falta noindex. -->
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <!-- `noindex` porque esto es UNA VARIANTE de un test, servida por rewrite bajo
+       /casos-de-estudio: indexarla por su cuenta la haría competir como duplicado
+       de la ruta pública. ⚠️ Si esta variante gana, quitarle el noindex al
+       promoverla — el 17-ago se promovió una variante sin hacerlo y la landing
+       quedó 5 días fuera del índice. Ver BITACORA 2026-08-22. -->
+  <meta name="robots" content="noindex, follow">
   <title>Casos de transformación física | TR4INER</title>
   <meta name="description" content="Selecciona tu sexo y rango de edad para ver un caso de transformación física de TR4INER y conocer qué hizo, paso a paso.">
   <link rel="canonical" href="https://metodo.tr4iner.com/casos-de-estudio">
@@ -513,12 +504,20 @@
   <div id="form-view">
     <section class="story" aria-labelledby="optin-title">
 
+    <!-- ÚNICA diferencia con index-fuerza.html: la promesa del hero. El control
+         promete el RESULTADO («transformó su cuerpo»); este promete el MÉTODO
+         («qué hizo, mes a mes»), que es el activo real del funnel: los cuatro
+         casos son análisis paso a paso, no antes/después. El obstáculo #1 que
+         declararon los 837 compradores del estudio fue «no tengo una estructura
+         clara» (44%), y en el test de agosto la ganadora levantó ese segmento
+         de 18,7% a 30,4%. El resaltado acompaña al ángulo: en el control marca
+         la identificación, acá marca el método. -->
     <h1 id="optin-title">
-      Mira cómo <span class="headline-match">alguien como tú</span> transformó su cuerpo.
+      Mira <span class="headline-match">qué hizo, mes a mes</span>, alguien que empezó como tú.
     </h1>
 
     <p class="subhead">
-      Selecciona tu sexo y rango de edad para ver el caso y conocer qué hizo, paso a paso.
+      El caso completo: qué cambió y en qué orden. Elige tu sexo y edad para ver el tuyo.
     </p>
 
     <div class="proof" aria-label="Los cuatro casos de estudio">
