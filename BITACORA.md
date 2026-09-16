@@ -13,6 +13,99 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-16 — Test de HERO a D+6: sano, pero el cierre se estira al 20-sep
+
+Rama `work/ab-titulo-descripcion`. Revisión de mitad de test de `ce_hero_202609` y cambio de
+plazo **por volumen, decidido antes de ver resultados por brazo**.
+
+### ▶ Decisión: cierre fijo el domingo 20-sep, lectura el lunes 21
+
+Decidido por el usuario el 16-sep hacia las 11:20 de Lima, **antes de ver un solo número por
+brazo**: hasta ese momento sólo se habían revisado métricas de salud y la tasa conjunta de los
+dos brazos. Aplica la regla 7 del protocolo (si cae el tráfico, se estira el plazo).
+
+- **Ventana:** opt-ins y exposiciones del **11-sep 00:00 al 20-sep 23:59 de Lima**. Agendas y
+  ventas de esa cohorte se siguen sin corte de fecha, como siempre.
+- **La fecha es fija.** No se vuelve a mover aunque al 20 falten o sobren exposiciones: mover
+  el cierre mirando cómo viene el test es otra forma de cortar cuando conviene. Estimación:
+  entre 3.000 y 3.250 usuarios por brazo.
+- **El criterio no cambia:** decide el opt-in con p < 0,05; guardarraíl Typeform por exposición
+  (no cae más de 20%); las agendas deciden sólo si un brazo dobla al otro; las ventas ratifican a
+  D+90. Empate deja RES.
+- **Parciales a pedido del usuario.** Desde hoy se le informan resultados parciales por brazo
+  mientras corre. **No deciden**: ni cortan el test ni mueven la fecha. Un parcial con p < 0,05
+  no cuenta; con varias miradas, el azar produce ese valor bastante más que 1 vez cada 20.
+
+### Revisión técnica: todo en orden
+
+| Chequeo | Resultado |
+|---|---|
+| Ruteo en producción (`curl`, sin JS, no ensucia GA4 ni CRM) | Pago sin cookie reparte y sirve la página de su cookie; la cookie no se reescribe; orgánico sin cookie; cero `Location` |
+| Deploys | El último a producción es del 10-sep 16:26 (`2d34766`, sólo docs). Nada cambió desde el T0 |
+| Reparto (SRM) | 1.669 RES / 1.626 MET usuarios del 11 al 16 (50,6%), p = 0,45 |
+| Cobertura | Sesiones pagas que aterrizan en la ruta ≈ sesiones con exposición (3.496 contra 3.456, 11→15) |
+| `variant` en `OptIn` | 791 de 792 opt-ins pagos; ningún valor raro; 20 orgánicos vuelven con cookie y cuentan para su brazo; 3 correos cayeron en los dos brazos |
+| Typeform `CGxeptJu` | `variant` declarado en hidden; lo traen 311 de 313 respuestas pagas; formulario sin cambios desde el 15-ago |
+| Tasa de opt-in conjunta | ~22%, la misma que asumió el cálculo de muestra |
+
+### Por qué se estira: 21% menos volumen
+
+| | Plan | Real 11→15 sep |
+|---|---|---|
+| Usuarios con exposición por brazo por día | 430 | **338** (314 desde el 14) |
+| Sesiones MetaAds por día en la ruta | 859 | 699 |
+| Usuarios por brazo al 17-sep | 3.010 | ~2.250 |
+
+Con ~2.250 por brazo el opt-in detectaba un 16% en vez de un 14%, y las agendas quedaban en ~11
+por brazo en vez de 14 (ver la corrección de abajo: con 11, la regla de las agendas dispara por
+azar el 15% de las veces).
+
+### 🔴 Confounder: se pausaron adsets durante el test
+
+- **14-sep 17:39:** se pausaron A3-HOO2, A3-HOO5, A7-HOO2 y A10-HOO2 de
+  `[TR4INER] [CE] [COLD] [US-CA-PE] [B4] [HOOKS GANADORES]` por decisión del dueño de la cuenta
+  (corte de B4 en la bitácora de `crm-ventas`, 14-sep). El tráfico de B4 a la landing bajó de
+  ~277 a ~165 sesiones por día (−40%). HOT-TYP y B2 siguieron estables.
+- El gasto de la cuenta ya venía bajando: USD 448 por día del 3 al 9 contra 329 del 11 al 15.
+- `[B3] [MEDICOS]`, apagada el 11-sep, **no** manda tráfico a `/casos-de-estudio`.
+
+**No sesga RES contra MET.** La asignación es aleatoria y simultánea: cada día los dos brazos
+recibieron la misma mezcla de campañas. Lo que cambia es **a quién representa el resultado**
+(desde el 14 pesa más HOT-TYP) y el volumen. La frase de `docs/ab-casos-de-estudio.md` según la
+cual apagar un anuncio hace que «las dos mitades dejan de ser comparables» no aplica a un split
+simultáneo; la regla de no tocar campañas se sostiene por volumen y representatividad.
+
+### Corrección: la falsa alarma de «un brazo dobla al otro» es 9%, no 4,7%
+
+La tabla del 10-sep mezclaba dos definiciones de diferencia. El 43% (≥30%) y el 20% (≥50%)
+comparan contra el promedio de los dos brazos; el 4,7% (≥100%) es la probabilidad de que **un
+brazo concreto** doble al otro. La regla dispara si **cualquiera** de los dos dobla. Recalculado
+con binomial exacta, dos brazos idénticos:
+
+| Casos por brazo | Un brazo concreto dobla | Cualquiera dobla (la regla) |
+|---|---|---|
+| Agendas, 14 | 4,5% | **9,1%** |
+| Agendas, 11 | 7,4% | **14,8%** |
+| Ventas, 8 | 11,7% | 23,4% |
+
+**La regla no cambia**: cambia cuánto pesa. Corregir `docs/protocolo-ab.md` al cerrar el test,
+no mientras corre.
+
+### Latente: la barra final rompe un solo brazo
+
+`/casos-de-estudio/` (con barra) entra al middleware —su matcher acepta la barra— pero no al
+rewrite de `vercel.json`: **RES da 404 y MET sirve la página**. Hubo una sola visita así en 6
+días, así que hoy no pesa; pero un anuncio con esa URL mandaría la mitad RES a un 404 y
+fabricaría un ganador. Arreglar al cerrar (redirect de la barra o matcher exacto), no ahora.
+
+### Fuera del test
+
+El Typeform no declara `rango_edad` en hidden: la página lo manda en `data-tf-hidden`, pero
+Typeform lo descarta. Verificado contra la API (definición del formulario y claves de las
+respuestas desde el 11-sep).
+
+---
+
 ## 2026-09-10 — Arranca el test de HERO: promesa de resultado contra promesa de método
 
 Rama `work/ab-titulo-descripcion`. **Tercer A/B de `/casos-de-estudio`.** `ce_hero_202609`.
@@ -308,6 +401,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-16` — Test de HERO a D+6: sano, pero el cierre se estira al 20-sep
 - `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
 - `2026-09-08` — Producción verificada: opt-in por edad y cuatro casos
 - `2026-09-08` — Cierre de opt-in por edad y cuatro testimonios para publicación (incluye iteraciones locales)

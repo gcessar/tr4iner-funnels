@@ -121,6 +121,11 @@ Cookie `ab_hero`, evento `ce_hero_exposure_res|met`. El orgánico ve el control 
 split. **Mientras corre: no tocar campañas de Meta, ni las páginas del funnel, ni el KPI
 declarado.**
 
+**Cierre estirado el 16-sep por volumen (−21% del plan):** ventana fija del 11 al 20-sep (Lima)
+y lectura el **lunes 21-sep**; la fecha no se vuelve a mover. Los parciales que se le muestran
+al usuario no deciden. Ver la entrada del 16-sep de `BITACORA.md`, que además corrige el 4,7%
+de abajo: la falsa alarma de «un brazo dobla al otro» es ~9%.
+
 **Protocolo vigente desde el 10-sep — decisión en 7 días, tres niveles:**
 
 | Rol | Métrica | Umbral | Cuándo |
