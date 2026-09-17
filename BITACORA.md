@@ -13,6 +13,17 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-17 — Preview de Ruta TR4INER para hombres: módulos y rutinas
+
+- Rama `work/ruta-hombres-preview`, basada en `origin/main` `2d34766`. Alcance de este turno: propuesta interactiva aislada en `/biblioteca/preview-hombres/`, para revisar antes de integrar el funnel y el CRM. No cambia el A/B de Caso de Estudio, páginas vivas, endpoints, esquema, catálogo de base de datos, mujeres ni producción.
+- Cinco módulos en el orden indicado por el usuario: Empieza aquí, Entrenamiento de pesas, Alimentación, Cardio / actividad y Cómo seguir el plan en tu vida real. Tres rangos `18-25`, `26-35`, `36+`; se respetan los enlaces legibles, pendientes y faltantes de las capturas. Bienvenida e introducción usan videos temporales. Los 3 pilares no tiene enlace; los dos videos fuente de ayuno no se publican como si fueran el montaje terminado. Los enlaces de Drive recortados quedan pendientes.
+- Registro de demostración con frecuencia de 3/4/5 días. Las rutinas y alternativas son ejemplos visuales pendientes de validación, no prescripciones definitivas por edad. En móvil: días de sesión, una ficha expandida por vez, video vertical, series, repeticiones, descanso, temporizador, completado y reemplazo reversible.
+- Editor de propuesta para `/admin/genesis`: permite modificar nombre, series, repeticiones, descanso y Library ID/Video ID de Bunny por miembro ficticio y día. La persistencia es **solo localStorage**, separada entre Mateo/Diego y frecuencia semanal. No es el admin real, no tiene autenticación ni escribe en el CRM; no introducir datos reales. La integración de registro, API, modelo y editor del CRM sigue pendiente.
+- Bunny de prueba aportado: biblioteca `658343`, video `71554740-2a7e-4bb6-9e92-3a1778871360`. Metadata pública identifica `CARLOS.mp4`, 58 s, 360×640. Se usa como clip de prueba explícito, sin atribuirlo como demostración real de sentadillas. El iframe devuelve **403 en navegador local**, aunque la petición HTTP directa devuelve 200: reproducción local no validada. No se modificaron protecciones de Bunny. Formato del embed contrastado con [Bunny](https://bunny.net/blog/introducing-player-js-support-for-bunny-stream-advanced-player-control-and-monitoring-api/).
+- QA local Chrome: 9 combinaciones edad/frecuencia, 16 pantallas a 320/375/768/1280 px sin overflow, conservación de parámetros entrantes, cambios individuales persistentes al recargar y otro miembro intacto, rechazo de IDs inválidos, reemplazo sin heredar video, restauración, temporizador y retirada del iframe al cerrar. Cero errores JS y cero escrituras a APIs. Sintaxis JS y `git diff --check` correctos. Evidencia temporal: `/private/tmp/ruta-preview-qa.json` y capturas `/private/tmp/ruta-*.png`.
+- Decisión SEO/GEO: preview operativo con título y descripción propios y `noindex, nofollow`; fuera del sitemap. UI conserva Instrument Sans, Mono, blanco/negro/amarillo, foco visible, diálogos nativos y movimiento reducido. Revisión visual realizada, sin medición de mejora de conversión.
+- Pendientes: revisión visual del usuario; rutinas y reemplazos definitivos; contenido de mujeres; integración con CRM y persistencia real en staging; completar contenido pendiente y resolver reproducción Bunny en navegador. No publicar esta demo como el funnel terminado.
+
 ## 2026-09-10 — Arranca el test de HERO: promesa de resultado contra promesa de método
 
 Rama `work/ab-titulo-descripcion`. **Tercer A/B de `/casos-de-estudio`.** `ce_hero_202609`.
