@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const D = window.RutaPreviewData;
-  const KEY = 'tr4_ruta_hombres_preview_v1';
+  const KEY = 'tr4_rutinas_preview_v2';
   const main = document.getElementById('main');
   const SAMPLE = { libraryId: '658343', videoId: '71554740-2a7e-4bb6-9e92-3a1778871360' };
   const icons = {
@@ -22,7 +22,7 @@
   try {
     const saved = JSON.parse(localStorage.getItem(KEY));
     if (saved && saved.members && saved.routines && saved.completed && saved.lessons) {
-      // Se aceptan únicamente los dos perfiles ficticios del preview.
+      // Se aceptan únicamente los perfiles ficticios del preview.
       for (const id of Object.keys(D.members)) {
         const member = saved.members[id];
         if (member && Object.hasOwn(D.ageLabels, member.age) && [3, 4, 5].includes(member.frequency)) store.members[id] = { ...D.members[id], age: member.age, frequency: member.frequency };
@@ -53,7 +53,7 @@
     params = new URLSearchParams(location.search);
     memberId = Object.hasOwn(D.members, params.get('miembro')) ? params.get('miembro') : 'mateo';
     member = store.members[memberId];
-    view = ['ruta', 'rutina', 'registro', 'editor'].includes(params.get('vista')) ? params.get('vista') : 'ruta';
+    view = ['ruta', 'rutina', 'registro', 'editor', 'planes'].includes(params.get('vista')) ? params.get('vista') : 'ruta';
     moduleIndex = Math.max(0, D.modules.findIndex(m => m.id === params.get('modulo')));
     lessonId = params.get('leccion');
     dayIndex = Math.max(0, Math.min(member.frequency - 1, Number.parseInt(params.get('dia'), 10) || 0));
@@ -63,12 +63,12 @@
     Object.entries(updates).forEach(([key, value]) => value == null ? query.delete(key) : query.set(key, value));
     return location.pathname + '?' + query.toString();
   }
-  function routineKey() { return memberId + ':' + member.frequency; }
+  function routineKey() { return memberId + ':' + member.sex + ':' + member.frequency; }
   function getRoutine() {
     const key = routineKey();
     const saved = store.routines[key];
-    if (!Array.isArray(saved) || saved.length !== member.frequency || !saved.every(day => Array.isArray(day.exercises) && day.exercises.length && day.exercises.every(ex => ex.slot && typeof ex.name === 'string' && ex.sets > 0 && ex.rest > 0 && Array.isArray(ex.alternatives)))) {
-      store.routines[key] = D.makeRoutine(member.frequency).map(day => ({ ...day, exercises: day.exercises.map(ex => ({ ...ex, ...SAMPLE, sampleVideo: true })) }));
+    if (!Array.isArray(saved) || saved.length !== member.frequency || !saved.every(day => typeof day.weekday === 'string' && Array.isArray(day.exercises) && day.exercises.length && day.exercises.every(ex => ex.id && ex.slot && typeof ex.name === 'string' && ex.sets > 0 && ex.rest > 0 && Array.isArray(ex.alternatives) && Array.isArray(ex.alternativeIds)))) {
+      store.routines[key] = D.makeRoutine(member.frequency, member.sex).map(day => ({ ...day, exercises: day.exercises.map(ex => ({ ...ex, ...SAMPLE, sampleVideo: true })) }));
     }
     return store.routines[key];
   }
@@ -87,7 +87,7 @@
     if (focus) { main.focus({ preventScroll: true }); window.scrollTo(0, 0); }
   }
   function topNavigation() {
-    document.getElementById('preview-nav').innerHTML = [['registro', 'Registro'], ['ruta', 'Módulos'], ['rutina', 'Mi rutina'], ['editor', 'Editor por miembro']].map(([key, label]) => '<a href="' + esc(url({ vista: key })) + '" data-view="' + key + '"' + (view === key ? ' aria-current="page"' : '') + '>' + label + '</a>').join('');
+    document.getElementById('preview-nav').innerHTML = [['registro', 'Registro'], ['ruta', 'Módulos'], ['rutina', 'Mi rutina'], ['planes', 'Rutinas base'], ['editor', 'Editor']].map(([key, label]) => '<a href="' + esc(url({ vista: key })) + '" data-view="' + key + '"' + (view === key ? ' aria-current="page"' : '') + '>' + label + '</a>').join('');
     document.querySelector('.brand').href = url({ vista: 'ruta' });
     document.getElementById('profile-name').textContent = member.name;
     document.querySelector('.avatar').textContent = member.name[0];
@@ -96,6 +96,10 @@
     return D.modules.map((m, i) => '<a class="module-link" href="' + esc(url({ vista: 'ruta', modulo: m.id, leccion: null })) + '" data-module="' + m.id + '"' + (i === moduleIndex ? ' aria-current="step"' : '') + '><span class="step-number">' + String(i + 1).padStart(2, '0') + '</span><strong>' + m.short + '</strong></a>').join('');
   }
   function renderRoute() {
+    if (member.sex === 'WOMEN') {
+      main.innerHTML = '<section class="registration"><p class="eyebrow">RUTA DE MUJERES</p><h1>Tu rutina ya está preparada.</h1><p class="intro">El temario de los módulos de mujeres está pendiente. Puedes revisar la propuesta de entrenamiento con prioridad en piernas y glúteos.</p><a class="button yellow" data-view="rutina" href="' + esc(url({ vista: 'rutina' })) + '">Ver mi rutina ' + icon('arrow') + '</a></section>';
+      return;
+    }
     const module = D.modules[moduleIndex];
     const playable = module.lessons.filter(l => l.youtubeId);
     const selected = playable.find(l => l.id === lessonId) || playable[0];
@@ -114,7 +118,7 @@
     const days = getRoutine();
     const day = days[dayIndex];
     const count = day.exercises.filter(ex => store.completed[completionKey(ex.slot)]).length;
-    main.innerHTML = '<section class="workout-page"><a class="breadcrumb" href="' + esc(url({ vista: 'ruta', modulo: 'pesas', leccion: 'rutina-intro' })) + '" data-training-back>' + icon('back') + 'Entrenamiento de pesas</a><header class="workout-heading"><div><p class="eyebrow">HOMBRES · ' + D.ageLabels[member.age] + '</p><h1>Tu rutina. A tu ritmo.</h1><p>Elige una sesión y concéntrate en un ejercicio a la vez.</p></div><div class="frequency-stamp"><b>' + member.frequency + '</b><span>días por<br>semana</span></div></header><p class="demo-note">' + icon('info') + 'Rutina de ejemplo para revisar el diseño. Series y ejercicios pendientes de validación.</p><nav class="day-tabs" aria-label="Días de entrenamiento">' + dayLinks() + '</nav><div class="session-summary"><div><h2>' + day.name + '</h2><p>Día ' + (dayIndex + 1) + ' · ' + day.exercises.length + ' ejercicios</p></div><div class="session-progress"><span id="session-count">' + count + ' de ' + day.exercises.length + ' completados</span><div class="progress-track" aria-hidden="true"><i id="session-fill" style="width:' + count / day.exercises.length * 100 + '%"></i></div></div></div><div id="exercise-list">' + day.exercises.map((ex, i) => renderExercise(ex, i)).join('') + '</div><section class="session-finish" id="session-finish"' + (count < day.exercises.length ? ' hidden' : '') + '><div><h3>Sesión completada.</h3><p>Tu avance queda guardado en este navegador.</p></div><button type="button" class="button" id="reset-session">Comenzar otra sesión</button></section></section>';
+    main.innerHTML = '<section class="workout-page"><a class="breadcrumb" href="' + esc(url({ vista: 'ruta', modulo: 'pesas', leccion: 'rutina-intro' })) + '" data-training-back>' + icon('back') + 'Entrenamiento de pesas</a><header class="workout-heading"><div><p class="eyebrow">' + (member.sex === 'WOMEN' ? 'MUJERES' : 'HOMBRES') + ' · ' + D.ageLabels[member.age] + '</p><h1>Tu rutina. A tu ritmo.</h1><p>Elige una sesión y concéntrate en un ejercicio a la vez.</p></div><div class="frequency-stamp"><b>' + member.frequency + '</b><span>días por<br>semana</span></div></header><p class="demo-note">' + icon('info') + 'Plantilla propuesta · Principiantes y retorno · Máximo objetivo 30–45 min.</p><details class="training-guide"><summary>Cómo empezar y progresar</summary><p>' + window.RutaPrograms.adaptation + '</p><p>' + window.RutaPrograms.warmup + '</p><p>' + window.RutaPrograms.intensity + '</p><p>' + window.RutaPrograms.progression + '</p><p>' + window.RutaPrograms.recovery + '</p><p>' + window.RutaPrograms.boundary + '</p><a class="text-button" data-view="planes" href="' + esc(url({ vista: 'planes' })) + '">Ver las seis rutinas base</a></details><nav class="day-tabs" aria-label="Días de entrenamiento">' + dayLinks() + '</nav><div class="session-summary"><div><h2>' + day.name + '</h2><p>Día ' + (dayIndex + 1) + ' · ' + day.exercises.length + ' ejercicios · ' + day.weekday + ' sugerido</p></div><div class="session-progress"><span id="session-count">' + count + ' de ' + day.exercises.length + ' completados</span><div class="progress-track" aria-hidden="true"><i id="session-fill" style="width:' + count / day.exercises.length * 100 + '%"></i></div></div></div><div id="exercise-list">' + day.exercises.map((ex, i) => renderExercise(ex, i)).join('') + '</div><section class="session-finish" id="session-finish"' + (count < day.exercises.length ? ' hidden' : '') + '><div><h3>Sesión completada.</h3><p>Tu avance queda guardado en este navegador.</p></div><button type="button" class="button" id="reset-session">Comenzar otra sesión</button></section></section>';
   }
   function renderExercise(ex, i) {
     const done = !!store.completed[completionKey(ex.slot)];
@@ -127,7 +131,8 @@
   }
   function bunnyUrl(ex) {
     if (!/^\d+$/.test(ex.libraryId) || !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(ex.videoId)) return null;
-    return 'https://iframe.mediadelivery.net/embed/' + ex.libraryId + '/' + ex.videoId + '?autoplay=false&loop=false&muted=false&preload=false&responsive=true';
+    // Mismo reproductor vigente que usa Biblioteca; el endpoint legacy devuelve 403 en el embed.
+    return 'https://player.mediadelivery.net/embed/' + ex.libraryId + '/' + ex.videoId + '?autoplay=false&loop=false&muted=false&preload=false&playsinline=true';
   }
   function memberOptions() { return Object.keys(D.members).map(id => '<option value="' + id + '"' + (memberId === id ? ' selected' : '') + '>' + D.members[id].name + ' · miembro ficticio</option>').join(''); }
   function renderRegistration() {
@@ -137,11 +142,22 @@
     const day = getRoutine()[dayIndex];
     main.innerHTML = '<section class="editor-page"><header class="content-header"><p class="eyebrow">PROPUESTA PARA CRM · /ADMIN/GENESIS</p><h1>Una rutina para cada miembro.</h1><p class="lede">Edita su sesión y abre la vista del miembro para comprobar el resultado.</p></header><div class="editor-toolbar"><label>Miembro<select id="editor-member" name="miembro">' + memberOptions() + '</select></label><label>Sesión<select id="editor-day" name="dia">' + getRoutine().map((d, i) => '<option value="' + i + '"' + (i === dayIndex ? ' selected' : '') + '>Día ' + (i + 1) + ' · ' + d.name + '</option>').join('') + '</select></label></div><p class="editor-scope"><strong>' + member.name + ' · ' + D.ageLabels[member.age] + ' · ' + member.frequency + ' días/semana.</strong><br>Los cambios de este preview afectan solo a su rutina de ' + member.frequency + ' días, dentro de este navegador.</p><form id="editor-form"><div class="editor-list">' + day.exercises.map((ex, i) => '<fieldset class="editor-exercise" data-edit-slot="' + ex.slot + '"><legend>Ejercicio ' + (i + 1) + '</legend><div class="editor-grid"><label class="full">Nombre del ejercicio<input name="name" value="' + esc(ex.name) + '" required maxlength="120" autocomplete="off"></label><label class="third">Series<input type="number" inputmode="numeric" name="sets" min="1" max="12" step="1" required value="' + ex.sets + '"></label><label class="third">Repeticiones<input name="reps" required maxlength="24" value="' + esc(ex.reps) + '" autocomplete="off"></label><label class="third">Descanso (s)<input type="number" inputmode="numeric" name="rest" min="10" max="600" step="1" required value="' + ex.rest + '"></label><label class="half">Bunny · Library ID<input name="libraryId" inputmode="numeric" pattern="[0-9]+" value="' + esc(ex.libraryId) + '" autocomplete="off" spellcheck="false"></label><label class="half">Bunny · Video ID<input name="videoId" value="' + esc(ex.videoId) + '" autocomplete="off" spellcheck="false"><span class="small">Vacía ambos IDs para dejar la demostración pendiente.</span></label></div></fieldset>').join('') + '</div><p class="form-error" id="editor-error" role="alert" tabindex="-1"></p><footer class="editor-footer"><button class="button yellow" type="submit">Guardar cambios de ' + member.name + '</button><a class="button" data-view="rutina" href="' + esc(url({ vista: 'rutina' })) + '">Ver como ' + member.name + ' ' + icon('arrow') + '</a><p class="small muted" id="editor-save-status">Demo local. La conexión y persistencia en el CRM real están pendientes.</p></footer></form><details class="catalog-note"><summary>Estado del contenido para hombres</summary><div class="catalog-status-list"><span class="status ready">Disponible</span><span class="status pending">Pendiente</span><span class="status missing">Por crear</span></div><p>Los 3 pilares: enlace pendiente. «Como saludable pero no bajo de peso»: pendiente. «Cuántas veces comer y ayuno intermitente»: por crear a partir de los dos videos fuente. Cardio / actividad: por crear.</p><p>Fuentes de ayuno: <a href="https://youtu.be/pQKyl2X7bNE" target="_blank" rel="noopener noreferrer">Comidas</a> · <a href="https://youtu.be/sY3z2CGhGLY" target="_blank" rel="noopener noreferrer">Ayuno</a>. Los enlaces de Drive recortados en la captura no se han inventado.</p></details></section>';
   }
+  function renderPrograms() {
+    const P = window.RutaPrograms;
+    const plans = Object.entries(P.definitions);
+    const pending = window.RutaExerciseLibrary.filter(ex => ex.status === 'confirmar');
+    main.innerHTML = '<section class="programs-page"><header class="content-header"><p class="eyebrow">PROGRAMACIÓN BASE · PROPUESTA PARA REVISAR</p><h1>Seis rutinas. Un comienzo claro.</h1><p class="lede">Principiantes y personas que retoman. Hombres: todo el cuerpo. Mujeres: prioridad en piernas y glúteos, con trabajo de tren superior.</p></header><div class="program-rules"><h2>Antes de empezar</h2><p>' + P.duration + '</p><p><strong>Adaptación.</strong> ' + P.adaptation + '</p><p><strong>Calentamiento.</strong> ' + P.warmup + '</p><p><strong>Esfuerzo.</strong> ' + P.intensity + '</p><p><strong>Progresión.</strong> ' + P.progression + '</p><p><strong>Recuperación.</strong> ' + P.recovery + '</p></div><p class="demo-note">' + icon('info') + 'Las tablas muestran las series de trabajo después de la fase de adaptación. Descansos en segundos.</p><div class="program-list">' + plans.map(([id, plan], index) => {
+      const days = P.makeRoutine(plan.frequency, plan.sex);
+      const sets = days.reduce((sum, d) => sum + d.exercises.reduce((n,ex) => n + ex.sets, 0), 0);
+      return '<details class="program-plan"' + (index === 0 ? ' open' : '') + '><summary><span><span class="eyebrow">' + (plan.sex === 'MEN' ? 'HOMBRES · CUERPO COMPLETO' : 'MUJERES · PIERNAS Y GLÚTEOS') + '</span><strong>' + plan.title + '</strong><small>' + sets + ' series de trabajo semanales en total · ' + days.map(d => d.weekday).join(', ') + '</small></span>' + icon('down') + '</summary><div class="program-days">' + days.map((d, i) => '<section class="program-day"><h3>Día ' + (i+1) + ' · ' + d.name + '</h3><p class="small muted">' + d.weekday + ' sugerido</p><table><thead><tr><th scope="col">Ejercicio</th><th scope="col">Series</th><th scope="col">Rep.</th><th scope="col">Pausa</th></tr></thead><tbody>' + d.exercises.map(ex => '<tr><th scope="row">' + ex.name + '</th><td>' + ex.sets + '</td><td>' + ex.reps + '</td><td>' + ex.rest + ' s</td></tr>').join('') + '</tbody></table></section>').join('') + '<button type="button" class="button yellow" data-program="' + id + '">Probar esta rutina ' + icon('arrow') + '</button></div></details>';
+    }).join('') + '</div><section class="program-notes"><h2>Criterios para asignarlas</h2><p>' + P.audience + '</p><p>' + P.age + '</p><p>' + P.substitutions + '</p><p>' + P.missing + '</p><p>' + P.boundary + '</p><p>Los 3 días son la opción inicial más sencilla. Las versiones de 4 y 5 distribuyen un volumen parecido en sesiones más breves; tener más días disponibles no obliga a entrenar más.</p><h3>Catálogo: ' + window.RutaExerciseLibrary.length + ' ejercicios</h3><p>Los siguientes quedan fuera de las plantillas hasta confirmar qué movimiento muestra su video:</p><ul>' + pending.map(ex => '<li><strong>' + esc(ex.name) + ':</strong> ' + esc(ex.note) + '</li>').join('') + '</ul><p>«Elevación lateral en máquina» permanece como una categoría. Si tienes videos de máquinas distintas, cada variante puede recibir su propio ID.</p><h3>Base de la propuesta</h3><p>El reparto y las dosis son una propuesta específica para tu catálogo y el límite de tiempo; no una tabla publicada por estas organizaciones.</p><p>' + P.sources.map(s => '<a href="' + s.url + '" target="_blank" rel="noopener noreferrer">' + s.title + '</a>').join(' · ') + '</p></section></section>';
+  }
   function render() {
     readState(); topNavigation();
     if (view === 'registro') renderRegistration();
     else if (view === 'rutina') renderWorkout();
     else if (view === 'editor') renderEditor();
+    else if (view === 'planes') renderPrograms();
     else renderRoute();
     if (!storageAvailable) announce('No se pudo acceder al almacenamiento local. Los cambios se conservarán solo mientras esta pestaña permanezca abierta.');
   }
@@ -153,7 +169,7 @@
   function openReplacement(slot, trigger) {
     const ex = exerciseBySlot(slot); if (!ex) return;
     replaceSlot = slot;
-    document.getElementById('replace-description').textContent = ex.name + ' · ' + ex.sets + ' series × ' + ex.reps + ' repeticiones. En este ejemplo se conserva el volumen y el descanso.';
+    document.getElementById('replace-description').textContent = ex.name + ' · ' + ex.sets + ' series × ' + ex.reps + ' repeticiones. Se conservan series, repeticiones y descanso; elige de nuevo la carga. Si es unilateral, completa las repeticiones por cada lado.';
     document.getElementById('replace-options').innerHTML = ex.alternatives.map((name, i) => '<button type="button" data-alternative="' + i + '"><span>' + esc(name) + '</span>' + icon('arrow') + '</button>').join('') + (ex.original ? '<button type="button" data-restore-exercise><span>Volver a ' + esc(ex.original.name) + '</span>' + icon('back') + '</button>' : '');
     openDialog('replace-dialog', trigger);
   }
@@ -161,10 +177,11 @@
     const ex = exerciseBySlot(replaceSlot); if (!ex) return;
     if (restore && ex.original) { Object.assign(ex, ex.original); delete ex.original; }
     else {
-      const name = ex.alternatives[index]; if (!name) return;
-      if (!ex.original) ex.original = { name: ex.name, libraryId: ex.libraryId, videoId: ex.videoId, sampleVideo: ex.sampleVideo };
+      const alternative = window.RutaExerciseLibrary.find(item => item.id === ex.alternativeIds[index]);
+      if (!alternative || alternative.status !== 'disponible') return;
+      if (!ex.original) ex.original = { id: ex.id, name: ex.name, area: ex.area, pattern: ex.pattern, equipment: ex.equipment, libraryId: ex.libraryId, videoId: ex.videoId, sampleVideo: ex.sampleVideo };
       // Un reemplazo no hereda el video del ejercicio anterior: la demostración debe ser propia.
-      Object.assign(ex, { name, libraryId: '', videoId: '', sampleVideo: false });
+      Object.assign(ex, { id: alternative.id, name: alternative.name, area: alternative.area, pattern: alternative.pattern, equipment: alternative.equipment, libraryId: alternative.libraryId, videoId: alternative.videoId, sampleVideo: false });
     }
     delete store.completed[completionKey(replaceSlot)];
     const persisted = save();
@@ -201,7 +218,8 @@
   document.addEventListener('click', event => {
     const target = event.target.closest('a,button'); if (!target) return;
     if (target.tagName === 'A' && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return;
-    if (target.dataset.view) { event.preventDefault(); navigate({ vista: target.dataset.view }); }
+    if (target.dataset.program) { event.preventDefault(); if (!guardChanges()) return; dirty = false; const p = window.RutaPrograms.definitions[target.dataset.program]; const id = p.sex === 'WOMEN' ? 'laura' : 'mateo'; store.members[id].frequency = p.frequency; const persisted = save(); navigate({ vista: 'rutina', miembro: id, dia: 0 }); if (!persisted) toast('Cambio temporal: el navegador no permite guardarlo.'); }
+    else if (target.dataset.view) { event.preventDefault(); navigate({ vista: target.dataset.view }); }
     else if (target.dataset.module) { event.preventDefault(); navigate({ vista: 'ruta', modulo: target.dataset.module, leccion: null }); }
     else if (target.hasAttribute('data-training-back')) { event.preventDefault(); navigate({ vista: 'ruta', modulo: 'pesas', leccion: 'rutina-intro' }); }
     else if (target.hasAttribute('data-day')) { event.preventDefault(); stopTimer(false); navigate({ dia: target.dataset.day }); }
