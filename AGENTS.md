@@ -31,6 +31,8 @@ Rutas objetivo del proyecto:
 - `/testimonio-dashiel` → página Dashiel (`registro-typeform-optimizado.html`).
 - `/testimonio-andrea` → página Andrea (`testimonio-andrea/index.html`).
 - `/testimonio-christian` → página Christian (`testimonio-christian/index.html`).
+- `/testimonio-rosita-va` y `/testimonio-rosita-va/video` → funnel propio de Veronika con el caso de Rosita: prerregistro (nombre/email, `sexo=Mujer`) y VSL con la misma evaluación de Typeform.
+- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Identidad visual propia (crema/guinda) y Vidalytics `QzmpW1qqYB8GFVaI`.
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
@@ -52,6 +54,9 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
 | `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
+| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Tema oscuro propio en `assets/rosita-va/rosita-theme.css`. |
+| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/guinda del prototipo aprobado; CSS y JS inline en cada página. |
+| `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
@@ -95,7 +100,7 @@ Caso de Estudio tiene una decisión visual propia aprobada: fuentes locales **St
 
 Decisión del 8-sep-2026: `rango_edad` viaja en la URL, en ambos payloads del opt-in y en `data-tf-hidden` de los cuatro casos. **No se cambia el Typeform externo ni se salta su pregunta de edad**, que conserva el rechazo de menores. Los rangos de ambos formularios aún difieren; el usuario pospone su alineación y no requiere mapear edad en Brevo/Sheet. El transporte al atributo no prueba que Typeform haya declarado/publicado ese parámetro ni que lo almacene. Revisar con datos antes de modificarlo.
 
-Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CGxeptJu`). Vidalytics, cuenta `IoH8SL8U`: Flor `sYxbpUd09oZRWy21`, Dashiel `Vk1OyDQZVxfAOUVI`, Andrea `7cbPQZs876r6l9Ae`, Christian `5gVwwJPsJNtuN4EU`. Flor VA conserva su video y ruta independientes. Los cuatro testimonios mantienen `noindex, nofollow` y canonical propio.
+Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CGxeptJu`). Vidalytics, cuenta `IoH8SL8U`: Flor `sYxbpUd09oZRWy21`, Dashiel `Vk1OyDQZVxfAOUVI`, Andrea `7cbPQZs876r6l9Ae`, Christian `5gVwwJPsJNtuN4EU`. Flor VA conserva su video y ruta independientes. Las rutas VA de Veronika llevan los suyos: Rosita `RymSJVDkKpFH17Z7` y Andrea VA `QzmpW1qqYB8GFVaI`, y montan el mismo formulario `CGxeptJu` con el SDK (`tf.createWidget`) en vez del embed live. Los cuatro testimonios mantienen `noindex, nofollow` y canonical propio.
 
 ### Regla de navegación y atribución
 
@@ -104,6 +109,7 @@ Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CG
 - **Cada salto entre páginas debe reenviar todos los parámetros de atribución presentes**, no una lista parcial: cualquier `utm_*`, `video`, `fbclid`, `gclid`, `fbc_id`, `h_ad_id` y futuros identificadores equivalentes.
 - También se preservan los datos funcionales necesarios (`first_name`, `name`, `email`, `sexo`, `rango_edad` y parámetros de Calendly). El email debe llegar con `@` literal cuando el siguiente sistema lo necesite.
 - Antes de publicar, probar la cadena completa con UTMs sintéticas y verificar la URL en cada salto.
+- **El tráfico VA se reconoce al salir del Typeform SÓLO por `utm_campaign`.** Las dos páginas puente (`/redirectionutmstr4iner` y `/redirectionutmstr4iner2`) comparan contra dos valores exactos, `TR4INER-VA` y `CASOS-VA`, y de ahí sale si la persona va a la agenda/WhatsApp de Veronika o a los de Anthoni. Typeform sólo reenvía las cinco UTMs: `funnel` y `funnel_variant` no llegan. Los enlaces de Veronika deben usar `utm_campaign=TR4INER-VA` y las landings VA rellenan `CASOS-VA` cuando el enlace llega sin campaña. **Ojo:** el respaldo de Rosita (`ROSITA-VA`) no está en esa lista y su tráfico directo termina en el lado de AN — pendiente de corregir (ver `/redirectfit4`, que sí usa la definición amplia de VA).
 
 ### Incidente resuelto — bug de UTMs (13-jul-2026)
 `buildRedirectUrl()` **no reenviaba los UTMs** a las páginas flor/dashiel (solo nombre/email/sexo). Del 11 al 13-jul los leads del sheet `LEADS` quedaron sin UTMs. **Ya corregido** (el loop de `utmData` en `buildRedirectUrl`). Regularización de los datos históricos (Clarity + GA4): ver detalle en `BITACORA.md`. Al tocar la lógica de redirect, **verificar siempre que los UTMs sigan viajando a testimonio-flor/dashiel**.
