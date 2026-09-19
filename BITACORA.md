@@ -104,9 +104,13 @@ Local, con el webhook y el CRM **interceptados** para no crear leads ni correos 
    ahora**: son páginas del funnel de Caso de Estudio y el test de hero está corriendo.
 2. Los enlaces que publique Veronika deben llevar `utm_campaign=TR4INER-VA` (o ninguna
    campaña). Con una campaña propia inventada, la salida del Typeform manda a la agenda de AN.
-3. Deploy: pendiente de Preview y aprobación. **El test de hero cierra el 20-sep**; publicar
-   antes significa un deploy de producción mientras corre. No toca ninguna página del test ni
-   el `middleware.ts`, pero conviene esperar a la lectura del 21.
+3. Deploy: **Preview listo, producción pendiente de aprobación.** Commits `804f488`, `14c4293`
+   y `b00c4c0` en `work/testimonio-andrea-va`; Vercel `dpl_HVgkRYRrUJSGzFBgbzqD4vqZq6tR`,
+   target `preview`, estado **Ready** en 9 s, alias de rama
+   `tr4iner-funnels-git-work-testimo-6778ba-metodotr4iners-projects.vercel.app` (protegido por
+   Vercel Authentication). **El test de hero cierra el 20-sep**: publicar antes significa un
+   deploy de producción mientras corre. No toca ninguna página del test ni el `middleware.ts`,
+   pero conviene esperar a la lectura del 21.
 
 ---
 
