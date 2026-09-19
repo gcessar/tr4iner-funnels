@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <script>
+    /*
+      Instagram —de donde viene casi todo el tráfico de Veronika— agrega sus
+      propios `utm_source=ig`, `utm_medium=social` y `utm_content=link_in_bio` a
+      un enlace que YA trae UTMs. Recorrer la query sobrescribiendo cada clave
+      con su última aparición hacía que el registro llegara con `utm_source=ig`
+      y se perdiera la nomenclatura original (incidente del 22-jul-2026).
+      Se consolida ANTES de GTM para que analítica, webhook y redirect lean la
+      misma query: gana el primer valor no vacío de cada dato de atribución.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
+    new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
+    "https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,"script","dataLayer","GTM-T88G63P");
+  </script>
+
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F7F1E8" />
+  <title>Por qué vuelves al mismo punto · Caso de Andrea | Veronika Alvarado</title>
+  <meta name="description" content="Haces dieta, entrenas y bajas de peso, pero terminas volviendo al mismo punto. Mira el caso de Andrea y entiende qué necesitas revisar para que esta vez sea diferente." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-andrea-va" />
+
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TR4INER" />
+  <meta property="og:title" content="Haces dieta. Entrenas. Bajas de peso. ¿Por qué terminas volviendo al mismo punto?" />
+  <meta property="og:description" content="Mira el caso de Andrea con Veronika Alvarado: qué necesitas revisar para que esta vez sea diferente." />
+  <meta property="og:url" content="https://metodo.tr4iner.com/testimonio-andrea-va" />
+  <meta property="og:image" content="https://metodo.tr4iner.com/assets/andrea-va/vsl-poster.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="675" />
+  <meta property="og:image:alt" content="Veronika Alvarado presentando el caso de Andrea" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Las dos familias del above-the-fold. JetBrains Mono sólo aparece dentro
+       del modal, así que no compite por ancho de banda en el primer render. -->
+  <link rel="preload" href="/assets/fonts/anton-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/outfit-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    /* Fuentes self-hosted: evitan el encadenamiento fonts.googleapis.com -> fonts.gstatic.com.
+       Outfit y JetBrains Mono son variables; el rango declarado tiene que cubrir los pesos que
+       usa el diseño (300 de cuerpo incluido) o el navegador los recorta al extremo más cercano. */
+    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+    :root {
+      --bg: #f7f1e8;
+      --ink: #2a1015;
+      --ink-soft: #5a3a3f;
+      --muted: #7a5c52;
+      --wine: #8c1d3f;
+      --orange: #e4622a;
+      --gold: #d9a521;
+      --panel-a: #efe4d5;
+      --panel-b: #e3d5c2;
+      --card-a: #fbf6ee;
+      --card-b: #f2e7d7;
+      --line: rgba(90, 45, 30, .10);
+      --line-strong: rgba(90, 45, 30, .14);
+      --display: "Anton", Impact, "Arial Narrow", sans-serif;
+      --body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --gutter: clamp(18px, 5vw, 24px);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      min-width: 320px;
+      color-scheme: light;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* El scroll del fondo se bloquea mientras el modal está abierto. */
+    html.modal-open { overflow: hidden; }
+
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      /* Los dos halos del diseño. Van como fondo del body y no como una capa
+         absoluta de 150vw: una capa más ancha que el viewport obliga a tapar el
+         desborde horizontal, y un fondo directamente no lo genera. */
+      background-image:
+        radial-gradient(46% 38% at 12% 52%, rgba(140, 29, 63, .20), rgba(140, 29, 63, 0) 72%),
+        radial-gradient(46% 38% at 88% 52%, rgba(228, 98, 42, .17), rgba(228, 98, 42, 0) 72%);
+      background-repeat: no-repeat;
+      background-position: 50% 0;
+      background-size: 150vw 980px;
+      color: var(--ink);
+      font-family: var(--body);
+      font-weight: 300;
+      font-size: clamp(16px, 1.05vw, 18px);
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; color: inherit; }
+
+    button, a {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(228, 98, 42, .18);
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--wine);
+      outline-offset: 3px;
+    }
+
+    ::selection { background: rgba(228, 98, 42, .28); }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 200;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--card-a);
+      font-weight: 600;
+      text-decoration: none;
+      transform: translateY(-180%);
+    }
+
+    .skip-link:focus { transform: none; }
+
+    .shell {
+      position: relative;
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: calc(22px + env(safe-area-inset-top)) var(--gutter) 36px;
+    }
+
+    .hero { position: relative; text-align: center; }
+
+    .hero-title {
+      max-width: 27ch;
+      margin: 0 auto;
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 3.6vw, 3.1rem);
+      font-weight: 400;
+      letter-spacing: -.01em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .grad {
+      background: linear-gradient(100deg, var(--wine), var(--orange));
+      background-clip: text;
+      color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 660px;
+      margin: 26px auto 0;
+      padding: 0 40px;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      text-align: justify;
+      text-align-last: center;
+      hyphens: auto;
+    }
+
+    .hero-copy strong { font-weight: 700; }
+
+    /* Portada del VSL: es un botón porque abre el mismo modal que el CTA.
+       Tocar el play de un video es el gesto natural y no puede quedar muerto. */
+    .media {
+      position: relative;
+      display: block;
+      width: 100%;
+      max-width: 720px;
+      margin: 30px auto 0;
+      padding: 2.5px;
+      border: 0;
+      border-radius: 26.5px;
+      background: linear-gradient(100deg, var(--wine), var(--gold));
+      box-shadow: 0 22px 60px -32px rgba(140, 29, 63, .55);
+      cursor: pointer;
+      appearance: none;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .media:hover {
+      box-shadow: 0 28px 70px -30px rgba(228, 98, 42, .6);
+      transform: translateY(-2px);
+    }
+
+    .media-frame {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border: 1px solid rgba(90, 45, 30, .07);
+      border-radius: var(--radius);
+      background: linear-gradient(160deg, var(--panel-a), var(--panel-b));
+    }
+
+    .media-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 2;
+      display: grid;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      place-items: center;
+      background: linear-gradient(100deg, var(--gold), var(--orange));
+      color: var(--ink);
+      box-shadow: 0 0 0 0 rgba(140, 29, 63, .55);
+      transform: translate(-50%, -50%);
+      animation: ring 2.6s infinite;
+    }
+
+    .play svg {
+      width: 24px;
+      height: 26px;
+      margin-left: 5px;
+      fill: currentColor;
+    }
+
+    @keyframes ring {
+      70% { box-shadow: 0 0 0 26px rgba(140, 29, 63, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(140, 29, 63, 0); }
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 34px;
+      padding: 18px 40px;
+      border: 0;
+      border-radius: 99px;
+      background: linear-gradient(100deg, var(--gold), var(--orange));
+      color: var(--ink);
+      box-shadow: 0 14px 40px -12px rgba(140, 29, 63, .75);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      line-height: 1.2;
+      text-transform: uppercase;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .cta:hover {
+      box-shadow: 0 20px 50px -12px rgba(228, 98, 42, .85);
+      transform: translateY(-3px);
+    }
+
+    .cta br { display: none; }
+
+    .site-footer {
+      padding: 24px var(--gutter) calc(20px + env(safe-area-inset-bottom));
+      color: var(--muted);
+      font-size: .88rem;
+      text-align: center;
+    }
+
+    .site-footer nav {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .site-footer a {
+      border-bottom: 1px solid rgba(90, 45, 30, .2);
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover { color: var(--ink); }
+
+    .noscript {
+      max-width: 520px;
+      margin: 18px auto 0;
+      padding: 12px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      color: var(--ink-soft);
+      font-size: .9rem;
+    }
+
+    /* ── Modal de registro ─────────────────────────────────────────────── */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      place-items: center;
+      background: rgba(42, 16, 21, .55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .22s ease;
+      visibility: hidden;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .modal-card {
+      position: relative;
+      width: min(100%, 460px);
+      padding: 38px clamp(22px, 6vw, 32px) 30px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(165deg, var(--card-a), var(--card-b));
+      box-shadow: 0 40px 90px -30px rgba(140, 29, 63, .5);
+      text-align: left;
+      transform: translateY(12px);
+      transition: transform .22s ease;
+    }
+
+    .modal.open .modal-card { transform: none; }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: grid;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      place-items: center;
+      background: rgba(90, 45, 30, .05);
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .modal-close:hover { background: rgba(90, 45, 30, .12); color: var(--ink); }
+    .modal-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; }
+
+    .modal-kicker {
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .modal-title {
+      font-family: var(--display);
+      font-size: 1.55rem;
+      font-weight: 400;
+      letter-spacing: -.01em;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .modal-copy {
+      margin: 16px 0 24px;
+      color: var(--ink-soft);
+      font-size: .92rem;
+      line-height: 1.5;
+    }
+
+    .field { display: grid; gap: 8px; margin-bottom: 18px; }
+
+    .field label {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 52px;
+      padding: 15px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: rgba(90, 45, 30, .04);
+      /* 16px exactos: con menos, iOS hace zoom al enfocar y descuadra el modal. */
+      font-size: 16px;
+      font-weight: 300;
+      appearance: none;
+    }
+
+    .field input::placeholder { color: #a08b7e; }
+    .field input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(228, 98, 42, .18);
+      outline: none;
+    }
+    .field input[aria-invalid="true"] { border-color: var(--wine); }
+
+    .field-error {
+      display: none;
+      color: var(--wine);
+      font-size: .82rem;
+      font-weight: 400;
+    }
+
+    .field-error.visible { display: block; }
+
+    .honeypot {
+      position: absolute !important;
+      left: -10000px !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+    }
+
+    .submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 56px;
+      margin-top: 8px;
+      padding: 16px 24px;
+      border: 0;
+      border-radius: 99px;
+      background: linear-gradient(100deg, var(--gold), var(--orange));
+      color: var(--ink);
+      box-shadow: 0 14px 40px -14px rgba(140, 29, 63, .8);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      transition: transform .25s ease;
+    }
+
+    .submit:hover { transform: translateY(-2px); }
+    .submit[disabled] { cursor: wait; opacity: .7; transform: none; }
+
+    .form-privacy {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .74rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .hero-copy { padding: 0 12px; font-size: 1.12rem; }
+
+      .cta {
+        display: block;
+        width: 100%;
+        max-width: 540px;
+        margin-right: auto;
+        margin-left: auto;
+        padding: 15px 20px;
+      }
+
+      .cta br { display: inline; }
+
+      .play { width: 58px; height: 58px; }
+      .modal-card { padding-top: 34px; }
+    }
+
+    @media (hover: none) {
+      .media:hover, .cta:hover, .submit:hover {
+        box-shadow: 0 22px 60px -32px rgba(140, 29, 63, .55);
+        transform: none;
+      }
+      .cta:hover { box-shadow: 0 14px 40px -12px rgba(140, 29, 63, .75); }
+      .submit:hover { box-shadow: 0 14px 40px -14px rgba(140, 29, 63, .8); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1" /></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <main class="shell" id="contenido">
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 class="hero-title" id="hero-title">
+        Haces dieta. Entrenas. Bajas de peso.
+        <span class="grad">¿Por qué terminas volviendo al mismo punto?</span>
+      </h1>
+
+      <p class="hero-copy">
+        Si sientes que siempre tienes que empezar de nuevo,
+        <strong>en este video vas a entender qué necesitas revisar para que esta vez sea diferente.</strong>
+      </p>
+
+      <button class="media open-modal" type="button" aria-haspopup="dialog" aria-controls="registro">
+        <span class="media-frame">
+          <img
+            src="/assets/andrea-va/vsl-poster-1280.webp"
+            srcset="/assets/andrea-va/vsl-poster-760.webp 760w, /assets/andrea-va/vsl-poster-1280.webp 1280w"
+            sizes="(max-width: 767px) calc(100vw - 2 * clamp(18px, 5vw, 24px)), 720px"
+            width="1280"
+            height="720"
+            fetchpriority="high"
+            decoding="async"
+            alt="Veronika Alvarado presenta el caso de Andrea, que pasó de 61 a 48 kilos en nueve meses"
+          />
+          <span class="play" aria-hidden="true">
+            <svg viewBox="0 0 24 26" aria-hidden="true"><path d="M0 0 24 13 0 26Z"></path></svg>
+          </span>
+        </span>
+      </button>
+
+      <button class="cta open-modal" type="button" aria-haspopup="dialog" aria-controls="registro">
+        Quiero saber qué necesito<br> cambiar
+      </button>
+
+      <noscript>
+        <p class="noscript">Para registrarte y ver el video necesitas activar JavaScript en tu navegador.</p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
+    <nav aria-label="Legal">
+      <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+      <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+    </nav>
+  </footer>
+
+  <div
+    class="modal"
+    id="registro"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-kicker modal-title"
+    aria-describedby="modal-copy"
+    aria-hidden="true"
+  >
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="Cerrar formulario">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 5l14 14M19 5 5 19" stroke-linecap="round"></path>
+        </svg>
+      </button>
+
+      <p class="modal-kicker" id="modal-kicker">Estás a un paso</p>
+      <h2 class="modal-title" id="modal-title">
+        <span class="grad">de descubrir qué está frenando el cambio que quieres ver en tu cuerpo</span>
+      </h2>
+      <p class="modal-copy" id="modal-copy">Completa tus datos para ver el video.</p>
+
+      <form class="registration-form" id="registration-form" novalidate>
+        <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" aria-label="Deja este campo vacío" />
+        <!-- Funnel de Veronika: la ruta es sólo para mujeres, igual que Rosita y
+             /casos-de-estudio-va. Por eso el sexo no se pregunta, se declara. -->
+        <input type="hidden" name="sexo" value="Mujer" />
+
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            placeholder="Ej. Andrea…"
+            autocomplete="given-name"
+            enterkeyhint="next"
+            maxlength="80"
+            aria-describedby="nombre-error"
+            aria-invalid="false"
+          />
+          <p class="field-error" id="nombre-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Ej. andrea22@correo.com…"
+            autocomplete="email"
+            inputmode="email"
+            enterkeyhint="go"
+            autocapitalize="none"
+            spellcheck="false"
+            maxlength="120"
+            aria-describedby="email-error"
+            aria-invalid="false"
+          />
+          <p class="field-error" id="email-error" role="alert"></p>
+        </div>
+
+        <button class="submit" id="submit" type="submit">
+          <span>Quiero verlo</span>
+          <b aria-hidden="true">→</b>
+        </button>
+      </form>
+
+      <p class="form-privacy">Tu información está segura · Sin spam</p>
+    </div>
+  </div>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var WEBHOOK = "https://primary-production-0efa.up.railway.app/webhook/casos-estudio";
+      var DESTINO = "/testimonio-andrea-va/video";
+      var FUNNEL_VARIANT = "testimonio-andrea-va";
+      /*
+        Fallback de atribución cuando el enlace llega pelado (una historia de
+        Instagram sin UTMs, alguien que teclea la URL).
+
+        `utm_campaign=CASOS-VA` no es decorativo: las salidas del Typeform
+        (/redirectionutmstr4iner y /redirectionutmstr4iner2) deciden si la
+        persona va a la agenda de Veronika o a la de Anthoni comparando
+        `utm_campaign` contra exactamente dos valores, `TR4INER-VA` y
+        `CASOS-VA`. Cualquier otro texto —incluido el `ROSITA-VA` que usa
+        Rosita— manda el lead VA al WhatsApp de AN. La identidad de esta
+        landing viaja en `utm_source`, que también llega entero al Typeform.
+      */
+      var UTM_SOURCE_DIRECTO = "LANDING-ANDREA-VA-DIRECTO";
+      var UTM_CAMPAIGN_DIRECTO = "CASOS-VA";
+      /* Tope de espera del webhook antes de navegar. Los dos envíos salen con
+         keepalive, así que el POST termina igual aunque ya estemos en el video;
+         esperar un instante es sólo para los navegadores que no lo respetan. */
+      var ESPERA_MAX_MS = 1500;
+
+      var tr4 = window.TR4Track || {};
+      var modal = document.getElementById("registro");
+      var card = modal.querySelector(".modal-card");
+      var closeButton = modal.querySelector(".modal-close");
+      var contenido = document.getElementById("contenido");
+      var form = document.getElementById("registration-form");
+      var submit = document.getElementById("submit");
+      var submitLabel = submit.querySelector("span");
+      var nameInput = document.getElementById("nombre");
+      var emailInput = document.getElementById("email");
+      var honeypot = document.getElementById("website");
+      var lastFocused = null;
+      var submitting = false;
+
+      // Correos de un solo uso: ensucian Brevo y no se pueden recontactar.
+      var dominiosFalsos = [
+        "test.com", "ejemplo.com", "example.com", "fake.com", "temp.com",
+        "mailinator.com", "guerrillamail.com", "yopmail.com", "trashmail.com",
+        "throwam.com", "sharklasers.com", "guerrillamailblock.com", "grr.la",
+        "spam4.me", "tempr.email", "dispostable.com", "spamgourmet.com"
+      ];
+
+      function openModal() {
+        lastFocused = document.activeElement;
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        contenido.setAttribute("inert", "");
+        document.documentElement.classList.add("modal-open");
+        window.setTimeout(function () {
+          // En móvil no se enfoca el campo: el teclado taparía el formulario
+          // apenas se abre y la persona no llega a leer para qué es.
+          if (window.matchMedia("(min-width: 641px)").matches) nameInput.focus();
+          else closeButton.focus();
+        }, 80);
+      }
+
+      function closeModal() {
+        if (submitting) return;
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        contenido.removeAttribute("inert");
+        document.documentElement.classList.remove("modal-open");
+        if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+      }
+
+      document.querySelectorAll(".open-modal").forEach(function (button) {
+        button.addEventListener("click", openModal);
+      });
+      closeButton.addEventListener("click", closeModal);
+      modal.addEventListener("click", function (event) {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (!modal.classList.contains("open")) return;
+        if (event.key === "Escape") { closeModal(); return; }
+        if (event.key !== "Tab") return;
+
+        var focusable = Array.from(card.querySelectorAll("button:not([disabled]), input:not(.honeypot)"));
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      });
+
+      function showError(input, errorId, message) {
+        var error = document.getElementById(errorId);
+        error.textContent = message || "";
+        error.classList.toggle("visible", !!message);
+        input.setAttribute("aria-invalid", message ? "true" : "false");
+      }
+
+      function emailIsValid(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+      }
+
+      function dominioSospechoso(email) {
+        return dominiosFalsos.indexOf((email.split("@")[1] || "").toLowerCase()) !== -1;
+      }
+
+      /*
+        Query de salida: TODO lo que entró, más lo que TR4Track recuerda del
+        primer aterrizaje (el `?video=` de YouTube, por ejemplo). `fbc` y `fbp`
+        se quedan afuera de la URL a propósito: se reconstruyen en el mismo
+        dominio y exponerlos en la barra de direcciones no aporta nada.
+      */
+      function buildContext() {
+        var all = tr4.getCanonicalParams
+          ? tr4.getCanonicalParams()
+          : new URLSearchParams(window.location.search);
+        var tracked = tr4.getAttribution ? tr4.getAttribution() : {};
+
+        Object.keys(tracked).forEach(function (key) {
+          if (key === "fbc" || key === "fbp") return;
+          if (!all.get(key) && tracked[key]) all.set(key, tracked[key]);
+        });
+
+        if (!all.get("utm_source")) all.set("utm_source", UTM_SOURCE_DIRECTO);
+        if (!all.get("utm_campaign")) all.set("utm_campaign", UTM_CAMPAIGN_DIRECTO);
+        all.set("funnel", "VA");
+        all.set("funnel_variant", FUNNEL_VARIANT);
+
+        return all;
+      }
+
+      function buildRedirect(nombre, email, context) {
+        // Mismo origen: el recorrido se queda dentro del deployment que se esté
+        // probando (preview o producción).
+        var target = new URL(DESTINO, window.location.origin);
+        var next = new URLSearchParams(context);
+        next.set("first_name", nombre);
+        next.set("name", nombre);
+        next.set("email", email);
+        next.set("sexo", "Mujer");
+        // El `@` literal: Typeform y Calendly lo necesitan sin encodear.
+        target.search = next.toString().replace(/%40/gi, "@");
+        return target.toString();
+      }
+
+      nameInput.addEventListener("input", function () { showError(nameInput, "nombre-error", ""); });
+      emailInput.addEventListener("input", function () { showError(emailInput, "email-error", ""); });
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        if (submitting || honeypot.value) return;
+
+        var nombre = nameInput.value.trim();
+        var email = emailInput.value.trim().toLowerCase();
+        var errorEmail = !emailIsValid(email)
+          ? "Ingresa un correo válido."
+          : (dominioSospechoso(email) ? "Ingresa un correo real: ahí te llega el acceso." : "");
+
+        showError(nameInput, "nombre-error", nombre ? "" : "Ingresa tu nombre.");
+        showError(emailInput, "email-error", errorEmail);
+        if (!nombre || errorEmail) {
+          (!nombre ? nameInput : emailInput).focus();
+          return;
+        }
+
+        submitting = true;
+        submit.disabled = true;
+        submit.setAttribute("aria-busy", "true");
+        submitLabel.textContent = "Abriendo video…";
+
+        var context = buildContext();
+        var attribution = {};
+        context.forEach(function (value, key) {
+          if (!value) return;
+          var esAtribucion = tr4.isAttributionKey
+            ? tr4.isAttributionKey(key)
+            : (key.indexOf("utm_") === 0 || ["fbclid", "gclid", "fbc_id", "h_ad_id"].indexOf(key) !== -1);
+          if (esAtribucion && key !== "fbc" && key !== "fbp") attribution[key] = value;
+        });
+
+        var metaIds = tr4.getMetaIds ? tr4.getMetaIds() : {};
+        var payload = {
+          nombre: nombre,
+          email: email,
+          sexo: "Mujer",
+          funnel: "andrea-va",
+          variant: "VA",
+          video: context.get("video") || null,
+          utm: attribution,
+          // Los ids de Meta van al ras del payload porque el CRM los guarda en
+          // columnas propias de `OptIn`: sin ellos el Lead del servidor no se
+          // empareja con el clic del anuncio.
+          fbc: metaIds.fbc || null,
+          fbp: metaIds.fbp || null,
+          page_url: window.location.href,
+          timestamp: new Date().toISOString()
+        };
+        var redirect = buildRedirect(nombre, email, context);
+
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "va_registration_submitted",
+          funnel_variant: FUNNEL_VARIANT,
+          sexo: "Mujer"
+        });
+
+        // Copia de seguridad directa al CRM, en paralelo al webhook de n8n: si
+        // n8n se cae, el sheet y Brevo se pierden juntos y esta es la única
+        // copia que queda. Ya usa keepalive adentro y nunca bloquea.
+        if (tr4.saveOptIn) tr4.saveOptIn(payload);
+
+        var navegado = false;
+        function irAlVideo() {
+          if (navegado) return;
+          navegado = true;
+          window.location.assign(redirect);
+        }
+
+        try {
+          fetch(WEBHOOK, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            // keepalive: el navegador se compromete a terminar el POST aunque
+            // la página ya se haya descargado.
+            keepalive: true
+          }).then(irAlVideo).catch(irAlVideo);
+        } catch (err) {
+          irAlVideo();
+        }
+
+        // Nadie espera más que esto por un formulario de dos campos.
+        window.setTimeout(irAlVideo, ESPERA_MAX_MS);
+      });
+
+      // La Mono sólo se usa dentro del modal. Se precarga cuando el navegador
+      // está ocioso para que las etiquetas no bailen al abrirlo.
+      function precargarMono() {
+        if (!document.fonts || !document.fonts.load) return;
+        try { document.fonts.load('600 10px "JetBrains Mono"'); } catch (e) { /* da igual */ }
+      }
+      if (window.requestIdleCallback) window.requestIdleCallback(precargarMono, { timeout: 3000 });
+      else window.setTimeout(precargarMono, 1200);
+    })();
+  </script>
+</body>
+</html>

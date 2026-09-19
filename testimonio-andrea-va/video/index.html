@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <script>
+    /*
+      Misma consolidación que en el registro: Instagram agrega sus propios UTMs
+      a un enlace que ya los trae y, sin esto, el último valor pisaba al
+      original. Acá importa doble, porque estos UTMs son los que viajan al
+      Typeform y los que deciden a qué agenda sale la persona al terminarlo.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
+  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
+    new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
+    "https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,"script","dataLayer","GTM-T88G63P");
+  </script>
+
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F7F1E8" />
+  <title>Qué ajustes hacer para bajar de peso · Caso de Andrea | Veronika Alvarado</title>
+  <meta name="description" content="Veronika Alvarado explica, con el caso de Andrea, qué ajustes sostienen la pérdida de peso sin dietas extremas. Al terminar, cuéntanos tu situación para que el equipo la revise." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-andrea-va/video" />
+
+  <meta property="og:locale" content="es_PE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TR4INER" />
+  <meta property="og:title" content="Qué ajustes hacer para bajar de peso y mantenerlo de forma sostenible" />
+  <meta property="og:description" content="El caso de Andrea, explicado por Veronika Alvarado: sin dietas extremas y sin vivir en el gimnasio." />
+  <meta property="og:url" content="https://metodo.tr4iner.com/testimonio-andrea-va/video" />
+  <meta property="og:image" content="https://metodo.tr4iner.com/assets/andrea-va/vsl-poster.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="675" />
+  <meta property="og:image:alt" content="Veronika Alvarado presentando el caso de Andrea" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- El video es el contenido de la página: su conexión se abre primero.
+       Typeform se conecta también porque su embed baja unos segundos después. -->
+  <link rel="preconnect" href="https://fast.vidalytics.com" crossorigin />
+  <link rel="preconnect" href="https://embed.typeform.com" />
+  <link rel="dns-prefetch" href="https://form.typeform.com" />
+  <link rel="preload" href="/assets/fonts/anton-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/outfit-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    /* Fuentes self-hosted: evitan el encadenamiento fonts.googleapis.com -> fonts.gstatic.com.
+       Outfit y JetBrains Mono son variables; el rango declarado tiene que cubrir los pesos que
+       usa el diseño (300 de cuerpo incluido) o el navegador los recorta al extremo más cercano. */
+    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+    :root {
+      --bg: #f7f1e8;
+      --ink: #2a1015;
+      --ink-soft: #5a3a3f;
+      --muted: #7a5c52;
+      --wine: #8c1d3f;
+      --orange: #e4622a;
+      --gold: #d9a521;
+      --panel-a: #efe4d5;
+      --panel-b: #e3d5c2;
+      --card-a: #fbf6ee;
+      --line: rgba(90, 45, 30, .10);
+      --display: "Anton", Impact, "Arial Narrow", sans-serif;
+      --body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --gutter: clamp(18px, 5vw, 24px);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      min-width: 320px;
+      color-scheme: light;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background-color: var(--bg);
+      /* Los dos halos del diseño. Van como fondo del body y no como una capa
+         absoluta de 150vw: una capa más ancha que el viewport obliga a tapar el
+         desborde horizontal, y un fondo directamente no lo genera. */
+      background-image:
+        radial-gradient(46% 38% at 12% 52%, rgba(140, 29, 63, .20), rgba(140, 29, 63, 0) 72%),
+        radial-gradient(46% 38% at 88% 52%, rgba(228, 98, 42, .17), rgba(228, 98, 42, 0) 72%);
+      background-repeat: no-repeat;
+      background-position: 50% 0;
+      background-size: 150vw 980px;
+      color: var(--ink);
+      font-family: var(--body);
+      font-weight: 300;
+      font-size: clamp(16px, 1.05vw, 18px);
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--wine); }
+    a:hover { color: var(--orange); }
+
+    a:focus-visible { outline: 3px solid var(--wine); outline-offset: 3px; }
+
+    ::selection { background: rgba(228, 98, 42, .28); }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 200;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--card-a);
+      font-weight: 600;
+      text-decoration: none;
+      transform: translateY(-180%);
+    }
+
+    .skip-link:focus { transform: none; }
+
+    .shell {
+      position: relative;
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: calc(20px + env(safe-area-inset-top)) var(--gutter) 0;
+    }
+
+    .brandbar {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .hero {
+      position: relative;
+      padding: 22px 0 36px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--orange);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 22px;
+      height: 2px;
+      background: currentColor;
+      content: "";
+    }
+
+    .title {
+      max-width: 27ch;
+      margin: 0 auto;
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 3.6vw, 3.1rem);
+      font-weight: 400;
+      letter-spacing: -.01em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .grad {
+      background: linear-gradient(100deg, var(--wine), var(--orange));
+      background-clip: text;
+      color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .copy {
+      max-width: 660px;
+      margin: 26px auto 0;
+      padding: 0 40px;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      text-align: justify;
+      text-align-last: center;
+      hyphens: auto;
+    }
+
+    .copy strong { font-weight: 700; }
+
+    /* Marco del video y del formulario: el degradado vive en el padding. */
+    .framed {
+      position: relative;
+      width: 100%;
+      max-width: 720px;
+      margin: 30px auto 0;
+      padding: 2.5px;
+      border-radius: 26.5px;
+      background: linear-gradient(100deg, var(--wine), var(--gold));
+      box-shadow: 0 22px 60px -32px rgba(140, 29, 63, .5);
+    }
+
+    .video-frame {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(90, 45, 30, .07);
+      border-radius: var(--radius);
+      background: linear-gradient(160deg, var(--panel-a), var(--panel-b));
+    }
+
+    /* Reserva el 16:9 antes de que el player pinte: sin esto la página salta
+       cuando Vidalytics inserta su iframe. */
+    .video-frame > div { width: 100%; }
+
+    .divider {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 0 var(--gutter);
+    }
+
+    .divider span {
+      display: block;
+      height: 1px;
+      background: var(--line);
+    }
+
+    .next-step {
+      position: relative;
+      padding: 56px 0 40px;
+      text-align: center;
+      scroll-margin-top: 16px;
+    }
+
+    .next-title {
+      max-width: 24ch;
+      margin: 16px auto 0;
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+      font-weight: 400;
+      letter-spacing: -.01em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+
+    .next-copy {
+      max-width: 620px;
+      margin: 20px auto 0;
+      padding: 0 40px;
+      font-size: 1rem;
+      line-height: 1.5;
+      text-align: justify;
+      text-align-last: center;
+      hyphens: auto;
+    }
+
+    .form-frame { margin-top: 34px; }
+
+    /* El alto lo manda el iframe: las preguntas con muchas opciones crecen y el
+       botón de continuar tiene que quedar visible. Un max-height acá lo cortaría;
+       el min-height es piso, nunca techo (si no, Typeform apila el botón sobre
+       la última opción en las preguntas cortas). */
+    .form-frame .form-inner {
+      overflow: hidden;
+      min-height: 560px;
+      border: 1px solid rgba(90, 45, 30, .07);
+      border-radius: var(--radius);
+      background: var(--card-a);
+    }
+
+    .form-frame #tf-embed { min-height: 560px; }
+
+    /* CSS del widget de Typeform. Va inline porque tf.createWidget() no lo
+       autoinyecta (sí lo hacía el embed por data-tf-*), y sin esto el iframe cae
+       al alto por defecto de 150px. Copiado de
+       embed.typeform.com/next/css/widget.css con el radio del marco. */
+    .tf-v1-widget {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+    }
+
+    .tf-v1-widget iframe {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      overflow: hidden;
+      border: none;
+      border-radius: var(--radius);
+    }
+
+    .tf-v1-widget-close { display: none; }
+
+    .tf-v1-widget-iframe-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: none;
+      border-radius: var(--radius);
+    }
+
+    .form-loader {
+      display: flex;
+      min-height: 560px;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .site-footer {
+      padding: 24px var(--gutter) calc(20px + env(safe-area-inset-bottom));
+      color: var(--muted);
+      font-size: .88rem;
+      text-align: center;
+    }
+
+    .site-footer nav {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .site-footer a {
+      border-bottom: 1px solid rgba(90, 45, 30, .2);
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover { color: var(--ink); }
+
+    @media (max-width: 640px) {
+      .brandbar { font-size: 9px; letter-spacing: .18em; }
+      .copy { padding: 0 12px; font-size: 1.05rem; }
+      .next-copy { padding: 0 12px; }
+      .next-step { padding-top: 44px; }
+      .form-frame .form-inner,
+      .form-frame #tf-embed,
+      .form-loader { min-height: 620px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+  <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1" /></noscript>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <main class="shell" id="contenido">
+    <header class="brandbar">Veronika Alvarado · TR4INER</header>
+
+    <section class="hero" aria-labelledby="video-title">
+      <p class="eyebrow">Caso real · Andrea</p>
+
+      <h1 class="title" id="video-title">
+        Qué ajustes hacer para
+        <span class="grad">bajar de peso y mantenerlo de forma sostenible</span>
+      </h1>
+
+      <p class="copy">
+        Sin dietas aburridas o extremas y sin pasar horas en el gimnasio.
+        <strong>Mira el video y luego cuéntanos qué está pasando contigo.</strong>
+      </p>
+
+      <div class="framed">
+        <div class="video-frame">
+          <div id="vidalytics_embed_QzmpW1qqYB8GFVaI" style="width:100%;position:relative;padding-top:56.25%"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="divider"><span></span></div>
+
+  <div class="shell">
+    <section class="next-step" id="aplicacion" aria-labelledby="application-title">
+      <p class="eyebrow" data-reveal>Siguiente paso</p>
+
+      <h2 class="next-title" id="application-title" data-reveal>
+        Ahora queremos saber
+        <span class="grad">qué está pasando contigo</span>
+      </h2>
+
+      <p class="next-copy" data-reveal>
+        Cuéntanos qué has intentado y qué quieres cambiar. El equipo revisará tus respuestas para
+        entender qué podría estar frenando tus resultados y ver cómo ayudarte.
+      </p>
+
+      <div class="framed form-frame" data-reveal>
+        <div class="form-inner">
+          <div class="form-loader" id="form-loader" role="status">Cargando evaluación…</div>
+          <!-- El embed live 01KHA5… resuelve a este mismo formulario pero fuerza
+               shareGaInstance. Se usa el ID real con el SDK para conservar la
+               evaluación; GA4 sigue centralizado en GTM. -->
+          <div id="tf-embed"></div>
+          <noscript>
+            <p class="form-loader">Activa JavaScript para completar la evaluación.</p>
+          </noscript>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
+    <nav aria-label="Legal">
+      <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+      <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+    </nav>
+  </footer>
+
+  <script>
+    (function (v, i, d, a, l, y, t, c, s) {
+      y="_"+d.toLowerCase();c=d+"L";if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}var vl="Loader",vli=v[y][vl],vsl=v[c][vl+"Script"],vlf=v[c][vl+"Loaded"],ve="Embed";
+      if(!vsl){vsl=function(u,cb){
+        if(t){cb();return;}s=i.createElement("script");s.type="text/javascript";s.async=1;s.src=u;
+        if(s.readyState){s.onreadystatechange=function(){if(s.readyState==="loaded"||s.readyState==="complete"){s.onreadystatechange=null;vlf=1;cb();}};}else{s.onload=function(){vlf=1;cb();};}
+        i.getElementsByTagName("head")[0].appendChild(s);
+      };}
+      vsl(l+"loader.min.js",function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}vli.loadScript(l+"player.min.js",function(){var vec=v[d][ve];t=new vec();t.run(a);});});
+    })(window, document, "Vidalytics", "vidalytics_embed_QzmpW1qqYB8GFVaI", "https://fast.vidalytics.com/embeds/IoH8SL8U/QzmpW1qqYB8GFVaI/");
+  </script>
+
+  <script src="/attribution.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var FORM_ID = "CGxeptJu";
+      var FUNNEL_VARIANT = "testimonio-andrea-va-video";
+      // Ver el comentario del registro: estos dos valores son los que hacen que
+      // la salida del Typeform mande a la agenda de Veronika y no a la de AN.
+      var UTM_SOURCE_DIRECTO = "LANDING-ANDREA-VA-DIRECTO";
+      var UTM_CAMPAIGN_DIRECTO = "CASOS-VA";
+
+      var tr4 = window.TR4Track || {};
+      var limpiar = tr4.decodeUtmValue || function (v) { return v == null ? "" : String(v); };
+      var params = tr4.getCanonicalParams
+        ? tr4.getCanonicalParams()
+        : new URLSearchParams(window.location.search);
+      var tracked = tr4.getAttribution ? tr4.getAttribution() : {};
+      var typeformLoaded = false;
+      var tf = document.getElementById("tf-embed");
+      var loader = document.getElementById("form-loader");
+      var frame = document.querySelector(".form-frame");
+
+      Object.keys(tracked).forEach(function (key) {
+        if (!params.get(key) && tracked[key]) params.set(key, tracked[key]);
+      });
+
+      // La variante se identifica incluso si alguien abre el VSL directamente.
+      if (!params.get("utm_source")) params.set("utm_source", UTM_SOURCE_DIRECTO);
+      if (!params.get("utm_campaign")) params.set("utm_campaign", UTM_CAMPAIGN_DIRECTO);
+      if (!params.get("sexo")) params.set("sexo", "Mujer");
+      params.set("funnel", "VA");
+      params.set("funnel_variant", FUNNEL_VARIANT);
+
+      function buildHiddenFields() {
+        var identityFields = ["first_name", "name", "email", "sexo", "video", "funnel", "funnel_variant"];
+        var hidden = {};
+
+        params.forEach(function (value, key) {
+          var allowed = (tr4.isAttributionKey ? tr4.isAttributionKey(key) : key.indexOf("utm_") === 0) ||
+            identityFields.indexOf(key) !== -1;
+          // fbc y fbp no se leen de la URL: los arma TR4Track con la cookie y el
+          // fbclid del primer aterrizaje, y se agregan abajo.
+          if (!allowed || !value || key === "fbc" || key === "fbp") return;
+          // El SDK codifica cada valor por su cuenta, así que acá van en crudo:
+          // espacios, tildes y emojis llegan enteros. `decodeUtmValue` sólo
+          // deshace lo que ya haya llegado doble-encodeado desde afuera.
+          hidden[key] = limpiar(value);
+        });
+
+        var metaIds = tr4.getMetaIds ? tr4.getMetaIds() : {};
+        Object.keys(metaIds).forEach(function (key) {
+          if (metaIds[key]) hidden[key] = metaIds[key];
+        });
+
+        return hidden;
+      }
+
+      function mountTypeform() {
+        if (!window.tf || !window.tf.createWidget || !tf) return;
+        window.tf.createWidget(FORM_ID, {
+          container: tf,
+          hideHeaders: true,
+          opacity: 0,
+          // Evita que un swipe al scrollear la página salte de pregunta.
+          disableScroll: true,
+          inlineOnMobile: true,
+          // Booleano, sin "min,max": el alto sigue a la pregunta y las que tienen
+          // muchas opciones dejan de cortar el botón de continuar.
+          autoResize: true,
+          // Explícito porque GA4 va centralizado en GTM, no compartido con el embed.
+          shareGaInstance: false,
+          hidden: buildHiddenFields(),
+          onReady: function () {
+            var iframe = tf.querySelector("iframe");
+            if (iframe) iframe.title = "Diagnóstico para Asesoría TR4INER";
+            if (loader) loader.style.display = "none";
+          }
+        });
+      }
+
+      function loadTypeform() {
+        if (typeformLoaded) return;
+        typeformLoaded = true;
+
+        if (window.tf && window.tf.createWidget) {
+          mountTypeform();
+          return;
+        }
+
+        var script = document.createElement("script");
+        script.src = "https://embed.typeform.com/next/embed.js";
+        script.async = true;
+        script.onload = mountTypeform;
+        script.onerror = function () {
+          if (loader) loader.textContent = "No pudimos cargar la evaluación. Recarga la página para intentarlo otra vez.";
+        };
+        document.head.appendChild(script);
+      }
+
+      /*
+        El video es a lo que vino la persona, así que se lleva el ancho de banda
+        primero: el formulario espera a que termine de cargar la página (o 6 s,
+        por si un tag de terceros demora el `load`). En móvil el form queda a un
+        scroll del video, así que con el IntersectionObserver solo se dispararía
+        igual al abrir; por eso la condición es "visible Y cargado".
+      */
+      function cuandoCargue(fn) {
+        if (document.readyState === "complete") { fn(); return; }
+        window.addEventListener("load", fn, { once: true });
+      }
+
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "va_vsl_view",
+        funnel_variant: FUNNEL_VARIANT,
+        sexo: "Mujer"
+      });
+
+      if (params.get("tf_debug") === "1" || !("IntersectionObserver" in window)) {
+        loadTypeform();
+      } else {
+        var observer = new IntersectionObserver(function (entries) {
+          if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+          observer.disconnect();
+          cuandoCargue(function () { window.setTimeout(loadTypeform, 300); });
+        }, { rootMargin: "1200px 0px" });
+        observer.observe(frame);
+
+        // Red de seguridad: si alguien se queda mirando el VSL sin scrollear, el
+        // formulario igual queda listo para cuando baje.
+        window.setTimeout(loadTypeform, 6000);
+      }
+
+      // Aparición suave del segundo bloque, como en el prototipo.
+      var revelables = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+      if (revelables.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+        revelables.forEach(function (el) {
+          el.style.opacity = "0";
+          el.style.transform = "translateY(26px)";
+          el.style.transition = "opacity .7s cubic-bezier(.22,.7,.3,1), transform .7s cubic-bezier(.22,.7,.3,1)";
+        });
+        var reveal = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "none";
+            reveal.unobserve(entry.target);
+          });
+        }, { threshold: .15 });
+        revelables.forEach(function (el) { reveal.observe(el); });
+      }
+    })();
+  </script>
+</body>
+</html>
