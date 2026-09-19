@@ -13,6 +13,127 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-19 — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
+
+Rama `work/puentes-va`. Resuelve el **Pendiente 1** de la entrada del funnel VA de Andrea.
+
+### Qué cambió
+
+`/redirectionutmstr4iner` y `/redirectionutmstr4iner2` —las dos salidas del Typeform
+`CGxeptJu`— decidían si el lead era de Veronika o de Anthoni con una comparación exacta:
+
+```js
+const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+```
+
+Ahora aplican **la misma definición de tráfico VA que ya usaban `/redirectfit4` y `/fit4`**:
+`utm_campaign` igual a `TR4INER-VA` o `CASOS-VA`, o `funnel=VA`, o `funnel_variant` con `VA`
+como token, o **cualquier `utm_*` con `VA` delimitado por `-` o `_`**. El marcador va anclado
+(`/(^|[-_])VA($|[-_])/i`) para no dispararse con `VA` dentro de una palabra.
+
+Los destinos no cambian: puente 1 reparte entre `/fit4-va` y el WhatsApp de AN
+(`+1 743 901 4239`), puente 2 entre `/calendly-va` y `/calendly-an`. Tampoco cambia el mensaje
+precargado de WhatsApp ni el reenvío del querystring.
+
+### Por qué
+
+El respaldo de `/testimonio-rosita-va` es `utm_campaign=ROSITA-VA`, que no estaba en la lista:
+su tráfico directo —el que llega sin UTMs— terminaba del lado de AN al completar la evaluación.
+Lo mismo le pasaría a cualquier campaña nueva de Veronika que no se dé de alta en los dos
+archivos. `/testimonio-andrea-va` esquivó el problema poniendo `CASOS-VA` como respaldo, pero
+eso es tapar el agujero una landing por vez y cuesta granularidad: la identidad de la página
+queda sólo en `utm_source`.
+
+**Se eligió arreglar los puentes en vez del respaldo de Rosita** para que `ROSITA-VA` siga
+distinguiendo su tráfico directo en el reporte, y para que la regla quede en un solo lugar.
+
+### Lo que se midió antes de tocar nada
+
+Contra el CRM (tabla `OptIn`, 19.023 filas, 06-ago → 19-sep) y el sheet `AGENDAS TODAS`
+(2.844 filas):
+
+| | n |
+|---|---|
+| Opt-ins con señal VA | 7.644 |
+| …que el puente viejo reconocía | 7.640 |
+| …que mandaba al lado AN | **4** (3 de `Llamada-Closer`, 1 de `ROSITA-VA`) |
+| Agendas que llegaron con `utm_campaign=ROSITA-VA` | **0** |
+| Agendas con `utm_source=LANDING-ROSITA-VA-DIRECTO` | **0** |
+
+**El bug es real pero hasta hoy no costó nada**: 1 opt-in en mes y medio, cero agendas. La
+razón es que los enlaces que publica Veronika ya traen `CASOS-VA`, así que el respaldo casi
+nunca se dispara (1 de 7.077 opt-ins de `rosita-va`). El rastro de Rosita en las agendas viaja
+en `utm_content=Rosita` (33 agendas), todas con `CASOS-VA` y bien ruteadas. Se arregla por lo
+que puede costar mañana, no por lo que costó.
+
+**Falsos positivos: cero.** De los 36 valores distintos del historial que contienen las letras
+«va», el marcador anclado dispara en 22 y todos son de Veronika (`STORIES-VA`,
+`Instagram-VA-perfil`, `Recurso-VA`, `Whatsapp-VA`…). Los 14 que no dispara son de AN o
+neutros, incluidos `Vas a quedar como Ángela`, `Tienes_ovarios` y `Reserva2Ene`.
+
+### Lo que este arreglo NO resuelve
+
+- **Una campaña de Veronika sin el marcador sigue yendo a AN.** `utm_campaign=VERONIKA-2026` o
+  `ROSITA-2026` no traen `VA` como token y caen del lado de Anthoni. Sigue vigente el
+  Pendiente 2: **sus enlaces deben llevar `VA` delimitado en alguna UTM**.
+- **Los creativos de Meta con espacios tampoco** (`VA VID 1. Esto arruina tus resultados`): el
+  marcador sólo acepta `-` y `_` como delimitadores. No se amplió a espacios porque hoy esos
+  anuncios ya viajan con `utm_campaign=CASOS-VA` y ampliar sin necesidad agranda la superficie
+  de falsos positivos.
+- **Los 8 agendamientos VA de `utm_campaign=Llamada-Closer` no pasan por estos puentes.** Ni
+  `Llamada-Closer` ni `FACE-VA-1erComent` existen en el repo: son enlaces que arman los closers
+  en ManyChat y entran directo a `/agendar-va`.
+
+### Hallazgo lateral, arreglado en el mismo movimiento (`/calendly-confirma/`)
+
+`hasVaUtm()` usa una **tercera** definición de VA, distinta de las otras dos, y busca `-VA-`
+**con guión a los dos lados**. Por eso no reconoce `CASOS-VA`, `STORIES-VA` ni `ROSITA-VA`, que
+terminan en `VA`. Medido sobre el sheet: **297 de 683 agendas con marcador VA (43%) ven el
+video de Anthoni en la página de confirmación** en vez del de Veronika. La cuenta mira sólo
+UTMs —el sheet no guarda `funnel`—, así que 297 es el techo: a quien llegue con `funnel=VA`
+lo rescata la primera condición. Además `/va/i.test(funnel_variant)` va sin anclar, así que un
+`funnel_variant=VARIANTE-A` daría VA por error.
+
+**Se arregló el mismo día**, cuando el usuario probó el funnel de Andrea con
+`utm_source=YOUTUBE-VA-descripcion&utm_campaign=Caso_Estudio` y reportó que la salida lo mandó
+a `/calendly-an`. Ya que la revisión tocaba la cadena entera, `hasVaUtm()` pasó al mismo
+marcador anclado que el resto. **Ojo: en esa página el criterio está DOS veces** —un script
+temprano en el `<head>` marca `va-context` para que no aparezca la tipografía de Anthoni antes
+de pintar— y también usaba la definición vieja. Si se arregla uno solo, sale el video de
+Veronika con la tipografía de AN; los dos quedaron con el mismo marcador.
+
+### Verificación
+
+22 casos de lógica, armados con valores reales del historial (los 9 VA que antes se perdían,
+las 4 trampas del sheet y los destinos AN): 22/22.
+
+Punta a punta sobre el servidor local (20 casos en los dos puentes, 11 en la confirmación y
+la cadena completa del caso reportado por el usuario: registro → VSL → Typeform → puente →
+`/calendly-va` con el Vidalytics de Veronika → confirmación con su video y su tipografía):
+
+| entrada | destino |
+|---|---|
+| `?utm_campaign=ROSITA-VA&utm_source=LANDING-ROSITA-VA-DIRECTO` (puente 2) | `/calendly-va` ✓ |
+| `?utm_source=STORIES-VA&utm_campaign=Llamada-Closer` (puente 2) | `/calendly-va` ✓ |
+| `?utm_campaign=NAVA-2026&utm_content=VARIANTE-A` (puente 2) | `/calendly-an` ✓ |
+| `?utm_campaign=ROSITA-VA` (puente 1) | `/fit4-va` ✓ |
+| `?utm_source=MetaAds&utm_medium=Caso_Estudio` (puente 1) | WhatsApp AN, mensaje corto ✓ |
+| `?utm_source=YouTube-AN&utm_campaign=CASOS-AN` (puente 1) | WhatsApp AN, mensaje largo ✓ |
+
+El querystring llega entero en todos los saltos. Sin errores de consola propios.
+
+### Publicación
+
+**Retenida a propósito.** Son páginas del funnel de Caso de Estudio y el test de hero
+`ce_hero_202609` cierra el 20-sep con lectura el 21: el puente 2 alimenta «agendas por 1.000
+exposiciones», que es el tercer nivel del protocolo. Queda en Preview hasta después de la
+lectura.
+
+### Resultado esperado
+
+Ninguno medible en el corto plazo: el tráfico que hoy se pierde es ~1 opt-in cada mes y medio.
+El valor es que la regla queda en un solo lugar y que la próxima landing VA —o la próxima
+campaña de Veronika con marcador— ya no necesita que nadie edite estos dos archivos.
 ## 2026-09-19 — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
 
 Segunda iteración del mismo día, con capturas del usuario como referencia. Sólo tocó estas dos
@@ -145,11 +266,11 @@ Local, con el webhook y el CRM **interceptados** para no crear leads ni correos 
 
 ### Pendientes
 
-1. **Rosita manda su tráfico directo al lado de AN.** Su respaldo `utm_campaign=ROSITA-VA` no
-   está en la lista de las páginas puente. Se arregla en Rosita (cambiar el respaldo) o, mejor,
-   en los dos puentes, usando la definición amplia de VA que ya aplica `/redirectfit4`
-   (`funnel=VA`, `funnel_variant` con VA, o cualquier `utm_*` con VA como token). **No se tocó
-   ahora**: son páginas del funnel de Caso de Estudio y el test de hero está corriendo.
+1. ~~**Rosita manda su tráfico directo al lado de AN.**~~ **Resuelto el 19-sep** en
+   `work/puentes-va`: los dos puentes pasaron a la definición amplia de `/redirectfit4`. Ver la
+   entrada de esa fecha, que además mide cuánto costó el bug (1 opt-in, 0 agendas) y deja
+   anotado un problema equivalente sin tocar en `/calendly-confirma/`. Sigue en Preview: no se
+   publica hasta después de la lectura del test de hero.
 2. Los enlaces que publique Veronika deben llevar `utm_campaign=TR4INER-VA` (o ninguna
    campaña). Con una campaña propia inventada, la salida del Typeform manda a la agenda de AN.
 ### Publicación
@@ -469,6 +590,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-19` — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
 - `2026-09-19` — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
 - `2026-09-19` — Funnel VA de Andrea: registro y VSL para las redes de Veronika
 - `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
