@@ -13,6 +13,54 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-19 — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
+
+Segunda iteración del mismo día, con capturas del usuario como referencia. Sólo tocó estas dos
+páginas: nada del funnel de Caso de Estudio ni del test de hero.
+
+### Qué cambió
+
+**Paleta.** Se retira el degradado guinda → naranja y entra un **acento tan plano**. El sistema
+queda en cuatro tintas:
+
+| Token | Antes | Ahora | Dónde |
+|---|---|---|---|
+| `--bg` | `#F7F1E8` | **`#FCF5EE`** | fondo |
+| `--ink` | `#2A1015` | **`#141414`** | titulares |
+| `--body-ink` | — | **`#403F3F`** | párrafos |
+| `--tan` | degradado `#8C1D3F → #E4622A` | **`#C68961`** | titular resaltado, etiquetas, enlaces |
+| `--muted` | `#7A5C52` | **`#8F8E8D`** | pie y metadatos |
+
+El acento dejó de ser un degradado recortado sobre el texto (`background-clip: text`) y pasó a
+ser `color` a secas: la clase `.grad` se llama ahora `.accent`. A pedido del usuario el tan se
+llevó **a toda la página**, no sólo al texto: marco del video, botón de play, CTA, botón del
+formulario, foco, halos de fondo y sombras salen de la misma familia (`--tan-deep #A96A45`,
+`--tan #C68961`, `--tan-soft #DDB08D`). Los errores del formulario conservan un rojo propio
+(`--error #B4402F`), que es señal y no decoración.
+
+**Copy del VSL.** El párrafo del hero pasó a: «Si sientes que haces dieta, entrenas, bajas de
+peso pero terminas recuperándolo de nuevo. **Mira el video, vas a entender qué necesitas revisar
+y luego cuéntanos qué está pasando contigo.**» Se respetó el texto de la captura salvo las
+tildes de los dos «qué» interrogativos.
+
+**Bloque de autoría.** Las dos páginas suman, arriba del pie, la foto redonda de Veronika
+(`/assets/va/vero-perfil-footer.webp`, la que ya usaba el tema VA), «Producción · TR4INER» en
+Outfit 700 con tracking y «Veronika Alvarado · Coach» en gris.
+
+### Verificación
+
+- Flujo intacto: los dos payloads del opt-in, el redirect con el `@` literal y los hidden del
+  Typeform siguen igual (sólo cambiaron CSS y copy). Validación, modal, foco y `Escape` OK.
+- Sin desborde horizontal a 390 y 1280 px; cero errores de consola; la foto del bloque de
+  autoría carga a 144 px de origen para 46 px de caja (nítida en pantallas retina).
+- **Contraste, para que quede escrito:** el tan `#C68961` sobre el crema da 2,9:1. Alcanza para
+  el titular en Anton, pero queda por debajo de AA en los textos chicos que lo usan (eyebrow de
+  11 px y enlaces del pie), y el gris `#8F8E8D` del copyright da 3,0:1. Son los valores del
+  diseño aprobado y se dejaron tal cual; las etiquetas del formulario sí se pasaron a
+  `--body-ink` porque ahí la legibilidad es funcional.
+
+---
+
 ## 2026-09-19 — Funnel VA de Andrea: registro y VSL para las redes de Veronika
 
 Rama `work/testimonio-andrea-va`. Dos páginas nuevas, ninguna página existente tocada.
@@ -421,6 +469,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-19` — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
 - `2026-09-19` — Funnel VA de Andrea: registro y VSL para las redes de Veronika
 - `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
 - `2026-09-08` — Producción verificada: opt-in por edad y cuatro casos

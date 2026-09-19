@@ -32,7 +32,7 @@ Rutas objetivo del proyecto:
 - `/testimonio-andrea` → página Andrea (`testimonio-andrea/index.html`).
 - `/testimonio-christian` → página Christian (`testimonio-christian/index.html`).
 - `/testimonio-rosita-va` y `/testimonio-rosita-va/video` → funnel propio de Veronika con el caso de Rosita: prerregistro (nombre/email, `sexo=Mujer`) y VSL con la misma evaluación de Typeform.
-- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Identidad visual propia (crema/guinda) y Vidalytics `QzmpW1qqYB8GFVaI`.
+- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Identidad visual propia (crema `#FCF5EE`, tinta `#141414`, acento tan `#C68961`) y Vidalytics `QzmpW1qqYB8GFVaI`.
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
@@ -55,7 +55,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
 | `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
 | `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Tema oscuro propio en `assets/rosita-va/rosita-theme.css`. |
-| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/guinda del prototipo aprobado; CSS y JS inline en cada página. |
+| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/tan del prototipo aprobado; CSS y JS inline en cada página. |
 | `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |

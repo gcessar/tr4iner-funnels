@@ -48,7 +48,7 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#F7F1E8" />
+  <meta name="theme-color" content="#FCF5EE" />
   <title>Qué ajustes hacer para bajar de peso · Caso de Andrea | Veronika Alvarado</title>
   <meta name="description" content="Veronika Alvarado explica, con el caso de Andrea, qué ajustes sostienen la pérdida de peso sin dietas extremas. Al terminar, cuéntanos tu situación para que el equipo la revise." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-andrea-va/video" />
@@ -85,17 +85,19 @@
     @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 
     :root {
-      --bg: #f7f1e8;
-      --ink: #2a1015;
-      --ink-soft: #5a3a3f;
-      --muted: #7a5c52;
-      --wine: #8c1d3f;
-      --orange: #e4622a;
-      --gold: #d9a521;
-      --panel-a: #efe4d5;
-      --panel-b: #e3d5c2;
-      --card-a: #fbf6ee;
-      --line: rgba(90, 45, 30, .10);
+      /* Paleta aprobada el 19-sep: fondo crema, tinta casi negra y un acento
+         tan plano que reemplaza al degradado guinda -> naranja. */
+      --bg: #fcf5ee;
+      --ink: #141414;
+      --body-ink: #403f3f;
+      --muted: #8f8e8d;
+      --tan: #c68961;
+      --tan-deep: #a96a45;
+      --tan-soft: #ddb08d;
+      --panel-a: #f1e8de;
+      --panel-b: #e6d9cc;
+      --card-a: #fffcf8;
+      --line: rgba(64, 63, 63, .10);
       --display: "Anton", Impact, "Arial Narrow", sans-serif;
       --body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
       --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -120,12 +122,12 @@
          absoluta de 150vw: una capa más ancha que el viewport obliga a tapar el
          desborde horizontal, y un fondo directamente no lo genera. */
       background-image:
-        radial-gradient(46% 38% at 12% 52%, rgba(140, 29, 63, .20), rgba(140, 29, 63, 0) 72%),
-        radial-gradient(46% 38% at 88% 52%, rgba(228, 98, 42, .17), rgba(228, 98, 42, 0) 72%);
+        radial-gradient(46% 38% at 12% 52%, rgba(198, 137, 97, .16), rgba(198, 137, 97, 0) 72%),
+        radial-gradient(46% 38% at 88% 52%, rgba(169, 106, 69, .12), rgba(169, 106, 69, 0) 72%);
       background-repeat: no-repeat;
       background-position: 50% 0;
       background-size: 150vw 980px;
-      color: var(--ink);
+      color: var(--body-ink);
       font-family: var(--body);
       font-weight: 300;
       font-size: clamp(16px, 1.05vw, 18px);
@@ -134,12 +136,12 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    a { color: var(--wine); }
-    a:hover { color: var(--orange); }
+    a { color: var(--tan); }
+    a:hover { color: var(--tan-deep); }
 
-    a:focus-visible { outline: 3px solid var(--wine); outline-offset: 3px; }
+    a:focus-visible { outline: 3px solid var(--tan-deep); outline-offset: 3px; }
 
-    ::selection { background: rgba(228, 98, 42, .28); }
+    ::selection { background: rgba(198, 137, 97, .3); }
 
     .skip-link {
       position: fixed;
@@ -185,7 +187,7 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 18px;
-      color: var(--orange);
+      color: var(--tan);
       font-family: var(--mono);
       font-size: 11px;
       font-weight: 600;
@@ -202,6 +204,7 @@
 
     .title {
       max-width: 27ch;
+      color: var(--ink);
       margin: 0 auto;
       font-family: var(--display);
       font-size: clamp(1.6rem, 3.6vw, 3.1rem);
@@ -212,13 +215,9 @@
       text-wrap: balance;
     }
 
-    .grad {
-      background: linear-gradient(100deg, var(--wine), var(--orange));
-      background-clip: text;
-      color: transparent;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    /* El acento pasó de degradado a color plano: una sola tinta para el
+       titular resaltado, las etiquetas y los enlaces. */
+    .accent { color: var(--tan); }
 
     .copy {
       max-width: 660px;
@@ -241,14 +240,14 @@
       margin: 30px auto 0;
       padding: 2.5px;
       border-radius: 26.5px;
-      background: linear-gradient(100deg, var(--wine), var(--gold));
-      box-shadow: 0 22px 60px -32px rgba(140, 29, 63, .5);
+      background: linear-gradient(100deg, var(--tan-deep), var(--tan-soft));
+      box-shadow: 0 22px 60px -32px rgba(169, 106, 69, .45);
     }
 
     .video-frame {
       position: relative;
       overflow: hidden;
-      border: 1px solid rgba(90, 45, 30, .07);
+      border: 1px solid rgba(64, 63, 63, .07);
       border-radius: var(--radius);
       background: linear-gradient(160deg, var(--panel-a), var(--panel-b));
     }
@@ -278,6 +277,7 @@
 
     .next-title {
       max-width: 24ch;
+      color: var(--ink);
       margin: 16px auto 0;
       font-family: var(--display);
       font-size: clamp(1.5rem, 3.2vw, 2.6rem);
@@ -308,7 +308,7 @@
     .form-frame .form-inner {
       overflow: hidden;
       min-height: 560px;
-      border: 1px solid rgba(90, 45, 30, .07);
+      border: 1px solid rgba(64, 63, 63, .07);
       border-radius: var(--radius);
       background: var(--card-a);
     }
@@ -362,6 +362,40 @@
       text-transform: uppercase;
     }
 
+    /* Quién presenta. La foto es la misma que ya usa el tema VA. */
+    .trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 30px var(--gutter) 0;
+      text-align: left;
+    }
+
+    .trust img {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .trust-label {
+      color: var(--ink);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .trust-name {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.3;
+    }
+
     .site-footer {
       padding: 24px var(--gutter) calc(20px + env(safe-area-inset-bottom));
       color: var(--muted);
@@ -377,7 +411,7 @@
     }
 
     .site-footer a {
-      border-bottom: 1px solid rgba(90, 45, 30, .2);
+      border-bottom: 1px solid rgba(198, 137, 97, .4);
       color: inherit;
       text-decoration: none;
     }
@@ -418,12 +452,12 @@
 
       <h1 class="title" id="video-title">
         Qué ajustes hacer para
-        <span class="grad">bajar de peso y mantenerlo de forma sostenible</span>
+        <span class="accent">bajar de peso y mantenerlo de forma sostenible</span>
       </h1>
 
       <p class="copy">
-        Sin dietas aburridas o extremas y sin pasar horas en el gimnasio.
-        <strong>Mira el video y luego cuéntanos qué está pasando contigo.</strong>
+        Si sientes que haces dieta, entrenas, bajas de peso pero terminas recuperándolo de nuevo.
+        <strong>Mira el video, vas a entender qué necesitas revisar y luego cuéntanos qué está pasando contigo.</strong>
       </p>
 
       <div class="framed">
@@ -442,7 +476,7 @@
 
       <h2 class="next-title" id="application-title" data-reveal>
         Ahora queremos saber
-        <span class="grad">qué está pasando contigo</span>
+        <span class="accent">qué está pasando contigo</span>
       </h2>
 
       <p class="next-copy" data-reveal>
@@ -464,6 +498,21 @@
       </div>
     </section>
   </div>
+
+  <section class="trust" aria-label="Quién presenta">
+    <img
+      src="/assets/va/vero-perfil-footer.webp"
+      width="46"
+      height="46"
+      loading="lazy"
+      decoding="async"
+      alt="Veronika Alvarado"
+    />
+    <div>
+      <p class="trust-label">Producción · TR4INER</p>
+      <p class="trust-name">Veronika Alvarado · Coach</p>
+    </div>
+  </section>
 
   <footer class="site-footer">
     <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
