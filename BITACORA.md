@@ -104,13 +104,25 @@ Local, con el webhook y el CRM **interceptados** para no crear leads ni correos 
    ahora**: son páginas del funnel de Caso de Estudio y el test de hero está corriendo.
 2. Los enlaces que publique Veronika deben llevar `utm_campaign=TR4INER-VA` (o ninguna
    campaña). Con una campaña propia inventada, la salida del Typeform manda a la agenda de AN.
-3. Deploy: **Preview listo, producción pendiente de aprobación.** Commits `804f488`, `14c4293`
-   y `b00c4c0` en `work/testimonio-andrea-va`; Vercel `dpl_HVgkRYRrUJSGzFBgbzqD4vqZq6tR`,
-   target `preview`, estado **Ready** en 9 s, alias de rama
-   `tr4iner-funnels-git-work-testimo-6778ba-metodotr4iners-projects.vercel.app` (protegido por
-   Vercel Authentication). **El test de hero cierra el 20-sep**: publicar antes significa un
-   deploy de producción mientras corre. No toca ninguna página del test ni el `middleware.ts`,
-   pero conviene esperar a la lectura del 21.
+### Publicación
+
+Preview `dpl_HVgkRYRrUJSGzFBgbzqD4vqZq6tR` (Ready en 9 s, alias de rama
+`tr4iner-funnels-git-work-testimo-6778ba-…`, protegido por Vercel Authentication).
+
+**Producción publicada el 19-sep a pedido del usuario**, con el test de hero todavía corriendo
+(cierra el 20). `work/testimonio-andrea-va` entró a `main` por avance rápido hasta `34c578a`;
+Vercel `dpl_cLfuGvJ4G59vHaQcTDB6x2g4Wiq5`, target `production`, **Ready** en 11 s, alias
+`https://metodo.tr4iner.com`. El deploy no toca ninguna página del test ni `middleware.ts`: se
+verificó después de publicar que `/casos-de-estudio` sigue sirviendo el control («Mira cómo
+alguien como tú transformó su cuerpo») y que el tráfico pago sigue recibiendo la cookie
+`ab_hero`.
+
+Verificado en vivo sobre el dominio canónico, con GA4/Meta/Clarity bloqueados para no ensuciar
+la analítica: `/testimonio-andrea-va` y `/testimonio-andrea-va/video` responden `200` con y sin
+barra final, las tres imágenes de `assets/andrea-va/` se sirven con su tipo correcto, el
+titular carga Anton y el cuerpo mantiene el peso 300, no hay desborde horizontal a 390 px, el
+modal abre, el player de Vidalytics monta su `<video>` y el Typeform arma el iframe de 620 px
+con todos los hidden —incluido el `fbc` reconstruido desde `fbclid`—. Cero errores de consola.
 
 ---
 
