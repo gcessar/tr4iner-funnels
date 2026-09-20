@@ -25,7 +25,7 @@ Rutas objetivo del proyecto:
 
 - `/` → redirección permanente a `/casos-de-estudio`.
 - `/casos-de-estudio` → landing canónica de Caso de Estudio.
-- `/casos-de-estudio-va` → registro exclusivo de Veronika; captura nombre/email, fuerza `sexo=Mujer` y continúa a Flor VA.
+- `/casos-de-estudio-va` → registro exclusivo de Veronika. Captura nombre/email, fuerza `sexo=Mujer` y **reparte entre los tres casos según lo que la persona elige**: «subo de peso» → `/testimonio-flor-va`, «entreno y no veo cambios» → `/testimonio-rosita-va/video`, «bajo y lo recupero» → `/testimonio-andrea-va/video`.
 - `/testimonio-flor` → página Flor (`registro-typeform-flor.html`).
 - `/testimonio-flor-va` → variante Flor para tráfico VA (`registro-typeform-flor-va.html`).
 - `/testimonio-dashiel` → página Dashiel (`registro-typeform-optimizado.html`).
@@ -49,7 +49,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
 | `middleware.ts` | Split 50/50 en el edge para el test de hero. Rewrite (nunca redirect), cookie `ab_hero` de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
 | `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
-| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer`, UTMs VA de respaldo y redirige a `/testimonio-flor-va`. |
+| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. El carrusel de Flor/Rosita/Andrea y los tres perfiles son **la misma selección**: el caso activo decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Diseño propio en Poppins sobre crema `#FDF6F0` con acento durazno `#E8B48F`. |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
@@ -57,6 +57,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Tema oscuro propio en `assets/rosita-va/rosita-theme.css`. |
 | `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/tan del prototipo aprobado; CSS y JS inline en cada página. |
 | `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
+| `assets/casos-va/` | Las tres comparativas antes/después de `/casos-de-estudio-va` en WebP 240/480 px. No son las mismas fotos que `assets/casos-optin/`. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |

@@ -13,6 +13,82 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-20 — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
+
+Rama `work/testimonio-andrea-va`. Rediseño completo de la landing VA sobre el prototipo que
+pasó el usuario, y cambio de fondo en el ruteo.
+
+### Qué cambió
+
+**Antes:** la página capturaba nombre y correo y mandaba **siempre** a `/testimonio-flor-va`,
+sin importar a quién se pareciera la persona.
+
+**Ahora:** el carrusel de casos y los tres perfiles son **una sola selección**, y el caso
+activo decide el destino:
+
+| Lo que elige | Caso | Destino |
+|---|---|---|
+| «Subo de peso y ya no me siento bien como antes» | Flor | `/testimonio-flor-va` |
+| «Entreno, cuido mi alimentación, pero no veo cambios» | Rosita | `/testimonio-rosita-va/video` |
+| «Logro bajar de peso, pero lo vuelvo a recuperar» | Andrea | `/testimonio-andrea-va/video` |
+
+Los destinos **no son simétricos** y por eso están declarados uno por uno en el código: Flor
+tiene su VSL dentro de la misma página de registro, mientras que Rosita y Andrea lo tienen en
+su ruta `/video`. Mandar a Rosita o Andrea a su raíz las haría registrarse dos veces.
+
+Se puede elegir de tres maneras y todas mueven lo mismo: tocando un perfil, tocando la tarjeta
+del caso o con las flechas del carrusel. **En móvil no hay flechas** —las tres tarjetas entran
+en pantalla—, así que las tarjetas son botones: en el prototipo no lo eran y la única forma de
+cambiar de caso habría sido el perfil. Si nadie elige nada, sale Flor, que es la que aparece
+activa desde el primer pintado.
+
+**Diseño:** Poppins 400/600/700 self-hosteada, crema `#FDF6F0`, tinta `#141414` y acento
+durazno `#E8B48F` (el del prototipo; el usuario lo eligió sabiendo que las páginas de Andrea
+usan el tan `#C68961`). La versión anterior cargaba **cuatro familias desde Google Fonts** con
+el encadenamiento `fonts.googleapis.com → fonts.gstatic.com` antes de pintar una letra: ahora
+son 0 peticiones a Google. Se retiró el JSON-LD, que no aportaba nada en una página `noindex`.
+
+**Datos nuevos en el opt-in:** `caso` (`flor|rosita|andrea`) y `perfil` (el texto que eligió).
+El CRM guarda el payload crudo, así que quedan disponibles aunque hoy nadie los mapee. `caso`
+viaja además en la URL del destino, para poder separarlo en GA4. El resto del contrato no se
+tocó: `funnel: "casos-estudio-va"`, `variant: "VA"`, `sexo: "Mujer"`, webhook de n8n + copia al
+CRM, y los respaldos `LANDING-VA-DIRECTO` / `CASOS-VA`.
+
+**Se suma lo que ya tenían las páginas de Andrea:** normalización de UTMs duplicadas de
+Instagram antes de GTM, envío con `keepalive` que navega sin esperar (tope 1,5 s), `fbc`/`fbp`
+al ras del payload, honeypot, rechazo de correos desechables y errores inline con `role=alert`.
+
+**Imágenes:** las tres comparativas antes/después salieron del propio prototipo (480 px) y se
+generaron las de 240 px para móvil. Son **fotos distintas** a las de `assets/casos-optin/`, así
+que van en `assets/casos-va/` y no se pisa nada del funnel AN.
+
+### Verificación
+
+Local, con el webhook y el CRM interceptados.
+
+- **Los tres ruteos**, cada uno con su payload: `caso` y `perfil` correctos, `funnel`,
+  `variant`, `sexo`, UTMs anidadas y `fbc` reconstruido desde `fbclid`.
+- **Cadena completa hasta el Typeform**: eligiendo Rosita y Andrea, sus VSL reciben
+  `first_name`, `email`, `sexo`, `video` y las UTMs, y arman el iframe con todo. Para Flor
+  —cuya ruta sólo existe por el rewrite de Vercel, así que en local da 404— se verificó contra
+  la página **en producción** con los parámetros que arma la nueva landing: los diez hidden
+  llegan enteros, incluido el nombre con tilde.
+- **Velocidad** (4G lenta emulada): FCP y LCP **376 ms** (el titular), CLS 0,0008, `load`
+  963 ms, 10 pedidos, 150 KB.
+- **Layout**: sin desborde horizontal a 360, 390, 768, 1024 y 1280 px. Etiquetas asociadas a
+  los dos campos y botones con `aria-pressed` que anuncia cuál está elegido.
+- Un detalle que se corrigió al mirarlo en móvil: la foto y el nombre de cada tarjeta son
+  `<span>` dentro del botón y, como cajas inline, el `outline` del caso activo se dibujaba en
+  pedazos. Van en `display: block`.
+
+### Ojo
+
+El acento durazno sobre el crema da **1,7:1** de contraste. En el titular (Poppins 700 a 25-38
+px) se lee, pero los enlaces del pie quedan lavados. Es el valor del prototipo y se dejó a
+pedido del usuario; si alguna vez se revisa accesibilidad, ese es el primer lugar.
+
+---
+
 ## 2026-09-19 — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
 
 Rama `work/puentes-va`. Resuelve el **Pendiente 1** de la entrada del funnel VA de Andrea.
@@ -590,6 +666,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-20` — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
 - `2026-09-19` — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
 - `2026-09-19` — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
 - `2026-09-19` — Funnel VA de Andrea: registro y VSL para las redes de Veronika
