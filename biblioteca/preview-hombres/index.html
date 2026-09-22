@@ -8,11 +8,12 @@
   <title>Ruta TR4INER · Preview de módulos y rutinas</title>
   <meta name="description" content="Preview de Ruta TR4INER: módulos para hombres por edad y seis rutinas para hombres y mujeres, de 3, 4 y 5 días, con edición individual de ejemplo.">
   <link rel="preload" href="/assets/fonts/instrument-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="./preview.css?v=20260917-rutinas2">
-  <script src="./exercises.js?v=20260917-rutinas2" defer></script>
-  <script src="./programs.js?v=20260917-rutinas2" defer></script>
-  <script src="./data.js?v=20260917-rutinas2" defer></script>
-  <script src="./preview.js?v=20260917-rutinas2" defer></script>
+  <link rel="stylesheet" href="./preview.css?v=20260922-sheet3">
+  <script src="./exercises.js?v=20260922-sheet3" defer></script>
+  <script src="./trainer-data.js?v=20260922-sheet3" defer></script>
+  <script src="./programs.js?v=20260922-sheet3" defer></script>
+  <script src="./data.js?v=20260922-sheet3" defer></script>
+  <script src="./preview.js?v=20260922-sheet3" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Saltar al contenido</a>
@@ -24,6 +25,7 @@
     <a class="brand" data-view="ruta" href="?vista=ruta" aria-label="Ruta TR4INER, inicio">TR<span>4</span>INER<span class="brand-sub">TU RUTA PERSONAL</span></a>
     <button type="button" class="profile-button" id="profile-button"><span class="avatar" aria-hidden="true">M</span><span id="profile-name">Mateo</span></button>
   </header>
+  <a class="capture-exit" href="?vista=rutina">Salir de capturas</a>
   <main id="main" tabindex="-1"></main>
   <dialog id="replace-dialog" aria-labelledby="replace-title">
     <div class="dialog-head"><p class="eyebrow">ALTERNATIVAS DEL EJERCICIO</p><button class="icon-button" type="button" data-close="replace-dialog" aria-label="Cerrar alternativas">×</button></div>
@@ -40,7 +42,7 @@
   </dialog>
   <aside class="rest-timer" id="rest-timer" aria-label="Temporizador de descanso" hidden>
     <div><span class="eyebrow">DESCANSO</span><strong id="timer-value" role="timer">01:30</strong></div>
-    <div class="timer-actions"><button type="button" id="timer-add">+30 s</button><button type="button" id="timer-pause">Pausar</button><button class="icon-button" type="button" id="timer-close" aria-label="Cerrar temporizador">×</button></div>
+    <div class="timer-actions"><button type="button" id="timer-alert" aria-pressed="false">Aviso: no</button><button type="button" id="timer-add">+30 s</button><button type="button" id="timer-pause">Pausar</button><button class="icon-button" type="button" id="timer-close" aria-label="Cerrar temporizador">×</button></div>
   </aside>
   <p class="toast" id="toast" role="status" hidden></p>
   <div class="sr-only" id="announcer" aria-live="polite"></div>

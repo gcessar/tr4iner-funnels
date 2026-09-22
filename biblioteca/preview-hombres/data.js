@@ -26,7 +26,7 @@
     ] }
   ];
   window.RutaPreviewData = {
-    modules, makeRoutine: window.RutaPrograms.makeRoutine,
+    modules: modules.map((m, i) => ({ ...m, unlockAfterDays: [0, 0, 2, 4, 6][i] })), makeRoutine: window.RutaPrograms.makeRoutine,
     ageLabels: { '18-25': '18 a 25 años', '26-35': '26 a 35 años', '36+': '36 años en adelante' },
     members: { mateo: { name: 'Mateo', sex: 'MEN', age: '26-35', frequency: 3 }, diego: { name: 'Diego', sex: 'MEN', age: '18-25', frequency: 4 }, laura: { name: 'Laura', sex: 'WOMEN', age: '26-35', frequency: 3 }, carmen: { name: 'Carmen', sex: 'WOMEN', age: '36+', frequency: 4 } }
   };

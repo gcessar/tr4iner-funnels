@@ -13,6 +13,26 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+
+## 2026-09-22 — Ruta TR4INER: Sheet del entrenador, registro y preview por días
+
+**Qué cambió:** las seis rutinas del preview se reemplazan por la transcripción del Sheet del entrenador `1OfJJlnXqbHlUkPXKkA7KvGV6gygISr4wnk50uS1oXfI`, pestañas HOMBRES y MUJERES. Se conservan dosis y reemplazos. Hombres de 4/5 días: rotación continua Empuje → Jalón → Piernas entre semanas (confirmado por Gulhio), selector de 3 semanas. No se modificó el Sheet ni se copiaron enlaces privados de Vimeo. Sesiones de hasta 21 series: duración de 30–45 min por validar.
+
+**Registro:** frecuencia 3/4/5 en `/biblioteca/inicio/` (paso 5, antes del correo) y `/biblioteca/`; payload `training_days` para CRM y n8n. El redirect conserva parámetros entrantes completos. El proxy recoge IP/país/ciudad del borde Vercel y los manda en encabezados internos; no toma la ubicación de datos del cliente. Cookies Secure en previews HTTPS y respuestas privadas no-store.
+
+**Drip:** ancla confirmada por usuario: primera confirmación del registro. Día 0 inmediato, día 2 = 48 h; CMS editable en rama CRM `work/ruta-drip-paises`, worktree `/private/tmp/crm-ruta-tr4iner`. El frontend vivo consume `locked/unlockAt`, muestra fecha y nunca cae al catálogo embebido si falla la API; recarga al volver si se cumplió el desbloqueo. Módulos existentes conservarán día 0. Migración solo preview, no producción.
+
+**Preview del equipo:** `/biblioteca/preview-hombres/` incorpora simulador de calendario (0/0/2/4/6 solo propuesta local), días transcurridos y países con cuatro perfiles/IP ficticios. `captura=1` oculta barra de herramientas y notas de demo; los clips de prueba siguen identificados. Edición de rutina local por miembro/frecuencia/semana; no registra leads ni toca el CRM. Mujeres: rutinas disponibles, temario de módulos aún no aportado.
+
+**Descansos:** deadline en sessionStorage, conserva tiempo al recargar o regresar; pausa/continuar/+30/cerrar; sonido voluntario y vibración compatible en primer plano. No se garantiza aviso con teléfono bloqueado. Investigación: Page Visibility de MDN, Vibration API, WebKit Web Push iOS 16.4 y headers Vercel. Push en bloqueo necesita PWA/permiso/service worker/cola por deadline, invalidación al pausar o cancelar y TTL; no contratado ni implementado.
+
+**Verificación:** 3 tests de transcripción/rotación, proxy simulado (rechaza país falso del cliente, conserva frecuencia), sintaxis de scripts; revisión CUA móvil 375px: registro → edad → frecuencia → correo, rotación segunda semana, temporizador recargado sin reinicio, candado día 0 y acceso en día 2. CRM: 50 tests Biblioteca, TypeScript y build Next sin conectarse a una base real. No se enviaron registros ni correos de prueba a producción.
+
+**Impacto esperado:** asignación según disponibilidad real, nutrición progresiva por antigüedad y segmentación geográfica trazable. No hay medición de conversión todavía. Caso de Estudio y su A/B no se modifican.
+
+**Pendientes:** Ready y enlace compartible nuevo; validar migración Neon preview y después aprobar integración a producción. Rutinas reales por miembro necesitan persistencia/endpoint; editor actual es demo. Videos Bunny de cada variante pendientes; clip facilitado es una prueba, no una demostración del ejercicio. No se inventan IP históricas ni residencia.
+
+
 ## 2026-09-17 — Seis rutinas base para principiantes y personas que retoman
 
 - Continuación en `work/ruta-hombres-preview`. El usuario amplió el alcance a rutinas de **hombres y mujeres**, 3/4/5 veces por semana, y precisó nivel principiante/retorno y sesiones de **30–45 minutos con calentamiento y descansos**. El contenido de módulos de mujeres sigue pendiente; la ruta de preview conserva `/biblioteca/preview-hombres/` para no romper los enlaces ya compartidos.
