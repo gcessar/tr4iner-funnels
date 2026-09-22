@@ -1414,6 +1414,14 @@
               <p class="err" id="err-sexo" aria-live="polite">Selecciona una ruta</p>
             </div>
 
+            <div class="field" id="f-frecuencia">
+              <label for="training-days">¿Cuántas veces a la semana puedes entrenar?</label>
+              <select class="control" id="training-days" name="training_days" required>
+                <option value="">Elige tus días</option><option value="3">3 veces por semana</option><option value="4">4 veces por semana</option><option value="5">5 veces por semana</option>
+              </select>
+              <p class="err" aria-live="polite">Elige 3, 4 o 5 días</p>
+            </div>
+
             <button class="submit" type="submit" id="submit-btn">
               <span id="submit-label">Crear mi Ruta Tr4iner</span>
               <span class="spinner" aria-hidden="true"></span>
@@ -1715,7 +1723,9 @@
         var prefijo = document.getElementById('prefijo').value;
         var email = document.getElementById('email').value.trim();
         var sexoEl = document.querySelector('input[name="sexo"]:checked');
-        var valid = true;
+        var trainingDays = Number(document.getElementById('training-days').value);
+        var valid = [3, 4, 5].includes(trainingDays);
+        setFieldError('f-frecuencia', !valid);
 
         setFieldError('f-nombre', !nombre);
         if (!nombre) valid = false;
@@ -1756,6 +1766,7 @@
           whatsapp: prefijo + telefono,
           email: email,
           sexo: sexo,
+          training_days: trainingDays,
           video: videoId,
           utm: utmData,
           page_url: window.location.href,
@@ -1770,7 +1781,7 @@
         if (window.TR4Track && TR4Track.track) TR4Track.track('registro', { whatsapp: prefijo + telefono });
 
         function next() {
-          var p = new URLSearchParams();
+          var p = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
           p.set('nombre', nombre);
           p.set('email', email);
           p.set('sexo', sexo);
@@ -1790,6 +1801,7 @@
           whatsapp: prefijo + telefono,
           email: email,
           sexo: sexo,
+          training_days: trainingDays,
           video: videoId
         };
         Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });

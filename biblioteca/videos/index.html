@@ -2531,17 +2531,22 @@
       }
 
       var activeAnnouncement = null;
+      var catalogFailed = false;
       var announcementShown = false;
       if (memberSession) {
+        // Un fallo nunca debe reactivar el catálogo antiguo y saltarse el calendario del CRM.
+        BLOQUES = []; VIDEOS = [];
         try {
           var catalogResponse = await fetch('/api/genesis/catalog', { cache: 'no-store' });
           if (catalogResponse.ok) {
             var catalogData = await catalogResponse.json();
-            if (catalogData.modules && catalogData.modules.length) {
+            if (Array.isArray(catalogData.modules)) {
               BLOQUES = catalogData.modules.map(function (module) {
                 var editorialBlock = EDITORIAL_BLOCKS[module.slug];
                 return {
                   id: module.slug,
+                  locked: module.locked === true,
+                  unlockAt: module.unlockAt,
                   num: module.num,
                   name: editorialBlock ? editorialBlock.name : module.title,
                   desc: editorialBlock ? editorialBlock.desc : (module.description || '')
@@ -2567,9 +2572,13 @@
               });
             }
             activeAnnouncement = catalogData.announcement || null;
-          }
-        } catch (e) { /* el catálogo embebido mantiene el programa disponible */ }
+          } else { catalogFailed = true; }
+        } catch (e) { catalogFailed = true; }
       }
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && BLOQUES.some(function (b) { return b.locked && b.unlockAt && Date.parse(b.unlockAt) <= Date.now(); })) window.location.reload();
+      });
 
       var state = {
         sexo: normalizeSexo(params.get('sexo') || lead.sexo),
@@ -2926,6 +2935,13 @@
         });
         enRuta.forEach(function (b, orden) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
+          if (b.locked) {
+            var locked = document.createElement('section'); locked.className = 'route-group';
+            var title = document.createElement('h3'); title.textContent = b.name;
+            var note = document.createElement('p');
+            note.textContent = b.unlockAt ? 'Disponible el ' + new Date(b.unlockAt).toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }) : 'Confirma tu registro para iniciar esta ruta.';
+            locked.style.padding = '24px'; locked.append(title, note); libraryEl.appendChild(locked); shown++; return;
+          }
           var vids = videosDe(b.id);
           if (vids.length === 0) return;
           shown += vids.length;
@@ -2979,6 +2995,7 @@
         });
 
         emptyEl.classList.toggle('visible', shown === 0);
+        if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
         requestAnimationFrame(checkReveals);
         setTimeout(checkReveals, 250);
 

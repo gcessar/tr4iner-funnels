@@ -622,7 +622,7 @@
               <input type="hidden" name="edad_rango" id="edad_rango" />
 
               <section class="wizard-step" id="step-nombre" aria-labelledby="nombre-title">
-                <div class="wizard-meta"><span>Creando tu Ruta Tr4iner</span><strong>Paso 1 de 6</strong></div>
+                <div class="wizard-meta"><span>Creando tu Ruta Tr4iner</span><strong>Paso 1 de 7</strong></div>
                 <h2 class="question-title" id="nombre-title" tabindex="-1">Para empezar, ¿cómo te llamas?</h2>
                 <p class="question-dek">Usaremos tu nombre para personalizar esta experiencia.</p>
                 <div class="single-answer">
@@ -637,7 +637,7 @@
               </section>
 
               <section class="wizard-step" id="step-sexo" aria-labelledby="sexo-title" hidden>
-                <div class="wizard-meta"><span>Personalizando tu ruta</span><strong>Paso 2 de 6</strong></div>
+                <div class="wizard-meta"><span>Personalizando tu ruta</span><strong>Paso 2 de 7</strong></div>
                 <h2 class="question-title" id="sexo-title" tabindex="-1"><span data-first-name></span>, ¿Eres Hombre o Mujer?</h2>
                 <div class="route-options" aria-label="Elige tu sexo">
                   <button class="route-option" type="button" data-sexo="Mujer"><span class="route-copy"><strong>Soy mujer</strong><small>Personalizar mi ruta</small></span><span class="route-action" aria-hidden="true">→</span></button>
@@ -647,7 +647,7 @@
               </section>
 
               <section class="wizard-step" id="step-situacion" aria-labelledby="situacion-title" hidden>
-                <div class="wizard-meta"><span>Entendiendo tu punto de partida</span><strong>Paso 3 de 6</strong></div>
+                <div class="wizard-meta"><span>Entendiendo tu punto de partida</span><strong>Paso 3 de 7</strong></div>
                 <h2 class="question-title" id="situacion-title" tabindex="-1"><span data-first-name></span>, ¿cuál de estas situaciones se parece más a la tuya?</h2>
                 <div class="choice-list" aria-label="Elige tu situación actual">
                   <button class="choice-button" type="button" data-situacion="estancado" data-situacion-text="Entreno o intento comer bien, pero no consigo los resultados que quiero."><span class="choice-index">01</span><span>Entreno o intento comer bien, pero no consigo los resultados que quiero.</span><span class="choice-arrow" aria-hidden="true">→</span></button>
@@ -660,7 +660,7 @@
               </section>
 
               <section class="wizard-step" id="step-edad" aria-labelledby="edad-title" hidden>
-                <div class="wizard-meta"><span>Ajustando tu ruta</span><strong>Paso 4 de 6</strong></div>
+                <div class="wizard-meta"><span>Ajustando tu ruta</span><strong>Paso 4 de 7</strong></div>
                 <h2 class="question-title" id="edad-title" tabindex="-1"><span data-first-name></span>, ¿en qué rango de edad estás?</h2>
                 <p class="question-dek">Cambia qué priorizamos: no es lo mismo empezar a los 22 que a los 45.</p>
                 <div class="route-options" aria-label="Elige tu rango de edad">
@@ -671,8 +671,16 @@
                 <button class="wizard-back" type="button" data-back="situacion">← Volver</button>
               </section>
 
+              <section class="wizard-step" id="step-frecuencia" aria-labelledby="frecuencia-title" hidden>
+                <div class="wizard-meta"><span>Tu semana de entrenamiento</span><strong>Paso 5 de 7</strong></div>
+                <h2 class="question-title" id="frecuencia-title" tabindex="-1">¿Cuántas veces a la semana puedes entrenar?</h2>
+                <p class="question-dek">Elige lo que puedas mantener. Prepararemos tu rutina con esos días.</p>
+                <div class="route-options" aria-label="Días de entrenamiento"><button class="route-option" type="button" data-frecuencia="3"><span class="route-copy"><strong>3 veces por semana</strong></span><span class="route-action" aria-hidden="true">→</span></button><button class="route-option" type="button" data-frecuencia="4"><span class="route-copy"><strong>4 veces por semana</strong></span><span class="route-action" aria-hidden="true">→</span></button><button class="route-option" type="button" data-frecuencia="5"><span class="route-copy"><strong>5 veces por semana</strong></span><span class="route-action" aria-hidden="true">→</span></button></div>
+                <button class="wizard-back" type="button" data-back="edad">← Volver</button>
+              </section>
+
               <section class="wizard-step" id="step-email" aria-labelledby="email-title" hidden>
-                <div class="wizard-meta"><span>Guardando tu ruta</span><strong>Paso 5 de 6</strong></div>
+                <div class="wizard-meta"><span>Guardando tu ruta</span><strong>Paso 6 de 7</strong></div>
                 <h2 class="question-title" id="email-title" tabindex="-1"><span data-first-name></span>, ¿a qué correo guardamos tu Ruta Tr4iner?</h2>
                 <p class="question-dek">Ahí queda guardada y ahí llega tu enlace personal para abrirla.</p>
                 <div class="single-answer">
@@ -683,11 +691,11 @@
                   </div>
                   <button class="primary-cta answer-cta" type="button" id="continue-email">Continuar <span class="cta-arrow" aria-hidden="true">→</span></button>
                 </div>
-                <button class="wizard-back" type="button" data-back="edad">← Volver</button>
+                <button class="wizard-back" type="button" data-back="frecuencia">← Volver</button>
               </section>
 
               <section class="wizard-step" id="step-whatsapp" aria-labelledby="whatsapp-title" hidden>
-                <div class="wizard-meta"><span>Tu ruta está lista</span><strong>Paso 6 de 6</strong></div>
+                <div class="wizard-meta"><span>Tu ruta está lista</span><strong>Paso 7 de 7</strong></div>
                 <h2 class="question-title" id="whatsapp-title" tabindex="-1">Por último, <span data-first-name></span>, ¿a qué WhatsApp te la enviamos?</h2>
                 <p class="question-dek">Te llega ahí apenas termines, sin buscarla en el correo.</p>
                 <div class="single-answer">
@@ -742,10 +750,11 @@
         sexo: document.getElementById('step-sexo'),
         situacion: document.getElementById('step-situacion'),
         edad: document.getElementById('step-edad'),
+        frecuencia: document.getElementById('step-frecuencia'),
         email: document.getElementById('step-email'),
         whatsapp: document.getElementById('step-whatsapp')
       };
-      var state = { nombre: '', firstName: '', sexo: '', situacion: '', situacionText: '', edadRango: '' };
+      var state = { nombre: '', firstName: '', sexo: '', situacion: '', situacionText: '', edadRango: '', trainingDays: null };
 
       function showStep(name) {
         Object.keys(steps).forEach(function (key) { steps[key].hidden = key !== name; });
@@ -827,14 +836,18 @@
           if (window.TR4Track && TR4Track.track) {
             TR4Track.track('biblioteca_edad_select', { edad_rango: state.edadRango });
           }
-          showStep('email');
+          showStep('frecuencia');
         });
+      });
+
+      document.querySelectorAll('[data-frecuencia]').forEach(function (choice) {
+        choice.addEventListener('click', function () { state.trainingDays = Number(choice.getAttribute('data-frecuencia')); showStep('email'); });
       });
 
       // Atajo por número en las dos preguntas de opción múltiple.
       document.addEventListener('keydown', function (event) {
         if (event.metaKey || event.ctrlKey || event.altKey) return;
-        var selector = !steps.situacion.hidden ? '[data-situacion]' : !steps.edad.hidden ? '[data-edad]' : null;
+        var selector = !steps.situacion.hidden ? '[data-situacion]' : !steps.edad.hidden ? '[data-edad]' : !steps.frecuencia.hidden ? '[data-frecuencia]' : null;
         if (!selector) return;
         var option = Number(event.key) - 1;
         var choices = document.querySelectorAll(selector);
@@ -938,6 +951,8 @@
           return;
         }
 
+        if (![3, 4, 5].includes(state.trainingDays)) { showStep('frecuencia'); return; }
+
         var emailBad = !validateEmail(email) || isDomainSuspect(email);
         setFieldError('f-email', emailBad, !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega tu ruta');
         if (emailBad) {
@@ -969,6 +984,7 @@
           situacion: state.situacion,
           situacion_text: state.situacionText,
           edad_rango: state.edadRango,
+          training_days: state.trainingDays,
           video: videoId,
           utm: utmData,
           page_url: window.location.href,
@@ -987,7 +1003,7 @@
         }
 
         function next() {
-          var params = new URLSearchParams();
+          var params = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
           params.set('nombre', nombre);
           params.set('email', email);
           params.set('sexo', state.sexo);
@@ -1010,6 +1026,7 @@
           situacion: state.situacion,
           situacion_text: state.situacionText,
           edad_rango: state.edadRango,
+          training_days: state.trainingDays,
           video: videoId
         };
         Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });
