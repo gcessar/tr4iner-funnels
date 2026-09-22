@@ -30,7 +30,9 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 **Impacto esperado:** asignación según disponibilidad real, nutrición progresiva por antigüedad y segmentación geográfica trazable. No hay medición de conversión todavía. Caso de Estudio y su A/B no se modifican.
 
-**Pendientes:** Ready y enlace compartible nuevo; validar migración Neon preview y después aprobar integración a producción. Rutinas reales por miembro necesitan persistencia/endpoint; editor actual es demo. Videos Bunny de cada variante pendientes; clip facilitado es una prueba, no una demostración del ejercicio. No se inventan IP históricas ni residencia.
+**Estado verificado:** preview visual `dpl_Bw7Bawx5i9tSrmXKnzPp232HPKjp` Ready sobre `54e6a0f`; recorrido comprobado en Vercel, incluido reemplazo/restauración. Corrección adicional de barra del preview a 320 px (sin desbordamiento). CRM `981ae43`, deployment `dpl_3yDcKAaTW1CUZKEkEeVydhAFFevf`, `https://crm-ventas-icljiat4t-metodotr4iners-projects.vercel.app`, Ready. Build confirma migración `20260922000000_genesis_training_drip_country` aplicada en Neon Preview. Configuración de migración y comparación con host productivo limitada a `work/ruta-drip-paises`. El CRM conserva login propio; no se compartió con editores ni se ingresó como administrador.
+
+**Pendientes:** aprobar integración a producción y validar el CRM con sesión ADMIN. El preview visual sigue siendo una demo sin conexión de miembros reales. Rutinas reales por miembro necesitan persistencia/endpoint; editor actual es demo. Videos Bunny de cada variante pendientes; clip facilitado es una prueba, no una demostración del ejercicio. No se inventan IP históricas ni residencia.
 
 
 ## 2026-09-17 — Seis rutinas base para principiantes y personas que retoman
