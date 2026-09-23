@@ -1,6 +1,54 @@
 import { next, rewrite } from "@vercel/edge";
+import { isPreview, teamPreviewEnabled, previewConfigured, verifyTeamCookie } from "./lib/genesis-team";
 
-export const config = { matcher: "/casos-de-estudio" };
+export const config = { matcher: ["/casos-de-estudio", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
+
+function privatePreview(response: Response) {
+  response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  response.headers.set("Vercel-CDN-Cache-Control", "no-store");
+  response.headers.set("CDN-Cache-Control", "no-store");
+  response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  response.headers.set("Referrer-Policy", "same-origin");
+  // También bloquea los píxeles noscript: ni el navegador sin JavaScript cuenta como un lead real.
+  response.headers.set("Content-Security-Policy", [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com https://iframe.mediadelivery.net https://player.mediadelivery.net",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https://i.ytimg.com https://*.b-cdn.net https://*.mediadelivery.net",
+    "connect-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.b-cdn.net https://*.mediadelivery.net",
+    "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://iframe.mediadelivery.net https://player.mediadelivery.net",
+    "media-src 'self' blob: https://*.b-cdn.net https://*.mediadelivery.net",
+    "worker-src 'self'", "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'"
+  ].join("; "));
+  return response;
+}
+
+async function bibliotecaPreview(req: Request, url: URL) {
+  if (!isPreview()) return next();
+  const path = url.pathname.replace(/\/$/, "");
+  const api = path.startsWith("/api/genesis/");
+  if (path === "/api/genesis/config") return privatePreview(next());
+  if (!teamPreviewEnabled() || !previewConfigured()) {
+    return privatePreview(new Response(api ? JSON.stringify({ error: "Preview privado sin configurar" }) : "Este entorno de prueba todavía no está disponible.", {
+      status: 503, headers: { "Content-Type": api ? "application/json; charset=utf-8" : "text/plain; charset=utf-8" }
+    }));
+  }
+  if (path === "/api/genesis/team-access" || /^\/biblioteca\/equipo(?:\/index(?:\.html)?)?$/.test(path)) return privatePreview(next());
+  const authorized = await verifyTeamCookie(req.headers.get("cookie"));
+  if (!authorized) {
+    if (api) return privatePreview(new Response(JSON.stringify({ error: "Introduce la clave de equipo para continuar", teamAccessRequired: true }), { status: 401, headers: { "Content-Type": "application/json; charset=utf-8" } }));
+    const login = new URL("/biblioteca/equipo/", url);
+    login.searchParams.set("next", url.pathname + url.search);
+    return privatePreview(new Response(null, { status: 303, headers: { Location: login.toString() } }));
+  }
+  if (/^\/biblioteca\/videos(?:\/index(?:\.html)?)?$/.test(path)) {
+    const route = new URL("/biblioteca/ruta/index.html", url);
+    route.search = url.search;
+    return privatePreview(rewrite(route));
+  }
+  return privatePreview(next());
+}
 
 /*
   Test de HERO — 10-sep-2026. `ce_hero_202609`.
@@ -36,8 +84,9 @@ function esTraficoDeAds(url: URL): boolean {
   return source.includes("ads");
 }
 
-export default function middleware(req: Request) {
+export default async function middleware(req: Request) {
   const url = new URL(req.url);
+  if (url.pathname !== "/casos-de-estudio") return bibliotecaPreview(req, url);
   const cookie = req.headers.get("cookie") ?? "";
 
   // Cookie ESTRENADA. `ab_ce` (A/B) y `ab_copy` (B/C) siguen vivas 180 días en

@@ -1,12 +1,16 @@
 <!doctype html>
 <html lang="es-419">
 <head>
+  <script>window.TR4_RUNTIME = {ready:false,teamPreview:false,analyticsEnabled:false,automationEnabled:false};</script>
+  <script src="/api/genesis/config?format=js"></script>
+  <script>if(window.TR4_RUNTIME.teamPreview){var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/api/genesis/manifest';document.head.appendChild(manifest);var icon=document.createElement('link');icon.rel='apple-touch-icon';icon.href='/biblioteca/icons/icon-192.png';document.head.appendChild(icon);}</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    if(window.TR4_RUNTIME.analyticsEnabled) (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -1012,7 +1016,7 @@
           window.location.href = '/biblioteca/confirma/?' + params.toString();
         }
 
-        fetch(WEBHOOK, {
+        if (window.TR4_RUNTIME.automationEnabled) fetch(WEBHOOK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1036,7 +1040,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(genesisPayload)
         }).then(function (response) {
-          if (!response.ok) throw new Error('No pudimos enviar el correo');
+          if (!response.ok) throw new Error('No pudimos crear el acceso');
+          return response.json();
+        }).then(function (data) {
+          if (window.TR4_RUNTIME.teamPreview && data.devLink) sessionStorage.setItem('tr4_preview_access_link', data.devLink);
           next();
         }).catch(function () {
           button.classList.remove('loading');

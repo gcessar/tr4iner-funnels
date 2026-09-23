@@ -205,6 +205,7 @@
    * incluso si la página está navegando (p.ej. el submit del registro).
    */
   function track(event, props) {
+    if (window.TR4_RUNTIME && !window.TR4_RUNTIME.automationEnabled) return;
     var lead = getLead();
     var body;
     try {
@@ -247,6 +248,7 @@
    * navegando a la redirección.
    */
   function saveOptIn(payload) {
+    if (window.TR4_RUNTIME && !window.TR4_RUNTIME.automationEnabled) return;
     try {
       fetch(OPTIN_ENDPOINT, {
         method: 'POST',

@@ -1,12 +1,16 @@
 <!doctype html>
 <html lang="es-419">
 <head>
+  <script>window.TR4_RUNTIME = {ready:false,teamPreview:false,analyticsEnabled:false,automationEnabled:false};</script>
+  <script src="/api/genesis/config?format=js"></script>
+  <script>if(window.TR4_RUNTIME.teamPreview){var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/api/genesis/manifest';document.head.appendChild(manifest);var icon=document.createElement('link');icon.rel='apple-touch-icon';icon.href='/biblioteca/icons/icon-192.png';document.head.appendChild(icon);}</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    if(window.TR4_RUNTIME.analyticsEnabled) (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -557,7 +561,7 @@
       // flow «ENVIO de RUTA» de ManyChat quedó activo y el sub-workflow de n8n
       // verificado de punta a punta. Si alguna vez se cae ese canal, apagarlo
       // acá antes que dejar la pantalla prometiendo un mensaje que no llega.
-      var CANAL_WHATSAPP_ACTIVO = true;
+      var CANAL_WHATSAPP_ACTIVO = !window.TR4_RUNTIME.teamPreview;
 
       var nombre = params.get('nombre') || params.get('first_name') || lead.nombre || '';
       var sexo = params.get('sexo') || lead.sexo || '';
@@ -582,6 +586,19 @@
       }
       if (sexo === 'Mujer' || sexo === 'Hombre') {
         document.documentElement.dataset.sexo = sexo.toLowerCase();
+      }
+
+      if (window.TR4_RUNTIME.teamPreview) {
+        document.getElementById('entrega-mail').textContent = 'Entorno de equipo: no se envían correos ni WhatsApp. Abre el correo de prueba para confirmar tu cuenta y empezar tu ruta.';
+        document.querySelector('.mail-toolbar small').textContent = 'Correo de prueba · solo visible en este entorno';
+        document.querySelector('.confirm-help').hidden = true;
+        var link = sessionStorage.getItem('tr4_preview_access_link');
+        if (link) {
+          try { var target = new URL(link); if (target.origin === location.origin) {
+            var button = document.createElement('a'); button.href=target.href; button.className='text-link'; button.textContent='Abrir mi Ruta Tr4iner →'; button.style.cssText='display:block;background:#111;color:white;padding:18px;text-align:center;border-radius:8px;margin:20px 0';
+            document.querySelector('.mail-sheet').appendChild(button);
+          } } catch (_) {}
+        }
       }
 
       // Pedir otro enlace vuelve al acceso sin soltar ninguna atribución.

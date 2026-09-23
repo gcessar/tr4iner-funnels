@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#ffffff">
+  <title>Mi Ruta TR4INER</title>
+  <meta name="description" content="Tu ruta personal: aprende, entrena y avanza a tu ritmo.">
+  <link rel="preload" href="/assets/fonts/instrument-sans-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/biblioteca/preview-hombres/preview.css?v=20260922-stage1">
+  <link rel="manifest" href="/api/genesis/manifest">
+  <link rel="apple-touch-icon" href="/biblioteca/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="/biblioteca/ruta/member.js?v=20260922-stage1" defer></script>
+  <style>.team-note{margin:0;padding:7px 16px;background:#fff8da;font-size:12px;text-align:center}.notification-help{max-width:440px}.notification-help p{line-height:1.6}.member-loading{padding:64px 24px;text-align:center}.push-status{font-size:12px;max-width:240px}.rest-timer{flex-wrap:wrap}#push-status{flex-basis:100%;margin:0;color:#666}.profile-button{min-height:44px}</style>
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <p class="team-note">Entorno privado del equipo · Datos de prueba</p>
+  <header class="site-header">
+    <a class="brand" data-view="ruta" href="?vista=ruta" aria-label="Ruta TR4INER, inicio">TR<span>4</span>INER<span class="brand-sub">TU RUTA PERSONAL</span></a>
+    <button type="button" class="profile-button" id="profile-button"><span class="avatar" aria-hidden="true">T</span><span id="profile-name">Mi perfil</span></button>
+  </header>
+  <main id="main" tabindex="-1"><p class="member-loading">Estamos preparando tu ruta…</p></main>
+  <dialog id="replace-dialog" aria-labelledby="replace-title">
+    <div class="dialog-head"><p class="eyebrow">ALTERNATIVAS DEL EJERCICIO</p><button class="icon-button" type="button" data-close="replace-dialog" aria-label="Cerrar alternativas">×</button></div>
+    <h2 id="replace-title">Encuentra un reemplazo</h2>
+    <p class="muted" id="replace-description"></p>
+    <div id="replace-options"></div>
+    <p class="small muted">Alternativas de tu rutina. Ajusta el peso a la nueva variante; no copies automáticamente la carga anterior.</p>
+  </dialog>
+  <dialog id="profile-dialog" aria-labelledby="profile-title">
+    <div class="dialog-head"><p class="eyebrow">TU PERFIL</p><button class="icon-button" type="button" data-close="profile-dialog" aria-label="Cerrar perfil">×</button></div>
+    <h2 id="profile-title">Así se adapta tu ruta</h2>
+    <div id="profile-details"></div>
+    <button class="button dark" id="logout" type="button">Cerrar sesión</button>
+  </dialog>
+  <aside class="rest-timer" id="rest-timer" aria-label="Temporizador de descanso" hidden>
+    <div><span class="eyebrow">DESCANSO</span><strong id="timer-value" role="timer">01:30</strong></div>
+    <div class="timer-actions"><button type="button" id="timer-alert" aria-pressed="false">Activar avisos</button><button type="button" id="timer-add">+30 s</button><button type="button" id="timer-pause">Pausar</button><button class="icon-button" type="button" id="timer-close" aria-label="Cerrar temporizador">×</button></div>
+    <p id="push-status" role="status"></p>
+  </aside>
+  <p class="toast" id="toast" role="status" hidden></p>
+  <div class="sr-only" id="announcer" aria-live="polite"></div>
+  <dialog id="push-help" class="notification-help" aria-labelledby="push-help-title"><div class="dialog-head"><p class="eyebrow">AVISOS DE DESCANSO</p><button class="icon-button" data-close="push-help" type="button" aria-label="Cerrar">×</button></div><h2 id="push-help-title">Entrena sin mirar el reloj.</h2><div id="push-help-text"></div><button id="push-enable" class="button yellow" type="button">Activar notificaciones</button><button id="push-disable" class="text-button" type="button" hidden>Desactivar en este dispositivo</button></dialog>
+  <noscript>Activa JavaScript para entrar a tu Ruta TR4INER.</noscript>
+</body>
+</html>
