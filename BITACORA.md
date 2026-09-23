@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-09-23 — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny
+
+- **Qué (Claude, continúa el QA de Codex):** `bf18533` en `work/ruta-hombres-preview`. Cerrar el descanso sin internet lo cierra en el acto y reintenta la cancelación del aviso al volver la red (antes el reloj quedaba trabado y el aviso llegaba igual); tras recargar, la revisión guardada alcanza para cancelar. Errores de red en español (no más «Failed to fetch»/«Load failed»). «Reiniciar» repite el descanso del ejercicio, no 60 s. Sin aviso remoto confirmado, vibra al terminar con la ruta visible (Android). Tocar la notificación enfoca la ruta sin recargarla si ya está en esa página. La rutina ya no espera al service worker (tope 2,5 s) y pide las semanas 2 y 3 en paralelo, después de la 1, que es la que crea la asignación.
+- **CRM:** `aa8810a` en `work/ruta-drip-paises` guarda el ajuste de reintento por lease que Codex había dejado sin commitear.
+- **Verificación:** 5 tests del repo y sintaxis correctos. Simulador en navegador con servidor falso: 7 casos de temporizador (programar, cerrar sin conexión, reintento al volver, sin resurrección, reinicio con la duración real, vibración solo sin aviso remoto, cierre tras recargar) correctos. Preview Ready `dpl_5QM9SaR8PhuGsCLsgsAgx9v1ADND`; el alias de rama y su enlace compartible permanente responden, `/api/genesis/config` da `ready`/`teamPreview` con analítica y automatizaciones apagadas y la API exige la clave. CRM Ready `dpl_EcnwRYj5YCjZJNT9Kag9BpV1EPZn`. **El recorrido con sesión no se repitió:** la clave del equipo la escribe el usuario (el agente no ingresa contraseñas).
+- **Bunny 403, causa encontrada:** la biblioteca `658343` sólo admite `metodo.tr4iner.com` (y los dominios propios de Bunny) y bloquea peticiones sin referer. Desde el alias de Vercel o `localhost` el reproductor muestra «403 Forbidden» y la miniatura también falla; con referer `metodo.tr4iner.com` el CDN responde 200. No es un fallo del código: hay que agregar el host del alias de rama a los dominios permitidos de la biblioteca en Bunny (lo hace el usuario).
+- **Pendientes:** QA con sesión (clave del equipo), notificaciones en iPhone/Android reales, dominio de Bunny, videos definitivos por ejercicio, temario de mujeres y revisión del CRM como ADMIN. Producción intacta.
+
 ## 2026-09-22 — Ruta: recorrido privado desde registro y avisos Web Push
 
 - **Qué:** `/biblioteca/inicio/` con acceso privado del equipo; registro real en CRM Preview, correo de prueba y sesión independiente. `/biblioteca/videos/` muestra la nueva `/biblioteca/ruta/` solo en Preview. Rutinas, progreso y reemplazos persistidos; PWA y Web Push de descansos.
@@ -363,6 +371,11 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-23` — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny
+- `2026-09-22` — Ruta: recorrido privado desde registro y avisos Web Push
+- `2026-09-22` — Ruta TR4INER: Sheet del entrenador, registro y preview por días
+- `2026-09-17` — Seis rutinas base para principiantes y personas que retoman
+- `2026-09-17` — Preview de Ruta TR4INER para hombres: módulos y rutinas
 - `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
 - `2026-09-08` — Producción verificada: opt-in por edad y cuatro casos
 - `2026-09-08` — Cierre de opt-in por edad y cuatro testimonios para publicación (incluye iteraciones locales)
