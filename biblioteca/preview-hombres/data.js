@@ -22,7 +22,7 @@
     ] },
     { id: 'cardio', title: 'Cardio / actividad', short: 'Cardio / actividad', description: 'Este módulo forma parte de tu ruta. Su contenido todavía está en preparación.', lessons: [] },
     { id: 'vida-real', title: 'Cómo seguir el plan en tu vida real', short: 'El plan en tu vida real', description: 'La constancia se construye también fuera del entrenamiento.', lessons: [
-      lesson('constancia', 'Cómo ser constante', 'SSz4p9XnEEc')
+      lesson('constancia', 'Cómo ser constante', 'SSZ4p9XnEEc')
     ] }
   ];
   window.RutaPreviewData = {

@@ -53,11 +53,11 @@
         lessons:m.contents.map(c=>({id:c.id,title:c.title,youtubeId:c.youtubeId,status:c.description?.includes('provisional')?'preview':'ready',routine:c.slug==='ruta-rutina-intro'}))}))
     };
     async function script(src) { return new Promise((resolve,reject)=>{const el=document.createElement('script');el.src=src;el.onload=resolve;el.onerror=()=>reject(new Error('No se pudo cargar la ruta. Recarga la página.'));document.head.append(el);}); }
-    await script('/biblioteca/ruta/push.js?v=20260923-stage2');
+    await script('/biblioteca/ruta/push.js?v=20260923-stage3');
     // Los avisos son un extra: si el service worker o el CRM tardan, la rutina se
     // muestra igual y el temporizador sigue funcionando con la ruta abierta.
     await Promise.race([window.RutaPush.ready, new Promise(resolve=>setTimeout(resolve,2500))]);
-    await script('/biblioteca/ruta/app.js?v=20260923-stage2');
+    await script('/biblioteca/ruta/app.js?v=20260923-stage3');
   } catch(error) {
     const p=document.createElement('p');p.className='member-loading';p.textContent=error.message;main.replaceChildren(p);
     const link=document.createElement('a');link.href='/biblioteca/inicio/';link.className='button dark';link.textContent='Volver al inicio';main.append(link);
