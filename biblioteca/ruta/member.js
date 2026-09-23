@@ -5,10 +5,15 @@
   let version = 0, pending = Promise.resolve();
   const state = { members: {}, routines: {}, completed: {}, lessons: {} };
   async function api(path, options) {
-    const response = await fetch('/api/genesis/' + path, {credentials:'same-origin',cache:'no-store',...options});
-    const data = await response.json();
+    let response, data = null;
+    try { response = await fetch('/api/genesis/' + path, {credentials:'same-origin',cache:'no-store',...options}); }
+    catch (_) {
+      // Sin esto el miembro leía «Failed to fetch» o «Load failed» en pleno gimnasio.
+      const error = new Error('Sin conexión. Revisa tu internet e inténtalo de nuevo.'); error.network = true; throw error;
+    }
+    try { data = await response.json(); } catch (_) { /* Un timeout de Vercel responde HTML, no JSON. */ }
     if (response.status === 401) { location.replace('/biblioteca/acceso/'); throw new Error('Vuelve a entrar a tu ruta.'); }
-    if (!response.ok) { const error = new Error(data.error || 'No se pudo guardar. Inténtalo de nuevo.'); error.status=response.status; throw error; }
+    if (!response.ok || !data) { const error = new Error(data?.error || 'No se pudo completar. Inténtalo de nuevo.'); error.status=response.status; throw error; }
     return data;
   }
   function accept(data) {
@@ -37,8 +42,10 @@
   };
   try {
     const [first,catalog] = await Promise.all([api('workout?week=0'),api('catalog')]);
+    // La semana 0 crea la asignación en el primer acceso; recién después se piden
+    // las otras dos en paralelo, sin carrera sobre esa creación.
     accept(first);
-    for (const week of [1,2]) accept(await api('workout?week='+week));
+    (await Promise.all([1,2].map(week=>api('workout?week='+week)))).forEach(accept);
     window.RutaPreviewData = {
       members:state.members,ageLabels:{'18-25':'18 a 25 años','26-35':'26 a 35 años','36+':'36 años en adelante'},
       makeRoutine(){throw new Error('La rutina asignada no está disponible.');},
@@ -46,9 +53,11 @@
         lessons:m.contents.map(c=>({id:c.id,title:c.title,youtubeId:c.youtubeId,status:c.description?.includes('provisional')?'preview':'ready',routine:c.slug==='ruta-rutina-intro'}))}))
     };
     async function script(src) { return new Promise((resolve,reject)=>{const el=document.createElement('script');el.src=src;el.onload=resolve;el.onerror=()=>reject(new Error('No se pudo cargar la ruta. Recarga la página.'));document.head.append(el);}); }
-    await script('/biblioteca/ruta/push.js?v=20260922-stage1');
-    await window.RutaPush.ready;
-    await script('/biblioteca/ruta/app.js?v=20260922-stage1');
+    await script('/biblioteca/ruta/push.js?v=20260923-stage2');
+    // Los avisos son un extra: si el service worker o el CRM tardan, la rutina se
+    // muestra igual y el temporizador sigue funcionando con la ruta abierta.
+    await Promise.race([window.RutaPush.ready, new Promise(resolve=>setTimeout(resolve,2500))]);
+    await script('/biblioteca/ruta/app.js?v=20260923-stage2');
   } catch(error) {
     const p=document.createElement('p');p.className='member-loading';p.textContent=error.message;main.replaceChildren(p);
     const link=document.createElement('a');link.href='/biblioteca/inicio/';link.className='button dark';link.textContent='Volver al inicio';main.append(link);

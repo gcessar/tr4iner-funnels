@@ -6,6 +6,15 @@
   let dismissed=[];
   try {const saved=JSON.parse(sessionStorage.getItem(key+'_dismissed'));if(Array.isArray(saved))dismissed=saved.filter(id=>typeof id==='string').slice(-30);}catch(_){}
   function dismiss(id) {if(!id)return;dismissed=[...dismissed.filter(item=>item!==id),id].slice(-30);try{sessionStorage.setItem(key+'_dismissed',JSON.stringify(dismissed));}catch(_){} }
+  // Cerrar el descanso sin internet no puede depender del servidor: el reloj se
+  // cierra en el acto y la cancelación del aviso se reintenta al volver la red.
+  let pendingCancel=null;
+  try {const saved=JSON.parse(sessionStorage.getItem(key+'_cancel'));if(saved&&typeof saved.id==='string'&&Number.isInteger(saved.revision))pendingCancel=saved;}catch(_){}
+  function setPendingCancel(value) {pendingCancel=value;try{if(value)sessionStorage.setItem(key+'_cancel',JSON.stringify(value));else sessionStorage.removeItem(key+'_cancel');}catch(_){} }
+  // «Reiniciar» repite el descanso del ejercicio, no un minuto fijo.
+  let lastSeconds=60;
+  try {const saved=Number(sessionStorage.getItem(key+'_seconds'));if(Number.isInteger(saved)&&saved>=1&&saved<=600)lastSeconds=saved;}catch(_){}
+  function notify(text) {const el=$('toast');el.textContent=text;el.hidden=false;clearTimeout(notify.timeout);notify.timeout=setTimeout(()=>{el.hidden=true;},6000);}
   const standalone=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
   const ios=()=>/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
   const supported=()=>('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window);
@@ -18,7 +27,13 @@
     if(!local)return;
     const left=remaining();$('timer-value').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
     $('timer-pause').textContent=left?(local.paused?'Continuar':'Pausar'):'Reiniciar';
-    if(!left&&!local.paused) {local.paused=true;local.remaining=0;persist();$('announcer').textContent='Terminó el descanso.';}
+    if(!left&&!local.paused) {
+      const justEnded=Date.now()-local.end<5000;
+      local.paused=true;local.remaining=0;persist();$('announcer').textContent='Terminó el descanso.';
+      // Con un aviso remoto confirmado vibra la notificación. Sin él, al menos vibra
+      // el teléfono que está en la mano (Android; iPhone no expone la vibración).
+      if(justEnded&&!document.hidden&&(!subscriptionId||local.fallback||!local.remoteId)&&navigator.vibrate)navigator.vibrate([200,100,200]);
+    }
   }
   function accept(data) {
     if(data.serverNow)offset=Date.parse(data.serverNow)-Date.now();
@@ -30,7 +45,7 @@
     remote=next;
     if(remote.status==='CANCELLED') {dismiss(remote.id);remote=null;local=null;}
     else if(['SCHEDULED','PAUSED'].includes(remote.status)) {
-      local={end:Date.parse(remote.deadlineAt)-offset,paused:remote.status==='PAUSED',remaining:Math.ceil(remote.remainingMs/1000),remoteId:remote.id,fallback:false};
+      local={end:Date.parse(remote.deadlineAt)-offset,paused:remote.status==='PAUSED',remaining:Math.ceil(remote.remainingMs/1000),remoteId:remote.id,remoteRevision:remote.revision,fallback:false};
     } else if(['FAILED','EXPIRED'].includes(remote.status) && local && remaining()>0) {
       local.fallback=true;local.remoteId=null;dismiss(remote.id);remote=null;
       status('No se confirmó el aviso remoto. El reloj continúa; mantén la ruta abierta.');
@@ -60,6 +75,18 @@
       throw new Error('No se confirmó el aviso remoto. El reloj continúa; mantén la ruta abierta.');
     }
   }
+  async function cancelRemote(target) {
+    try {
+      await api('rest-timer',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:target.id,revision:target.revision,action:'cancel'})});
+      setPendingCancel(null);
+    } catch(error) {
+      // 404/409: el descanso ya terminó o cambió en el servidor; no queda nada que cancelar.
+      if(!error.network){setPendingCancel(null);return;}
+      setPendingCancel(target);
+      notify('Sin conexión: el aviso de este descanso podría llegar igual. Lo cancelaremos al volver internet.');
+    }
+  }
+  function retryCancel() {if(pendingCancel)enqueue(()=>pendingCancel&&cancelRemote(pendingCancel));}
   async function updateRemote(action,seconds) {
     if(!remote || !['SCHEDULED','PAUSED'].includes(remote.status))return;
     try {
@@ -108,7 +135,7 @@
   });
   $('timer-pause').onclick=()=>enqueue(async()=>{
     if(!local)return;
-    if(!remaining()){if(subscriptionId)await startRemote(60);else{local={end:Date.now()+60000,remaining:60,paused:false};persist();paint();}return;}
+    if(!remaining()){if(subscriptionId)await startRemote(lastSeconds);else{local={end:Date.now()+lastSeconds*1000,remaining:lastSeconds,paused:false,remoteId:null,fallback:false};persist();paint();}return;}
     if(subscriptionId&&remote)await updateRemote(local.paused?'resume':'pause');
     else {if(local.paused){local.end=Date.now()+local.remaining*1000;local.paused=false;}else{local.remaining=remaining();local.paused=true;}persist();paint();}
   });
@@ -127,10 +154,20 @@
     } catch(error) {status('Los avisos no están disponibles por ahora. El reloj sigue funcionando con la ruta abierta.');}
   })();
   window.RutaPush={ready,start(seconds,button){return enqueue(async()=>{
-    trigger=button;
+    trigger=button;lastSeconds=seconds;try{sessionStorage.setItem(key+'_seconds',String(seconds));}catch(_){}
     if(subscriptionId)await startRemote(seconds);
     else{dismiss(remote?.id);remote=null;local={end:Date.now()+seconds*1000,remaining:seconds,paused:false,remoteId:null,fallback:false};persist();paint();status('Activa los avisos para recibir la notificación con la pantalla bloqueada.');}
-  });},cancel(){return enqueue(async()=>{const id=remote?.id||local?.remoteId;if(remote)await updateRemote('cancel');dismiss(id);remote=null;local=null;persist();paint();if(trigger?.isConnected)trigger.focus({preventScroll:true});});},disable};
+  });},cancel(){return enqueue(async()=>{
+    // Tras recargar, el reloj guardado puede cerrarse antes de volver a leer el
+    // servidor: su revisión guardada alcanza para cancelar el aviso igual.
+    const target=remote&&['SCHEDULED','PAUSED'].includes(remote.status)?{id:remote.id,revision:remote.revision}:
+      local?.remoteId&&!local.fallback&&Number.isInteger(local.remoteRevision)&&remaining()>0?{id:local.remoteId,revision:local.remoteRevision}:null;
+    dismiss(remote?.id||local?.remoteId);remote=null;local=null;persist();paint();
+    if(trigger?.isConnected)trigger.focus({preventScroll:true});
+    if(target)await cancelRemote(target);
+  });},disable};
   setInterval(paint,250);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden){paint();if(subscriptionId)enqueue(async()=>{const data=await api('rest-timer?subscriptionId='+encodeURIComponent(subscriptionId));if(data.timer)accept(data);});}});
+  window.addEventListener('online',retryCancel);
+  retryCancel();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){paint();retryCancel();if(subscriptionId)enqueue(async()=>{const data=await api('rest-timer?subscriptionId='+encodeURIComponent(subscriptionId));if(data.timer)accept(data);});}});
 })();

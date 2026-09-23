@@ -203,6 +203,10 @@
   function stopTimer() { window.RutaPush.cancel(); }
   window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
   window.addEventListener('popstate', () => { if (dirty && !guardChanges()) { history.pushState({}, '', location.pathname + '?' + params.toString()); return; } dirty = false; render(); });
-  document.getElementById('logout').onclick = async () => { await window.RutaPush.disable(); await fetch('/api/genesis/logout',{method:'POST'}); location.href='/biblioteca/inicio/'; };
+  document.getElementById('logout').onclick = async () => {
+    try { await window.RutaPush.disable(); } catch (_) { /* Un aviso sin cancelar no debe impedir cerrar la sesión. */ }
+    try { await fetch('/api/genesis/logout',{method:'POST'}); location.href='/biblioteca/inicio/'; }
+    catch (_) { toast('Sin conexión. Revisa tu internet para cerrar sesión.'); }
+  };
   render();
 })();

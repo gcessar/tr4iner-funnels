@@ -18,7 +18,15 @@ self.addEventListener('notificationclick',event=>{
   if(target.origin!==self.location.origin)return;
   event.waitUntil((async()=>{
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-    for(const client of windows){if(new URL(client.url).pathname.startsWith('/biblioteca/')){await client.navigate(target.href);return client.focus();}}
+    for(const client of windows){
+      const url=new URL(client.url);
+      if(!url.pathname.startsWith('/biblioteca/'))continue;
+      // Primero el foco, mientras dura el permiso del toque. Si ya está en la rutina
+      // no se recarga: el miembro perdería la ficha del ejercicio que tenía abierta.
+      const focused=await client.focus().catch(()=>client);
+      if(url.pathname+url.search!==target.pathname+target.search){try{await focused.navigate(target.href);}catch(_){}}
+      return;
+    }
     return self.clients.openWindow(target.href);
   })());
 });
