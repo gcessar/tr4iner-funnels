@@ -5,7 +5,7 @@
 - **Qué:** `/biblioteca/inicio/` con acceso privado del equipo; registro real en CRM Preview, correo de prueba y sesión independiente. `/biblioteca/videos/` muestra la nueva `/biblioteca/ruta/` solo en Preview. Rutinas, progreso y reemplazos persistidos; PWA y Web Push de descansos.
 - **Aislamiento:** middleware firmado, clave exclusiva de rama, proxy al CRM Preview con bypass solo servidor, n8n/GTM/Meta apagados y CSP de respaldo. Enlace de rama estable para mantener el origen de la app instalada; manifest con share específico de esa rama, sin bypass global del proyecto.
 - **Impacto KPI:** pruebas no generan registros ni eventos productivos. Caso de Estudio conserva su split y páginas.
-- **Verificación:** 5 tests de datos/puerta privada y sintaxis inline correctos; 56 tests + build del CRM. Deploy Ready y QA del flujo pendientes de añadir tras verificación.
+- **Verificación:** 5 tests de datos/puerta privada y sintaxis inline correctos; 56 tests + build del CRM. Primer Preview Ready `dpl_7vVFBVNJgCajuJUvPfhCzcs6tbLF` (`ec9c92a`): puerta privada, registro y confirmación reales comprobados. QA detectó rewrite incompatible con cleanUrls, corregido a `/biblioteca/ruta/`; se oculta ayuda de correo real en staging. Temporizador mantiene reloj local si falla red y no reabre avisos descartados. QA completo en curso.
 - **Pendiente externo:** validar entrega y ajustes de notificaciones en iPhone y Android reales, y mapear demostraciones Bunny. No se publica producción.
 
 

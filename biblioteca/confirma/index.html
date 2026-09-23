@@ -591,7 +591,7 @@
       if (window.TR4_RUNTIME.teamPreview) {
         document.getElementById('entrega-mail').textContent = 'Entorno de equipo: no se envían correos ni WhatsApp. Abre el correo de prueba para confirmar tu cuenta y empezar tu ruta.';
         document.querySelector('.mail-toolbar small').textContent = 'Correo de prueba · solo visible en este entorno';
-        document.querySelector('.confirm-help').hidden = true;
+        document.querySelector('.confirm-help').style.display = 'none';
         var link = sessionStorage.getItem('tr4_preview_access_link');
         if (link) {
           try { var target = new URL(link); if (target.origin === location.origin) {

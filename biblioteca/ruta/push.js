@@ -3,6 +3,9 @@
   const api=window.RutaMember.api, $=id=>document.getElementById(id);
   const key='tr4_rest_member_'+window.RutaMember.id;
   let config, registration, subscriptionId=null, remote=null, local=null, queue=Promise.resolve(), offset=0, trigger;
+  let dismissed=[];
+  try {const saved=JSON.parse(sessionStorage.getItem(key+'_dismissed'));if(Array.isArray(saved))dismissed=saved.filter(id=>typeof id==='string').slice(-30);}catch(_){}
+  function dismiss(id) {if(!id)return;dismissed=[...dismissed.filter(item=>item!==id),id].slice(-30);try{sessionStorage.setItem(key+'_dismissed',JSON.stringify(dismissed));}catch(_){} }
   const standalone=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
   const ios=()=>/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
   const supported=()=>('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window);
@@ -19,10 +22,19 @@
   }
   function accept(data) {
     if(data.serverNow)offset=Date.parse(data.serverNow)-Date.now();
-    remote=data.timer;
-    if(remote && ['SCHEDULED','PAUSED'].includes(remote.status)) {
-      local={end:Date.parse(remote.deadlineAt)-offset,paused:remote.status==='PAUSED',remaining:Math.ceil(remote.remainingMs/1000)};
-    } else if(remote) { local={end:Date.now(),paused:true,remaining:0}; }
+    const next=data.timer;
+    if(!next)return;
+    if(dismissed.includes(next.id)){if(remote?.id===next.id)remote=null;return;}
+    // Una respuesta tardía de un intento fallido no debe apagar el reloj local.
+    if(local?.fallback && local.remoteId!==next.id)return;
+    remote=next;
+    if(remote.status==='CANCELLED') {dismiss(remote.id);remote=null;local=null;}
+    else if(['SCHEDULED','PAUSED'].includes(remote.status)) {
+      local={end:Date.parse(remote.deadlineAt)-offset,paused:remote.status==='PAUSED',remaining:Math.ceil(remote.remainingMs/1000),remoteId:remote.id,fallback:false};
+    } else if(['FAILED','EXPIRED'].includes(remote.status) && local && remaining()>0) {
+      local.fallback=true;local.remoteId=null;dismiss(remote.id);remote=null;
+      status('No se confirmó el aviso remoto. El reloj continúa; mantén la ruta abierta.');
+    } else {local={end:Date.now(),paused:true,remaining:0,remoteId:remote.id,fallback:false};}
     persist();paint();
   }
   function refreshButton() {
@@ -34,8 +46,19 @@
     const data=await api('push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:sub.toJSON()})});subscriptionId=data.subscriptionId;refreshButton();
   }
   async function startRemote(seconds) {
-    const data=await api('rest-timer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscriptionId,clientId:crypto.randomUUID(),seconds,label:'Terminó tu descanso. Puedes continuar con tu siguiente serie.',path:location.pathname+location.search})});
-    accept(data);status('Aviso programado. Puedes bloquear la pantalla.');
+    // El reloj responde al toque aunque el móvil pierda internet en el gimnasio.
+    dismiss(remote?.id);remote=null;
+    local={end:Date.now()+seconds*1000,remaining:seconds,paused:false,remoteId:null,fallback:false};persist();paint();
+    status('Programando aviso…');
+    try {
+      const data=await api('rest-timer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscriptionId,clientId:crypto.randomUUID(),seconds,label:'Terminó tu descanso. Puedes continuar con tu siguiente serie.',path:location.pathname+location.search})});
+      accept(data);
+      if(remote?.status==='SCHEDULED')status('Aviso programado. Puedes bloquear la pantalla.');
+      else status('No se confirmó el aviso remoto. Mantén la ruta abierta para ver el reloj.');
+    }catch(error){
+      local.fallback=true;persist();paint();
+      throw new Error('No se confirmó el aviso remoto. El reloj continúa; mantén la ruta abierta.');
+    }
   }
   async function updateRemote(action,seconds) {
     if(!remote || !['SCHEDULED','PAUSED'].includes(remote.status))return;
@@ -105,9 +128,9 @@
   })();
   window.RutaPush={ready,start(seconds,button){return enqueue(async()=>{
     trigger=button;
-    if(subscriptionId){status('Programando aviso…');await startRemote(seconds);}
-    else{remote=null;local={end:Date.now()+seconds*1000,remaining:seconds,paused:false};persist();paint();status('Activa los avisos para recibir la notificación con la pantalla bloqueada.');}
-  });},cancel(){return enqueue(async()=>{if(remote)await updateRemote('cancel');remote=null;local=null;persist();paint();if(trigger?.isConnected)trigger.focus({preventScroll:true});});},disable};
+    if(subscriptionId)await startRemote(seconds);
+    else{dismiss(remote?.id);remote=null;local={end:Date.now()+seconds*1000,remaining:seconds,paused:false,remoteId:null,fallback:false};persist();paint();status('Activa los avisos para recibir la notificación con la pantalla bloqueada.');}
+  });},cancel(){return enqueue(async()=>{const id=remote?.id||local?.remoteId;if(remote)await updateRemote('cancel');dismiss(id);remote=null;local=null;persist();paint();if(trigger?.isConnected)trigger.focus({preventScroll:true});});},disable};
   setInterval(paint,250);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){paint();if(subscriptionId)enqueue(async()=>{const data=await api('rest-timer?subscriptionId='+encodeURIComponent(subscriptionId));if(data.timer)accept(data);});}});
 })();

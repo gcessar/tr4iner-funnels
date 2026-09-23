@@ -43,7 +43,7 @@ async function bibliotecaPreview(req: Request, url: URL) {
     return privatePreview(new Response(null, { status: 303, headers: { Location: login.toString() } }));
   }
   if (/^\/biblioteca\/videos(?:\/index(?:\.html)?)?$/.test(path)) {
-    const route = new URL("/biblioteca/ruta/index.html", url);
+    const route = new URL("/biblioteca/ruta/", url);
     route.search = url.search;
     return privatePreview(rewrite(route));
   }
