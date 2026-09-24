@@ -67,6 +67,11 @@
     })();
   </script>
 
+  <!-- VARIANTE `INL` del test `med_form_202609`, servida por rewrite bajo /medicos
+       (ver middleware.ts). Idéntica a medicos/index.html salvo el bloque
+       «Brazo INL» del CSS y `setupInlineRegistration` del JS: el formulario queda a
+       la vista en el celular en vez de vivir en un modal. Al editar la landing
+       mientras corre el test, TOCAR LAS DOS PÁGINAS. -->
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0B1217" />
   <title>TR4INER para médicos | Caso real de Flor de María</title>
@@ -1253,6 +1258,43 @@
       .hero-video-toggle { display: none !important; }
     }
 
+    /* ── Brazo INL ──────────────────────────────────────────────────────────
+       En el celular el formulario deja de ser un modal y queda a la vista,
+       justo debajo de la foto de Flor. `display: contents` disuelve la columna
+       de copia dentro de la grilla del hero, así el formulario se ordena ENTRE
+       sus hijos sin mover nada con JS (moverlo después de pintar produciría un
+       salto visible, que por sí solo ya cambia la conversión). */
+    @media (max-width: 640px) {
+      .hero-inner {
+        grid-template-areas: none;
+        row-gap: 0;
+      }
+
+      .hero-copy { display: contents; }
+
+      .registration-panel {
+        position: relative;
+        z-index: auto;
+        inset: auto;
+        grid-area: auto;
+        order: 1;
+        max-height: none;
+        margin: 24px 0 0;
+        overflow: visible;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+      }
+
+      .hero-copy .lead,
+      .hero-registration-button,
+      .service-line { order: 2; }
+
+      .registration-close,
+      .registration-modal-backdrop { display: none; }
+    }
+
     @media (max-width: 374px) {
       .hero-copy h1 { font-size: 39px; }
       .registration-panel { padding-inline: 17px; }
@@ -1512,104 +1554,26 @@
 
       setupHeroVideo();
 
-      (function setupMobileRegistrationModal() {
-        var media = window.matchMedia("(max-width: 640px)");
+      (function setupInlineRegistration() {
+        // Brazo INL: el formulario ya está a la vista, así que el play falso y
+        // «Ver el caso completo» llevan hasta él en lugar de abrir un modal.
         var panel = document.getElementById("registro");
-        var backdrop = document.getElementById("registration-modal-backdrop");
-        var home = document.getElementById("registration-home");
-        var closeButton = document.getElementById("registration-close");
+        var nombre = document.getElementById("nombre");
         var triggers = document.querySelectorAll(".registration-popup-trigger");
-        var activeTrigger = null;
-        if (!panel || !backdrop || !home || !closeButton || !triggers.length) return;
-
-        function moveModalToBody() {
-          if (panel.parentNode === document.body) return;
-          document.body.appendChild(backdrop);
-          document.body.appendChild(panel);
-        }
-
-        function restoreModalHome() {
-          if (panel.parentNode !== document.body) return;
-          home.insertAdjacentElement("afterend", backdrop);
-          backdrop.insertAdjacentElement("afterend", panel);
-        }
-
-        function setMobileState() {
-          if (media.matches) {
-            // Fuera del hero, el overflow cinematográfico ya no puede recortar el modal.
-            moveModalToBody();
-            if (!panel.classList.contains("is-open")) panel.setAttribute("aria-hidden", "true");
-            return;
-          }
-
-          document.body.classList.remove("registration-modal-open");
-          panel.classList.remove("is-open");
-          backdrop.classList.remove("is-open");
-          panel.removeAttribute("role");
-          panel.removeAttribute("aria-modal");
-          panel.removeAttribute("aria-hidden");
-          restoreModalHome();
-        }
-
-        function openModal(source, trigger) {
-          if (!media.matches) return;
-          activeTrigger = trigger;
-          document.body.classList.add("registration-modal-open");
-          panel.classList.add("is-open");
-          backdrop.classList.add("is-open");
-          panel.setAttribute("role", "dialog");
-          panel.setAttribute("aria-modal", "true");
-          panel.removeAttribute("aria-hidden");
-          pushEvent("medicos_registration_modal_open", {
-            funnel_name: "medicos",
-            source: source
-          });
-          window.setTimeout(function () { closeButton.focus(); }, 150);
-        }
-
-        function closeModal() {
-          if (!media.matches || !panel.classList.contains("is-open")) return;
-          document.body.classList.remove("registration-modal-open");
-          panel.classList.remove("is-open");
-          backdrop.classList.remove("is-open");
-          panel.setAttribute("aria-hidden", "true");
-          panel.removeAttribute("role");
-          panel.removeAttribute("aria-modal");
-          if (activeTrigger) activeTrigger.focus();
-        }
+        if (!panel || !nombre || !triggers.length) return;
 
         Array.prototype.forEach.call(triggers, function (trigger) {
+          trigger.removeAttribute("aria-haspopup");
           trigger.addEventListener("click", function () {
-            openModal(trigger.getAttribute("data-popup-source") || "unknown", trigger);
+            var instant = reduceMotion.matches;
+            panel.scrollIntoView({ behavior: instant ? "auto" : "smooth", block: "start" });
+            window.setTimeout(function () { nombre.focus({ preventScroll: true }); }, instant ? 0 : 350);
+            pushEvent("medicos_registration_form_focus", {
+              funnel_name: "medicos",
+              source: trigger.getAttribute("data-popup-source") || "unknown"
+            });
           });
         });
-
-        backdrop.addEventListener("click", closeModal);
-        closeButton.addEventListener("click", closeModal);
-
-        panel.addEventListener("keydown", function (event) {
-          if (event.key === "Escape") {
-            closeModal();
-            return;
-          }
-          if (event.key !== "Tab") return;
-
-          var focusable = panel.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]');
-          if (!focusable.length) return;
-          var first = focusable[0];
-          var last = focusable[focusable.length - 1];
-          if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-          } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-          }
-        });
-
-        if (media.addEventListener) media.addEventListener("change", setMobileState);
-        else media.addListener(setMobileState);
-        setMobileState();
       })();
 
       (function setupRegistration() {

@@ -47,7 +47,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 |---|---|
 | `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite) y **control `RES`** del test de hero. Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. |
 | `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
-| `middleware.ts` | Split 50/50 en el edge para el test de hero. Rewrite (nunca redirect), cookie `ab_hero` de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
+| `middleware.ts` | Split 50/50 en el edge para **dos** tests independientes: hero de `/casos-de-estudio` (cookie `ab_hero`) y formulario de `/medicos` (cookie `ab_med`, despachado antes). Rewrite (nunca redirect), cookies de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
 | `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
 | `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. El carrusel de Flor/Rosita/Andrea y los tres perfiles son **la misma selección**: el caso activo decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Diseño propio en Poppins sobre crema `#FDF6F0` con acento durazno `#E8B48F`. |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
@@ -63,6 +63,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
 | `biblioteca/` | Videoteca / recursos. |
 | `medicos/index.html` | Landing completa de **Médicos / Guardias** (`/medicos/`), con relato de 24 horas y Calendly diferido. |
+| `medicos/formulario-visible.html` | **Retador `INL`** del test de formulario: idéntico a `medicos/index.html` salvo que en el celular el formulario queda a la vista en vez de vivir en un modal. `noindex`; se sirve por rewrite bajo `/medicos`. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
 | `fit4/index.html`, `fit4-va/index.html` | VSL FIT4 públicas de Anthoni/compatibilidad y Veronika. La ruta VA siempre carga su video y eventos propios. |
 | `assets/va/` | Imagen del caso y tema compartido de Veronika. Usa Montserrat 900/300; no publicar los archivos Mont DEMO. |
@@ -154,6 +155,20 @@ no se testea** — se publica directo o se propone algo más grande.
 
 Criterio completo en la entrada del 10-sep de `BITACORA.md`; método en lenguaje llano en
 [`docs/protocolo-ab.md`](docs/protocolo-ab.md).
+
+**Al 24-sep-2026 CORRE además el test de FORMULARIO en `/medicos`** (`med_form_202609`), sólo
+tráfico pago y en el mismo `middleware.ts` (Vercel admite uno solo por proyecto):
+
+| Brazo | Archivo | En el celular |
+|---|---|---|
+| `MOD` (control) | `medicos/index.html` | el formulario vive en un modal que abre el play falso |
+| `INL` (retador) | `medicos/formulario-visible.html` | el formulario está a la vista, debajo de la foto |
+
+Cookie `ab_med`, evento `med_form_exposure_mod|inl`. Es independiente del test de hero: cada
+uno lee sólo su cookie. **Mientras corre: tocar SIEMPRE las dos páginas de médicos** (son
+idénticas salvo el bloque «Brazo INL» del CSS y `setupInlineRegistration` del JS). Los
+retadores de hook de la campaña MEDICOS sí se pueden apagar a las 72 h: el reparto es por
+visitante y los dos brazos ven la misma mezcla. Criterio en `BITACORA.md`, entrada del 24-sep.
 
 `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin ruta**:
 revertir es cambiar una línea, no restaurar archivos.
