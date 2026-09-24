@@ -86,6 +86,22 @@ Mismo protocolo que el test de hero (entrada del 10-sep):
 - Visita orgánica con la cookie del otro test (`ab_hero=MET`): cero exposiciones de médicos y
   `variant` vacío.
 
+### Publicación
+
+- **Aprobado por el usuario el 24-sep** («publica el test y enciende la campaña»). Merge `8cfa28c` en
+  `main`; deployment de Production `success` (GitHub deployment `6649130180`,
+  `tr4iner-funnels-kkzbhen3l-metodotr4iners-projects.vercel.app`).
+- **Verificado en `metodo.tr4iner.com`** con `curl` (no ejecuta JS, así que no genera exposiciones ni
+  opt-ins): 40 visitas pagas nuevas → 16 `MOD` / 24 `INL`, cookie y página coinciden siempre; cookie
+  existente respetada; orgánico al control sin cookie; la URL queda `/medicos` (rewrite); la variante
+  sale `noindex` con canonical a `/medicos`. Test de hero en paralelo: 30 visitas → 15 `RES` / 15 `MET`,
+  ninguna toca `ab_med`.
+- **Día 0 = 24-sep 17:07 Lima**, cuando se encendió la campaña MEDICOS con 7 conjuntos a $15/día (los
+  3 campeones HOO1 + 4 retadores de hook). Primer día completo: 25-sep. **D+7 = 1-oct**.
+- La verificación en el Preview no fue posible: está detrás del login de Vercel y el conector no tiene
+  acceso al equipo. Se reemplazó por la ejecución del middleware real con `@vercel/edge` sobre 2.000
+  visitas simuladas por ruta (51/49 en `/medicos`, 49/51 en `/casos-de-estudio`) antes del merge.
+
 ### Resultado medido (completar a D+7)
 
 ...
