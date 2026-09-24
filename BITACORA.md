@@ -13,6 +13,83 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-24 — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
+
+Rama `work/medicos-ab-formulario`. Test `med_form_202609`, sólo tráfico pago. No toca nada del
+funnel de Caso de Estudio: el test de hero sigue en el mismo `middleware.ts` con su código
+textualmente igual, y la ruta de médicos se despacha antes de llegar a él.
+
+### Qué cambió
+
+| Brazo | Archivo | En el celular |
+|---|---|---|
+| `MOD` (control) | `medicos/index.html` | el formulario vive en un modal: se abre al tocar el play falso o «Ver el caso completo de Flor» |
+| `INL` (retador) | `medicos/formulario-visible.html` | el formulario está a la vista, **debajo de la foto de Flor**; el play y el botón bajan hasta él y enfocan el nombre |
+
+- **`middleware.ts`**: matcher `["/casos-de-estudio", "/medicos", "/medicos/"]`. `/medicos` va a
+  `testMedicos()` —cookie `ab_med` de 180 días, 50/50, rewrite a `/medicos/formulario-visible`
+  para `INL`— y el resto sigue al test de hero sin cambios.
+- **Los dos archivos** emiten `med_form_exposure_mod|inl` (GA4, `experiment_id:
+  med_form_202609`) con un bloque idéntico byte a byte, y mandan el brazo en `variant` al CRM
+  (`/api/optin`), al webhook de n8n y a `/testimonio-flor` → hidden `variant` del Typeform.
+- **`variant` sale de la cookie `ab_med`**, nunca de `ab_hero` ni de las cookies viejas: una
+  visitante que pasó por las dos landings reportaría el brazo del otro test.
+- **El retador se arma sin mover nada con JS:** en ≤640 px la columna de copia pasa a
+  `display: contents` y el formulario se ordena entre sus hijos con `order`. Mover el nodo
+  después de pintar produciría un salto visible, que ya cambia la conversión por sí solo.
+- **Escritorio es idéntico en los dos brazos** (el formulario ya estaba a la vista): medido,
+  misma posición y tamaño de título, panel, campos y botón. Es el 1% del tráfico.
+- Etiquetas nuevas: `MOD`/`INL` no aparecen nunca en `OptIn.variant` (hay VA, RES, MET, A, B y
+  C), y los 242 opt-ins históricos de médicos tienen la columna vacía.
+- Peso: 63.079 contra 61.791 bytes. El retador pierde el JS del modal y suma el CSS nuevo; un
+  2% del HTML, despreciable frente a las imágenes del hero.
+
+### Por qué
+
+El 98,9% del tráfico de `/medicos` es móvil (GA4, 29-ago → 24-sep) y ahí **la primera pantalla
+no tiene formulario**. Registró 13,0% de las visitas (236 de 1.809) contra ~21,6% de
+`/casos-de-estudio`, que lo muestra de entrada. Esa comparación no prueba nada —mezcla páginas,
+anuncios y audiencias—, y el modal fue una decisión deliberada del 25-ago. Además la campaña
+MEDICOS ya cerró en ROAS Real 2,33x con esta página, así que no se cambia a ciegas: se testea.
+
+### Criterio — declarado ANTES de ver datos
+
+Mismo protocolo que el test de hero (entrada del 10-sep):
+
+| Rol | Métrica | Umbral | Cuándo |
+|---|---|---|---|
+| **Decide** | tasa de registro = opt-ins con `variant` ÷ usuarios con exposición | p < 0,05 | D+7 |
+| **Guardarraíl** | respuestas de Typeform ÷ exposiciones | `INL` no cae más de 20% | D+7 |
+| **Ratificación** | % que declara $300-600 y agendas del ganador | si caen, se revierte | D+30 |
+
+- **Empate = se queda el control.** Si a D+7 no hay diferencia significativa, `MOD` se queda.
+- **Muestra:** con la campaña a $105/día (~296 visitas pagas/día) son ~1.000 visitas por brazo a
+  D+7, que detectan una suba relativa de ~34% o más. La hipótesis es mayor (13% → ~20%); un
+  efecto más chico que eso no justifica testear, se decide por diseño.
+- **La campaña cambia durante el test, y está previsto:** los retadores de hook que arrancan el
+  mismo día se leen a las 72 h y se apagan los perdedores. El reparto es por visitante en la
+  landing, así que los dos brazos ven la misma mezcla de anuncios en todo momento y la
+  comparación sigue siendo válida. Lo que **no** se puede durante el test: editar una sola de
+  las dos páginas, o apagar la campaña entera.
+- **Intención de tratar:** dentro del test no se usa first ni last touch; manda el brazo
+  asignado.
+
+### Verificación (local, antes de subir)
+
+- `INL` a 375 px: el panel empieza en la primera pantalla (y=626 de 812) y el primer campo
+  queda 70 px debajo del borde. El play baja al formulario, enfoca el nombre, no abre modal y
+  emite `medicos_registration_form_focus`. Cero errores de consola.
+- `MOD` a 375 px: el modal sigue oculto al cargar y abre con el play, como hasta hoy.
+- Payload interceptado en el navegador (no salió nada a producción): con `ab_med=INL` los dos
+  envíos llevan `variant: "INL"`, `funnel: "medicos"` y el `utm_term`; con `MOD`, `"MOD"`. El
+  redirect a `/testimonio-flor` conserva `variant`, las UTMs y el `@` literal.
+- Visita orgánica con la cookie del otro test (`ab_hero=MET`): cero exposiciones de médicos y
+  `variant` vacío.
+
+### Resultado medido (completar a D+7)
+
+...
+
 ## 2026-09-20 — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
 
 Rama `work/testimonio-andrea-va`. Rediseño completo de la landing VA sobre el prototipo que
@@ -666,6 +743,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-24` — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
 - `2026-09-20` — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
 - `2026-09-19` — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
 - `2026-09-19` — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
