@@ -51,7 +51,7 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#FCF5EE" />
+  <meta name="theme-color" content="#FDF6F0" />
   <title>Por qué vuelves al mismo punto · Caso de Andrea | Veronika Alvarado</title>
   <meta name="description" content="Haces dieta, entrenas y bajas de peso, pero terminas volviendo al mismo punto. Mira el caso de Andrea y entiende qué necesitas revisar para que esta vez sea diferente." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-andrea-va" />
@@ -68,440 +68,290 @@
   <meta property="og:image:alt" content="Veronika Alvarado presentando el caso de Andrea" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- Las dos familias del above-the-fold. JetBrains Mono sólo aparece dentro
-       del modal, así que no compite por ancho de banda en el primer render. -->
-  <link rel="preload" href="/assets/fonts/anton-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/assets/fonts/outfit-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
+  <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
 
   <style>
-    /* Fuentes self-hosted: evitan el encadenamiento fonts.googleapis.com -> fonts.gstatic.com.
-       Outfit y JetBrains Mono son variables; el rango declarado tiene que cubrir los pesos que
-       usa el diseño (300 de cuerpo incluido) o el navegador los recorta al extremo más cercano. */
-    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-    @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(/assets/fonts/anton-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-    @font-face{font-family:'Outfit';font-style:normal;font-weight:100 900;font-display:swap;src:url(/assets/fonts/outfit-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-    @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face {
+      font-family: "Lora";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/lora-normal-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Lora";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/lora-normal-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
 
+    /* Paleta «Vino crema» (25-sep): la misma de la landing y las VSL de
+       Veronika. Estas dos páginas no tenían diseño propio en el exporte; se
+       armaron con las piezas de esas cuatro. */
     :root {
-      /* Paleta aprobada el 19-sep: fondo crema, tinta casi negra y un acento
-         tan plano que reemplaza al degradado guinda -> naranja. */
-      --bg: #fcf5ee;
-      --ink: #141414;
-      --body-ink: #403f3f;
-      --muted: #8f8e8d;
-      --tan: #c68961;
-      --tan-deep: #a96a45;
-      --tan-soft: #ddb08d;
-      --error: #b4402f;
-      --panel-a: #f1e8de;
-      --panel-b: #e6d9cc;
-      --card-a: #fffcf8;
-      --card-b: #f6ece2;
-      --line: rgba(64, 63, 63, .10);
-      --line-strong: rgba(64, 63, 63, .16);
-      --display: "Anton", Impact, "Arial Narrow", sans-serif;
-      --body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-      --gutter: clamp(18px, 5vw, 24px);
-      --radius: 24px;
+      --bg: #FDF6F0;
+      --panel: #FFFFFF;
+      --ink: #000000;
+      --vino: #7C2D3C;
+      --muted: #6B6B6B;
+      --soft: #F6ECE4;
+      --line: #EAEAEA;
+      --resalte: #404040;
+      --campo: #ECD9E7;
+      --campo-movil: #A3757E;
+      --radius: 14px;
+      --font: "Lora", Georgia, "Times New Roman", serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html {
-      min-width: 320px;
-      color-scheme: light;
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-    }
-
-    /* El scroll del fondo se bloquea mientras el modal está abierto. */
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
     html.modal-open { overflow: hidden; }
-
     body {
+      margin: 0;
       min-height: 100dvh;
-      overflow-x: hidden;
-      background-color: var(--bg);
-      /* Los dos halos del diseño. Van como fondo del body y no como una capa
-         absoluta de 150vw: una capa más ancha que el viewport obliga a tapar el
-         desborde horizontal, y un fondo directamente no lo genera. */
-      background-image:
-        radial-gradient(46% 38% at 12% 52%, rgba(198, 137, 97, .16), rgba(198, 137, 97, 0) 72%),
-        radial-gradient(46% 38% at 88% 52%, rgba(169, 106, 69, .12), rgba(169, 106, 69, 0) 72%);
-      background-repeat: no-repeat;
-      background-position: 50% 0;
-      background-size: 150vw 980px;
-      color: var(--body-ink);
-      font-family: var(--body);
-      font-weight: 300;
-      font-size: clamp(16px, 1.05vw, 18px);
-      line-height: 1.65;
-      text-rendering: optimizeLegibility;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-weight: 400;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-
-    button, input { font: inherit; color: inherit; }
-
-    button, a {
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: rgba(198, 137, 97, .22);
-    }
-
-    button:focus-visible,
-    a:focus-visible,
-    input:focus-visible {
-      outline: 3px solid var(--tan-deep);
-      outline-offset: 3px;
-    }
-
-    ::selection { background: rgba(198, 137, 97, .3); }
+    a { color: var(--ink); text-decoration: none; }
+    button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; font-family: inherit; }
+    button:focus-visible, input:focus-visible { outline: 3px solid var(--vino); outline-offset: 3px; }
 
     .skip-link {
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 200;
-      padding: 10px 14px;
-      border-radius: 8px;
-      background: var(--ink);
-      color: var(--card-a);
-      font-weight: 600;
-      text-decoration: none;
-      transform: translateY(-180%);
+      position: absolute; left: 12px; top: -48px; z-index: 50;
+      background: var(--vino); color: #fff; padding: 8px 14px; border-radius: 8px;
+      font-size: .85rem; transition: top .2s;
     }
+    .skip-link:focus { top: 12px; color: #fff; }
 
-    .skip-link:focus { transform: none; }
+    .wrap { max-width: 1120px; margin: 0 auto; text-align: center; }
+    .hero-sec { padding: 44px 24px 40px; }
 
-    .shell {
-      position: relative;
-      width: min(100%, 1120px);
-      margin: 0 auto;
-      padding: calc(22px + env(safe-area-inset-top)) var(--gutter) 36px;
+    .kick {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      color: var(--muted);
     }
+    .kick-bar { width: 22px; height: 2px; background: var(--vino); display: inline-block; }
 
-    .hero { position: relative; text-align: center; }
-
-    .hero-title {
-      max-width: 27ch;
-      color: var(--ink);
-      margin: 0 auto;
-      font-family: var(--display);
-      font-size: clamp(1.6rem, 3.6vw, 3.1rem);
+    .h1 {
+      font-family: var(--font);
       font-weight: 400;
+      line-height: 1.15;
       letter-spacing: -.01em;
-      line-height: 1.1;
-      text-transform: uppercase;
       text-wrap: balance;
+      margin: 0 auto;
+      max-width: 720px;
+      font-size: clamp(1.6rem, 2.7vw, 2.5rem);
     }
+    .frase { color: var(--vino); font-weight: 700; }
+    .bloque { display: block; }
 
-    /* El acento pasó de degradado a color plano: una sola tinta para el
-       titular resaltado, las etiquetas y los enlaces. */
-    .accent { color: var(--tan); }
-
-    .hero-copy {
-      max-width: 660px;
-      margin: 26px auto 0;
+    .copy {
+      max-width: 640px;
+      margin: 22px auto 0;
       padding: 0 40px;
       font-size: 1.05rem;
-      line-height: 1.5;
-      text-align: justify;
-      text-align-last: center;
-      hyphens: auto;
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+    .copy strong { font-weight: 700; color: var(--resalte); }
+
+    .video-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 40px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      color: var(--muted);
     }
 
-    .hero-copy strong { font-weight: 700; }
-
-    /* Portada del VSL: es un botón porque abre el mismo modal que el CTA.
-       Tocar el play de un video es el gesto natural y no puede quedar muerto. */
-    .media {
-      position: relative;
+    /* La portada es un botón: tocarla abre el registro, como antes. */
+    .poster {
       display: block;
       width: 100%;
       max-width: 720px;
-      margin: 30px auto 0;
-      padding: 2.5px;
-      border: 0;
-      border-radius: 26.5px;
-      background: linear-gradient(100deg, var(--tan-deep), var(--tan-soft));
-      box-shadow: 0 22px 60px -32px rgba(169, 106, 69, .5);
-      cursor: pointer;
-      appearance: none;
-      transition: transform .25s ease, box-shadow .25s ease;
-    }
-
-    .media:hover {
-      box-shadow: 0 28px 70px -30px rgba(169, 106, 69, .6);
-      transform: translateY(-2px);
-    }
-
-    .media-frame {
-      position: relative;
-      display: block;
-      overflow: hidden;
-      aspect-ratio: 16 / 9;
-      border: 1px solid rgba(64, 63, 63, .07);
+      margin: 8px auto 0;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--vino);
       border-radius: var(--radius);
-      background: linear-gradient(160deg, var(--panel-a), var(--panel-b));
+      background: var(--soft);
+      box-shadow: 0 18px 40px -30px rgba(20, 20, 20, .18);
+      overflow: hidden;
+      cursor: pointer;
     }
-
-    .media-frame img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
+    .poster-frame { position: relative; display: block; aspect-ratio: 16 / 9; }
+    .poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .play {
       position: absolute;
-      top: 50%;
       left: 50%;
-      z-index: 2;
+      top: 50%;
       display: grid;
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
       place-items: center;
-      background: linear-gradient(100deg, var(--tan-soft), var(--tan));
-      color: var(--ink);
-      box-shadow: 0 0 0 0 rgba(169, 106, 69, .55);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--vino);
+      box-shadow: 0 10px 30px -10px rgba(20, 20, 20, .45);
       transform: translate(-50%, -50%);
-      animation: ring 2.6s infinite;
+      transition: transform .2s;
     }
+    .play svg { width: 22px; height: 24px; margin-left: 4px; fill: #FFFFFF; }
+    @media (hover: hover) { .poster:hover .play { transform: translate(-50%, -50%) scale(1.06); } }
 
-    .play svg {
-      width: 24px;
-      height: 26px;
-      margin-left: 5px;
-      fill: currentColor;
-    }
-
-    @keyframes ring {
-      70% { box-shadow: 0 0 0 26px rgba(169, 106, 69, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(169, 106, 69, 0); }
-    }
-
-    .cta {
-      display: inline-block;
-      margin-top: 34px;
-      padding: 18px 40px;
-      border: 0;
-      border-radius: 99px;
-      background: linear-gradient(100deg, var(--tan-soft), var(--tan));
-      color: var(--ink);
-      box-shadow: 0 14px 40px -12px rgba(169, 106, 69, .65);
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: .02em;
-      line-height: 1.2;
-      text-transform: uppercase;
-      transition: transform .25s ease, box-shadow .25s ease;
-    }
-
-    .cta:hover {
-      box-shadow: 0 20px 50px -12px rgba(169, 106, 69, .75);
-      transform: translateY(-3px);
-    }
-
-    .cta br { display: none; }
-
-    /* Quién presenta. La foto es la misma que ya usa el tema VA. */
-    .trust {
-      display: flex;
+    /* Mismo botón que la landing «Quiero saber qué hacer». */
+    .cta, .submit {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      padding: 30px var(--gutter) 0;
-      text-align: left;
-    }
-
-    .trust img {
-      width: 46px;
-      height: 46px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .trust-label {
-      color: var(--ink);
-      font-size: .72rem;
+      gap: 11px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--vino);
+      color: #FFFFFF;
+      font-family: inherit;
       font-weight: 700;
-      letter-spacing: .18em;
-      line-height: 1.3;
-      text-transform: uppercase;
-    }
-
-    .trust-name {
-      margin-top: 2px;
-      color: var(--muted);
       font-size: .95rem;
-      line-height: 1.3;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .2s, opacity .2s;
     }
+    .cta { width: 100%; max-width: 440px; margin: 30px auto 0; padding: 16px 22px; line-height: 1.35; }
+    .submit { width: 100%; padding: 15px 20px; margin-top: 4px; }
+    .cta b, .submit b { font-weight: 700; }
+    @media (hover: hover) { .cta:hover, .submit:hover { transform: translateY(-2px); } }
+    .submit:disabled { cursor: progress; opacity: .8; transform: none; }
+    .noscript { font-size: .85rem; color: var(--muted); }
 
     .site-footer {
-      padding: 24px var(--gutter) calc(20px + env(safe-area-inset-bottom));
-      color: var(--muted);
-      font-size: .88rem;
+      padding: 26px 0 24px;
       text-align: center;
     }
+    .site-footer > div { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .f-line { max-width: 720px; height: 1px; margin: 0 auto 16px; background: var(--line); }
+    .trust { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0; }
+    .trust img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; display: block; background: var(--soft); }
+    .trust-name { font-size: .82rem; color: var(--muted); }
+    .site-footer p { color: var(--muted); font-size: .84rem; margin: 10px 0 2px; }
+    .legal { display: flex; gap: 14px; justify-content: center; margin: 2px 0 0 !important; }
+    .legal a { color: var(--muted); border-bottom: 1px solid var(--line); }
 
-    .site-footer nav {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 10px;
-    }
-
-    .site-footer a {
-      border-bottom: 1px solid rgba(198, 137, 97, .4);
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .site-footer a:hover { color: var(--ink); }
-
-    .noscript {
-      max-width: 520px;
-      margin: 18px auto 0;
-      padding: 12px 16px;
-      border: 1px solid var(--line-strong);
-      border-radius: 12px;
-      color: var(--body-ink);
-      font-size: .9rem;
-    }
-
-    /* ── Modal de registro ─────────────────────────────────────────────── */
-
+    /* Ventana del registro. Las clases `open` (ventana) y `modal-open` (<html>)
+       las pone el script de siempre; acá sólo cambia la piel. */
     .modal {
       position: fixed;
       inset: 0;
       z-index: 120;
       display: grid;
+      place-items: center;
       padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
       overflow-y: auto;
       overscroll-behavior: contain;
-      place-items: center;
       background: rgba(20, 20, 20, .5);
       opacity: 0;
-      pointer-events: none;
-      transition: opacity .22s ease;
       visibility: hidden;
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
+      pointer-events: none;
+      /* Al cerrar, la visibilidad se apaga recién cuando termina el fundido. */
+      transition: opacity .2s, visibility 0s linear .2s;
     }
-
-    .modal.open {
-      opacity: 1;
-      pointer-events: auto;
-      visibility: visible;
-    }
-
+    /* Al abrir, la visibilidad cambia en el acto: si dependiera de la
+       animación, en un teléfono lento la ventana tardaría en poder tocarse. */
+    .modal.open { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .2s, visibility 0s; }
     .modal-card {
       position: relative;
-      width: min(100%, 460px);
-      padding: 38px clamp(22px, 6vw, 32px) 30px;
+      width: min(100%, 420px);
+      padding: 30px 22px 22px;
       border: 1px solid var(--line);
-      border-radius: 22px;
-      background: linear-gradient(165deg, var(--card-a), var(--card-b));
-      box-shadow: 0 40px 90px -30px rgba(64, 63, 63, .35);
+      border-top: 3px solid var(--vino);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 30px 80px -30px rgba(20, 20, 20, .45);
       text-align: left;
-      transform: translateY(12px);
-      transition: transform .22s ease;
+      transform: translateY(14px);
+      transition: transform .25s;
     }
-
     .modal.open .modal-card { transform: none; }
-
     .modal-close {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      top: 10px;
+      right: 10px;
       display: grid;
-      width: 44px;
-      height: 44px;
-      border: 1px solid var(--line-strong);
-      border-radius: 50%;
       place-items: center;
-      background: rgba(64, 63, 63, .05);
-      color: var(--body-ink);
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.5rem;
+      line-height: 1;
       cursor: pointer;
     }
-
-    .modal-close:hover { background: rgba(64, 63, 63, .1); color: var(--ink); }
-    .modal-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2; }
-
+    .modal-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; }
+    @media (hover: hover) { .modal-close:hover { background: var(--soft); color: var(--ink); } }
     .modal-kicker {
-      margin-bottom: 14px;
-      color: var(--tan);
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .22em;
-      text-transform: uppercase;
+      margin: 0 0 8px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      font-weight: 700;
+      color: var(--muted);
     }
-
     .modal-title {
-      color: var(--ink);
-      font-family: var(--display);
-      font-size: 1.55rem;
+      margin: 0;
+      font-family: var(--font);
       font-weight: 400;
+      font-size: 1.4rem;
+      line-height: 1.2;
       letter-spacing: -.01em;
-      line-height: 1.08;
-      text-transform: uppercase;
+      text-wrap: balance;
     }
+    .modal-title .frase, .modal-title .accent, .modal-title .gradient-text { color: var(--vino); font-weight: 700; }
+    .modal-copy { margin: 12px 0 18px; font-size: .95rem; line-height: 1.5; color: var(--ink); }
+    .modal-copy strong { color: var(--resalte); }
 
-    .modal-copy {
-      margin: 16px 0 24px;
-      color: var(--body-ink);
-      font-size: .92rem;
-      line-height: 1.5;
-    }
-
-    .field { display: grid; gap: 8px; margin-bottom: 18px; }
-
+    .field { margin-bottom: 14px; }
     .field label {
-      /* Gris de etiqueta, no el del pie: a 10 px el #8f8e8d del diseño no
-         llega al contraste mínimo sobre la tarjeta. */
-      color: var(--body-ink);
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .2em;
-      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      font-weight: 700;
+      color: var(--muted);
     }
-
     .field input {
       width: 100%;
-      min-height: 52px;
-      padding: 15px 16px;
-      border: 1px solid var(--line-strong);
-      border-radius: 12px;
-      background: rgba(64, 63, 63, .03);
-      /* 16px exactos: con menos, iOS hace zoom al enfocar y descuadra el modal. */
-      font-size: 16px;
-      font-weight: 300;
-      appearance: none;
+      border: 1.5px solid var(--campo);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: .9rem;
+      color: var(--ink);
+      background: var(--panel);
+      transition: border-color .2s;
     }
-
-    .field input::placeholder { color: #a08b7e; }
-    .field input:focus {
-      border-color: var(--tan);
-      box-shadow: 0 0 0 3px rgba(198, 137, 97, .25);
-      outline: none;
-    }
-    .field input[aria-invalid="true"] { border-color: var(--error); }
-
-    .field-error {
-      display: none;
-      color: var(--error);
-      font-size: .82rem;
-      font-weight: 400;
-    }
-
+    .field input::placeholder { color: #8A8A8A; opacity: .75; }
+    .field input:focus { outline: 0; border-color: var(--vino); }
+    .field input[aria-invalid="true"] { border-color: var(--vino); }
+    .field-error { display: none; margin: 6px 0 0; font-size: .76rem; line-height: 1.4; color: var(--vino); }
     .field-error.visible { display: block; }
-
     .honeypot {
       position: absolute !important;
       left: -10000px !important;
@@ -509,143 +359,75 @@
       height: 1px !important;
       opacity: 0 !important;
     }
-
-    .submit {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      min-height: 56px;
-      margin-top: 8px;
-      padding: 16px 24px;
-      border: 0;
-      border-radius: 99px;
-      background: linear-gradient(100deg, var(--tan-soft), var(--tan));
-      color: var(--ink);
-      box-shadow: 0 14px 40px -14px rgba(169, 106, 69, .7);
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: .02em;
-      text-transform: uppercase;
-      transition: transform .25s ease;
-    }
-
-    .submit:hover { transform: translateY(-2px); }
-    .submit[disabled] { cursor: wait; opacity: .7; transform: none; }
-
-    .form-privacy {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: .74rem;
-      text-align: center;
-    }
+    .form-privacy { margin: 14px 0 0; text-align: center; font-size: .76rem; color: var(--muted); }
 
     @media (max-width: 640px) {
-      .hero-copy { padding: 0 12px; font-size: 1.12rem; }
-
-      .cta {
-        display: block;
-        width: 100%;
-        max-width: 540px;
-        margin-right: auto;
-        margin-left: auto;
-        padding: 15px 20px;
-      }
-
-      .cta br { display: inline; }
-
-      .play { width: 58px; height: 58px; }
-      .modal-card { padding-top: 34px; }
-    }
-
-    @media (hover: none) {
-      .media:hover, .cta:hover, .submit:hover {
-        box-shadow: 0 22px 60px -32px rgba(169, 106, 69, .5);
-        transform: none;
-      }
-      .cta:hover { box-shadow: 0 14px 40px -12px rgba(169, 106, 69, .65); }
-      .submit:hover { box-shadow: 0 14px 40px -14px rgba(169, 106, 69, .7); }
+      .hero-sec, .site-footer > div { padding-left: 20px; padding-right: 20px; }
+      .h1 { font-size: 1.55rem; }
+      .copy { padding: 0; max-width: none; }
+      .kick { white-space: nowrap; }
+      .cta { min-height: 52px; }
+      .play { width: 60px; height: 60px; }
+      /* 16px en el celular: con menos, iOS hace zoom al enfocar el campo. */
+      .field input { font-size: 16px; padding: 14px; border-color: var(--campo-movil); }
+      .field input::placeholder { font-size: .8rem; }
+      .submit { min-height: 52px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after {
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
-      }
+      * { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
-
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1" /></noscript>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
-  <main class="shell" id="contenido">
-    <section class="hero" aria-labelledby="hero-title">
-      <h1 class="hero-title" id="hero-title">
-        Haces dieta. Entrenas. Bajas de peso.
-        <span class="accent">¿Por qué terminas volviendo al mismo punto?</span>
-      </h1>
+  <main id="contenido">
+    <section class="wrap hero-sec" aria-labelledby="hero-title">
+      <div class="kick"><span class="kick-bar" aria-hidden="true"></span><span>Caso Real · Andrea</span></div>
+      <h1 class="h1" id="hero-title">Haces dieta. Entrenas. Bajas de peso. <span class="frase bloque">¿Por qué terminas volviendo al mismo punto?</span></h1>
+      <p class="copy">Si sientes que siempre tienes que empezar de nuevo, <strong>en este video vas a entender qué necesitas revisar para que esta vez sea diferente.</strong></p>
 
-      <p class="hero-copy">
-        Si sientes que siempre tienes que empezar de nuevo,
-        <strong>en este video vas a entender qué necesitas revisar para que esta vez sea diferente.</strong>
-      </p>
-
-      <button class="media open-modal" type="button" aria-haspopup="dialog" aria-controls="registro" aria-label="Regístrate para ver el video del caso de Andrea">
-        <span class="media-frame">
+      <button class="poster open-modal" type="button" aria-haspopup="dialog" aria-controls="registro" aria-label="Regístrate para ver el video del caso de Andrea" style="margin-top:30px">
+        <span class="poster-frame">
           <img
             src="/assets/andrea-va/vsl-poster-1280.webp"
             srcset="/assets/andrea-va/vsl-poster-760.webp 760w, /assets/andrea-va/vsl-poster-1280.webp 1280w"
-            sizes="(max-width: 767px) calc(100vw - 2 * clamp(18px, 5vw, 24px)), 720px"
+            sizes="(max-width: 767px) calc(100vw - 40px), 720px"
             width="1280"
             height="720"
             fetchpriority="high"
             decoding="async"
             alt="Veronika Alvarado presenta el caso de Andrea, que pasó de 61 a 48 kilos en nueve meses"
           />
-          <span class="play" aria-hidden="true">
-            <svg viewBox="0 0 24 26" aria-hidden="true"><path d="M0 0 24 13 0 26Z"></path></svg>
-          </span>
+          <span class="play" aria-hidden="true"><svg viewBox="0 0 24 26" aria-hidden="true"><path d="M0 0 24 13 0 26Z"></path></svg></span>
         </span>
       </button>
-
       <button class="cta open-modal" type="button" aria-haspopup="dialog" aria-controls="registro">
-        Quiero saber qué necesito<br> cambiar
+        <span>Quiero saber qué necesito cambiar</span>
+        <b aria-hidden="true">→</b>
       </button>
-
       <noscript>
         <p class="noscript">Para registrarte y ver el video necesitas activar JavaScript en tu navegador.</p>
       </noscript>
     </section>
   </main>
 
-  <section class="trust" aria-label="Quién presenta">
-    <img
-      src="/assets/va/vero-perfil-footer.webp"
-      width="46"
-      height="46"
-      loading="lazy"
-      decoding="async"
-      alt="Veronika Alvarado"
-    />
-    <div>
-      <p class="trust-label">Producción · TR4INER</p>
-      <p class="trust-name">Veronika Alvarado · Coach</p>
-    </div>
-  </section>
-
   <footer class="site-footer">
-    <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
-    <nav aria-label="Legal">
-      <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
-      <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
-    </nav>
+    <div>
+      <div class="f-line"></div>
+      <div class="trust">
+        <img src="/assets/va/vero-avatar-92.webp" width="46" height="46" loading="lazy" decoding="async" alt="Veronika Alvarado" />
+        <span class="trust-name">Veronika Alvarado</span>
+      </div>
+      <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
+      <p class="legal">
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+        <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+      </p>
+    </div>
   </footer>
 
   <div
@@ -663,19 +445,16 @@
           <path d="M5 5l14 14M19 5 5 19" stroke-linecap="round"></path>
         </svg>
       </button>
-
       <p class="modal-kicker" id="modal-kicker">Estás a un paso</p>
       <h2 class="modal-title" id="modal-title">
-        <span class="accent">de descubrir qué está frenando el cambio que quieres ver en tu cuerpo</span>
+        <span class="frase">de descubrir qué está frenando el cambio que quieres ver en tu cuerpo</span>
       </h2>
       <p class="modal-copy" id="modal-copy">Completa tus datos para ver el video.</p>
-
       <form class="registration-form" id="registration-form" novalidate>
         <input class="honeypot" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" aria-label="Deja este campo vacío" />
         <!-- Funnel de Veronika: la ruta es sólo para mujeres, igual que Rosita y
              /casos-de-estudio-va. Por eso el sexo no se pregunta, se declara. -->
         <input type="hidden" name="sexo" value="Mujer" />
-
         <div class="field">
           <label for="nombre">Nombre</label>
           <input
@@ -691,7 +470,6 @@
           />
           <p class="field-error" id="nombre-error" role="alert"></p>
         </div>
-
         <div class="field">
           <label for="email">Correo electrónico</label>
           <input
@@ -710,17 +488,14 @@
           />
           <p class="field-error" id="email-error" role="alert"></p>
         </div>
-
         <button class="submit" id="submit" type="submit">
           <span>Quiero verlo</span>
           <b aria-hidden="true">→</b>
         </button>
       </form>
-
       <p class="form-privacy">Tu información está segura · Sin spam</p>
     </div>
   </div>
-
   <script src="/attribution.js"></script>
   <script>
     (function () {
