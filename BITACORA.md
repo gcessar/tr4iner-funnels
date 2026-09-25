@@ -52,6 +52,14 @@ Local, con `fetch`, `sendBeacon` y `dataLayer` interceptados: nada salió a n8n,
 - Escape y el botón de cerrar cierran la ventana y liberan la página.
 - HTML bien cerrado, sin ids duplicados, sin referencias a las fuentes ni temas anteriores.
 
+### Producción (25-sep)
+
+Aprobado por el usuario. Merge `4f3003b` en `main` → deploy de Vercel
+`dpl_8Q7PzLbhDFDrvxcsUQQYhH9cuETo`, **Ready**. Verificado en `metodo.tr4iner.com`: los dos
+registros responden 200 con Lora, el avatar nuevo, su ventana, el webhook `casos-estudio` y la
+redirección a su `/video`, sin referencias al tema anterior. Las cuatro páginas publicadas antes
+siguen en 200. No se envió ningún formulario contra producción.
+
 ---
 
 ## 2026-09-25 — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
