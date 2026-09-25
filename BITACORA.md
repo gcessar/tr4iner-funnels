@@ -93,6 +93,15 @@ GTM no registrara un Lead falso en Meta). Nada salió a n8n, al CRM ni a GA4.
   los `/video`, así que sólo los ve quien entra por un enlace directo.
 - `assets/casos-va/` quedó sin uso; se deja por si se revierte.
 
+### Producción (25-sep)
+
+Aprobado por el usuario. Merge `c486fad` en `main` → deploy de Vercel
+`dpl_7oyD77BCVBFtdieRPWYfrGwitY4n`, **Ready**. Verificado en `metodo.tr4iner.com`: las
+cuatro rutas responden 200 con Lora y el avatar nuevo, Flor con el live
+`01KHA5RZHGV02HW971F4227939`, Rosita y Andrea con `CGxeptJu`, cada una con su video, y
+ninguna con el Typeform del exporte (`01M3CN3A…`). Los tres archivos nuevos responden 200.
+No se envió ningún formulario contra producción.
+
 ---
 
 ## 2026-09-24 — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
