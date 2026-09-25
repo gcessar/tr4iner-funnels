@@ -32,7 +32,7 @@ Rutas objetivo del proyecto:
 - `/testimonio-andrea` → página Andrea (`testimonio-andrea/index.html`).
 - `/testimonio-christian` → página Christian (`testimonio-christian/index.html`).
 - `/testimonio-rosita-va` y `/testimonio-rosita-va/video` → funnel propio de Veronika con el caso de Rosita: prerregistro (nombre/email, `sexo=Mujer`) y VSL con la misma evaluación de Typeform.
-- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Identidad visual propia (crema `#FCF5EE`, tinta `#141414`, acento tan `#C68961`) y Vidalytics `QzmpW1qqYB8GFVaI`.
+- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Vidalytics `QzmpW1qqYB8GFVaI`. El registro conserva la piel crema/tan (`#FCF5EE`, `#C68961`); el `/video` pasó al diseño «Vino crema» del 25-sep (ver abajo).
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
@@ -49,15 +49,15 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
 | `middleware.ts` | Split 50/50 en el edge para **dos** tests independientes: hero de `/casos-de-estudio` (cookie `ab_hero`) y formulario de `/medicos` (cookie `ab_med`, despachado antes). Rewrite (nunca redirect), cookies de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
 | `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
-| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. El carrusel de Flor/Rosita/Andrea y los tres perfiles son **la misma selección**: el caso activo decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Diseño propio en Poppins sobre crema `#FDF6F0` con acento durazno `#E8B48F`. |
+| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. **Desde el 25-sep no tiene carrusel**: los tres perfiles son la única forma de elegir caso y el perfil decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Si nadie elige, sigue saliendo Flor. Diseño «Vino crema» (ver abajo). |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
-| `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
-| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Tema oscuro propio en `assets/rosita-va/rosita-theme.css`. |
+| `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. **Desde el 25-sep tiene copy y diseño propios** («Vino crema»), ya no el de Flor normal: lo decidió el usuario al pasar el diseño nuevo. Conserva el video VA y el formulario que aparece a los 3 s. |
+| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. El prerregistro sigue con el tema oscuro de `assets/rosita-va/rosita-theme.css`; el `/video` usa el diseño «Vino crema» con CSS inline y ya no carga ese archivo. |
 | `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/tan del prototipo aprobado; CSS y JS inline en cada página. |
 | `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
-| `assets/casos-va/` | Las tres comparativas antes/después de `/casos-de-estudio-va` en WebP 240/480 px. No son las mismas fotos que `assets/casos-optin/`. |
+| `assets/casos-va/` | Las tres comparativas antes/después que usaba el carrusel de `/casos-de-estudio-va`. **Sin uso desde el 25-sep** (el diseño nuevo no tiene carrusel); se dejan por si se revierte. No son las mismas fotos que `assets/casos-optin/`. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
@@ -71,6 +71,16 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |
 | `track.js` | Copia de compatibilidad antigua; no enlazar desde páginas nuevas porque algunos bloqueadores la interceptan. |
 | `BITACORA.md` | Changelog del funnel (registrar cada cambio con impacto en KPIs). |
+
+### Diseño «Vino crema» de Veronika (25-sep-2026)
+
+Aplica a `/casos-de-estudio-va`, `/testimonio-flor-va`, `/testimonio-rosita-va/video` y `/testimonio-andrea-va/video`. Salió de un exporte de **Claude Design** (HTML empaquetado con React y una plantilla `{{ }}`), que se tradujo a HTML estático: **no copiar el exporte tal cual**, porque trae un Typeform que no es el de producción (`01M3CN3A…`) y su «enviar» es una demo.
+
+- **Lora** 400/700 self-hosteada y variable (`assets/fonts/lora-normal-latin*.woff2`, un archivo por subconjunto cubre los dos pesos). Cero pedidos a Google Fonts.
+- Crema `#FDF6F0`, tinta `#000000`, **vino `#7C2D3C`** en frases destacadas, botones y filete superior de las tarjetas; gris `#6B6B6B` para rótulos.
+- Avatar del pie: `assets/va/vero-avatar-92.webp` (fondo gris, 92 px para mostrarse a 46). `vero-perfil-footer.webp` sigue en uso en Calendly y otras páginas.
+- **La lógica no cambió**: los scripts de captura, envío a n8n y al CRM, ruteo, video y Typeform se copiaron byte a byte de las versiones anteriores. Sólo se quitó el carrusel de la landing y la animación propia de Andrea (la reemplaza la del diseño).
+- Los marcos del formulario conservan los pisos de alto de producción (560 px; 590/640 en Flor), no los 520 del diseño: con menos, Typeform tapa el botón de continuar.
 
 Las antiguas variantes `-A` fueron promovidas a los nombres canónicos el 14-jul-2026. El sufijo `-B` identifica las páginas anteriores archivadas. Cuando se implemente el A/B test real, documentar nuevamente la asignación y no cambiar las rutas públicas.
 
