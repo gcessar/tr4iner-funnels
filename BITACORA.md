@@ -13,6 +13,88 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-25 — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
+
+Rama `work/va-rediseno`. El usuario pasó cuatro exportes de Claude Design (página inicial y
+las VSL de Flor, Rosita y Andrea) con el pedido de aplicarlos **sin tocar el flujo de leads**.
+
+### Qué cambió
+
+| Página | Antes | Ahora |
+|---|---|---|
+| `/casos-de-estudio-va` | Poppins, durazno `#E8B48F`, carrusel de fotos + perfiles | Lora, vino `#7C2D3C`, **sin carrusel**: sólo los tres perfiles |
+| `/testimonio-flor-va` | Instrument Sans + tema `va-theme.css`, mismo copy que Flor AN | Lora, vino; **copy propio** («Flor de María. Evaluación / mes a mes») |
+| `/testimonio-rosita-va/video` | Tema oscuro (`rosita-theme.css`), Anton + Outfit | Lora, vino, fondo crema |
+| `/testimonio-andrea-va/video` | Crema/tan `#C68961`, Anton + Outfit | Lora, vino, fondo crema |
+
+Tipografía nueva: **Lora** variable self-hosteada (`assets/fonts/lora-normal-latin*.woff2`,
+37,8 + 20 KB). Avatar nuevo del pie: `assets/va/vero-avatar-92.webp`, la foto que traía el
+diseño (fondo gris). No se borró ni pisó ningún archivo que otras páginas usen.
+
+### Cómo se preservó la lógica
+
+El exporte de Claude Design no es HTML estático: es una plantilla `{{ }}` montada con React.
+Se tradujo a HTML plano, y **los scripts se copiaron byte a byte** desde las páginas
+anteriores con un generador que falla si un reemplazo no pega exactamente una vez. Cotejo
+final contra producción:
+
+- **Rosita y Flor:** script del Typeform, loader de Vidalytics y scripts de cabecera idénticos.
+- **Andrea:** idéntico salvo el bloque de «aparición suave» (visual), que reemplaza el del diseño.
+- **Landing:** idéntica salvo el código que movía el carrusel. Webhook `casos-estudio`, copia
+  `TR4Track.saveOptIn()` al CRM, `CASOS`/destinos, validación, honeypot, dominios
+  desechables, respaldos `LANDING-VA-DIRECTO`/`CASOS-VA` y evento `va_registration_submitted`
+  sin cambios. **Si nadie elige perfil sale Flor**, igual que antes.
+
+Lo que el diseño traía y **no** se aplicó:
+
+- **Typeform `01M3CN3A97JR5X0RDDJE89P9JV`**: no es el de producción. Se conservan el live
+  `01KHA5RZHGV02HW971F4227939` (Flor) y el SDK con `CGxeptJu` (Rosita, Andrea).
+- **Alto del marco del formulario de 520 px**: se mantienen los pisos de producción (560 px;
+  590/640 en Flor), porque con menos Typeform apila el botón de continuar sobre la última
+  opción.
+- El estado «Listo, {nombre}» de la landing: era la demo del diseño; la página redirige.
+
+Correcciones sobre el diseño, a revisar si fueron intencionales:
+
+- **«¿»** al comienzo del titular de la landing (el diseño lo omitía).
+- **Tildes** en el copy de Andrea: «entender **qué** necesitas revisar… cuéntanos **qué**
+  está pasando» (el diseño decía «que»; producción ya las tenía bien).
+- **Opción elegida visible en escritorio**: en el diseño un estilo en línea pisaba el borde y
+  sólo se marcaba en el celular. Ahora se marca igual en todos los tamaños.
+- Rótulos de los campos para lectores de pantalla y mensajes de error con `role=alert`
+  (el diseño sólo tenía placeholders).
+
+Se quitó el botón flotante «Completar aplicación» de Flor (no está en el diseño; en el
+celular ya estaba oculto).
+
+### Verificación
+
+Local, con los envíos interceptados (`fetch`, `sendBeacon` y un `dataLayer` aislado para que
+GTM no registrara un Lead falso en Meta). Nada salió a n8n, al CRM ni a GA4.
+
+- **Medidas contra el diseño**: posiciones y tamaños idénticos al píxel en celular (375 px) y
+  escritorio (1280 px) en las cuatro páginas, salvo el marco del formulario (pisos de arriba).
+- **Ruteo**: Rosita → `/testimonio-rosita-va/video`, Andrea → su `/video`, Flor y «sin
+  elegir» → `/testimonio-flor-va`, con UTMs, `funnel=VA`, nombre, correo con `@` literal,
+  `sexo` y `caso`.
+- **Payload** a n8n y al CRM con el contrato de siempre (`caso`, `perfil`, `utm` anidadas,
+  `fbp`, `page_url`).
+- **Typeform**: Rosita y Andrea montan `CGxeptJu` con los campos ocultos completos; Flor
+  despliega el formulario a los 3 s y recién ahí carga `embed.js`, con `data-tf-hidden` en crudo
+  (el nombre con tilde llega entero).
+- Validaciones (vacío, correo inválido, desechable), honeypot y consolidación de UTMs
+  duplicadas de Instagram: igual que antes.
+- Sin desborde horizontal a 290, 375 y 1280 px. Sin ids duplicados. HTML bien cerrado.
+
+### Pendientes
+
+- **Los prerregistros `/testimonio-rosita-va` y `/testimonio-andrea-va` no se tocaron** (no
+  había diseño para ellos) y quedan con la estética anterior. Hoy la landing salta directo a
+  los `/video`, así que sólo los ve quien entra por un enlace directo.
+- `assets/casos-va/` quedó sin uso; se deja por si se revierte.
+
+---
+
 ## 2026-09-24 — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
 
 Rama `work/medicos-ab-formulario`. Test `med_form_202609`, sólo tráfico pago. No toca nada del
@@ -759,6 +841,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-25` — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
 - `2026-09-24` — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
 - `2026-09-20` — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
 - `2026-09-19` — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
