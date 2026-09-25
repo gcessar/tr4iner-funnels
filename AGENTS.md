@@ -32,7 +32,7 @@ Rutas objetivo del proyecto:
 - `/testimonio-andrea` → página Andrea (`testimonio-andrea/index.html`).
 - `/testimonio-christian` → página Christian (`testimonio-christian/index.html`).
 - `/testimonio-rosita-va` y `/testimonio-rosita-va/video` → funnel propio de Veronika con el caso de Rosita: prerregistro (nombre/email, `sexo=Mujer`) y VSL con la misma evaluación de Typeform.
-- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Vidalytics `QzmpW1qqYB8GFVaI`. El registro conserva la piel crema/tan (`#FCF5EE`, `#C68961`); el `/video` pasó al diseño «Vino crema» del 25-sep (ver abajo).
+- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Vidalytics `QzmpW1qqYB8GFVaI`. Registro y `/video` con el diseño «Vino crema» (ver abajo).
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
@@ -54,8 +54,8 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
 | `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. **Desde el 25-sep tiene copy y diseño propios** («Vino crema»), ya no el de Flor normal: lo decidió el usuario al pasar el diseño nuevo. Conserva el video VA y el formulario que aparece a los 3 s. |
-| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. El prerregistro sigue con el tema oscuro de `assets/rosita-va/rosita-theme.css`; el `/video` usa el diseño «Vino crema» con CSS inline y ya no carga ese archivo. |
-| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación) con la piel crema/tan del prototipo aprobado; CSS y JS inline en cada página. |
+| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Prerregistro y `/video` con el diseño «Vino crema» y CSS inline: ninguna de las dos carga ya `assets/rosita-va/rosita-theme.css`. |
+| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación). Diseño «Vino crema»; CSS y JS inline en cada página. |
 | `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
 | `assets/casos-va/` | Las tres comparativas antes/después que usaba el carrusel de `/casos-de-estudio-va`. **Sin uso desde el 25-sep** (el diseño nuevo no tiene carrusel); se dejan por si se revierte. No son las mismas fotos que `assets/casos-optin/`. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
@@ -74,7 +74,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 
 ### Diseño «Vino crema» de Veronika (25-sep-2026)
 
-Aplica a `/casos-de-estudio-va`, `/testimonio-flor-va`, `/testimonio-rosita-va/video` y `/testimonio-andrea-va/video`. Salió de un exporte de **Claude Design** (HTML empaquetado con React y una plantilla `{{ }}`), que se tradujo a HTML estático: **no copiar el exporte tal cual**, porque trae un Typeform que no es el de producción (`01M3CN3A…`) y su «enviar» es una demo.
+Aplica a `/casos-de-estudio-va`, `/testimonio-flor-va` y a registro y `/video` de Rosita y Andrea. Los dos registros no venían en el exporte: se armaron con las mismas piezas (encabezado de las VSL, botón y campos de la landing) y conservan su ventana de registro —la portada y el botón la abren—. Salió de un exporte de **Claude Design** (HTML empaquetado con React y una plantilla `{{ }}`), que se tradujo a HTML estático: **no copiar el exporte tal cual**, porque trae un Typeform que no es el de producción (`01M3CN3A…`) y su «enviar» es una demo.
 
 - **Lora** 400/700 self-hosteada y variable (`assets/fonts/lora-normal-latin*.woff2`, un archivo por subconjunto cubre los dos pesos). Cero pedidos a Google Fonts.
 - Crema `#FDF6F0`, tinta `#000000`, **vino `#7C2D3C`** en frases destacadas, botones y filete superior de las tarjetas; gris `#6B6B6B` para rótulos.
