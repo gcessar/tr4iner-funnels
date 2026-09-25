@@ -14,7 +14,7 @@
   </script>
 
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#140A1B" />
+  <meta name="theme-color" content="#FDF6F0" />
   <title>Los 4 cambios para bajar grasa · Rosita | Veronika Alvarado</title>
   <meta name="description" content="Mira la explicación de Rosita y completa la evaluación de TR4INER para que el equipo revise tu situación." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-rosita-va/video" />
@@ -32,75 +32,287 @@
 
   <link rel="preconnect" href="https://fast.vidalytics.com" />
   <link rel="preconnect" href="https://embed.typeform.com" />
-  <link rel="preload" href="/assets/fonts/outfit-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/assets/fonts/anton-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/assets/rosita-va/rosita-theme.css?v=20260807" />
-</head>
 
+  <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
+  <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    @font-face {
+      font-family: "Lora";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/lora-normal-latin.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: "Lora";
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url("/assets/fonts/lora-normal-latin-ext.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+
+    /* Paleta «Vino crema» del diseño del 25-sep, común a Flor, Rosita y Andrea. */
+    :root {
+      --bg: #FDF6F0;
+      --panel: #FFFFFF;
+      --ink: #000000;
+      --vino: #7C2D3C;
+      --muted: #6B6B6B;
+      --soft: #F6ECE4;
+      --line: #EAEAEA;
+      --resalte: #404040;
+      --radius: 14px;
+      --font: "Lora", Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: var(--ink); text-decoration: none; }
+
+    .skip-link {
+      position: absolute; left: 12px; top: -48px; z-index: 50;
+      background: var(--vino); color: #fff; padding: 8px 14px; border-radius: 8px;
+      font-size: .85rem; transition: top .2s;
+    }
+    .skip-link:focus { top: 12px; color: #fff; }
+
+    .wrap { max-width: 1120px; margin: 0 auto; text-align: center; }
+    .hero-sec { padding: 44px 24px 40px; }
+    .next-sec { padding: 56px 24px 40px; }
+
+    .kick {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      color: var(--muted);
+    }
+    .kick-bar { width: 22px; height: 2px; background: var(--vino); display: inline-block; }
+
+    .h1, .h2 {
+      font-family: var(--font);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -.01em;
+      text-wrap: balance;
+    }
+    .h1 { margin: 0 auto; max-width: 720px; font-size: clamp(1.6rem, 2.7vw, 2.5rem); }
+    .h2 { margin: 14px auto 0; max-width: 24ch; font-size: clamp(1.4rem, 2.2vw, 2.1rem); }
+    .frase { color: var(--vino); font-weight: 700; }
+    .bloque { display: block; }
+    .solo-movil { display: none; }
+
+    .copy {
+      max-width: 640px;
+      margin: 22px auto 0;
+      padding: 0 40px;
+      color: var(--ink);
+      font-size: 1.05rem;
+      line-height: 1.55;
+      text-wrap: pretty;
+    }
+    .copy b { font-weight: 700; color: var(--resalte); }
+    .copy-next { max-width: 620px; margin-top: 20px; }
+
+    .video-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-top: 40px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      color: var(--muted);
+    }
+    .video-box, .fbox {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--vino);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 40px -30px rgba(20, 20, 20, .18);
+      overflow: hidden;
+    }
+    .video-box { max-width: 720px; margin: 8px auto 0; }
+    .video-box.sin-rotulo { margin-top: 30px; }
+    .video-host { position: relative; width: 100%; background: var(--soft); }
+
+    /* «Siguiente paso»: flecha animada del diseño. */
+    .kick-next { flex-direction: column; gap: 14px; margin: -40px 0 0; }
+    .arrow-wrap { position: relative; display: grid; place-items: center; width: 64px; height: 64px; }
+    .arrow-bob {
+      position: relative; width: 34px; height: 34px; display: block;
+      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--vino) 55%, transparent));
+      animation: arrow-bob 1.6s ease-in-out infinite;
+    }
+    @keyframes arrow-bob { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(8px); } }
+
+    /* Marco del formulario. El min-height es PISO, nunca techo: el alto lo manda
+       el iframe, y con menos de 560 px Typeform apila el botón de continuar
+       sobre la última opción en las preguntas cortas (medido en producción;
+       el diseño traía 520). */
+    .fbox { position: relative; max-width: 600px; margin: 34px auto 0; min-height: 560px; padding: 0; text-align: left; }
+    .fbox #tf-embed { min-height: 560px; }
+    .form-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-size: .76rem;
+      letter-spacing: .02em;
+      color: var(--muted);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    /* CSS del widget de Typeform. Va inline porque tf.createWidget() no lo
+       autoinyecta (sí lo hacía el embed por data-tf-*), y sin esto el iframe cae
+       al alto por defecto de 150px. Copiado de
+       embed.typeform.com/next/css/widget.css con el radio del marco. */
+    .tf-v1-widget {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+    }
+    .tf-v1-widget iframe {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      overflow: hidden;
+      border: none;
+    }
+    .tf-v1-widget-close { display: none; }
+    .tf-v1-widget-iframe-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: none;
+    }
+
+    /* Aparición del segundo bloque, como en el diseño. */
+    @keyframes rv-up { from { opacity: 0; transform: translateY(90px); } to { opacity: 1; transform: none; } }
+    @keyframes rv-card { from { opacity: 0; transform: translateY(110px); } to { opacity: 1; transform: none; } }
+    [data-reveal].rv-armed { opacity: 0; }
+    [data-reveal].rv-in { opacity: 1; animation: rv-up 9s cubic-bezier(.16, .84, .26, 1) both; }
+    [data-reveal="card"].rv-in { animation-name: rv-card; }
+
+    .site-footer {
+      padding: 26px 0 24px;
+      text-align: center;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 220px;
+    }
+    .site-footer > div { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .f-line { max-width: 720px; height: 1px; margin: 0 auto 16px; background: var(--line); }
+    .trust { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0; }
+    .trust img { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; display: block; background: var(--soft); }
+    .trust-name { font-size: .82rem; color: var(--muted); }
+    .site-footer p { color: var(--muted); font-size: .84rem; margin: 10px 0 2px; }
+    .legal { display: flex; gap: 14px; justify-content: center; margin: 2px 0 0 !important; }
+    .legal a { color: var(--muted); border-bottom: 1px solid var(--line); }
+    @media (hover: hover) { .legal a:hover { color: var(--vino); } }
+
+    @media (max-width: 640px) {
+      .hero-sec, .next-sec, .site-footer > div { padding-left: 20px; padding-right: 20px; }
+      .h1 { font-size: 1.55rem; }
+      .h2 { font-size: 1.3rem; }
+      .m-line { display: block; white-space: nowrap; }
+      .solo-movil { display: inline; }
+      .copy { padding: 0; max-width: none; }
+      .kick { white-space: nowrap; }
+      .fbox {
+        max-width: 720px;
+        border: 0;
+        border-top: 1px solid var(--line);
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    @media (max-width: 640px) {
+      /* El titular va en dos renglones fijos, como en el diseño. */
+      .h1 { font-size: min(1.55rem, 5.8vw); max-width: none; }
+      .h1 .t1 { display: block; white-space: nowrap; }
+    }
+  </style>
+</head>
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1" /></noscript>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
-  <main class="watch-shell" id="contenido">
-    <header class="brandbar">Veronika Alvarado · TR4INER</header>
-
-    <section class="watch-hero" aria-labelledby="video-title">
-      <p class="eyebrow">Caso real · Rosita</p>
-      <h1 class="hero-title" id="video-title">
-        Los 4 cambios para bajar grasa
-        <span class="gradient-text">sin perder piernas ni glúteos</span>
-      </h1>
-      <p class="hero-copy">
-        Sin dietas extremas. Sin horas de cardio. Mira el video completo antes de contarnos qué está pasando contigo.
-      </p>
-
-      <div class="sound-cue" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M11 5 6.8 8.5H3v7h3.8L11 19V5Z" stroke-width="1.8" stroke-linejoin="round"></path>
-          <path d="M15 9a4.2 4.2 0 0 1 0 6M17.7 6.5a7.6 7.6 0 0 1 0 11" stroke-width="1.8" stroke-linecap="round"></path>
-        </svg>
-        Activa el sonido para escuchar la explicación
-      </div>
-
-      <div class="media-shell">
-        <div class="vidalytics-frame">
+  <main id="contenido">
+    <section class="wrap hero-sec" aria-labelledby="video-title">
+      <div class="kick"><span class="kick-bar" aria-hidden="true"></span><span>Caso Real · Rosita</span></div>
+      <h1 class="h1" id="video-title"><span class="t1">Los 4 cambios para bajar grasa</span><span class="frase bloque m-line">sin perder piernas<br class="solo-movil" /> ni glúteos</span></h1>
+      <p class="copy" data-copy>Sin dietas extremas, ni horas de cardio. Mira el video completo antes de contarnos <b>qué es lo que está pasando contigo.</b></p>
+      <div class="video-label"><span>Aquí te explico qué es lo que funciona</span></div>
+      <div class="video-box">
+        <div class="video-host">
           <div id="vidalytics_embed_RymSJVDkKpFH17Z7" style="width: 100%; position:relative; padding-top: 56.25%;"></div>
         </div>
       </div>
     </section>
 
-    <section class="typeform-section" id="aplicacion" aria-labelledby="application-title">
-      <div class="typeform-heading">
-        <p class="eyebrow">Siguiente paso</p>
-        <h2 class="typeform-title" id="application-title">
-          Ahora queremos saber
-          <span class="gradient-text">qué está pasando contigo</span>
-        </h2>
-        <p class="typeform-copy">
-          Cuéntanos qué has intentado y qué quieres cambiar. El equipo revisará tus respuestas para entender qué podría estar frenando tus resultados y ver cómo ayudarte.
-        </p>
+    <section class="wrap next-sec" id="aplicacion" aria-labelledby="application-title">
+      <div class="kick kick-next" data-reveal="kicker">
+        <span class="arrow-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#7C2D3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="arrow-bob"><path d="M12 4v16M6 14l6 6 6-6"></path></svg></span>
+        <span>Siguiente paso</span>
       </div>
-
-      <div class="typeform-frame">
+      <h2 class="h2" id="application-title" data-reveal>Ahora queremos saber <span class="frase bloque m-line">qué está pasando contigo</span></h2>
+      <p class="copy copy-next" data-copy data-reveal>Cuéntanos qué has intentado y qué<br class="solo-movil" /> quieres cambiar. El equipo revisará tus respuestas para entender qué podría estar frenando tus resultados y ver cómo podemos ayudarte.</p>
+      <div class="fbox typeform-frame" data-reveal="card">
         <div class="form-loader" id="form-loader" role="status">Cargando evaluación…</div>
-        <!-- El embed live 01KHA5... resuelve a este formulario, pero fuerza shareGaInstance.
-             Usamos el ID real para conservar la evaluación; GA4 sigue centralizado en GTM. -->
-        <!-- Se monta con tf.createWidget (SDK) en vez de data-tf-*: así autoResize
-             va como booleano sin tope de alto y los hidden fields viajan como
-             objeto, sin romper tildes ni espacios. -->
+        <!-- El embed live 01KHA5… resuelve a este mismo formulario pero fuerza
+             shareGaInstance. Se usa el ID real con el SDK (tf.createWidget) para
+             conservar la evaluación; GA4 sigue centralizado en GTM. -->
         <div id="tf-embed"></div>
         <noscript>
           <p class="form-loader">Activa JavaScript para completar la evaluación.</p>
         </noscript>
       </div>
     </section>
-
-    <footer class="site-footer">
-      <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
-      <nav aria-label="Legal"><a href="#">Privacidad</a><a href="#">Términos</a></nav>
-    </footer>
   </main>
+
+  <footer class="site-footer">
+    <div>
+      <div class="f-line"></div>
+      <div class="trust">
+        <img src="/assets/va/vero-avatar-92.webp" width="46" height="46" loading="lazy" decoding="async" alt="Veronika Alvarado" />
+        <span class="trust-name">Veronika Alvarado</span>
+      </div>
+      <p>© 2026 TR4INER · BodyMindFitCo LLC</p>
+      <p class="legal">
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a>
+        <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+      </p>
+    </div>
+  </footer>
 
   <script>
     (function (v, i, d, a, l, y, t, c, s) {
@@ -113,7 +325,6 @@
       vsl(l+"loader.min.js",function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}vli.loadScript(l+"player.min.js",function(){var vec=v[d][ve];t=new vec();t.run(a);});});
     })(window, document, "Vidalytics", "vidalytics_embed_RymSJVDkKpFH17Z7", "https://fast.vidalytics.com/embeds/IoH8SL8U/RymSJVDkKpFH17Z7/");
   </script>
-
   <script src="/attribution.js"></script>
   <script>
     (function () {
@@ -231,6 +442,39 @@
         // igual queda listo para cuando baje.
         setTimeout(loadTypeform, 6000);
       }
+    })();
+  </script>
+  <script>
+    /*
+      Aparición suave del segundo bloque, portada del diseño de Claude Design.
+      Además del IntersectionObserver hay un barrido cada 400 ms: si alguien
+      salta con el ancla o el navegador no dispara el observer, nada queda
+      invisible.
+    */
+    (function () {
+      "use strict";
+      var els = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+      if (!els.length) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+      function show(el) { el.classList.remove("rv-armed"); el.classList.add("rv-in"); }
+      els.forEach(function (el) { el.classList.add("rv-armed"); });
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.style.animationDelay = (Math.max(els.indexOf(entry.target), 0) % 4) * 260 + "ms";
+          show(entry.target);
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0, rootMargin: "0px 0px -14% 0px" });
+      els.forEach(function (el) { io.observe(el); });
+      var sweep = window.setInterval(function () {
+        var pend = els.filter(function (el) { return !el.classList.contains("rv-in"); });
+        pend.forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.86 && r.bottom > 0) show(el);
+        });
+        if (!pend.length) window.clearInterval(sweep);
+      }, 400);
     })();
   </script>
 </body>
