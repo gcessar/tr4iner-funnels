@@ -13,6 +13,47 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-25 — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
+
+Rama `work/va-registros`. Pedido del usuario después de publicar las otras cuatro páginas:
+`/testimonio-rosita-va` y `/testimonio-andrea-va` eran las únicas de Veronika que quedaban con
+la estética anterior (tema oscuro de Rosita, crema/tan de Andrea).
+
+### Qué cambió
+
+No había exporte de diseño para estas dos, así que se armaron con las piezas ya aprobadas:
+rótulo «Caso Real · …» y titular de las VSL, portada del video en el marco con filete vino,
+botón y campos de la landing, y el mismo pie con el avatar nuevo. Se conservó el copy de
+producción; sólo se agregó el rótulo «Caso Real · Andrea», que Rosita ya tenía.
+
+**La mecánica es la de siempre**: la portada y el botón abren una ventana con el registro, y al
+enviar la persona va a su `/video`. El script de cada página —ventana, validación, webhook
+`casos-estudio`, copia al CRM, respaldos de atribución, evento `va_registration_submitted`—
+y los scripts de cabecera se copiaron **byte a byte**. El HTML nuevo mantiene todos los ids y
+clases que ese script usa (verificado con un cotejo automático).
+
+Un ajuste propio de la ventana: al abrirse, su visibilidad cambia en el acto y sólo el
+fundido se anima. Si la visibilidad dependía de la animación, en un teléfono lento la ventana
+podía tardar en poder tocarse.
+
+Rosita deja de cargar `assets/rosita-va/rosita-theme.css` en sus dos páginas. El archivo queda
+en el repo (sin uso) por si se revierte.
+
+### Verificación
+
+Local, con `fetch`, `sendBeacon` y `dataLayer` interceptados: nada salió a n8n, al CRM ni a GA4.
+
+- **Rosita:** portada → ventana abierta, página bloqueada, contenido inerte y foco en cerrar
+  (celular). Vacío → los dos errores sin enviar. Válido → `/testimonio-rosita-va/video` con
+  UTMs, `funnel=VA`, `funnel_variant=testimonio-rosita-va`, nombre, correo con `@` y `sexo`;
+  payload `funnel: rosita-va` a n8n y al CRM.
+- **Andrea:** consolidación de UTMs duplicadas de Instagram, correo desechable rechazado sin
+  enviar, y válido → `/testimonio-andrea-va/video` con el payload `andrea-va` (con `fbp`/`fbc`).
+- Escape y el botón de cerrar cierran la ventana y liberan la página.
+- HTML bien cerrado, sin ids duplicados, sin referencias a las fuentes ni temas anteriores.
+
+---
+
 ## 2026-09-25 — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
 
 Rama `work/va-rediseno`. El usuario pasó cuatro exportes de Claude Design (página inicial y
@@ -850,6 +891,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-25` — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
 - `2026-09-25` — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
 - `2026-09-24` — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
 - `2026-09-20` — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
