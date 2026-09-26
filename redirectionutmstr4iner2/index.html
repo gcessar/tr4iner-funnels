@@ -45,9 +45,30 @@
           return entry[0].toLowerCase().indexOf("utm_") === 0 && vaMarker.test(entry[1]);
         });
 
-      const destination = isVa ? "/calendly-va" : "/calendly-an";
+      // Agenda en pausa desde el 26-sep-2026: Martin no está disponible hasta el
+      // lunes y nadie puede tomar las llamadas. Mientras tanto, los calificados
+      // van al WhatsApp de ManyChat de su cuenta, con los mismos números y
+      // textos que /redirectionutmstr4iner, así ManyChat los recibe igual que
+      // siempre. Para volver a Calendly basta con pasar esto a false.
+      const AGENDA_PAUSADA = true;
 
-      window.location.replace(window.location.origin + destination + queryString);
+      if (!AGENDA_PAUSADA) {
+        const destination = isVa ? "/calendly-va" : "/calendly-an";
+        window.location.replace(window.location.origin + destination + queryString);
+        return;
+      }
+
+      const isMetaCaseStudy = !isVa &&
+        urlParams.get("utm_source") === "MetaAds" &&
+        urlParams.get("utm_medium") === "Caso_Estudio";
+      const phone = isVa ? "15677024560" : "17439014239";
+      const message = isMetaCaseStudy
+        ? "¡Hola! Quiero más información."
+        : "Hola! Necesito ayuda con mi transformacion fisica y buscaba conocer mas sobre los programas que ofrece Tr4iner.";
+
+      window.location.replace(
+        "https://api.whatsapp.com/send?phone=" + phone + "&text=" + encodeURIComponent(message)
+      );
     });
   </script>
 </body>
