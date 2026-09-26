@@ -2644,6 +2644,8 @@
                     // Mientras no exista el video final se muestra uno del canal, y
                     // el equipo tiene que poder distinguirlo a simple vista.
                     provisional: /provisional/i.test(content.description || ''),
+                    // Portada diseñada por el equipo; sin ella, la de YouTube.
+                    thumb: content.thumbnail || null,
                     description: content.description || '',
                     resources: Array.isArray(content.resources) ? content.resources : [],
                     intentLevel: content.intentLevel
@@ -3042,7 +3044,8 @@
           '</summary>' +
           '<div class="route-group-body locked-body">' +
             (portadas.length ? '<div class="locked-thumbs" aria-hidden="true">' + portadas.map(function (src) {
-              return '<span><img src="' + escapeHtml(src) + '" alt="" width="320" height="180" loading="lazy" decoding="async" /><i><svg viewBox="0 0 12 14"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg></i></span>';
+              // Cuatro en fila: alcanza con la portada chica.
+              return '<span><img src="' + escapeHtml(String(src).replace(/-960\.webp$/, '-480.webp')) + '" alt="" width="320" height="180" loading="lazy" decoding="async" /><i><svg viewBox="0 0 12 14"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg></i></span>';
             }).join('') + '</div>' : '') +
             '<p class="locked-date">' + escapeHtml(apertura.larga) + '</p>' +
             '<p class="bloque-desc">' + (cantidad ? cantidad + (cantidad === 1 ? ' orientación te espera' : ' orientaciones te esperan') + ' en este paso. ' : '') +
@@ -3147,6 +3150,14 @@
           .replace(/'/g, '&#039;');
       }
 
+      // Las portadas propias vienen en dos anchos (-480/-960.webp): el navegador baja la
+      // chica en las tarjetas del teléfono y la grande en pantallas densas.
+      function atributosPortada(url) {
+        if (!/-960\.webp$/.test(url)) return '';
+        return ' srcset="' + escapeHtml(url.replace(/-960\.webp$/, '-480.webp')) + ' 480w, ' + escapeHtml(url) + ' 960w"' +
+          ' sizes="(max-width: 640px) 92vw, 420px"';
+      }
+
       function mkCard(v, b, index) {
         var card = document.createElement('article');
         card.className = 'vcard' + (isDone(v.id) ? ' done' : '');
@@ -3160,8 +3171,11 @@
         card.innerHTML =
           '<button type="button" class="vmain" aria-label="Ver orientación: ' + escapeHtml(v.title) + '">' +
             '<span class="thumb">' +
-              '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
-                'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />' +
+              (v.thumb
+                ? '<img src="' + escapeHtml(v.thumb) + '"' + atributosPortada(v.thumb) + ' alt="" width="640" height="360" loading="lazy" decoding="async" ' +
+                  'onerror="this.onerror=null;this.removeAttribute(\'srcset\');this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />'
+                : '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
+                  'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />') +
               '<span class="play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
               (v.provisional ? '<span class="thumb-flag">Video provisional</span>' : '') +
             '</span>' +
@@ -3633,9 +3647,20 @@
         return 'https://i.ytimg.com/vi/' + id + '/' + (alta ? 'maxresdefault' : 'hqdefault') + '.jpg';
       }
 
-      function pintarMiniatura(img, id) {
-        img.onerror = function () { img.onerror = null; img.src = urlMiniatura(id, false); };
-        img.src = urlMiniatura(id, true);
+      function pintarMiniatura(img, v) {
+        if (v.thumb) {
+          // Si la portada no carga, la de YouTube: nunca un hueco en la tarjeta principal.
+          img.onerror = function () { img.onerror = null; img.removeAttribute('srcset'); img.src = urlMiniatura(v.id, false); };
+          if (/-960\.webp$/.test(v.thumb)) {
+            img.srcset = v.thumb.replace(/-960\.webp$/, '-480.webp') + ' 480w, ' + v.thumb + ' 960w';
+            img.sizes = '(max-width: 640px) 92vw, 560px';
+          } else { img.removeAttribute('srcset'); }
+          img.src = v.thumb;
+          return;
+        }
+        img.removeAttribute('srcset');
+        img.onerror = function () { img.onerror = null; img.src = urlMiniatura(v.id, false); };
+        img.src = urlMiniatura(v.id, true);
       }
 
       // Las tres siguientes orientaciones, en abanico, como acceso a lo que viene.
@@ -3654,7 +3679,8 @@
         deck.innerHTML = '';
         siguientes.forEach(function (item) {
           var carta = document.createElement('i');
-          carta.style.backgroundImage = 'url("' + urlMiniatura(item.v.id, false) + '")';
+          var portada = item.v.thumb ? item.v.thumb.replace(/-960\.webp$/, '-480.webp') : urlMiniatura(item.v.id, false);
+          carta.style.backgroundImage = 'url("' + portada + '")';
           deck.appendChild(carta);
         });
         var restantes = lista.length - desde;
@@ -3707,8 +3733,8 @@
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
-        pintarMiniatura(document.getElementById('guide-img'), nextVideo.id);
-        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo.id);
+        pintarMiniatura(document.getElementById('guide-img'), nextVideo);
+        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo);
         pintarBaraja();
         mobileFocusOpen.setAttribute('aria-label', accion + ': ' + nextVideo.title);
       }
