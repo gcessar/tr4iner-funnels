@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-09-26 — Ruta: el diseño vuelve a ser el de producción (decisiones, sin código)
+
+- **Corrección del usuario:** la app `/biblioteca/ruta/` (header con logo, «Mi perfil», franja de equipo, otro layout) **no se usa**. La Ruta nueva debe verse **igual** a `biblioteca/videos/index.html` de `main`; lo único nuevo son los módulos y la rutina. Hay que quitar el rewrite de `/biblioteca/videos/` → `/biblioteca/ruta/` del middleware y extender la página de producción, reutilizando la lógica ya hecha (rutina persistida, descansos, Web Push, drip).
+- **Decisiones:** reemplazo total de los 6 bloques para hombres y mujeres (mismos módulos y rutina; cambia el video por segmento sexo/edad) · **todos los videos en Bunny**, YouTube se abandona (reproductor Bunny con medición de avance; CRM con video por lección × segmento) · rutina con botón bajo el video de introducción de Pesas + acceso fijo tipo «Conoce tus macros» · módulos bloqueados visibles con candado, fecha y miniaturas · orden fijo por días; el test queda para macros · miembros actuales: el drip cuenta desde la publicación · lo que está en Vimeo se migra con Sheet de enlaces + script que corre el usuario con sus claves; videos futuros desde el CRM · portadas siempre diseñadas por el equipo · títulos editables por lección en el CRM.
+- **Pendiente antes de construir:** fecha objetivo de lanzamiento, maqueta de la vista de rutina con el sistema visual de producción, Sheet de videos por lección y segmento, respuestas del entrenador sobre correspondencias de ejercicios.
+
 ## 2026-09-23 — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny
 
 - **Qué (Claude, continúa el QA de Codex):** `bf18533` en `work/ruta-hombres-preview`. Cerrar el descanso sin internet lo cierra en el acto y reintenta la cancelación del aviso al volver la red (antes el reloj quedaba trabado y el aviso llegaba igual); tras recargar, la revisión guardada alcanza para cancelar. Errores de red en español (no más «Failed to fetch»/«Load failed»). «Reiniciar» repite el descanso del ejercicio, no 60 s. Sin aviso remoto confirmado, vibra al terminar con la ruta visible (Android). Tocar la notificación enfoca la ruta sin recargarla si ya está en esa página. La rutina ya no espera al service worker (tope 2,5 s) y pide las semanas 2 y 3 en paralelo, después de la 1, que es la que crea la asignación.
@@ -372,6 +378,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-26` — Ruta: el diseño vuelve a ser el de producción (decisiones, sin código)
 - `2026-09-23` — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny
 - `2026-09-22` — Ruta: recorrido privado desde registro y avisos Web Push
 - `2026-09-22` — Ruta TR4INER: Sheet del entrenador, registro y preview por días
