@@ -13,6 +13,42 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-26 — Agenda en pausa: los calificados del Typeform van a WhatsApp
+
+Rama `work/agenda-pausada-whatsapp`. Martin no está disponible hasta el lunes y no
+hay quien atienda las llamadas de venta.
+
+### Qué cambió
+- `/redirectionutmstr4iner2` (la salida del Typeform para calificados) deja de mandar a
+  `/calendly-an` y `/calendly-va`: ahora abre el WhatsApp de ManyChat de la cuenta que corresponde.
+- **AN → `17439014239`**, **VA → `15677024560`** (Veronika). Son los mismos números que usan
+  `/redirectionutmstr4iner` y `404.html`.
+- Textos precargados idénticos a los de `/redirectionutmstr4iner` antes de que su rama VA pasara
+  a `/fit4-va`: «¡Hola! Quiero más información.» sólo para AN con `utm_source=MetaAds` +
+  `utm_medium=Caso_Estudio`; el resto, el texto largo de transformación física. Se copiaron tal
+  cual para no romper disparadores de ManyChat que dependan del texto.
+- La detección de VA no cambió (marcador único del repo).
+- `/redirectionutmstr4iner` **no se tocó**: su tráfico VA sigue yendo a `/fit4-va`.
+
+### Cómo revertir
+En `redirectionutmstr4iner2/index.html`, pasar `const AGENDA_PAUSADA = true;` a `false`. La
+ruta a Calendly quedó intacta detrás de ese interruptor y reenvía la query completa como antes.
+
+### Impacto esperado en KPIs
+- Mientras dure la pausa **no entran agendas nuevas por Calendly** desde el Typeform: las
+  agendas por 1.000 exposiciones del test de hero (`ce_hero_202609`) caen a cero en los dos
+  brazos por igual. Los días de pausa no sirven para leer agendas del test.
+- WhatsApp no recibe UTMs: la atribución de estos leads queda en la respuesta de Typeform
+  (teléfono como puente), no en Calendly ni en el sheet AGENDAS.
+
+### Verificación
+Prueba local del script con UTMs sintéticas: AN orgánico, AN MetaAds/Caso_Estudio, `TR4INER-VA`,
+`CASOS-VA`, `ROSITA-VA`, `YOUTUBE-VA-descripcion`, sin query, y los falsos positivos `NAVA-2026` y
+`VARIANTE-A` (van a AN). Con el interruptor en `false`, vuelve a `/calendly-an` y `/calendly-va`
+con la query completa.
+
+---
+
 ## 2026-09-25 — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
 
 Rama `work/va-registros`. Pedido del usuario después de publicar las otras cuatro páginas:
@@ -899,6 +935,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-26` — Agenda en pausa: los calificados del Typeform van a WhatsApp
 - `2026-09-25` — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
 - `2026-09-25` — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
 - `2026-09-24` — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
