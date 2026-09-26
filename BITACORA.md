@@ -47,6 +47,14 @@ Prueba local del script con UTMs sintéticas: AN orgánico, AN MetaAds/Caso_Estu
 `VARIANTE-A` (van a AN). Con el interruptor en `false`, vuelve a `/calendly-an` y `/calendly-va`
 con la query completa.
 
+### Publicación
+Aprobada por el usuario el 26-sep. Merge `2f049f3` en `main` → deployment de producción
+`dpl_DX8f63eaFDJBDEWQx1cyj41ExG3h`, **Ready**. `https://metodo.tr4iner.com/redirectionutmstr4iner2`
+responde `200` y sirve el mismo archivo que `main` (SHA-256 `e8c067bb23c29635…`); el script
+servido pasó los mismos casos de AN/VA que la prueba local.
+
+**Pendiente:** cuando vuelva Martin, pasar `AGENDA_PAUSADA` a `false` y publicar.
+
 ---
 
 ## 2026-09-25 — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
