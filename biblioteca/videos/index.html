@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://i.ytimg.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20260926-rutina1" />
 
   <style>
     :root {
@@ -2242,6 +2243,13 @@
         </button>
       </section>
 
+      <button type="button" class="routine-trigger" id="routine-trigger" aria-haspopup="dialog" aria-controls="routine-sheet" hidden>
+        <span>
+          <strong id="routine-trigger-title">Tu rutina</strong>
+          <small id="routine-trigger-next"></small>
+        </span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+      </button>
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
           <strong id="mobile-profile-trigger-value">CONOCE TUS MACROS</strong>
@@ -2372,6 +2380,7 @@
       </button>
     </div>
     <div class="player-sheet" id="player-sheet" hidden>
+      <div class="player-routine" id="player-routine" hidden></div>
       <div class="player-hint" id="player-hint" hidden>
         <p class="player-hint-code">TE LO RECOMENDAMOS EN ORDEN</p>
         <p id="player-hint-text"></p>
@@ -2421,6 +2430,47 @@
     </div>
   </dialog>
 
+  <dialog class="routine-sheet" id="routine-sheet" aria-labelledby="routine-title">
+    <div class="routine-head">
+      <span id="routine-head-label">Tu rutina</span>
+      <button type="button" class="profile-dialog-close" id="routine-close" aria-label="Cerrar rutina">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="routine-scroll" id="routine-scroll"><div id="routine-body"></div></div>
+    <aside class="rest-bar" id="rest-timer" aria-label="Temporizador de descanso" hidden>
+      <div class="rest-top">
+        <div><span class="rest-label">Descanso</span><strong id="timer-value" role="timer">01:30</strong></div>
+        <div class="rest-btns">
+          <button type="button" id="timer-add">+30 s</button>
+          <button type="button" id="timer-pause">Pausar</button>
+          <button type="button" id="timer-close" aria-label="Cerrar descanso">✕</button>
+        </div>
+      </div>
+      <div class="rest-track" aria-hidden="true"><i id="timer-fill"></i></div>
+      <p class="rest-note"><span id="push-status" role="status"></span><button type="button" class="rest-alert" id="timer-alert" aria-pressed="false">Activar avisos</button></p>
+    </aside>
+    <div class="rt-replace" id="rt-replace" hidden>
+      <div class="rt-replace-dim" data-close-replace></div>
+      <section class="rt-replace-sheet" role="dialog" aria-modal="true" aria-labelledby="rt-replace-title">
+        <div class="rt-grabber" aria-hidden="true"></div>
+        <p class="rt-eyebrow">Alternativas del ejercicio</p>
+        <h3 id="rt-replace-title">¿Está ocupado o te falta el equipo?</h3>
+        <p id="rt-replace-text"></p>
+        <div id="rt-replace-options"></div>
+        <button type="button" class="rt-replace-cancel" data-close-replace>Cancelar</button>
+      </section>
+    </div>
+    <p class="routine-toast" id="toast" role="status" hidden></p>
+    <div class="routine-sr" id="announcer" aria-live="polite"></div>
+  </dialog>
+  <dialog class="push-help" id="push-help" aria-labelledby="push-help-title">
+    <div class="push-help-head"><span>Avisos de descanso</span><button type="button" class="profile-dialog-close" data-close="push-help" aria-label="Cerrar" onclick="this.closest('dialog').close()"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+    <h2 id="push-help-title">Entrena sin mirar el reloj.</h2>
+    <div id="push-help-text"></div>
+    <button type="button" id="push-enable">Activar notificaciones</button>
+    <button type="button" id="push-disable" hidden>Desactivar en este dispositivo</button>
+  </dialog>
   <div class="tour" id="tour" hidden aria-hidden="true">
     <div class="tour-spot" id="tour-spot" aria-hidden="true"></div>
     <section class="tour-card" id="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
@@ -2435,6 +2485,7 @@
   </div>
 
   <script src="/attribution.js"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20260926-rutina1"></script>
   <script>
     (async function () {
       'use strict';
@@ -3151,7 +3202,8 @@
       var playerLastFocus = null;
 
       function syncModalState() {
-        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open));
+        var routineSheet = document.getElementById('routine-sheet');
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open)));
       }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
@@ -3285,7 +3337,12 @@
           list.appendChild(item);
         });
         box.hidden = recursos.length === 0;
-        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden;
+        // Debajo del video de introducción de pesas va la puerta a la rutina.
+        var rutinaBox = document.getElementById('player-routine');
+        var esIntroRutina = v.slug === 'ruta-rutina-intro' && window.RutinaUI && window.RutinaUI.disponible();
+        rutinaBox.hidden = !esIntroRutina;
+        if (esIntroRutina) window.RutinaUI.botonReproductor(rutinaBox, closePlayer);
+        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden && !esIntroRutina;
       }
 
       function openPlayer(v, b) {
@@ -3926,6 +3983,10 @@
       updateBridge();
       maybeStartTour();
       showAnnouncement();
+      // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
+      if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
+        window.RutinaUI.init({ abrir: params.get('rutina') === '1' });
+      }
       if (memberSession && plan && params.get('video')) {
         var requested = VIDEOS.find(function (item) { return item.id === params.get('video'); });
         var requestedBlock = requested && BLOQUES.find(function (item) { return item.id === requested.bloque; });

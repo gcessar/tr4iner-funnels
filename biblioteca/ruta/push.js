@@ -26,6 +26,8 @@
     $('rest-timer').hidden=!local;
     if(!local)return;
     const left=remaining();$('timer-value').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+    // La barra de la rutina en la página de producción; en otras páginas no existe.
+    const fill=$('timer-fill');if(fill)fill.style.width=Math.max(0,Math.min(100,left/Math.max(1,lastSeconds)*100))+'%';
     $('timer-pause').textContent=left?(local.paused?'Continuar':'Pausar'):'Reiniciar';
     if(!left&&!local.paused) {
       const justEnded=Date.now()-local.end<5000;
