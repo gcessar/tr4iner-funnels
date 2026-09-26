@@ -3,7 +3,7 @@ self.addEventListener('install',()=>self.skipWaiting());
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
 self.addEventListener('push',event=>{
   let data={};try{data=event.data.json();}catch(_){}
-  let target=new URL('/biblioteca/ruta/?vista=rutina',self.location.origin);
+  let target=new URL('/biblioteca/videos/?rutina=1',self.location.origin);
   try{const url=new URL(data.url,self.location.origin);if(url.origin===self.location.origin&&url.pathname.startsWith('/biblioteca/'))target=url;}catch(_){}
   event.waitUntil(self.registration.showNotification(data.title||'Terminó tu descanso',{
     body:data.body||'Puedes continuar con tu siguiente serie.',
@@ -14,7 +14,7 @@ self.addEventListener('push',event=>{
 });
 self.addEventListener('notificationclick',event=>{
   event.notification.close();
-  const target=new URL(event.notification.data?.url||'/biblioteca/ruta/',self.location.origin);
+  const target=new URL(event.notification.data?.url||'/biblioteca/videos/?rutina=1',self.location.origin);
   if(target.origin!==self.location.origin)return;
   event.waitUntil((async()=>{
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
