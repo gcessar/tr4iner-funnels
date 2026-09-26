@@ -2138,6 +2138,22 @@
         transition: none;
       }
     }
+
+    /* ── Ruta por días: módulos que todavía no se abren ──
+       Se ven en el índice para anticipar lo que viene, con su fecha y las
+       portadas en gris: se entiende que existe pero que aún no toca. */
+    .route-group.is-locked .index-copy strong { color: var(--ink-soft); }
+    .route-group.is-locked .index-status { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); }
+    .route-group.is-locked .lock-icon { width: 9px; height: 10px; flex: none; }
+    .locked-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 6px 0 16px; }
+    .locked-thumbs span { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--rule); border-radius: 7px; background: var(--paper-deep); }
+    .locked-thumbs img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(.9); opacity: .45; }
+    .locked-thumbs i { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); }
+    .locked-thumbs i svg { width: 14px; height: 16px; }
+    .locked-date { margin: 0 0 6px; font-family: var(--serif); font-size: 19px; font-weight: 560; line-height: 1.2; }
+    /* Rótulo sobre la portada: en la meta competía con el botón de marcar como vista. */
+    .thumb-flag { position: absolute; left: 8px; top: 8px; padding: 3px 6px; border-radius: 4px; background: #FFFFFF; color: var(--ink); font: 600 8px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    @media (max-width: 560px) { .locked-thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -2299,7 +2315,7 @@
                 <p class="section-code">ÍNDICE DE TU RUTA</p>
                 <h2 id="route-index-title" tabindex="-1">Lo que sigue, en orden.</h2>
               </div>
-              <span>SEGÚN TU PERFIL</span>
+              <span id="route-index-order">SEGÚN TU PERFIL</span>
             </div>
             <div class="filters-wrap" hidden aria-hidden="true">
               <div class="filters" id="filters"></div>
@@ -2536,6 +2552,7 @@
 
       var activeAnnouncement = null;
       var catalogFailed = false;
+      var rutaPorDias = false;
       var announcementShown = false;
       if (memberSession) {
         // Un fallo nunca debe reactivar el catálogo antiguo y saltarse el calendario del CRM.
@@ -2551,23 +2568,31 @@
                   id: module.slug,
                   locked: module.locked === true,
                   unlockAt: module.unlockAt,
+                  unlockAfterDays: module.unlockAfterDays,
+                  teaser: module.teaser || null,
                   num: module.num,
                   name: editorialBlock ? editorialBlock.name : module.title,
                   desc: editorialBlock ? editorialBlock.desc : (module.description || '')
                 };
               });
+              rutaPorDias = BLOQUES.some(function (b) { return b.id.indexOf('ruta-') === 0; });
               VIDEOS = [];
               catalogData.modules.forEach(function (module) {
                 module.contents.forEach(function (content) {
                   VIDEOS.push({
                     id: content.youtubeId,
                     bloque: module.slug,
+                    slug: content.slug,
                     sexo: content.audience === 'WOMEN' ? 'mujer' : (content.audience === 'MEN' ? 'hombre' : 'all'),
                     // Los titulos de la base son los de YouTube, de captacion.
-                    // Solo mandan cuando alguien los edito desde el CMS.
-                    title: content.titleEdited
+                    // Solo mandan cuando alguien los edito desde el CMS. En la
+                    // Ruta por dias el titulo lo define siempre el CRM.
+                    title: content.titleEdited || module.slug.indexOf('ruta-') === 0
                       ? content.title
                       : (EDITORIAL_TITLES[content.youtubeId] || content.title),
+                    // Mientras no exista el video final se muestra uno del canal, y
+                    // el equipo tiene que poder distinguirlo a simple vista.
+                    provisional: /provisional/i.test(content.description || ''),
                     description: content.description || '',
                     resources: Array.isArray(content.resources) ? content.resources : [],
                     intentLevel: content.intentLevel
@@ -2813,7 +2838,9 @@
       }
       // Con plan hecho, los bloques se muestran en el orden de la ruta personalizada.
       function bloquesOrdenados() {
-        if (!plan || !plan.ruta) return BLOQUES;
+        // La Ruta por días se recorre en el orden en que se abre: el test solo
+        // calcula los macros, ya no reordena los módulos.
+        if (rutaPorDias || !plan || !plan.ruta) return BLOQUES;
         var orden = plan.ruta;
         return BLOQUES.slice().sort(function (a, b) {
           var ia = orden.indexOf(a.id), ib = orden.indexOf(b.id);
@@ -2922,10 +2949,62 @@
       window.addEventListener('scroll', checkReveals, { passive: true });
       window.addEventListener('resize', checkReveals, { passive: true });
 
+      // ── Módulos que se abren por fecha ──
+      // Se publican por fecha: una fecha concreta se entiende mejor que «a los 2 días».
+      function aperturaDe(b) {
+        var at = new Date(b.unlockAt || '');
+        if (isNaN(at.getTime())) return { corta: 'PRÓXIMAMENTE', larga: 'Se abre a los ' + (b.unlockAfterDays || 0) + ' días de confirmar tu plaza.' };
+        var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+        var dia = new Date(at); dia.setHours(0, 0, 0, 0);
+        var faltan = Math.round((dia - hoy) / 86400000);
+        var hora = at.toLocaleTimeString('es-419', { hour: 'numeric', minute: '2-digit' });
+        if (faltan <= 0) return { corta: 'SE ABRE HOY', larga: 'Se abre hoy a las ' + hora + '.' };
+        if (faltan === 1) return { corta: 'SE ABRE MAÑANA', larga: 'Se abre mañana a las ' + hora + '.' };
+        var fecha = at.toLocaleDateString('es-419', { day: 'numeric', month: 'short' }).replace('.', '');
+        return {
+          corta: 'SE ABRE EL ' + fecha.toUpperCase(),
+          larga: 'Se abre el ' + at.toLocaleDateString('es-419', { weekday: 'long' }) + ' ' + at.toLocaleDateString('es-419', { day: 'numeric', month: 'long' }) + '.'
+        };
+      }
+
+      function mkLockedGroup(b, orden) {
+        var apertura = aperturaDe(b);
+        var numero = String(orden + 1).padStart(2, '0');
+        var section = document.createElement('details');
+        section.className = 'route-group is-locked';
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+            if (otro !== section) otro.open = false;
+          });
+        });
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': ' + b.name + '. ' + apertura.larga);
+        var teaser = b.teaser || {};
+        var portadas = Array.isArray(teaser.thumbnails) ? teaser.thumbnails.slice(0, 4) : [];
+        var cantidad = Number(teaser.count) || 0;
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + numero + '</span>' +
+            '<span class="index-copy"><strong>' + escapeHtml(b.name) + '</strong><small>' + escapeHtml(b.desc) + '</small></span>' +
+            '<b class="index-status"><svg class="lock-icon" viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>' + escapeHtml(apertura.corta) + '</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body locked-body">' +
+            (portadas.length ? '<div class="locked-thumbs" aria-hidden="true">' + portadas.map(function (src) {
+              return '<span><img src="' + escapeHtml(src) + '" alt="" width="320" height="180" loading="lazy" decoding="async" /><i><svg viewBox="0 0 12 14"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg></i></span>';
+            }).join('') + '</div>' : '') +
+            '<p class="locked-date">' + escapeHtml(apertura.larga) + '</p>' +
+            '<p class="bloque-desc">' + (cantidad ? cantidad + (cantidad === 1 ? ' orientación te espera' : ' orientaciones te esperan') + ' en este paso. ' : '') +
+              'Mientras tanto, sigue con lo que ya tienes abierto.</p>' +
+          '</div>';
+        return section;
+      }
+
       function renderLibrary() {
         libraryRendered = true;
         libraryEl.innerHTML = '';
         var shown = 0;
+        if (rutaPorDias) document.getElementById('route-index-order').textContent = 'SE ABRE DÍA A DÍA';
 
         var enRuta = bloquesOrdenados();
         var firstPendingBlockId = null;
@@ -2940,11 +3019,9 @@
         enRuta.forEach(function (b, orden) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
           if (b.locked) {
-            var locked = document.createElement('section'); locked.className = 'route-group';
-            var title = document.createElement('h3'); title.textContent = b.name;
-            var note = document.createElement('p');
-            note.textContent = b.unlockAt ? 'Disponible el ' + new Date(b.unlockAt).toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }) : 'Confirma tu registro para iniciar esta ruta.';
-            locked.style.padding = '24px'; locked.append(title, note); libraryEl.appendChild(locked); shown++; return;
+            libraryEl.appendChild(mkLockedGroup(b, orden));
+            shown++;
+            return;
           }
           var vids = videosDe(b.id);
           if (vids.length === 0) return;
@@ -3035,6 +3112,7 @@
               '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
                 'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />' +
               '<span class="play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
+              (v.provisional ? '<span class="thumb-flag">Video provisional</span>' : '') +
             '</span>' +
             '<span class="vbody">' +
               '<span class="vmeta"><span>ORIENTACIÓN · ' + escapeHtml(b.name) + '</span>' + badge + '</span>' +
