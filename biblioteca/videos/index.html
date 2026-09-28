@@ -2158,6 +2158,8 @@
     body.ruta-solo-paso-uno .profile-summary,
     body.ruta-solo-paso-uno .editorial-index,
     body.ruta-solo-paso-uno .conversion-bridge { display: none !important; }
+    /* En la Ruta los macros viven sólo como paso del índice, después de Alimentación (29-sep). */
+    body.ruta-por-dias #mobile-profile-trigger { display: none !important; }
     body.ruta-solo-paso-uno .library-layout { grid-template-columns: minmax(0, 1fr); }
     /* La rutina y los macros como pasos del índice: se abren, no se despliegan. */
     .route-paso:not(.is-locked) .index-status { color: var(--ink); }
@@ -3374,6 +3376,7 @@
       function aplicarDesbloqueos() {
         if (!rutaPorDias) return;
         var paso1 = soloPasoUno();
+        document.body.classList.add('ruta-por-dias');
         document.body.classList.toggle('ruta-solo-paso-uno', paso1);
         if (window.RutinaUI && window.RutinaUI.activar) {
           window.RutinaUI.activar({ activa: rutinaActiva(), enInicio: rutinaActiva() && !paso1, faltan: pendientesDe(MODULO_PESAS), total: videosDe(MODULO_PESAS).length, modulo: nombreModulo(MODULO_PESAS) || 'Entrenamiento de pesas' });
