@@ -8,7 +8,9 @@ function privatePreview(response: Response) {
   response.headers.set("Vercel-CDN-Cache-Control", "no-store");
   response.headers.set("CDN-Cache-Control", "no-store");
   response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  response.headers.set("Referrer-Policy", "same-origin");
+  // Hacia otros dominios sólo viaja el origen, nunca la ruta ni el enlace compartido. Bunny
+  // exige ese origen para servir los videos de ejercicios, que la página reproduce directo.
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   // También bloquea los píxeles noscript: ni el navegador sin JavaScript cuenta como un lead real.
   response.headers.set("Content-Security-Policy", [
     "default-src 'self'",

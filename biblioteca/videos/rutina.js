@@ -16,7 +16,11 @@
     down: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 2v11M4.5 9.5L8 13l3.5-3.5"/></svg>',
     check: '<svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6.5"/></svg>',
     play: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>',
-    lock: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>'
+    lock: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="0" width="3.6" height="14" rx="1"/><rect x="7.4" y="0" width="3.6" height="14" rx="1"/></svg>',
+    sound: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6.3 6.3 0 0 1 0 9"/></svg>',
+    muted: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 6l4 4M14.5 6l-4 4"/></svg>',
+    expand: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg>'
   };
   var st = { weeks: {}, version: 0, member: null, program: null, week: 0, day: 0, openSlot: null,
     replaceSlot: null, pending: Promise.resolve(), loaded: false, lastFocus: null, replaceFocus: null,
@@ -126,9 +130,113 @@
         '<span class="rt-soon-flag">Video en producción</span><span class="rt-soon-play">' + ICON.play + '</span>' +
         '<strong>' + esc(ex.name) + '</strong><small>Se publica pronto.</small></button>';
     }
-    return '<button type="button" class="rt-video ' + (ex.orientation === 'horizontal' ? 'is-h' : 'is-v') + '" data-play="' + esc(ex.slot) + '" aria-label="Ver demostración de ' + esc(ex.name) + '">' +
-      (ex.thumbnail ? '<img src="' + esc(ex.thumbnail) + '" alt="" loading="lazy" decoding="async" />' : '') +
-      '<span class="rt-play">' + ICON.play + '</span></button>';
+    var forma = ex.orientation === 'horizontal' ? 'is-h' : 'is-v';
+    if (!cdnBase(ex)) {
+      return '<button type="button" class="rt-video ' + forma + '" data-play="' + esc(ex.slot) + '" aria-label="Ver demostración de ' + esc(ex.name) + '">' +
+        '<span class="rt-play">' + ICON.play + '</span></button>';
+    }
+    // La portada se pinta con el HTML; el archivo de video se elige después, al medir la tarjeta.
+    return '<div class="rt-video ' + forma + '" data-player="' + esc(ex.slot) + '" role="group" aria-label="Demostración de ' + esc(ex.name) + '">' +
+      '<video playsinline webkit-playsinline loop preload="none" disablepictureinpicture poster="' + esc(cdnBase(ex) + 'thumbnail.jpg') + '"></video>' +
+      '<button type="button" class="rt-play" data-vplay aria-label="Reproducir la demostración">' + ICON.play + '<i class="rt-spin" aria-hidden="true"></i></button>' +
+      '<div class="rt-vtools">' +
+        '<button type="button" class="rt-vtool" data-vsound aria-label="Silenciar" aria-pressed="false">' + ICON.sound + '</button>' +
+        '<button type="button" class="rt-vtool" data-vfull aria-label="Ver en pantalla completa">' + ICON.expand + '</button>' +
+      '</div>' +
+      '<div class="rt-vbar" aria-hidden="true"><i></i></div>' +
+      '<div class="rt-verror" hidden><p>No se pudo cargar el video. Revisa tu conexión.</p><button type="button" data-vretry>Reintentar</button></div>' +
+    '</div>';
+  }
+  function cdnBase(ex) {
+    if (!/^[a-z0-9-]+\.b-cdn\.net$/i.test(ex.videoHost || '') || !/^[0-9a-f-]{36}$/i.test(ex.videoId || '')) return null;
+    return 'https://' + ex.videoHost + '/' + ex.videoId + '/';
+  }
+
+  // ── Reproductor de ejercicios ──
+  // El embebido de Bunny cargaba su propio reproductor dentro de un iframe (pantalla negra,
+  // luego su interfaz) y pedía un segundo toque: el navegador no deja sonar un video dentro
+  // de un iframe con el toque dado afuera. Un <video> de la página arranca con sonido en el
+  // mismo toque, sobre los MP4 de Bunny (índice al inicio, rangos y caché de 30 días).
+  function calidad(box) {
+    var red = navigator.connection || {};
+    if (red.saveData || /(^|-)2g|3g/.test(red.effectiveType || '')) return '360p';
+    var lado = box.getBoundingClientRect()[box.classList.contains('is-h') ? 'height' : 'width'] || 240;
+    // El lado corto del video contra los píxeles reales de la pantalla: nítido sin bajar de más.
+    return lado * Math.min(window.devicePixelRatio || 1, 3) > 500 ? '720p' : '480p';
+  }
+  function wirePlayers() {
+    document.querySelectorAll('#routine-body [data-player]').forEach(function (box) {
+      var video = box.querySelector('video');
+      if (video.dataset.src) return;
+      var ex = exerciseBySlot(box.dataset.player);
+      video.dataset.src = cdnBase(ex) + 'play_' + calidad(box) + '.mp4';
+      // Sólo se precarga el ejercicio abierto: al tocar play ya hay segundos en memoria. Con
+      // ahorro de datos o red lenta se baja apenas el índice del archivo.
+      var red = navigator.connection || {};
+      video.preload = red.saveData || /(^|-)2g|3g/.test(red.effectiveType || '') ? 'metadata' : 'auto';
+      video.src = video.dataset.src;
+      var bar = box.querySelector('.rt-vbar i');
+      var tick = function () {
+        if (video.duration) bar.style.transform = 'scaleX(' + (video.currentTime / video.duration) + ')';
+        if (!video.paused) box.raf = requestAnimationFrame(tick);
+      };
+      video.addEventListener('playing', function () {
+        box.classList.add('is-playing'); box.classList.remove('is-loading', 'is-paused');
+        box.querySelector('[data-vplay]').setAttribute('aria-label', 'Pausar la demostración');
+        cancelAnimationFrame(box.raf); tick();
+      });
+      video.addEventListener('waiting', function () { box.classList.add('is-loading'); });
+      video.addEventListener('pause', function () {
+        box.classList.remove('is-playing', 'is-loading'); box.classList.add('is-paused');
+        box.querySelector('[data-vplay]').setAttribute('aria-label', 'Reproducir la demostración');
+        cancelAnimationFrame(box.raf);
+      });
+      video.addEventListener('volumechange', function () { paintSound(box); });
+      video.addEventListener('error', function () {
+        box.classList.remove('is-loading', 'is-playing');
+        box.querySelector('.rt-verror').hidden = false;
+      });
+      // Tocar el video pausa o sigue, como en cualquier app de video.
+      video.addEventListener('click', function () { togglePlay(box); });
+    });
+  }
+  function paintSound(box) {
+    var video = box.querySelector('video'), boton = box.querySelector('[data-vsound]');
+    boton.innerHTML = video.muted ? ICON.muted : ICON.sound;
+    boton.setAttribute('aria-label', video.muted ? 'Activar el sonido' : 'Silenciar');
+    boton.setAttribute('aria-pressed', String(video.muted));
+  }
+  function pauseAll(except) {
+    document.querySelectorAll('#routine-body [data-player] video').forEach(function (video) {
+      if (video !== except && !video.paused) video.pause();
+    });
+  }
+  function togglePlay(box) {
+    var video = box.querySelector('video');
+    if (!video.paused) { video.pause(); return; }
+    pauseAll(video);
+    box.classList.add('is-loading');
+    box.querySelector('.rt-verror').hidden = true;
+    var intento = video.play();
+    if (intento && intento.catch) intento.catch(function (error) {
+      // Si el navegador no deja sonar (ahorro de datos, modo bajo consumo), arranca en
+      // silencio y el botón de sonido queda a la vista para activarlo.
+      if (error && error.name === 'NotAllowedError' && !video.muted) {
+        video.muted = true;
+        video.play().catch(function () { box.classList.remove('is-loading'); });
+        paintSound(box);
+        return;
+      }
+      box.classList.remove('is-loading');
+    });
+  }
+  function fullscreen(box) {
+    var video = box.querySelector('video');
+    if (video.webkitEnterFullscreen && !document.fullscreenEnabled) { video.webkitEnterFullscreen(); return; }
+    var pedir = box.requestFullscreen || box.webkitRequestFullscreen;
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (pedir) pedir.call(box);
+    else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
   }
   function bunnySrc(ex) {
     if (!/^\d+$/.test(ex.libraryId || '') || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ex.videoId || '')) return null;
@@ -187,6 +295,7 @@
     }
     $('routine-body').innerHTML = html;
     $('routine-head-label').textContent = 'Tu rutina · ' + st.member.frequency + ' días por semana';
+    wirePlayers();
   }
 
   function open(options) {
@@ -284,6 +393,18 @@
         var payload = restore ? { action: 'restore', slot: st.replaceSlot } : { action: 'replace', slot: st.replaceSlot, alternativeIndex: Number(target.dataset.alternative) };
         st.openSlot = st.replaceSlot;
         change(payload, function () { $('rt-replace').hidden = true; toast('Ejercicio actualizado en tu rutina.'); });
+      } else if (target.hasAttribute('data-vplay')) {
+        togglePlay(target.closest('[data-player]'));
+      } else if (target.hasAttribute('data-vsound')) {
+        var sonido = target.closest('[data-player]').querySelector('video');
+        sonido.muted = !sonido.muted;
+      } else if (target.hasAttribute('data-vfull')) {
+        fullscreen(target.closest('[data-player]'));
+      } else if (target.hasAttribute('data-vretry')) {
+        var caja = target.closest('[data-player]'), fallido = caja.querySelector('video');
+        caja.querySelector('.rt-verror').hidden = true;
+        fallido.load();
+        togglePlay(caja);
       } else if (target.dataset.play) {
         var video = exerciseBySlot(target.dataset.play), src = video && bunnySrc(video);
         if (!src) return;
@@ -314,6 +435,7 @@
       if (!$('rt-replace').hidden) { event.preventDefault(); closeReplace(); }
     });
     sheet.addEventListener('close', function () {
+      pauseAll(null);
       $('rt-replace').hidden = true;
       var player = $('player'), profile = $('profile-dialog');
       if (!(player && player.open) && !(profile && profile.open)) document.body.classList.remove('modal-open');
@@ -322,6 +444,21 @@
       if (st.lastFocus && st.lastFocus.isConnected && typeof st.lastFocus.focus === 'function') {
         setTimeout(function () { st.lastFocus.focus({ preventScroll: true }); }, 0);
       }
+    });
+  }
+
+  function warmCdn() {
+    var hosts = {};
+    Object.keys(st.weeks).forEach(function (w) {
+      (st.weeks[w] || []).forEach(function (day) {
+        day.exercises.forEach(function (ex) { if (cdnBase(ex)) hosts[ex.videoHost] = true; });
+      });
+    });
+    Object.keys(hosts).forEach(function (host) {
+      if (document.querySelector('link[rel="preconnect"][href="https://' + host + '"]')) return;
+      var link = document.createElement('link');
+      link.rel = 'preconnect'; link.href = 'https://' + host;
+      document.head.appendChild(link);
     });
   }
 
@@ -359,6 +496,8 @@
       }
       st.loaded = true;
       bindSheet();
+      warmCdn();
+      document.addEventListener('visibilitychange', function () { if (document.hidden) pauseAll(null); });
       placeTrigger();
       var mq = window.matchMedia('(max-width: 640px)');
       if (mq.addEventListener) mq.addEventListener('change', placeTrigger); else mq.addListener(placeTrigger);

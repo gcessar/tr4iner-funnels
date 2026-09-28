@@ -75,6 +75,34 @@ dialog.routine-sheet:has(#rest-timer:not([hidden])) .routine-scroll { padding-bo
 .rt-video img, .rt-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
 .rt-play { position: absolute; left: 12px; bottom: 12px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); box-shadow: 0 4px 14px rgba(22, 19, 14, .4); }
 .rt-play svg { width: 13px; height: 13px; margin-left: 2px; fill: var(--mark); }
+/* Reproductor propio de ejercicios: portada al instante, un toque y suena. Mismos
+   elementos que el resto de la página: tinta, amarillo y círculos del botón de play. */
+.rt-video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
+.rt-video .rt-play { z-index: 2; border: 0; cursor: pointer; transition: opacity .18s ease, transform .18s ease; }
+.rt-video .rt-play:active { transform: scale(.94); }
+.rt-video.is-playing .rt-play { opacity: 0; pointer-events: none; }
+.rt-spin { position: absolute; inset: -4px; border: 2px solid transparent; border-top-color: var(--mark); border-right-color: var(--mark); border-radius: 50%; opacity: 0; }
+.rt-video.is-loading .rt-play { opacity: 1; }
+.rt-video.is-loading .rt-spin { opacity: 1; animation: rt-spin .7s linear infinite; }
+@keyframes rt-spin { to { transform: rotate(360deg); } }
+.rt-vtools { position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; gap: 6px; opacity: 0; pointer-events: none; transition: opacity .18s ease; }
+.rt-video.is-playing .rt-vtools, .rt-video.is-paused .rt-vtools { opacity: 1; pointer-events: auto; }
+.rt-vtool { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(17, 17, 17, .62); color: #FFFFFF; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.rt-vtool svg { width: 16px; height: 16px; }
+.rt-vtool[aria-pressed="true"] { background: var(--mark); color: var(--ink); }
+.rt-vbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; height: 3px; background: rgba(255, 255, 255, .28); opacity: 0; transition: opacity .18s ease; }
+.rt-vbar i { display: block; height: 100%; background: var(--mark); transform: scaleX(0); transform-origin: left center; }
+.rt-video.is-playing .rt-vbar, .rt-video.is-paused .rt-vbar { opacity: 1; }
+.rt-verror { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: rgba(17, 17, 17, .82); color: #FFFFFF; text-align: center; font-size: 13px; line-height: 1.4; }
+.rt-verror[hidden] { display: none; }
+.rt-verror p { margin: 0; }
+.rt-verror button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--mark); color: var(--ink); cursor: pointer; font: 700 13px var(--sans); }
+/* En pantalla completa el video se ve entero, sin recorte. */
+.rt-video:fullscreen, .rt-video:-webkit-full-screen { aspect-ratio: auto; width: 100%; height: 100%; border-radius: 0; }
+.rt-video:fullscreen video, .rt-video:-webkit-full-screen video { object-fit: contain; }
+@media (prefers-reduced-motion: reduce) {
+  .rt-video.is-loading .rt-spin { animation: none; border-color: var(--mark); }
+}
 .rt-soon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px 10px; background: linear-gradient(165deg, #34372f 0%, #171916 58%); color: #FFFFFF; text-align: center; font-family: var(--sans); }
 .rt-soon strong { max-width: 16ch; font-size: 13px; font-weight: 700; line-height: 1.25; }
 .rt-soon small { color: #CDD0C6; font-size: 11px; }
