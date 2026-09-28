@@ -27,7 +27,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://i.ytimg.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20260926-rutina1" />
+  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20260928-pasos" />
 
   <style>
     :root {
@@ -1895,14 +1895,8 @@
         line-height: .98;
         text-wrap: balance;
       }
-      .mobile-focus-lead {
-        max-width: 360px;
-        margin: 14px 0 22px;
-        color: var(--ink-soft);
-        font-size: 15px;
-        line-height: 1.5;
-        text-wrap: pretty;
-      }
+      /* Sin la bajada del título (28-sep), la tarjeta deja lugar para su rótulo amarillo. */
+      body:not(.mobile-library-mode) .mobile-focus h1 + .mobile-focus-card { margin-top: 30px; }
       .mobile-focus-card {
         position: relative;
         width: 100%;
@@ -2036,9 +2030,10 @@
         gap: 14px;
         margin: 14px 0 0;
         padding: 12px 14px;
-        border: 1px solid var(--rule-strong);
+        /* El mismo amarillo del rótulo «Este es el Paso 1»: se lee como parte del paso. */
+        border: 1px solid var(--mark);
         border-radius: 8px;
-        background: var(--card);
+        background: var(--mark);
         color: var(--ink);
         cursor: pointer;
         font-family: var(--sans);
@@ -2066,17 +2061,17 @@
       .mobile-show-library .deck i:nth-child(2) { transform: translate(-50%, -50%) rotate(0deg); z-index: 2; }
       .mobile-show-library .deck i:nth-child(3) { transform: translate(-50%, -50%) rotate(13deg) translateX(13px); }
       .mobile-show-library .deck-copy { flex: 1 1 auto; min-width: 0; }
-      .mobile-show-library .deck-copy strong { display: block; font-size: 15px; font-weight: 700; }
+      .mobile-show-library .deck-copy strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.005em; }
       .mobile-show-library .deck-copy small {
         display: block;
-        margin-top: 2px;
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: .1em;
+        margin-top: 4px;
+        color: var(--ink);
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.35;
       }
-      .mobile-show-library > i { color: var(--muted); font-size: 17px; font-style: normal; }
+      .mobile-show-library .deck-copy small b { font-weight: 800; }
+      .mobile-show-library > i { color: var(--ink); font-size: 17px; font-style: normal; }
       @media (prefers-reduced-motion: reduce) {
         .mobile-focus-play::after { animation: none; }
       }
@@ -2120,7 +2115,7 @@
     @media (max-width: 640px) and (max-height: 700px) {
       body.mobile-focus-mode .page { align-content: start; }
       .mobile-focus h1 { font-size: clamp(30px, 9vw, 38px); }
-      .mobile-focus-lead { margin: 10px 0 16px; }
+      body:not(.mobile-library-mode) .mobile-focus h1 + .mobile-focus-card { margin-top: 24px; }
       .mobile-focus-card { padding-top: 18px; }
       .mobile-focus-description { margin-top: 10px; }
       .mobile-focus-meta { margin: 14px 0 12px; }
@@ -2154,6 +2149,18 @@
     .locked-date { margin: 0 0 6px; font-family: var(--serif); font-size: 19px; font-weight: 560; line-height: 1.2; }
     /* Rótulo sobre la portada: en la meta competía con el botón de marcar como vista. */
     .thumb-flag { position: absolute; left: 8px; top: 8px; padding: 3px 6px; border-radius: 4px; background: #FFFFFF; color: var(--ink); font: 600 8px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    /* Las categorías de la señal («HÁBITOS · APLICACIÓN INMEDIATA») no se muestran al miembro. */
+    .mobile-focus-meta, .guide-meta { display: none !important; }
+    /* Al entrar sólo existe el Paso 1: siguientes pasos, rutina y macros aparecen cuando
+       termina de verlo. En escritorio, lo mismo con el índice y el expediente. */
+    body.ruta-solo-paso-uno #mobile-show-library,
+    body.ruta-solo-paso-uno #mobile-profile-trigger,
+    body.ruta-solo-paso-uno .profile-summary,
+    body.ruta-solo-paso-uno .editorial-index,
+    body.ruta-solo-paso-uno .conversion-bridge { display: none !important; }
+    body.ruta-solo-paso-uno .library-layout { grid-template-columns: minmax(0, 1fr); }
+    /* La rutina como paso del índice: se abre como hoja, no se despliega. */
+    .route-rutina:not(.is-locked) .index-status { color: var(--ink); }
     @media (max-width: 560px) { .locked-thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
@@ -2215,7 +2222,6 @@
       <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
         <p class="mobile-focus-eyebrow">Tu ruta privada · RUTA TR4INER</p>
         <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
-        <p class="mobile-focus-lead">No necesitas verlo todo hoy. Abre este video y llévate una sola acción clara.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
           <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
           <span class="mobile-focus-thumb" id="mobile-focus-thumb">
@@ -2236,8 +2242,8 @@
         <button type="button" class="mobile-show-library" id="mobile-show-library">
           <span class="deck" id="mobile-deck" aria-hidden="true"></span>
           <span class="deck-copy">
-            <strong>Ver siguientes Pasos</strong>
-            <small id="mobile-deck-count"></small>
+            <strong>MIRA TUS SIGUIENTES PASOS</strong>
+            <small id="mobile-deck-count">Míralos <b>ANTES</b> de ver tu rutina y tus macros, de lo contrario no sabrás cómo llevarlos a cabo.</small>
           </span>
           <i aria-hidden="true">→</i>
         </button>
@@ -2485,7 +2491,7 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20260926-rutina1"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20260928-pasos"></script>
   <script>
     (async function () {
       'use strict';
@@ -2914,6 +2920,13 @@
       saveProgreso();
 
       function isDone(id) { return progreso.indexOf(id) !== -1; }
+
+      // «Visto» es lo que el reproductor dio por terminado (≥85 % real o llegó al final), no
+      // el check manual: en la Ruta, ver el Paso 1 y los videos de pesas es lo que abre el resto.
+      var vistos = {};
+      (memberSession && memberSession.progress || []).forEach(function (item) {
+        if (item.completed) vistos[item.videoId] = true;
+      });
       function saveProgreso() {
         try { window.localStorage.setItem(PROGRESO_KEY, JSON.stringify(progreso)); } catch (e) { /* incógnito */ }
       }
@@ -2939,6 +2952,8 @@
       }
       // Autocompletado desde el reproductor (≥85% vista de verdad).
       function completarAuto(v) {
+        vistos[v.id] = true;
+        aplicarDesbloqueos();
         if (isDone(v.id)) return;
         progreso.push(v.id);
         saveProgreso();
@@ -3070,11 +3085,16 @@
           }
           return false;
         });
-        enRuta.forEach(function (b, orden) {
+        // La rutina ocupa un número en el índice: los módulos que siguen se corren uno.
+        var numero = 0;
+        var conRutina = rutaPorDias && window.RutinaUI && window.RutinaUI.disponible();
+        enRuta.forEach(function (b) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
+          var orden = numero++;
           if (b.locked) {
             libraryEl.appendChild(mkLockedGroup(b, orden));
             shown++;
+            if (conRutina && b.id === MODULO_PESAS) libraryEl.appendChild(mkRutinaGroup(numero++));
             return;
           }
           var vids = videosDe(b.id);
@@ -3112,11 +3132,6 @@
           bar.innerHTML = '<i data-bar="' + escapeHtml(b.id) + '"></i>';
           body.appendChild(bar);
 
-          var desc = document.createElement('p');
-          desc.className = 'bloque-desc';
-          desc.textContent = 'Abre la orientación que más conecta con lo que necesitas aplicar ahora.';
-          body.appendChild(desc);
-
           var grid = document.createElement('div');
           grid.className = 'grid';
 
@@ -3127,7 +3142,9 @@
           body.appendChild(grid);
           section.appendChild(body);
           libraryEl.appendChild(section);
+          if (conRutina && b.id === MODULO_PESAS) libraryEl.appendChild(mkRutinaGroup(numero++));
         });
+        pintarFilaRutina();
 
         emptyEl.classList.toggle('visible', shown === 0);
         if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
@@ -3290,6 +3307,85 @@
       }
 
       // La ruta entera en orden, para saber que viene antes que que.
+      // ── Lo que abre cada paso de la Ruta (28-sep) ──
+      // Al entrar sólo se ve el Paso 1: los siguientes pasos, la rutina y los macros aparecen
+      // cuando termina de verlo. La rutina, además, exige ver los videos de pesas completos.
+      var MODULO_PESAS = 'ruta-pesas';
+      function soloPasoUno() {
+        if (!rutaPorDias) return false;
+        var lista = rutaOrdenada();
+        return lista.length > 0 && !vistos[lista[0].v.id];
+      }
+      function pesasPendientes() {
+        return videosDe(MODULO_PESAS).filter(function (v) { return !vistos[v.id]; }).length;
+      }
+      function rutinaActiva() {
+        return rutaPorDias && videosDe(MODULO_PESAS).length > 0 && pesasPendientes() === 0;
+      }
+      function aplicarDesbloqueos() {
+        if (!rutaPorDias) return;
+        var paso1 = soloPasoUno();
+        document.body.classList.toggle('ruta-solo-paso-uno', paso1);
+        if (window.RutinaUI && window.RutinaUI.activar) {
+          window.RutinaUI.activar({ activa: rutinaActiva(), enInicio: rutinaActiva() && !paso1, faltan: pesasPendientes(), total: videosDe(MODULO_PESAS).length, modulo: nombreModulo(MODULO_PESAS) });
+        }
+        pintarFilaRutina();
+      }
+      function nombreModulo(id) {
+        var b = BLOQUES.find(function (item) { return item.id === id; });
+        return b ? b.name : 'Entrenamiento de pesas';
+      }
+
+      // La rutina es un paso más del índice, justo después del módulo de pesas.
+      function mkRutinaGroup(orden) {
+        var section = document.createElement('details');
+        section.className = 'route-group route-rutina';
+        section.id = 'route-rutina';
+        section.dataset.numero = String(orden + 1).padStart(2, '0');
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + section.dataset.numero + '</span>' +
+            '<span class="index-copy"><strong></strong><small></small></span>' +
+            '<b class="index-status"></b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body locked-body"><p class="locked-date"></p><p class="bloque-desc"></p></div>';
+        section.querySelector('summary').addEventListener('click', function (event) {
+          if (!rutinaActiva()) return; // bloqueada: se despliega la explicación
+          event.preventDefault();
+          window.RutinaUI.abrir();
+        });
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+            if (otro !== section) otro.open = false;
+          });
+        });
+        return section;
+      }
+      function pintarFilaRutina() {
+        var fila = document.getElementById('route-rutina');
+        if (!fila) return;
+        var activa = rutinaActiva();
+        var faltan = pesasPendientes();
+        var total = videosDe(MODULO_PESAS).length;
+        var dias = window.RutinaUI && window.RutinaUI.frecuencia ? window.RutinaUI.frecuencia() : null;
+        var titulo = 'Tu rutina' + (dias ? ' de ' + dias + ' días' : '');
+        var candado = '<svg class="lock-icon" viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>';
+        fila.classList.toggle('is-locked', !activa);
+        if (activa) fila.open = false;
+        fila.querySelector('.index-copy strong').textContent = titulo;
+        fila.querySelector('.index-copy small').textContent = activa
+          ? 'Tus ejercicios, series, repeticiones y descansos, sesión por sesión.'
+          : 'Se activa cuando termines los ' + total + ' videos de ' + nombreModulo(MODULO_PESAS) + '.';
+        fila.querySelector('.index-status').innerHTML = activa
+          ? 'VER RUTINA'
+          : candado + (faltan === 1 ? 'TE FALTA 1 VIDEO' : 'TE FALTAN ' + faltan + ' VIDEOS');
+        fila.querySelector('.locked-date').textContent = faltan === 1 ? 'Te falta 1 video.' : 'Te faltan ' + faltan + ' videos.';
+        fila.querySelector('.bloque-desc').textContent = 'Mira completos los videos de «' + nombreModulo(MODULO_PESAS) + '»: ahí aprendes cómo llevar a cabo tu rutina. Al terminarlos se activa aquí y en tu inicio.';
+        fila.setAttribute('aria-label', 'Paso ' + fila.dataset.numero + ': ' + titulo + (activa ? '' : '. Bloqueada: ' + (faltan === 1 ? 'te falta 1 video' : 'te faltan ' + faltan + ' videos') + ' de ' + nombreModulo(MODULO_PESAS) + '.'));
+      }
+
       function rutaOrdenada() {
         var lista = [];
         bloquesOrdenados().forEach(function (b) {
@@ -3684,9 +3780,9 @@
           deck.appendChild(carta);
         });
         var restantes = lista.length - desde;
-        cuenta.textContent = restantes > 0
-          ? restantes + (restantes === 1 ? ' ORIENTACIÓN MÁS' : ' ORIENTACIONES MÁS')
-          : 'TODA TU RUTA';
+        if (!cuenta.dataset.aviso) cuenta.dataset.aviso = cuenta.innerHTML;
+        if (restantes > 0) cuenta.innerHTML = cuenta.dataset.aviso;
+        else cuenta.textContent = 'Ya viste todos tus pasos. Repásalos cuando quieras.';
       }
 
       // Paso 1 = todavía no terminó ninguna orientación y tampoco dejó esta
@@ -3951,7 +4047,8 @@
       }
       function maybeStartTour() {
         if (!plan || gateActivo || activeAnnouncement || params.get('video') ||
-            document.body.classList.contains('mobile-video-experience')) return;
+            document.body.classList.contains('mobile-video-experience') ||
+            document.body.classList.contains('ruta-solo-paso-uno')) return;
         try { if (window.localStorage.getItem(TOUR_KEY)) return; } catch (e) { /* incógnito */ }
         setTimeout(function () { showTourStep(0); }, 550);
       }
@@ -4005,13 +4102,21 @@
       renderOnboard();
       renderFilters();
       renderNextCard();
+      aplicarDesbloqueos();
       setupMobileExperience();
       updateBridge();
       maybeStartTour();
       showAnnouncement();
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
       if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
-        window.RutinaUI.init({ abrir: params.get('rutina') === '1' });
+        window.RutinaUI.init({
+          abrir: params.get('rutina') === '1',
+          // Con la rutina cargada entra al índice como paso propio y toma su frecuencia.
+          alCargar: function () {
+            if (libraryRendered) renderLibrary();
+            aplicarDesbloqueos();
+          }
+        });
       }
       if (memberSession && plan && params.get('video')) {
         var requested = VIDEOS.find(function (item) { return item.id === params.get('video'); });

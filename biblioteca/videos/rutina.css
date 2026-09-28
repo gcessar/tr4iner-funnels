@@ -19,6 +19,9 @@ body.mobile-video-experience .routine-trigger + .mobile-profile-trigger { margin
 .player-routine { margin-bottom: 14px; }
 .player-routine-cta { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 6px; background: var(--mark); color: var(--ink); cursor: pointer; font: 750 15px var(--sans); }
 .player-routine-note { margin: 12px 0 0; color: rgba(244, 239, 230, .72); font-size: 14px; line-height: 1.55; }
+/* Rutina todavía bloqueada: dice cuánto falta, sin botón. */
+.player-routine-locked { display: flex; align-items: flex-start; gap: 10px; margin: 0; padding: 14px 16px; border: 1px solid rgba(244, 239, 230, .22); border-radius: 6px; color: rgba(244, 239, 230, .86); font-size: 14px; line-height: 1.5; }
+.player-routine-locked svg { flex: none; width: 11px; height: 13px; margin-top: 4px; color: var(--mark); }
 
 /* Hoja a pantalla completa. */
 dialog.routine-sheet { width: 100%; max-width: 560px; height: 100dvh; max-height: 100dvh; margin: 0 auto; padding: 0; border: 0; background: var(--card); color: var(--ink); overflow: hidden; overscroll-behavior: contain; }

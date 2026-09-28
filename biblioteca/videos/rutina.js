@@ -15,10 +15,15 @@
     arrow: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>',
     down: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 2v11M4.5 9.5L8 13l3.5-3.5"/></svg>',
     check: '<svg viewBox="0 0 14 14" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-6.5"/></svg>',
-    play: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>'
+    play: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>',
+    lock: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>'
   };
   var st = { weeks: {}, version: 0, member: null, program: null, week: 0, day: 0, openSlot: null,
-    replaceSlot: null, pending: Promise.resolve(), loaded: false, lastFocus: null, replaceFocus: null };
+    replaceSlot: null, pending: Promise.resolve(), loaded: false, lastFocus: null, replaceFocus: null,
+    // La página decide cuándo se activa (videos de pesas vistos) y si va en el inicio.
+    // Hasta que lo diga, la rutina no se muestra ni se abre.
+    gate: { activa: false, enInicio: false, faltan: 0, total: 0, modulo: 'Entrenamiento de pesas' },
+    box: null, cerrarReproductor: null };
 
   async function api(path, options) {
     var response, data = null;
@@ -91,7 +96,25 @@
     $('routine-trigger-next').textContent = next
       ? 'Te toca: Día ' + (next.day + 1) + ' · ' + cap(list[next.day].name)
       : 'Semana completa · empieza de nuevo';
-    trigger.hidden = false;
+    trigger.hidden = !st.gate.enInicio;
+  }
+
+  // Debajo del video de introducción: el botón si ya está activa; si no, cuánto falta.
+  function paintPlayerBox() {
+    var box = st.box;
+    if (!box || !box.isConnected || box.hidden) return;
+    if (st.gate.activa) {
+      box.innerHTML = '<button type="button" class="player-routine-cta">Ver mi rutina de ' + st.member.frequency + ' días <span aria-hidden="true">→</span></button>' +
+        '<p class="player-routine-note">Tus ejercicios, series, repeticiones y descansos, sesión por sesión. También la tienes en el inicio.</p>';
+      box.querySelector('button').onclick = function () {
+        if (st.cerrarReproductor) st.cerrarReproductor();
+        setTimeout(function () { open(); }, 0);
+      };
+      return;
+    }
+    var faltan = st.gate.faltan;
+    box.innerHTML = '<p class="player-routine-locked">' + ICON.lock + '<span>Tu rutina de ' + st.member.frequency + ' días se activa cuando termines los ' + st.gate.total +
+      ' videos de ' + esc(st.gate.modulo) + '. ' + (faltan === 1 ? 'Te falta 1.' : 'Te faltan ' + faltan + '.') + '</span></p>';
   }
 
   // ── Hoja de la rutina ──
@@ -312,15 +335,19 @@
 
   window.RutinaUI = {
     disponible: function () { return st.loaded; },
-    abrir: open,
+    frecuencia: function () { return st.member ? st.member.frequency : null; },
+    abrir: function () { if (st.gate.activa) open(); },
+    activar: function (gate) {
+      st.gate = Object.assign({}, st.gate, gate);
+      if (!st.loaded) return;
+      paintTrigger();
+      paintPlayerBox();
+    },
     // Botón «Ver mi rutina» debajo del video de introducción del módulo de pesas.
     botonReproductor: function (container, cerrarReproductor) {
-      container.innerHTML = '<button type="button" class="player-routine-cta">Ver mi rutina de ' + st.member.frequency + ' días <span aria-hidden="true">→</span></button>' +
-        '<p class="player-routine-note">Tus ejercicios, series, repeticiones y descansos, sesión por sesión. También la tienes en el inicio.</p>';
-      container.querySelector('button').onclick = function () {
-        cerrarReproductor();
-        setTimeout(function () { open(); }, 0);
-      };
+      st.box = container;
+      st.cerrarReproductor = cerrarReproductor;
+      paintPlayerBox();
     },
     init: async function (ctx) {
       try {
@@ -338,7 +365,8 @@
       $('routine-trigger').addEventListener('click', function () { open(); });
       paintTrigger();
       loadPush();
-      if (ctx && ctx.abrir) open();
+      if (ctx && ctx.alCargar) ctx.alCargar();
+      if (ctx && ctx.abrir && st.gate.activa) open();
     }
   };
 })();
