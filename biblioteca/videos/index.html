@@ -2157,10 +2157,12 @@
     body.ruta-solo-paso-uno #mobile-profile-trigger,
     body.ruta-solo-paso-uno .profile-summary,
     body.ruta-solo-paso-uno .editorial-index,
-    body.ruta-solo-paso-uno .conversion-bridge { display: none !important; }
+    body.ruta-solo-paso-uno .conversion-bridge,
+    body.ruta-macros-bloqueados #mobile-profile-trigger,
+    body.ruta-macros-bloqueados #plan-chip { display: none !important; }
     body.ruta-solo-paso-uno .library-layout { grid-template-columns: minmax(0, 1fr); }
-    /* La rutina como paso del índice: se abre como hoja, no se despliega. */
-    .route-rutina:not(.is-locked) .index-status { color: var(--ink); }
+    /* La rutina y los macros como pasos del índice: se abren, no se despliegan. */
+    .route-paso:not(.is-locked) .index-status { color: var(--ink); }
     @media (max-width: 560px) { .locked-thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
@@ -3087,14 +3089,16 @@
         });
         // La rutina ocupa un número en el índice: los módulos que siguen se corren uno.
         var numero = 0;
-        var conRutina = rutaPorDias && window.RutinaUI && window.RutinaUI.disponible();
+        var agregarPasos = function (b) {
+          pasosTras(b.id).forEach(function (clave) { libraryEl.appendChild(mkPasoGroup(clave, numero++)); });
+        };
         enRuta.forEach(function (b) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
           var orden = numero++;
           if (b.locked) {
             libraryEl.appendChild(mkLockedGroup(b, orden));
             shown++;
-            if (conRutina && b.id === MODULO_PESAS) libraryEl.appendChild(mkRutinaGroup(numero++));
+            agregarPasos(b);
             return;
           }
           var vids = videosDe(b.id);
@@ -3142,9 +3146,9 @@
           body.appendChild(grid);
           section.appendChild(body);
           libraryEl.appendChild(section);
-          if (conRutina && b.id === MODULO_PESAS) libraryEl.appendChild(mkRutinaGroup(numero++));
+          agregarPasos(b);
         });
-        pintarFilaRutina();
+        pintarPasos();
 
         emptyEl.classList.toggle('visible', shown === 0);
         if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
@@ -3308,39 +3312,79 @@
 
       // La ruta entera en orden, para saber que viene antes que que.
       // ── Lo que abre cada paso de la Ruta (28-sep) ──
-      // Al entrar sólo se ve el Paso 1: los siguientes pasos, la rutina y los macros aparecen
-      // cuando termina de verlo. La rutina, además, exige ver los videos de pesas completos.
+      // Al entrar sólo se ve el Paso 1: los siguientes pasos aparecen cuando termina de verlo.
+      // La rutina y los macros, además, se ganan viendo completo el módulo que los explica.
       var MODULO_PESAS = 'ruta-pesas';
+      var MODULO_ALIMENTACION = 'ruta-alimentacion';
       function soloPasoUno() {
         if (!rutaPorDias) return false;
         var lista = rutaOrdenada();
         return lista.length > 0 && !vistos[lista[0].v.id];
       }
-      function pesasPendientes() {
-        return videosDe(MODULO_PESAS).filter(function (v) { return !vistos[v.id]; }).length;
+      function pendientesDe(modulo) {
+        return videosDe(modulo).filter(function (v) { return !vistos[v.id]; }).length;
       }
-      function rutinaActiva() {
-        return rutaPorDias && videosDe(MODULO_PESAS).length > 0 && pesasPendientes() === 0;
+      function moduloVisto(modulo) {
+        return rutaPorDias && videosDe(modulo).length > 0 && pendientesDe(modulo) === 0;
       }
+      function rutinaActiva() { return moduloVisto(MODULO_PESAS); }
+      function nombreModulo(id) {
+        var b = BLOQUES.find(function (item) { return item.id === id; });
+        return b ? b.name : '';
+      }
+
+      // Cada paso ganado entra al índice justo después del módulo que lo abre.
+      var PASOS = {
+        rutina: {
+          modulo: MODULO_PESAS,
+          existe: function () { return !!(window.RutinaUI && window.RutinaUI.disponible()); },
+          titulo: function () {
+            var dias = window.RutinaUI && window.RutinaUI.frecuencia ? window.RutinaUI.frecuencia() : null;
+            return 'Tu rutina' + (dias ? ' de ' + dias + ' días' : '');
+          },
+          texto: function () { return 'Tus ejercicios, series, repeticiones y descansos, sesión por sesión.'; },
+          estado: function () { return 'VER RUTINA'; },
+          para: 'cómo llevar a cabo tu rutina',
+          abrir: function () { window.RutinaUI.abrir(); }
+        },
+        macros: {
+          modulo: MODULO_ALIMENTACION,
+          existe: function () { return true; },
+          titulo: function () { return 'Conoce tus macros'; },
+          texto: function () { return plan ? 'Tus calorías y macros de cada día.' : 'Un test corto calcula tus calorías y macros para empezar.'; },
+          estado: function () { return plan ? 'VER TUS MACROS' : 'HACER EL TEST'; },
+          para: 'cómo usar tus calorías y macros',
+          // Con el test hecho se ven sus macros; sin él, va directo al test.
+          abrir: function () {
+            if (!plan) { window.location.href = planUrl(); return; }
+            profileLastFocus = document.activeElement;
+            profileDialog.showModal();
+            syncModalState();
+          }
+        }
+      };
+      function pasosTras(moduloId) {
+        return Object.keys(PASOS).filter(function (clave) {
+          return rutaPorDias && PASOS[clave].modulo === moduloId && PASOS[clave].existe();
+        });
+      }
+
       function aplicarDesbloqueos() {
         if (!rutaPorDias) return;
         var paso1 = soloPasoUno();
         document.body.classList.toggle('ruta-solo-paso-uno', paso1);
+        document.body.classList.toggle('ruta-macros-bloqueados', !moduloVisto(MODULO_ALIMENTACION));
         if (window.RutinaUI && window.RutinaUI.activar) {
-          window.RutinaUI.activar({ activa: rutinaActiva(), enInicio: rutinaActiva() && !paso1, faltan: pesasPendientes(), total: videosDe(MODULO_PESAS).length, modulo: nombreModulo(MODULO_PESAS) });
+          window.RutinaUI.activar({ activa: rutinaActiva(), enInicio: rutinaActiva() && !paso1, faltan: pendientesDe(MODULO_PESAS), total: videosDe(MODULO_PESAS).length, modulo: nombreModulo(MODULO_PESAS) || 'Entrenamiento de pesas' });
         }
-        pintarFilaRutina();
-      }
-      function nombreModulo(id) {
-        var b = BLOQUES.find(function (item) { return item.id === id; });
-        return b ? b.name : 'Entrenamiento de pesas';
+        pintarPasos();
       }
 
-      // La rutina es un paso más del índice, justo después del módulo de pesas.
-      function mkRutinaGroup(orden) {
+      function mkPasoGroup(clave, orden) {
+        var paso = PASOS[clave];
         var section = document.createElement('details');
-        section.className = 'route-group route-rutina';
-        section.id = 'route-rutina';
+        section.className = 'route-group route-paso';
+        section.id = 'route-paso-' + clave;
         section.dataset.numero = String(orden + 1).padStart(2, '0');
         section.innerHTML =
           '<summary>' +
@@ -3351,9 +3395,9 @@
           '</summary>' +
           '<div class="route-group-body locked-body"><p class="locked-date"></p><p class="bloque-desc"></p></div>';
         section.querySelector('summary').addEventListener('click', function (event) {
-          if (!rutinaActiva()) return; // bloqueada: se despliega la explicación
+          if (!moduloVisto(paso.modulo)) return; // bloqueado: se despliega la explicación
           event.preventDefault();
-          window.RutinaUI.abrir();
+          paso.abrir();
         });
         section.addEventListener('toggle', function () {
           if (!section.open) return;
@@ -3363,27 +3407,29 @@
         });
         return section;
       }
-      function pintarFilaRutina() {
-        var fila = document.getElementById('route-rutina');
-        if (!fila) return;
-        var activa = rutinaActiva();
-        var faltan = pesasPendientes();
-        var total = videosDe(MODULO_PESAS).length;
-        var dias = window.RutinaUI && window.RutinaUI.frecuencia ? window.RutinaUI.frecuencia() : null;
-        var titulo = 'Tu rutina' + (dias ? ' de ' + dias + ' días' : '');
+      function pintarPasos() {
         var candado = '<svg class="lock-icon" viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>';
-        fila.classList.toggle('is-locked', !activa);
-        if (activa) fila.open = false;
-        fila.querySelector('.index-copy strong').textContent = titulo;
-        fila.querySelector('.index-copy small').textContent = activa
-          ? 'Tus ejercicios, series, repeticiones y descansos, sesión por sesión.'
-          : 'Se activa cuando termines los ' + total + ' videos de ' + nombreModulo(MODULO_PESAS) + '.';
-        fila.querySelector('.index-status').innerHTML = activa
-          ? 'VER RUTINA'
-          : candado + (faltan === 1 ? 'TE FALTA 1 VIDEO' : 'TE FALTAN ' + faltan + ' VIDEOS');
-        fila.querySelector('.locked-date').textContent = faltan === 1 ? 'Te falta 1 video.' : 'Te faltan ' + faltan + ' videos.';
-        fila.querySelector('.bloque-desc').textContent = 'Mira completos los videos de «' + nombreModulo(MODULO_PESAS) + '»: ahí aprendes cómo llevar a cabo tu rutina. Al terminarlos se activa aquí y en tu inicio.';
-        fila.setAttribute('aria-label', 'Paso ' + fila.dataset.numero + ': ' + titulo + (activa ? '' : '. Bloqueada: ' + (faltan === 1 ? 'te falta 1 video' : 'te faltan ' + faltan + ' videos') + ' de ' + nombreModulo(MODULO_PESAS) + '.'));
+        Object.keys(PASOS).forEach(function (clave) {
+          var fila = document.getElementById('route-paso-' + clave);
+          if (!fila) return;
+          var paso = PASOS[clave];
+          var activo = moduloVisto(paso.modulo);
+          var faltan = pendientesDe(paso.modulo);
+          var total = videosDe(paso.modulo).length;
+          var modulo = nombreModulo(paso.modulo);
+          var titulo = paso.titulo();
+          var cuantos = faltan === 1 ? 'te falta 1 video' : 'te faltan ' + faltan + ' videos';
+          fila.classList.toggle('is-locked', !activo);
+          if (activo) fila.open = false;
+          fila.querySelector('.index-copy strong').textContent = titulo;
+          fila.querySelector('.index-copy small').textContent = activo
+            ? paso.texto()
+            : 'Se activa cuando termines ' + (total === 1 ? 'el video' : 'los ' + total + ' videos') + ' de ' + modulo + '.';
+          fila.querySelector('.index-status').innerHTML = activo ? paso.estado() : candado + cuantos.toUpperCase();
+          fila.querySelector('.locked-date').textContent = cuantos.charAt(0).toUpperCase() + cuantos.slice(1) + '.';
+          fila.querySelector('.bloque-desc').textContent = 'Mira completos los videos de «' + modulo + '»: ahí aprendes ' + paso.para + '. Al terminarlos se activa aquí y en tu inicio.';
+          fila.setAttribute('aria-label', 'Paso ' + fila.dataset.numero + ': ' + titulo + (activo ? '' : '. Bloqueado: ' + cuantos + ' de ' + modulo + '.'));
+        });
       }
 
       function rutaOrdenada() {
