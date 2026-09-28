@@ -3183,7 +3183,8 @@
         card.style.setProperty('--i', index % 6);
         card.setAttribute('data-video-id', v.id);
 
-        var badge = v.sexo === 'mujer'
+        // En la Ruta cada miembro sólo recibe lo de su sexo: el rótulo no agrega nada.
+        var badge = rutaPorDias ? '' : v.sexo === 'mujer'
           ? '<span class="badge">Para mujeres</span>'
           : (v.sexo === 'hombre' ? '<span class="badge">Para hombres</span>' : '');
 
