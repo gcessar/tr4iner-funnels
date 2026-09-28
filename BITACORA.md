@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-09-28 — Ruta: primero el Paso 1, la rutina se gana con los videos de pesas
+
+- **Pedido del usuario (captura del preview en iPhone):** siete correcciones de diseño y sacar Ayuno y Cardio. Funnel `5296838`, CRM `1db71f2`, ambos en preview; producción intacta.
+- **Paso 1 solo:** al entrar, el miembro ve únicamente el Paso 1. «Mira tus siguientes pasos», «Tu rutina» y «Conoce tus macros» aparecen cuando termina de verlo; en escritorio, lo mismo con el índice, el expediente y el puente a Dashiel/WhatsApp (y no corre el tour). «Ver» = el reproductor lo dio por terminado (≥85 % o final, lo mismo que el CRM marca `completedAt`); el check manual no abre pasos.
+- **Rutina bloqueada hasta ver los videos de pesas:** sin los 3 de «Entrenamiento de pesas» no aparece en el inicio, `?rutina=1` no la abre y bajo el video de introducción se lee cuántos faltan. Pasa a ser un paso del índice después del módulo de pesas (03 en hombres, 04 en mujeres); los módulos siguientes se corren un número. Tocarla abre la hoja; bloqueada, se despliega la explicación.
+- **Copy y estilo:** «MIRA TUS SIGUIENTES PASOS» con el amarillo del rótulo «Este es el Paso 1» y la advertencia «Míralos ANTES de ver tu rutina y tus macros…»; sin categorías de la señal («HÁBITOS · APLICACIÓN INMEDIATA»), sin «No necesitas verlo todo hoy…» y sin «Abre la orientación que más conecta…».
+- **Ayuno y Cardio fuera** hasta tener contenido: se archivan en el preview, no se borran.
+- **Infra:** macOS purgó a medias el worktree del CRM en `/private/tmp`; no se perdió nada (todo pusheado). Se recreó en `~/crm-ventas/.claude/worktrees/ruta-tr4iner`.
+- **Verificación:** réplica local con la lógica del CRM y avance simulado: hombre 5 días y mujer 3 días, móvil 375 px y escritorio; sin ver nada, con el Paso 1, con 1 de 3 y con los 3 videos de pesas. 62 tests del CRM y 5 del funnel correctos.
+
 ## 2026-09-26 — Ruta: el diseño vuelve a ser el de producción (decisiones, sin código)
 
 - **Corrección del usuario:** la app `/biblioteca/ruta/` (header con logo, «Mi perfil», franja de equipo, otro layout) **no se usa**. La Ruta nueva debe verse **igual** a `biblioteca/videos/index.html` de `main`; lo único nuevo son los módulos y la rutina. Hay que quitar el rewrite de `/biblioteca/videos/` → `/biblioteca/ruta/` del middleware y extender la página de producción, reutilizando la lógica ya hecha (rutina persistida, descansos, Web Push, drip).
@@ -384,6 +394,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-28` — Ruta: primero el Paso 1, la rutina se gana con los videos de pesas
 - `2026-09-26` — Ruta: el diseño vuelve a ser el de producción (decisiones, sin código)
 - `2026-09-23` — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny
 - `2026-09-22` — Ruta: recorrido privado desde registro y avisos Web Push
