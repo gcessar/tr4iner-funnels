@@ -2157,9 +2157,7 @@
     body.ruta-solo-paso-uno #mobile-profile-trigger,
     body.ruta-solo-paso-uno .profile-summary,
     body.ruta-solo-paso-uno .editorial-index,
-    body.ruta-solo-paso-uno .conversion-bridge,
-    body.ruta-macros-bloqueados #mobile-profile-trigger,
-    body.ruta-macros-bloqueados #plan-chip { display: none !important; }
+    body.ruta-solo-paso-uno .conversion-bridge { display: none !important; }
     body.ruta-solo-paso-uno .library-layout { grid-template-columns: minmax(0, 1fr); }
     /* La rutina y los macros como pasos del índice: se abren, no se despliegan. */
     .route-paso:not(.is-locked) .index-status { color: var(--ink); }
@@ -3313,7 +3311,8 @@
       // La ruta entera en orden, para saber que viene antes que que.
       // ── Lo que abre cada paso de la Ruta (28-sep) ──
       // Al entrar sólo se ve el Paso 1: los siguientes pasos aparecen cuando termina de verlo.
-      // La rutina y los macros, además, se ganan viendo completo el módulo que los explica.
+      // La rutina, además, se gana viendo completo el módulo de pesas. Los macros van después
+      // de Alimentación, abiertos: no son obligatorios (29-sep).
       var MODULO_PESAS = 'ruta-pesas';
       var MODULO_ALIMENTACION = 'ruta-alimentacion';
       function soloPasoUno() {
@@ -3333,7 +3332,7 @@
         return b ? b.name : '';
       }
 
-      // Cada paso ganado entra al índice justo después del módulo que lo abre.
+      // Cada paso entra al índice justo después de su módulo; `libre` = sin candado.
       var PASOS = {
         rutina: {
           modulo: MODULO_PESAS,
@@ -3349,6 +3348,7 @@
         },
         macros: {
           modulo: MODULO_ALIMENTACION,
+          libre: true,
           existe: function () { return true; },
           titulo: function () { return 'Conoce tus macros'; },
           texto: function () { return plan ? 'Tus calorías y macros de cada día.' : 'Un test corto calcula tus calorías y macros para empezar.'; },
@@ -3363,6 +3363,7 @@
           }
         }
       };
+      function pasoActivo(paso) { return paso.libre || moduloVisto(paso.modulo); }
       function pasosTras(moduloId) {
         return Object.keys(PASOS).filter(function (clave) {
           return rutaPorDias && PASOS[clave].modulo === moduloId && PASOS[clave].existe();
@@ -3373,7 +3374,6 @@
         if (!rutaPorDias) return;
         var paso1 = soloPasoUno();
         document.body.classList.toggle('ruta-solo-paso-uno', paso1);
-        document.body.classList.toggle('ruta-macros-bloqueados', !moduloVisto(MODULO_ALIMENTACION));
         if (window.RutinaUI && window.RutinaUI.activar) {
           window.RutinaUI.activar({ activa: rutinaActiva(), enInicio: rutinaActiva() && !paso1, faltan: pendientesDe(MODULO_PESAS), total: videosDe(MODULO_PESAS).length, modulo: nombreModulo(MODULO_PESAS) || 'Entrenamiento de pesas' });
         }
@@ -3395,7 +3395,7 @@
           '</summary>' +
           '<div class="route-group-body locked-body"><p class="locked-date"></p><p class="bloque-desc"></p></div>';
         section.querySelector('summary').addEventListener('click', function (event) {
-          if (!moduloVisto(paso.modulo)) return; // bloqueado: se despliega la explicación
+          if (!pasoActivo(paso)) return; // bloqueado: se despliega la explicación
           event.preventDefault();
           paso.abrir();
         });
@@ -3413,7 +3413,7 @@
           var fila = document.getElementById('route-paso-' + clave);
           if (!fila) return;
           var paso = PASOS[clave];
-          var activo = moduloVisto(paso.modulo);
+          var activo = pasoActivo(paso);
           var faltan = pendientesDe(paso.modulo);
           var total = videosDe(paso.modulo).length;
           var modulo = nombreModulo(paso.modulo);
