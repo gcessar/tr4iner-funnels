@@ -13,6 +13,641 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-26 — Agenda en pausa: los calificados del Typeform van a WhatsApp
+
+Rama `work/agenda-pausada-whatsapp`. Martin no está disponible hasta el lunes y no
+hay quien atienda las llamadas de venta.
+
+### Qué cambió
+- `/redirectionutmstr4iner2` (la salida del Typeform para calificados) deja de mandar a
+  `/calendly-an` y `/calendly-va`: ahora abre el WhatsApp de ManyChat de la cuenta que corresponde.
+- **AN → `17439014239`**, **VA → `15677024560`** (Veronika). Son los mismos números que usan
+  `/redirectionutmstr4iner` y `404.html`.
+- Textos precargados idénticos a los de `/redirectionutmstr4iner` antes de que su rama VA pasara
+  a `/fit4-va`: «¡Hola! Quiero más información.» sólo para AN con `utm_source=MetaAds` +
+  `utm_medium=Caso_Estudio`; el resto, el texto largo de transformación física. Se copiaron tal
+  cual para no romper disparadores de ManyChat que dependan del texto.
+- La detección de VA no cambió (marcador único del repo).
+- `/redirectionutmstr4iner` **no se tocó**: su tráfico VA sigue yendo a `/fit4-va`.
+
+### Cómo revertir
+En `redirectionutmstr4iner2/index.html`, pasar `const AGENDA_PAUSADA = true;` a `false`. La
+ruta a Calendly quedó intacta detrás de ese interruptor y reenvía la query completa como antes.
+
+### Impacto esperado en KPIs
+- Mientras dure la pausa **no entran agendas nuevas por Calendly** desde el Typeform: las
+  agendas por 1.000 exposiciones del test de hero (`ce_hero_202609`) caen a cero en los dos
+  brazos por igual. Los días de pausa no sirven para leer agendas del test.
+- WhatsApp no recibe UTMs: la atribución de estos leads queda en la respuesta de Typeform
+  (teléfono como puente), no en Calendly ni en el sheet AGENDAS.
+
+### Verificación
+Prueba local del script con UTMs sintéticas: AN orgánico, AN MetaAds/Caso_Estudio, `TR4INER-VA`,
+`CASOS-VA`, `ROSITA-VA`, `YOUTUBE-VA-descripcion`, sin query, y los falsos positivos `NAVA-2026` y
+`VARIANTE-A` (van a AN). Con el interruptor en `false`, vuelve a `/calendly-an` y `/calendly-va`
+con la query completa.
+
+### Publicación
+Aprobada por el usuario el 26-sep. Merge `2f049f3` en `main` → deployment de producción
+`dpl_DX8f63eaFDJBDEWQx1cyj41ExG3h`, **Ready**. `https://metodo.tr4iner.com/redirectionutmstr4iner2`
+responde `200` y sirve el mismo archivo que `main` (SHA-256 `e8c067bb23c29635…`); el script
+servido pasó los mismos casos de AN/VA que la prueba local.
+
+**Pendiente:** cuando vuelva Martin, pasar `AGENDA_PAUSADA` a `false` y publicar.
+
+---
+
+## 2026-09-25 — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
+
+Rama `work/va-registros`. Pedido del usuario después de publicar las otras cuatro páginas:
+`/testimonio-rosita-va` y `/testimonio-andrea-va` eran las únicas de Veronika que quedaban con
+la estética anterior (tema oscuro de Rosita, crema/tan de Andrea).
+
+### Qué cambió
+
+No había exporte de diseño para estas dos, así que se armaron con las piezas ya aprobadas:
+rótulo «Caso Real · …» y titular de las VSL, portada del video en el marco con filete vino,
+botón y campos de la landing, y el mismo pie con el avatar nuevo. Se conservó el copy de
+producción; sólo se agregó el rótulo «Caso Real · Andrea», que Rosita ya tenía.
+
+**La mecánica es la de siempre**: la portada y el botón abren una ventana con el registro, y al
+enviar la persona va a su `/video`. El script de cada página —ventana, validación, webhook
+`casos-estudio`, copia al CRM, respaldos de atribución, evento `va_registration_submitted`—
+y los scripts de cabecera se copiaron **byte a byte**. El HTML nuevo mantiene todos los ids y
+clases que ese script usa (verificado con un cotejo automático).
+
+Un ajuste propio de la ventana: al abrirse, su visibilidad cambia en el acto y sólo el
+fundido se anima. Si la visibilidad dependía de la animación, en un teléfono lento la ventana
+podía tardar en poder tocarse.
+
+Rosita deja de cargar `assets/rosita-va/rosita-theme.css` en sus dos páginas. El archivo queda
+en el repo (sin uso) por si se revierte.
+
+### Verificación
+
+Local, con `fetch`, `sendBeacon` y `dataLayer` interceptados: nada salió a n8n, al CRM ni a GA4.
+
+- **Rosita:** portada → ventana abierta, página bloqueada, contenido inerte y foco en cerrar
+  (celular). Vacío → los dos errores sin enviar. Válido → `/testimonio-rosita-va/video` con
+  UTMs, `funnel=VA`, `funnel_variant=testimonio-rosita-va`, nombre, correo con `@` y `sexo`;
+  payload `funnel: rosita-va` a n8n y al CRM.
+- **Andrea:** consolidación de UTMs duplicadas de Instagram, correo desechable rechazado sin
+  enviar, y válido → `/testimonio-andrea-va/video` con el payload `andrea-va` (con `fbp`/`fbc`).
+- Escape y el botón de cerrar cierran la ventana y liberan la página.
+- HTML bien cerrado, sin ids duplicados, sin referencias a las fuentes ni temas anteriores.
+
+### Producción (25-sep)
+
+Aprobado por el usuario. Merge `4f3003b` en `main` → deploy de Vercel
+`dpl_8Q7PzLbhDFDrvxcsUQQYhH9cuETo`, **Ready**. Verificado en `metodo.tr4iner.com`: los dos
+registros responden 200 con Lora, el avatar nuevo, su ventana, el webhook `casos-estudio` y la
+redirección a su `/video`, sin referencias al tema anterior. Las cuatro páginas publicadas antes
+siguen en 200. No se envió ningún formulario contra producción.
+
+---
+
+## 2026-09-25 — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
+
+Rama `work/va-rediseno`. El usuario pasó cuatro exportes de Claude Design (página inicial y
+las VSL de Flor, Rosita y Andrea) con el pedido de aplicarlos **sin tocar el flujo de leads**.
+
+### Qué cambió
+
+| Página | Antes | Ahora |
+|---|---|---|
+| `/casos-de-estudio-va` | Poppins, durazno `#E8B48F`, carrusel de fotos + perfiles | Lora, vino `#7C2D3C`, **sin carrusel**: sólo los tres perfiles |
+| `/testimonio-flor-va` | Instrument Sans + tema `va-theme.css`, mismo copy que Flor AN | Lora, vino; **copy propio** («Flor de María. Evaluación / mes a mes») |
+| `/testimonio-rosita-va/video` | Tema oscuro (`rosita-theme.css`), Anton + Outfit | Lora, vino, fondo crema |
+| `/testimonio-andrea-va/video` | Crema/tan `#C68961`, Anton + Outfit | Lora, vino, fondo crema |
+
+Tipografía nueva: **Lora** variable self-hosteada (`assets/fonts/lora-normal-latin*.woff2`,
+37,8 + 20 KB). Avatar nuevo del pie: `assets/va/vero-avatar-92.webp`, la foto que traía el
+diseño (fondo gris). No se borró ni pisó ningún archivo que otras páginas usen.
+
+### Cómo se preservó la lógica
+
+El exporte de Claude Design no es HTML estático: es una plantilla `{{ }}` montada con React.
+Se tradujo a HTML plano, y **los scripts se copiaron byte a byte** desde las páginas
+anteriores con un generador que falla si un reemplazo no pega exactamente una vez. Cotejo
+final contra producción:
+
+- **Rosita y Flor:** script del Typeform, loader de Vidalytics y scripts de cabecera idénticos.
+- **Andrea:** idéntico salvo el bloque de «aparición suave» (visual), que reemplaza el del diseño.
+- **Landing:** idéntica salvo el código que movía el carrusel. Webhook `casos-estudio`, copia
+  `TR4Track.saveOptIn()` al CRM, `CASOS`/destinos, validación, honeypot, dominios
+  desechables, respaldos `LANDING-VA-DIRECTO`/`CASOS-VA` y evento `va_registration_submitted`
+  sin cambios. **Si nadie elige perfil sale Flor**, igual que antes.
+
+Lo que el diseño traía y **no** se aplicó:
+
+- **Typeform `01M3CN3A97JR5X0RDDJE89P9JV`**: no es el de producción. Se conservan el live
+  `01KHA5RZHGV02HW971F4227939` (Flor) y el SDK con `CGxeptJu` (Rosita, Andrea).
+- **Alto del marco del formulario de 520 px**: se mantienen los pisos de producción (560 px;
+  590/640 en Flor), porque con menos Typeform apila el botón de continuar sobre la última
+  opción.
+- El estado «Listo, {nombre}» de la landing: era la demo del diseño; la página redirige.
+
+Correcciones sobre el diseño, a revisar si fueron intencionales:
+
+- **«¿»** al comienzo del titular de la landing (el diseño lo omitía).
+- **Tildes** en el copy de Andrea: «entender **qué** necesitas revisar… cuéntanos **qué**
+  está pasando» (el diseño decía «que»; producción ya las tenía bien).
+- **Opción elegida visible en escritorio**: en el diseño un estilo en línea pisaba el borde y
+  sólo se marcaba en el celular. Ahora se marca igual en todos los tamaños.
+- Rótulos de los campos para lectores de pantalla y mensajes de error con `role=alert`
+  (el diseño sólo tenía placeholders).
+
+Se quitó el botón flotante «Completar aplicación» de Flor (no está en el diseño; en el
+celular ya estaba oculto).
+
+### Verificación
+
+Local, con los envíos interceptados (`fetch`, `sendBeacon` y un `dataLayer` aislado para que
+GTM no registrara un Lead falso en Meta). Nada salió a n8n, al CRM ni a GA4.
+
+- **Medidas contra el diseño**: posiciones y tamaños idénticos al píxel en celular (375 px) y
+  escritorio (1280 px) en las cuatro páginas, salvo el marco del formulario (pisos de arriba).
+- **Ruteo**: Rosita → `/testimonio-rosita-va/video`, Andrea → su `/video`, Flor y «sin
+  elegir» → `/testimonio-flor-va`, con UTMs, `funnel=VA`, nombre, correo con `@` literal,
+  `sexo` y `caso`.
+- **Payload** a n8n y al CRM con el contrato de siempre (`caso`, `perfil`, `utm` anidadas,
+  `fbp`, `page_url`).
+- **Typeform**: Rosita y Andrea montan `CGxeptJu` con los campos ocultos completos; Flor
+  despliega el formulario a los 3 s y recién ahí carga `embed.js`, con `data-tf-hidden` en crudo
+  (el nombre con tilde llega entero).
+- Validaciones (vacío, correo inválido, desechable), honeypot y consolidación de UTMs
+  duplicadas de Instagram: igual que antes.
+- Sin desborde horizontal a 290, 375 y 1280 px. Sin ids duplicados. HTML bien cerrado.
+
+### Pendientes
+
+- **Los prerregistros `/testimonio-rosita-va` y `/testimonio-andrea-va` no se tocaron** (no
+  había diseño para ellos) y quedan con la estética anterior. Hoy la landing salta directo a
+  los `/video`, así que sólo los ve quien entra por un enlace directo.
+- `assets/casos-va/` quedó sin uso; se deja por si se revierte.
+
+### Producción (25-sep)
+
+Aprobado por el usuario. Merge `c486fad` en `main` → deploy de Vercel
+`dpl_7oyD77BCVBFtdieRPWYfrGwitY4n`, **Ready**. Verificado en `metodo.tr4iner.com`: las
+cuatro rutas responden 200 con Lora y el avatar nuevo, Flor con el live
+`01KHA5RZHGV02HW971F4227939`, Rosita y Andrea con `CGxeptJu`, cada una con su video, y
+ninguna con el Typeform del exporte (`01M3CN3A…`). Los tres archivos nuevos responden 200.
+No se envió ningún formulario contra producción.
+
+---
+
+## 2026-09-24 — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
+
+Rama `work/medicos-ab-formulario`. Test `med_form_202609`, sólo tráfico pago. No toca nada del
+funnel de Caso de Estudio: el test de hero sigue en el mismo `middleware.ts` con su código
+textualmente igual, y la ruta de médicos se despacha antes de llegar a él.
+
+### Qué cambió
+
+| Brazo | Archivo | En el celular |
+|---|---|---|
+| `MOD` (control) | `medicos/index.html` | el formulario vive en un modal: se abre al tocar el play falso o «Ver el caso completo de Flor» |
+| `INL` (retador) | `medicos/formulario-visible.html` | el formulario está a la vista, **debajo de la foto de Flor**; el play y el botón bajan hasta él y enfocan el nombre |
+
+- **`middleware.ts`**: matcher `["/casos-de-estudio", "/medicos", "/medicos/"]`. `/medicos` va a
+  `testMedicos()` —cookie `ab_med` de 180 días, 50/50, rewrite a `/medicos/formulario-visible`
+  para `INL`— y el resto sigue al test de hero sin cambios.
+- **Los dos archivos** emiten `med_form_exposure_mod|inl` (GA4, `experiment_id:
+  med_form_202609`) con un bloque idéntico byte a byte, y mandan el brazo en `variant` al CRM
+  (`/api/optin`), al webhook de n8n y a `/testimonio-flor` → hidden `variant` del Typeform.
+- **`variant` sale de la cookie `ab_med`**, nunca de `ab_hero` ni de las cookies viejas: una
+  visitante que pasó por las dos landings reportaría el brazo del otro test.
+- **El retador se arma sin mover nada con JS:** en ≤640 px la columna de copia pasa a
+  `display: contents` y el formulario se ordena entre sus hijos con `order`. Mover el nodo
+  después de pintar produciría un salto visible, que ya cambia la conversión por sí solo.
+- **Escritorio es idéntico en los dos brazos** (el formulario ya estaba a la vista): medido,
+  misma posición y tamaño de título, panel, campos y botón. Es el 1% del tráfico.
+- Etiquetas nuevas: `MOD`/`INL` no aparecen nunca en `OptIn.variant` (hay VA, RES, MET, A, B y
+  C), y los 242 opt-ins históricos de médicos tienen la columna vacía.
+- Peso: 63.079 contra 61.791 bytes. El retador pierde el JS del modal y suma el CSS nuevo; un
+  2% del HTML, despreciable frente a las imágenes del hero.
+
+### Por qué
+
+El 98,9% del tráfico de `/medicos` es móvil (GA4, 29-ago → 24-sep) y ahí **la primera pantalla
+no tiene formulario**. Registró 13,0% de las visitas (236 de 1.809) contra ~21,6% de
+`/casos-de-estudio`, que lo muestra de entrada. Esa comparación no prueba nada —mezcla páginas,
+anuncios y audiencias—, y el modal fue una decisión deliberada del 25-ago. Además la campaña
+MEDICOS ya cerró en ROAS Real 2,33x con esta página, así que no se cambia a ciegas: se testea.
+
+### Criterio — declarado ANTES de ver datos
+
+Mismo protocolo que el test de hero (entrada del 10-sep):
+
+| Rol | Métrica | Umbral | Cuándo |
+|---|---|---|---|
+| **Decide** | tasa de registro = opt-ins con `variant` ÷ usuarios con exposición | p < 0,05 | D+7 |
+| **Guardarraíl** | respuestas de Typeform ÷ exposiciones | `INL` no cae más de 20% | D+7 |
+| **Ratificación** | % que declara $300-600 y agendas del ganador | si caen, se revierte | D+30 |
+
+- **Empate = se queda el control.** Si a D+7 no hay diferencia significativa, `MOD` se queda.
+- **Muestra:** con la campaña a $105/día (~296 visitas pagas/día) son ~1.000 visitas por brazo a
+  D+7, que detectan una suba relativa de ~34% o más. La hipótesis es mayor (13% → ~20%); un
+  efecto más chico que eso no justifica testear, se decide por diseño.
+- **La campaña cambia durante el test, y está previsto:** los retadores de hook que arrancan el
+  mismo día se leen a las 72 h y se apagan los perdedores. El reparto es por visitante en la
+  landing, así que los dos brazos ven la misma mezcla de anuncios en todo momento y la
+  comparación sigue siendo válida. Lo que **no** se puede durante el test: editar una sola de
+  las dos páginas, o apagar la campaña entera.
+- **Intención de tratar:** dentro del test no se usa first ni last touch; manda el brazo
+  asignado.
+
+### Verificación (local, antes de subir)
+
+- `INL` a 375 px: el panel empieza en la primera pantalla (y=626 de 812) y el primer campo
+  queda 70 px debajo del borde. El play baja al formulario, enfoca el nombre, no abre modal y
+  emite `medicos_registration_form_focus`. Cero errores de consola.
+- `MOD` a 375 px: el modal sigue oculto al cargar y abre con el play, como hasta hoy.
+- Payload interceptado en el navegador (no salió nada a producción): con `ab_med=INL` los dos
+  envíos llevan `variant: "INL"`, `funnel: "medicos"` y el `utm_term`; con `MOD`, `"MOD"`. El
+  redirect a `/testimonio-flor` conserva `variant`, las UTMs y el `@` literal.
+- Visita orgánica con la cookie del otro test (`ab_hero=MET`): cero exposiciones de médicos y
+  `variant` vacío.
+
+### Publicación
+
+- **Aprobado por el usuario el 24-sep** («publica el test y enciende la campaña»). Merge `8cfa28c` en
+  `main`; deployment de Production `success` (GitHub deployment `6649130180`,
+  `tr4iner-funnels-kkzbhen3l-metodotr4iners-projects.vercel.app`).
+- **Verificado en `metodo.tr4iner.com`** con `curl` (no ejecuta JS, así que no genera exposiciones ni
+  opt-ins): 40 visitas pagas nuevas → 16 `MOD` / 24 `INL`, cookie y página coinciden siempre; cookie
+  existente respetada; orgánico al control sin cookie; la URL queda `/medicos` (rewrite); la variante
+  sale `noindex` con canonical a `/medicos`. Test de hero en paralelo: 30 visitas → 15 `RES` / 15 `MET`,
+  ninguna toca `ab_med`.
+- **Día 0 = 24-sep 17:07 Lima**, cuando se encendió la campaña MEDICOS con 7 conjuntos a $15/día (los
+  3 campeones HOO1 + 4 retadores de hook). Primer día completo: 25-sep. **D+7 = 1-oct**.
+- La verificación en el Preview no fue posible: está detrás del login de Vercel y el conector no tiene
+  acceso al equipo. Se reemplazó por la ejecución del middleware real con `@vercel/edge` sobre 2.000
+  visitas simuladas por ruta (51/49 en `/medicos`, 49/51 en `/casos-de-estudio`) antes del merge.
+
+### Resultado medido (completar a D+7)
+
+...
+
+## 2026-09-20 — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
+
+Rama `work/testimonio-andrea-va`. Rediseño completo de la landing VA sobre el prototipo que
+pasó el usuario, y cambio de fondo en el ruteo.
+
+### Qué cambió
+
+**Antes:** la página capturaba nombre y correo y mandaba **siempre** a `/testimonio-flor-va`,
+sin importar a quién se pareciera la persona.
+
+**Ahora:** el carrusel de casos y los tres perfiles son **una sola selección**, y el caso
+activo decide el destino:
+
+| Lo que elige | Caso | Destino |
+|---|---|---|
+| «Subo de peso y ya no me siento bien como antes» | Flor | `/testimonio-flor-va` |
+| «Entreno, cuido mi alimentación, pero no veo cambios» | Rosita | `/testimonio-rosita-va/video` |
+| «Logro bajar de peso, pero lo vuelvo a recuperar» | Andrea | `/testimonio-andrea-va/video` |
+
+Los destinos **no son simétricos** y por eso están declarados uno por uno en el código: Flor
+tiene su VSL dentro de la misma página de registro, mientras que Rosita y Andrea lo tienen en
+su ruta `/video`. Mandar a Rosita o Andrea a su raíz las haría registrarse dos veces.
+
+Se puede elegir de tres maneras y todas mueven lo mismo: tocando un perfil, tocando la tarjeta
+del caso o con las flechas del carrusel. **En móvil no hay flechas** —las tres tarjetas entran
+en pantalla—, así que las tarjetas son botones: en el prototipo no lo eran y la única forma de
+cambiar de caso habría sido el perfil. Si nadie elige nada, sale Flor, que es la que aparece
+activa desde el primer pintado.
+
+**Diseño:** Poppins 400/600/700 self-hosteada, crema `#FDF6F0`, tinta `#141414` y acento
+durazno `#E8B48F` (el del prototipo; el usuario lo eligió sabiendo que las páginas de Andrea
+usan el tan `#C68961`). La versión anterior cargaba **cuatro familias desde Google Fonts** con
+el encadenamiento `fonts.googleapis.com → fonts.gstatic.com` antes de pintar una letra: ahora
+son 0 peticiones a Google. Se retiró el JSON-LD, que no aportaba nada en una página `noindex`.
+
+**Datos nuevos en el opt-in:** `caso` (`flor|rosita|andrea`) y `perfil` (el texto que eligió).
+El CRM guarda el payload crudo, así que quedan disponibles aunque hoy nadie los mapee. `caso`
+viaja además en la URL del destino, para poder separarlo en GA4. El resto del contrato no se
+tocó: `funnel: "casos-estudio-va"`, `variant: "VA"`, `sexo: "Mujer"`, webhook de n8n + copia al
+CRM, y los respaldos `LANDING-VA-DIRECTO` / `CASOS-VA`.
+
+**Se suma lo que ya tenían las páginas de Andrea:** normalización de UTMs duplicadas de
+Instagram antes de GTM, envío con `keepalive` que navega sin esperar (tope 1,5 s), `fbc`/`fbp`
+al ras del payload, honeypot, rechazo de correos desechables y errores inline con `role=alert`.
+
+**Imágenes:** las tres comparativas antes/después salieron del propio prototipo (480 px) y se
+generaron las de 240 px para móvil. Son **fotos distintas** a las de `assets/casos-optin/`, así
+que van en `assets/casos-va/` y no se pisa nada del funnel AN.
+
+### Verificación
+
+Local, con el webhook y el CRM interceptados.
+
+- **Los tres ruteos**, cada uno con su payload: `caso` y `perfil` correctos, `funnel`,
+  `variant`, `sexo`, UTMs anidadas y `fbc` reconstruido desde `fbclid`.
+- **Cadena completa hasta el Typeform**: eligiendo Rosita y Andrea, sus VSL reciben
+  `first_name`, `email`, `sexo`, `video` y las UTMs, y arman el iframe con todo. Para Flor
+  —cuya ruta sólo existe por el rewrite de Vercel, así que en local da 404— se verificó contra
+  la página **en producción** con los parámetros que arma la nueva landing: los diez hidden
+  llegan enteros, incluido el nombre con tilde.
+- **Velocidad** (4G lenta emulada): FCP y LCP **376 ms** (el titular), CLS 0,0008, `load`
+  963 ms, 10 pedidos, 150 KB.
+- **Layout**: sin desborde horizontal a 360, 390, 768, 1024 y 1280 px. Etiquetas asociadas a
+  los dos campos y botones con `aria-pressed` que anuncia cuál está elegido.
+- Un detalle que se corrigió al mirarlo en móvil: la foto y el nombre de cada tarjeta son
+  `<span>` dentro del botón y, como cajas inline, el `outline` del caso activo se dibujaba en
+  pedazos. Van en `display: block`.
+
+### Ojo
+
+El acento durazno sobre el crema da **1,7:1** de contraste. En el titular (Poppins 700 a 25-38
+px) se lee, pero los enlaces del pie quedan lavados. Es el valor del prototipo y se dejó a
+pedido del usuario; si alguna vez se revisa accesibilidad, ese es el primer lugar.
+
+---
+
+## 2026-09-19 — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
+
+Rama `work/puentes-va`. Resuelve el **Pendiente 1** de la entrada del funnel VA de Andrea.
+
+### Qué cambió
+
+`/redirectionutmstr4iner` y `/redirectionutmstr4iner2` —las dos salidas del Typeform
+`CGxeptJu`— decidían si el lead era de Veronika o de Anthoni con una comparación exacta:
+
+```js
+const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+```
+
+Ahora aplican **la misma definición de tráfico VA que ya usaban `/redirectfit4` y `/fit4`**:
+`utm_campaign` igual a `TR4INER-VA` o `CASOS-VA`, o `funnel=VA`, o `funnel_variant` con `VA`
+como token, o **cualquier `utm_*` con `VA` delimitado por `-` o `_`**. El marcador va anclado
+(`/(^|[-_])VA($|[-_])/i`) para no dispararse con `VA` dentro de una palabra.
+
+Los destinos no cambian: puente 1 reparte entre `/fit4-va` y el WhatsApp de AN
+(`+1 743 901 4239`), puente 2 entre `/calendly-va` y `/calendly-an`. Tampoco cambia el mensaje
+precargado de WhatsApp ni el reenvío del querystring.
+
+### Por qué
+
+El respaldo de `/testimonio-rosita-va` es `utm_campaign=ROSITA-VA`, que no estaba en la lista:
+su tráfico directo —el que llega sin UTMs— terminaba del lado de AN al completar la evaluación.
+Lo mismo le pasaría a cualquier campaña nueva de Veronika que no se dé de alta en los dos
+archivos. `/testimonio-andrea-va` esquivó el problema poniendo `CASOS-VA` como respaldo, pero
+eso es tapar el agujero una landing por vez y cuesta granularidad: la identidad de la página
+queda sólo en `utm_source`.
+
+**Se eligió arreglar los puentes en vez del respaldo de Rosita** para que `ROSITA-VA` siga
+distinguiendo su tráfico directo en el reporte, y para que la regla quede en un solo lugar.
+
+### Lo que se midió antes de tocar nada
+
+Contra el CRM (tabla `OptIn`, 19.023 filas, 06-ago → 19-sep) y el sheet `AGENDAS TODAS`
+(2.844 filas):
+
+| | n |
+|---|---|
+| Opt-ins con señal VA | 7.644 |
+| …que el puente viejo reconocía | 7.640 |
+| …que mandaba al lado AN | **4** (3 de `Llamada-Closer`, 1 de `ROSITA-VA`) |
+| Agendas que llegaron con `utm_campaign=ROSITA-VA` | **0** |
+| Agendas con `utm_source=LANDING-ROSITA-VA-DIRECTO` | **0** |
+
+**El bug es real pero hasta hoy no costó nada**: 1 opt-in en mes y medio, cero agendas. La
+razón es que los enlaces que publica Veronika ya traen `CASOS-VA`, así que el respaldo casi
+nunca se dispara (1 de 7.077 opt-ins de `rosita-va`). El rastro de Rosita en las agendas viaja
+en `utm_content=Rosita` (33 agendas), todas con `CASOS-VA` y bien ruteadas. Se arregla por lo
+que puede costar mañana, no por lo que costó.
+
+**Falsos positivos: cero.** De los 36 valores distintos del historial que contienen las letras
+«va», el marcador anclado dispara en 22 y todos son de Veronika (`STORIES-VA`,
+`Instagram-VA-perfil`, `Recurso-VA`, `Whatsapp-VA`…). Los 14 que no dispara son de AN o
+neutros, incluidos `Vas a quedar como Ángela`, `Tienes_ovarios` y `Reserva2Ene`.
+
+### Lo que este arreglo NO resuelve
+
+- **Una campaña de Veronika sin el marcador sigue yendo a AN.** `utm_campaign=VERONIKA-2026` o
+  `ROSITA-2026` no traen `VA` como token y caen del lado de Anthoni. Sigue vigente el
+  Pendiente 2: **sus enlaces deben llevar `VA` delimitado en alguna UTM**.
+- **Los creativos de Meta con espacios tampoco** (`VA VID 1. Esto arruina tus resultados`): el
+  marcador sólo acepta `-` y `_` como delimitadores. No se amplió a espacios porque hoy esos
+  anuncios ya viajan con `utm_campaign=CASOS-VA` y ampliar sin necesidad agranda la superficie
+  de falsos positivos.
+- **Los 8 agendamientos VA de `utm_campaign=Llamada-Closer` no pasan por estos puentes.** Ni
+  `Llamada-Closer` ni `FACE-VA-1erComent` existen en el repo: son enlaces que arman los closers
+  en ManyChat y entran directo a `/agendar-va`.
+
+### Hallazgo lateral, arreglado en el mismo movimiento (`/calendly-confirma/`)
+
+`hasVaUtm()` usa una **tercera** definición de VA, distinta de las otras dos, y busca `-VA-`
+**con guión a los dos lados**. Por eso no reconoce `CASOS-VA`, `STORIES-VA` ni `ROSITA-VA`, que
+terminan en `VA`. Medido sobre el sheet: **297 de 683 agendas con marcador VA (43%) ven el
+video de Anthoni en la página de confirmación** en vez del de Veronika. La cuenta mira sólo
+UTMs —el sheet no guarda `funnel`—, así que 297 es el techo: a quien llegue con `funnel=VA`
+lo rescata la primera condición. Además `/va/i.test(funnel_variant)` va sin anclar, así que un
+`funnel_variant=VARIANTE-A` daría VA por error.
+
+**Se arregló el mismo día**, cuando el usuario probó el funnel de Andrea con
+`utm_source=YOUTUBE-VA-descripcion&utm_campaign=Caso_Estudio` y reportó que la salida lo mandó
+a `/calendly-an`. Ya que la revisión tocaba la cadena entera, `hasVaUtm()` pasó al mismo
+marcador anclado que el resto. **Ojo: en esa página el criterio está DOS veces** —un script
+temprano en el `<head>` marca `va-context` para que no aparezca la tipografía de Anthoni antes
+de pintar— y también usaba la definición vieja. Si se arregla uno solo, sale el video de
+Veronika con la tipografía de AN; los dos quedaron con el mismo marcador.
+
+### Verificación
+
+22 casos de lógica, armados con valores reales del historial (los 9 VA que antes se perdían,
+las 4 trampas del sheet y los destinos AN): 22/22.
+
+Punta a punta sobre el servidor local (20 casos en los dos puentes, 11 en la confirmación y
+la cadena completa del caso reportado por el usuario: registro → VSL → Typeform → puente →
+`/calendly-va` con el Vidalytics de Veronika → confirmación con su video y su tipografía):
+
+| entrada | destino |
+|---|---|
+| `?utm_campaign=ROSITA-VA&utm_source=LANDING-ROSITA-VA-DIRECTO` (puente 2) | `/calendly-va` ✓ |
+| `?utm_source=STORIES-VA&utm_campaign=Llamada-Closer` (puente 2) | `/calendly-va` ✓ |
+| `?utm_campaign=NAVA-2026&utm_content=VARIANTE-A` (puente 2) | `/calendly-an` ✓ |
+| `?utm_campaign=ROSITA-VA` (puente 1) | `/fit4-va` ✓ |
+| `?utm_source=MetaAds&utm_medium=Caso_Estudio` (puente 1) | WhatsApp AN, mensaje corto ✓ |
+| `?utm_source=YouTube-AN&utm_campaign=CASOS-AN` (puente 1) | WhatsApp AN, mensaje largo ✓ |
+
+El querystring llega entero en todos los saltos. Sin errores de consola propios.
+
+### Publicación
+
+**Retenida a propósito.** Son páginas del funnel de Caso de Estudio y el test de hero
+`ce_hero_202609` cierra el 20-sep con lectura el 21: el puente 2 alimenta «agendas por 1.000
+exposiciones», que es el tercer nivel del protocolo. Queda en Preview hasta después de la
+lectura.
+
+### Resultado esperado
+
+Ninguno medible en el corto plazo: el tráfico que hoy se pierde es ~1 opt-in cada mes y medio.
+El valor es que la regla queda en un solo lugar y que la próxima landing VA —o la próxima
+campaña de Veronika con marcador— ya no necesita que nadie edite estos dos archivos.
+## 2026-09-19 — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
+
+Segunda iteración del mismo día, con capturas del usuario como referencia. Sólo tocó estas dos
+páginas: nada del funnel de Caso de Estudio ni del test de hero.
+
+### Qué cambió
+
+**Paleta.** Se retira el degradado guinda → naranja y entra un **acento tan plano**. El sistema
+queda en cuatro tintas:
+
+| Token | Antes | Ahora | Dónde |
+|---|---|---|---|
+| `--bg` | `#F7F1E8` | **`#FCF5EE`** | fondo |
+| `--ink` | `#2A1015` | **`#141414`** | titulares |
+| `--body-ink` | — | **`#403F3F`** | párrafos |
+| `--tan` | degradado `#8C1D3F → #E4622A` | **`#C68961`** | titular resaltado, etiquetas, enlaces |
+| `--muted` | `#7A5C52` | **`#8F8E8D`** | pie y metadatos |
+
+El acento dejó de ser un degradado recortado sobre el texto (`background-clip: text`) y pasó a
+ser `color` a secas: la clase `.grad` se llama ahora `.accent`. A pedido del usuario el tan se
+llevó **a toda la página**, no sólo al texto: marco del video, botón de play, CTA, botón del
+formulario, foco, halos de fondo y sombras salen de la misma familia (`--tan-deep #A96A45`,
+`--tan #C68961`, `--tan-soft #DDB08D`). Los errores del formulario conservan un rojo propio
+(`--error #B4402F`), que es señal y no decoración.
+
+**Copy del VSL.** El párrafo del hero pasó a: «Si sientes que haces dieta, entrenas, bajas de
+peso pero terminas recuperándolo de nuevo. **Mira el video, vas a entender qué necesitas revisar
+y luego cuéntanos qué está pasando contigo.**» Se respetó el texto de la captura salvo las
+tildes de los dos «qué» interrogativos.
+
+**Bloque de autoría.** Las dos páginas suman, arriba del pie, la foto redonda de Veronika
+(`/assets/va/vero-perfil-footer.webp`, la que ya usaba el tema VA), «Producción · TR4INER» en
+Outfit 700 con tracking y «Veronika Alvarado · Coach» en gris.
+
+### Verificación
+
+- Flujo intacto: los dos payloads del opt-in, el redirect con el `@` literal y los hidden del
+  Typeform siguen igual (sólo cambiaron CSS y copy). Validación, modal, foco y `Escape` OK.
+- Sin desborde horizontal a 390 y 1280 px; cero errores de consola; la foto del bloque de
+  autoría carga a 144 px de origen para 46 px de caja (nítida en pantallas retina).
+- **Contraste, para que quede escrito:** el tan `#C68961` sobre el crema da 2,9:1. Alcanza para
+  el titular en Anton, pero queda por debajo de AA en los textos chicos que lo usan (eyebrow de
+  11 px y enlaces del pie), y el gris `#8F8E8D` del copyright da 3,0:1. Son los valores del
+  diseño aprobado y se dejaron tal cual; las etiquetas del formulario sí se pasaron a
+  `--body-ink` porque ahí la legibilidad es funcional.
+
+---
+
+## 2026-09-19 — Funnel VA de Andrea: registro y VSL para las redes de Veronika
+
+Rama `work/testimonio-andrea-va`. Dos páginas nuevas, ninguna página existente tocada.
+
+### Qué cambió
+
+- **`/testimonio-andrea-va`** (`testimonio-andrea-va/index.html`): prerregistro con la portada
+  del VSL, un CTA y un modal de dos campos. Mismo recorrido que Rosita —captura nombre y
+  correo, declara `sexo=Mujer` y sigue al video en el mismo origen— con la piel del prototipo
+  aprobado: crema `#F7F1E8`, guinda `#8C1D3F`, naranja `#E4622A`, dorado `#D9A521`, Anton para
+  titulares, Outfit 300 para lectura y JetBrains Mono en etiquetas.
+- **`/testimonio-andrea-va/video`** (`testimonio-andrea-va/video/index.html`): VSL con el
+  Vidalytics `QzmpW1qqYB8GFVaI` (cuenta `IoH8SL8U`) y, debajo, la misma evaluación de Typeform
+  `CGxeptJu` montada con el SDK, igual que Rosita.
+- **`assets/andrea-va/`**: la portada salió de un fotograma del propio video (segundo 10,
+  Veronika con el rótulo «Y QUÉ HACER»), en WebP de 760 px (13 KB) y 1280 px (24 KB) más un
+  JPG de 1200×675 para `og:image`. No se agregó ninguna imagen de terceros.
+- El CSS y el JS van **inline en cada página**, como el resto del repo. Las fuentes salen de
+  `/assets/fonts/` (self-hosted) y se declaran con el rango variable completo: con el
+  `font-weight: 400 700` que usa el tema de Rosita, el peso 300 del diseño se recortaba a 400.
+
+### Decisiones que no son cosméticas
+
+- **`utm_campaign=CASOS-VA` como respaldo, no `ANDREA-VA`.** Al terminar el Typeform, las dos
+  páginas puente (`/redirectionutmstr4iner` y `/redirectionutmstr4iner2`) deciden agenda de
+  Veronika o de Anthoni comparando `utm_campaign` contra **dos valores exactos**:
+  `TR4INER-VA` y `CASOS-VA`. Typeform sólo reenvía las cinco UTMs, así que `funnel=VA` y
+  `funnel_variant` no llegan a esa decisión. Con cualquier otro texto el lead VA termina en el
+  WhatsApp de AN. La identidad de la landing viaja en `utm_source=LANDING-ANDREA-VA-DIRECTO`,
+  que también llega entero. **Rosita tiene ese bug**: su respaldo es `ROSITA-VA` y no está en
+  la lista (ver Pendientes).
+- **Normalización de UTMs duplicadas antes de GTM**, como `index-fuerza.html`. Instagram —de
+  donde viene este tráfico— agrega `utm_source=ig`, `utm_medium=social` y
+  `utm_content=link_in_bio` a un enlace que ya trae UTMs; sin esto gana el último valor y la
+  campaña de Veronika desaparece. Rosita y Flor VA no lo tienen.
+- **Se navega sin esperar al webhook.** Los dos envíos (n8n `casos-estudio` y la copia directa
+  al CRM) salen con `keepalive` y la página avanza apenas responde el webhook o a los 1,5 s, lo
+  que ocurra primero. Rosita espera hasta 7 s; la landing principal no espera nada.
+- **`fbc` y `fbp` al ras del payload del opt-in**: el CRM los guarda en columnas propias de
+  `OptIn` y sin ellos el Lead del servidor no se empareja con el clic del anuncio. No viajan en
+  la URL: se reconstruyen en el mismo dominio.
+- **Correos desechables rechazados** (misma lista que `/casos-de-estudio`), y el envío nunca
+  se dispara dos veces.
+
+### SEO y GEO
+
+`noindex, nofollow` con canonical propio en las dos: son pasos operativos de un funnel de
+tráfico dirigido, no contenido para posicionar. Sí llevan título, descripción y **paquete
+social completo** (`og:*` + `twitter:card` con la portada de 1200×675), porque el enlace se va
+a compartir en historias y mensajes y ahí la previsualización sí decide clics. No entran al
+`sitemap.xml`.
+
+### Verificación
+
+Local, con el webhook y el CRM **interceptados** para no crear leads ni correos reales.
+
+- **Atribución punta a punta.** Entrada con las UTMs de Veronika + las que agrega Instagram
+  duplicadas: la URL quedó consolidada con `utm_source=Instagram-VA-perfil`, `utm_medium=Social`
+  y `utm_campaign=TR4INER-VA`, y completó el `utm_content` que venía vacío. Los dos payloads
+  llevaron nombre con tildes y emoji, correo en minúsculas, `sexo=Mujer`, `funnel=andrea-va`,
+  `variant=VA`, `video`, las UTMs anidadas y el `fbc` reconstruido desde `fbclid`.
+- **Redirect:** `/testimonio-andrea-va/video` con todas las UTMs, `video`, `fbclid`, `funnel`,
+  `funnel_variant`, `first_name`, `name`, `sexo` y el correo con **`@` literal** (sin `%40`).
+- **Hidden fields del Typeform** (en el fragmento del iframe, que es donde los pone el SDK):
+  `utm_source`, `utm_medium`, `utm_campaign`, `video`, `fbclid`, `funnel`, `funnel_variant`,
+  `first_name`, `name`, `email`, `sexo`, `fbc` y `fbp`. El nombre llegó entero: `María José 🤍`.
+- **Visita directa sin UTMs:** respaldo `LANDING-ANDREA-VA-DIRECTO` + `CASOS-VA`.
+- **Velocidad** (4G lenta emulada: 1,6 Mbps, 150 ms de RTT). Registro: FCP 412 ms, **LCP
+  692 ms** (la portada), CLS 0,0017, `load` 836 ms, 7 pedidos, 129 KB propios. VSL: FCP/LCP
+  368 ms, CLS 0,0024. El formulario espera al `load` de la página para no pelearle el ancho de
+  banda al video (el player de Vidalytics pesa ~1 MB): `embed.js` arrancó a los 1,65 s, 300 ms
+  después del video, con red de seguridad a los 6 s.
+- **Layout:** sin desborde horizontal a 375, 390, 768 y 1280 px (`scrollWidth` = viewport). En
+  iPhone SE (375×667) el CTA queda a 496 px, dentro del primer viewport, y el modal entra
+  completo. Los halos del prototipo se pasaron a fondo del `body`: como capa absoluta de 150vw
+  obligaban a tapar el desborde.
+- **Teclado y lectores:** foco al primer campo en escritorio (en móvil no, para que el teclado
+  no tape el formulario), tabulación encerrada en el modal, fondo con `inert`, `Escape` cierra y
+  devuelve el foco al botón que lo abrió, errores con `role="alert"` y etiquetas asociadas.
+- **Typeform:** el iframe respeta el piso de 620 px en móvil y crece sin techo; el botón
+  «Aceptar» queda visible. Consola sin errores propios.
+
+### Pendientes
+
+1. ~~**Rosita manda su tráfico directo al lado de AN.**~~ **Resuelto el 19-sep** en
+   `work/puentes-va`: los dos puentes pasaron a la definición amplia de `/redirectfit4`. Ver la
+   entrada de esa fecha, que además mide cuánto costó el bug (1 opt-in, 0 agendas) y deja
+   anotado un problema equivalente sin tocar en `/calendly-confirma/`. Sigue en Preview: no se
+   publica hasta después de la lectura del test de hero.
+2. Los enlaces que publique Veronika deben llevar `utm_campaign=TR4INER-VA` (o ninguna
+   campaña). Con una campaña propia inventada, la salida del Typeform manda a la agenda de AN.
+### Publicación
+
+Preview `dpl_HVgkRYRrUJSGzFBgbzqD4vqZq6tR` (Ready en 9 s, alias de rama
+`tr4iner-funnels-git-work-testimo-6778ba-…`, protegido por Vercel Authentication).
+
+**Producción publicada el 19-sep a pedido del usuario**, con el test de hero todavía corriendo
+(cierra el 20). `work/testimonio-andrea-va` entró a `main` por avance rápido hasta `34c578a`;
+Vercel `dpl_cLfuGvJ4G59vHaQcTDB6x2g4Wiq5`, target `production`, **Ready** en 11 s, alias
+`https://metodo.tr4iner.com`. El deploy no toca ninguna página del test ni `middleware.ts`: se
+verificó después de publicar que `/casos-de-estudio` sigue sirviendo el control («Mira cómo
+alguien como tú transformó su cuerpo») y que el tráfico pago sigue recibiendo la cookie
+`ab_hero`.
+
+Verificado en vivo sobre el dominio canónico, con GA4/Meta/Clarity bloqueados para no ensuciar
+la analítica: `/testimonio-andrea-va` y `/testimonio-andrea-va/video` responden `200` con y sin
+barra final, las tres imágenes de `assets/andrea-va/` se sirven con su tipo correcto, el
+titular carga Anton y el cuerpo mantiene el peso 300, no hay desborde horizontal a 390 px, el
+modal abre, el player de Vidalytics monta su `<video>` y el Typeform arma el iframe de 620 px
+con todos los hidden —incluido el `fbc` reconstruido desde `fbclid`—. Cero errores de consola.
+
+---
+
 ## 2026-09-16 — Test de HERO a D+6: sano, pero el cierre se estira al 20-sep
 
 Rama `work/ab-titulo-descripcion`. Revisión de mitad de test de `ce_hero_202609` y cambio de
@@ -401,6 +1036,14 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-26` — Agenda en pausa: los calificados del Typeform van a WhatsApp
+- `2026-09-25` — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
+- `2026-09-25` — Las cuatro páginas de Veronika pasan al diseño «Vino crema»
+- `2026-09-24` — Arranca el test de FORMULARIO en `/medicos`: modal contra formulario a la vista
+- `2026-09-20` — `/casos-de-estudio-va` deja de mandar a todas a Flor y reparte por caso
+- `2026-09-19` — Los dos puentes del Typeform reconocen VA por marcador, no por dos campañas exactas
+- `2026-09-19` — Andrea VA: paleta tan, copy nuevo del VSL y bloque de autoría
+- `2026-09-19` — Funnel VA de Andrea: registro y VSL para las redes de Veronika
 - `2026-09-16` — Test de HERO a D+6: sano, pero el cierre se estira al 20-sep
 - `2026-09-10` — Arranca el test de HERO: promesa de resultado contra promesa de método
 - `2026-09-08` — Producción verificada: opt-in por edad y cuatro casos

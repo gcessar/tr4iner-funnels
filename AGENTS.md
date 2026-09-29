@@ -25,12 +25,14 @@ Rutas objetivo del proyecto:
 
 - `/` → redirección permanente a `/casos-de-estudio`.
 - `/casos-de-estudio` → landing canónica de Caso de Estudio.
-- `/casos-de-estudio-va` → registro exclusivo de Veronika; captura nombre/email, fuerza `sexo=Mujer` y continúa a Flor VA.
+- `/casos-de-estudio-va` → registro exclusivo de Veronika. Captura nombre/email, fuerza `sexo=Mujer` y **reparte entre los tres casos según lo que la persona elige**: «subo de peso» → `/testimonio-flor-va`, «entreno y no veo cambios» → `/testimonio-rosita-va/video`, «bajo y lo recupero» → `/testimonio-andrea-va/video`.
 - `/testimonio-flor` → página Flor (`registro-typeform-flor.html`).
 - `/testimonio-flor-va` → variante Flor para tráfico VA (`registro-typeform-flor-va.html`).
 - `/testimonio-dashiel` → página Dashiel (`registro-typeform-optimizado.html`).
 - `/testimonio-andrea` → página Andrea (`testimonio-andrea/index.html`).
 - `/testimonio-christian` → página Christian (`testimonio-christian/index.html`).
+- `/testimonio-rosita-va` y `/testimonio-rosita-va/video` → funnel propio de Veronika con el caso de Rosita: prerregistro (nombre/email, `sexo=Mujer`) y VSL con la misma evaluación de Typeform.
+- `/testimonio-andrea-va` y `/testimonio-andrea-va/video` → mismo patrón con el caso de Andrea, para las redes de Veronika. Vidalytics `QzmpW1qqYB8GFVaI`. Registro y `/video` con el diseño «Vino crema» (ver abajo).
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
@@ -45,18 +47,23 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 |---|---|
 | `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite) y **control `RES`** del test de hero. Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. |
 | `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
-| `middleware.ts` | Split 50/50 en el edge para el test de hero. Rewrite (nunca redirect), cookie `ab_hero` de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
+| `middleware.ts` | Split 50/50 en el edge para **dos** tests independientes: hero de `/casos-de-estudio` (cookie `ab_hero`) y formulario de `/medicos` (cookie `ab_med`, despachado antes). Rewrite (nunca redirect), cookies de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
 | `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
-| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer`, UTMs VA de respaldo y redirige a `/testimonio-flor-va`. |
+| `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. **Desde el 25-sep no tiene carrusel**: los tres perfiles son la única forma de elegir caso y el perfil decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Si nadie elige, sigue saliendo Flor. Diseño «Vino crema» (ver abajo). |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
 | `assets/casos-optin/` | Cuatro comparativas en WebP 240/480px; fila fija hasta 899px y carrusel nativo desde 900px. |
-| `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. Debe mantener el mismo copy que Flor normal y diferenciarse por el video VA. |
+| `registro-typeform-flor-va.html` | Página Flor específica para tráfico VA; ruta pública `/testimonio-flor-va`. **Desde el 25-sep tiene copy y diseño propios** («Vino crema»), ya no el de Flor normal: lo decidió el usuario al pasar el diseño nuevo. Conserva el video VA y el formulario que aparece a los 3 s. |
+| `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Prerregistro y `/video` con el diseño «Vino crema» y CSS inline: ninguna de las dos carga ya `assets/rosita-va/rosita-theme.css`. |
+| `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación). Diseño «Vino crema»; CSS y JS inline en cada página. |
+| `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
+| `assets/casos-va/` | Las tres comparativas antes/después que usaba el carrusel de `/casos-de-estudio-va`. **Sin uso desde el 25-sep** (el diseño nuevo no tiene carrusel); se dejan por si se revierte. No son las mismas fotos que `assets/casos-optin/`. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
 | `biblioteca/` | Videoteca / recursos. |
 | `medicos/index.html` | Landing completa de **Médicos / Guardias** (`/medicos/`), con relato de 24 horas y Calendly diferido. |
+| `medicos/formulario-visible.html` | **Retador `INL`** del test de formulario: idéntico a `medicos/index.html` salvo que en el celular el formulario queda a la vista en vez de vivir en un modal. `noindex`; se sirve por rewrite bajo `/medicos`. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
 | `fit4/index.html`, `fit4-va/index.html` | VSL FIT4 públicas de Anthoni/compatibilidad y Veronika. La ruta VA siempre carga su video y eventos propios. |
 | `assets/va/` | Imagen del caso y tema compartido de Veronika. Usa Montserrat 900/300; no publicar los archivos Mont DEMO. |
@@ -64,6 +71,16 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |
 | `track.js` | Copia de compatibilidad antigua; no enlazar desde páginas nuevas porque algunos bloqueadores la interceptan. |
 | `BITACORA.md` | Changelog del funnel (registrar cada cambio con impacto en KPIs). |
+
+### Diseño «Vino crema» de Veronika (25-sep-2026)
+
+Aplica a `/casos-de-estudio-va`, `/testimonio-flor-va` y a registro y `/video` de Rosita y Andrea. Los dos registros no venían en el exporte: se armaron con las mismas piezas (encabezado de las VSL, botón y campos de la landing) y conservan su ventana de registro —la portada y el botón la abren—. Salió de un exporte de **Claude Design** (HTML empaquetado con React y una plantilla `{{ }}`), que se tradujo a HTML estático: **no copiar el exporte tal cual**, porque trae un Typeform que no es el de producción (`01M3CN3A…`) y su «enviar» es una demo.
+
+- **Lora** 400/700 self-hosteada y variable (`assets/fonts/lora-normal-latin*.woff2`, un archivo por subconjunto cubre los dos pesos). Cero pedidos a Google Fonts.
+- Crema `#FDF6F0`, tinta `#000000`, **vino `#7C2D3C`** en frases destacadas, botones y filete superior de las tarjetas; gris `#6B6B6B` para rótulos.
+- Avatar del pie: `assets/va/vero-avatar-92.webp` (fondo gris, 92 px para mostrarse a 46). `vero-perfil-footer.webp` sigue en uso en Calendly y otras páginas.
+- **La lógica no cambió**: los scripts de captura, envío a n8n y al CRM, ruteo, video y Typeform se copiaron byte a byte de las versiones anteriores. Sólo se quitó el carrusel de la landing y la animación propia de Andrea (la reemplaza la del diseño).
+- Los marcos del formulario conservan los pisos de alto de producción (560 px; 590/640 en Flor), no los 520 del diseño: con menos, Typeform tapa el botón de continuar.
 
 Las antiguas variantes `-A` fueron promovidas a los nombres canónicos el 14-jul-2026. El sufijo `-B` identifica las páginas anteriores archivadas. Cuando se implemente el A/B test real, documentar nuevamente la asignación y no cambiar las rutas públicas.
 
@@ -95,7 +112,7 @@ Caso de Estudio tiene una decisión visual propia aprobada: fuentes locales **St
 
 Decisión del 8-sep-2026: `rango_edad` viaja en la URL, en ambos payloads del opt-in y en `data-tf-hidden` de los cuatro casos. **No se cambia el Typeform externo ni se salta su pregunta de edad**, que conserva el rechazo de menores. Los rangos de ambos formularios aún difieren; el usuario pospone su alineación y no requiere mapear edad en Brevo/Sheet. El transporte al atributo no prueba que Typeform haya declarado/publicado ese parámetro ni que lo almacene. Revisar con datos antes de modificarlo.
 
-Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CGxeptJu`). Vidalytics, cuenta `IoH8SL8U`: Flor `sYxbpUd09oZRWy21`, Dashiel `Vk1OyDQZVxfAOUVI`, Andrea `7cbPQZs876r6l9Ae`, Christian `5gVwwJPsJNtuN4EU`. Flor VA conserva su video y ruta independientes. Los cuatro testimonios mantienen `noindex, nofollow` y canonical propio.
+Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CGxeptJu`). Vidalytics, cuenta `IoH8SL8U`: Flor `sYxbpUd09oZRWy21`, Dashiel `Vk1OyDQZVxfAOUVI`, Andrea `7cbPQZs876r6l9Ae`, Christian `5gVwwJPsJNtuN4EU`. Flor VA conserva su video y ruta independientes. Las rutas VA de Veronika llevan los suyos: Rosita `RymSJVDkKpFH17Z7` y Andrea VA `QzmpW1qqYB8GFVaI`, y montan el mismo formulario `CGxeptJu` con el SDK (`tf.createWidget`) en vez del embed live. Los cuatro testimonios mantienen `noindex, nofollow` y canonical propio.
 
 ### Regla de navegación y atribución
 
@@ -104,6 +121,8 @@ Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CG
 - **Cada salto entre páginas debe reenviar todos los parámetros de atribución presentes**, no una lista parcial: cualquier `utm_*`, `video`, `fbclid`, `gclid`, `fbc_id`, `h_ad_id` y futuros identificadores equivalentes.
 - También se preservan los datos funcionales necesarios (`first_name`, `name`, `email`, `sexo`, `rango_edad` y parámetros de Calendly). El email debe llegar con `@` literal cuando el siguiente sistema lo necesite.
 - Antes de publicar, probar la cadena completa con UTMs sintéticas y verificar la URL en cada salto.
+- **Hay UNA sola definición de «tráfico VA» y vale para todo el repo:** `utm_campaign` igual a `TR4INER-VA` o `CASOS-VA`, o `funnel=VA`, o `funnel_variant` con `VA` como token, o **cualquier `utm_*` con `VA` delimitado por `-` o `_`** (marcador anclado `/(^|[-_])VA($|[-_])/i`, que no se dispara con `NAVA-2026` ni `VARIANTE-A`). La aplican `/redirectfit4`, `/fit4`, `/fit4challenge-b`, `/gracias-fit4-challenge`, `404.html`, las dos salidas del Typeform (`/redirectionutmstr4iner` y `/redirectionutmstr4iner2`) y `/calendly-confirma/` —esta última **dos veces**: el `hasVaUtm()` del video y el script del `<head>` que marca `va-context` para la tipografía; si divergen, sale el video de Veronika con la tipografía de Anthoni—. Al agregar una superficie nueva, copiar el mismo marcador; no inventar una variante.
+- **Typeform sólo reenvía las cinco UTMs a su salida**: `funnel` y `funnel_variant` no llegan al puente. Por eso los enlaces de Veronika **tienen que llevar `VA` como token en alguna UTM** (`utm_campaign=TR4INER-VA`, `utm_source=YOUTUBE-VA-descripcion`, …). Una campaña tipo `VERONIKA-2026`, sin el marcador, cae del lado de AN. Las landings VA rellenan `CASOS-VA` cuando el enlace llega sin campaña.
 
 ### Incidente resuelto — bug de UTMs (13-jul-2026)
 `buildRedirectUrl()` **no reenviaba los UTMs** a las páginas flor/dashiel (solo nombre/email/sexo). Del 11 al 13-jul los leads del sheet `LEADS` quedaron sin UTMs. **Ya corregido** (el loop de `utmData` en `buildRedirectUrl`). Regularización de los datos históricos (Clarity + GA4): ver detalle en `BITACORA.md`. Al tocar la lógica de redirect, **verificar siempre que los UTMs sigan viajando a testimonio-flor/dashiel**.
@@ -151,6 +170,20 @@ no se testea** — se publica directo o se propone algo más grande.
 
 Criterio completo en la entrada del 10-sep de `BITACORA.md`; método en lenguaje llano en
 [`docs/protocolo-ab.md`](docs/protocolo-ab.md).
+
+**Al 24-sep-2026 CORRE además el test de FORMULARIO en `/medicos`** (`med_form_202609`), sólo
+tráfico pago y en el mismo `middleware.ts` (Vercel admite uno solo por proyecto):
+
+| Brazo | Archivo | En el celular |
+|---|---|---|
+| `MOD` (control) | `medicos/index.html` | el formulario vive en un modal que abre el play falso |
+| `INL` (retador) | `medicos/formulario-visible.html` | el formulario está a la vista, debajo de la foto |
+
+Cookie `ab_med`, evento `med_form_exposure_mod|inl`. Es independiente del test de hero: cada
+uno lee sólo su cookie. **Mientras corre: tocar SIEMPRE las dos páginas de médicos** (son
+idénticas salvo el bloque «Brazo INL» del CSS y `setupInlineRegistration` del JS). Los
+retadores de hook de la campaña MEDICOS sí se pueden apagar a las 72 h: el reparto es por
+visitante y los dos brazos ven la misma mezcla. Criterio en `BITACORA.md`, entrada del 24-sep.
 
 `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin ruta**:
 revertir es cambiar una línea, no restaurar archivos.

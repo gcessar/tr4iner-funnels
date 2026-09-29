@@ -22,11 +22,29 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const urlParams = new URLSearchParams(window.location.search);
-      const campaign = urlParams.get("utm_campaign");
       const source = urlParams.get("utm_source");
       const medium = urlParams.get("utm_medium");
 
-      const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
+      // Misma definición de "tráfico VA" que ya aplican /redirectfit4 y /fit4.
+      // Antes se comparaba utm_campaign contra dos valores exactos, y cualquier
+      // otro texto mandaba el lead de Veronika al WhatsApp de Anthoni: el
+      // respaldo ROSITA-VA de /testimonio-rosita-va, que viaja cuando el enlace
+      // llega sin UTMs, y cualquier campaña propia que ella estrene.
+      // Typeform sólo reenvía las cinco UTMs, así que funnel/funnel_variant casi
+      // nunca llegan hasta acá; se leen igual porque el puente también se abre
+      // desde enlaces directos que sí los traen.
+      const campaign = (urlParams.get("utm_campaign") || "").trim().toUpperCase();
+      const funnel = (urlParams.get("funnel") || "").trim().toUpperCase();
+      const funnelVariant = (urlParams.get("funnel_variant") || "").trim();
+      const vaMarker = /(^|[-_])VA($|[-_])/i;
+
+      const isVa = campaign === "TR4INER-VA" ||
+        campaign === "CASOS-VA" ||
+        funnel === "VA" ||
+        vaMarker.test(funnelVariant) ||
+        Array.from(urlParams.entries()).some(function (entry) {
+          return entry[0].toLowerCase().indexOf("utm_") === 0 && vaMarker.test(entry[1]);
+        });
 
       if (isVa) {
         var fit4Url = new URL(window.location.origin + "/fit4-va");

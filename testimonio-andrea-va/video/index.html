@@ -4,6 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+  <script>
+    /*
+      Misma consolidación que en el registro: Instagram agrega sus propios UTMs
+      a un enlace que ya los trae y, sin esto, el último valor pisaba al
+      original. Acá importa doble, porque estos UTMs son los que viajan al
+      Typeform y los que deciden a qué agenda sale la persona al terminarlo.
+    */
+    (function () {
+      var raw = new URLSearchParams(window.location.search);
+      var canonical = new URLSearchParams();
+      var hadDuplicates = false;
+      var attributionKeys = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
+
+      raw.forEach(function (value, key) {
+        var isAttribution = key.indexOf("utm_") === 0 || attributionKeys.indexOf(key) !== -1;
+        if (!isAttribution) {
+          canonical.append(key, value);
+          return;
+        }
+        if (!canonical.has(key)) {
+          canonical.set(key, value);
+          return;
+        }
+        hadDuplicates = true;
+        if (!canonical.get(key) && value) canonical.set(key, value);
+      });
+
+      if (!hadDuplicates) return;
+      var query = canonical.toString();
+      var cleanUrl = window.location.pathname + (query ? "?" + query : "") + window.location.hash;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    })();
+  </script>
+
   <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
   <script>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":
@@ -15,23 +49,27 @@
 
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FDF6F0" />
-  <title>Los 4 cambios para bajar grasa · Rosita | Veronika Alvarado</title>
-  <meta name="description" content="Mira la explicación de Rosita y completa la evaluación de TR4INER para que el equipo revise tu situación." />
-  <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-rosita-va/video" />
+  <title>Qué ajustes hacer para bajar de peso · Caso de Andrea | Veronika Alvarado</title>
+  <meta name="description" content="Veronika Alvarado explica, con el caso de Andrea, qué ajustes sostienen la pérdida de peso sin dietas extremas. Al terminar, cuéntanos tu situación para que el equipo la revise." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-andrea-va/video" />
 
   <meta property="og:locale" content="es_PE" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="TR4INER" />
-  <meta property="og:title" content="Los 4 cambios para bajar grasa sin perder piernas ni glúteos" />
-  <meta property="og:description" content="Rosita explica qué funciona sin dietas extremas ni horas de cardio." />
-  <meta property="og:url" content="https://metodo.tr4iner.com/testimonio-rosita-va/video" />
-  <meta property="og:image" content="https://metodo.tr4iner.com/assets/rosita-va/vsl-poster.jpg" />
-  <meta property="og:image:width" content="1366" />
-  <meta property="og:image:height" content="768" />
+  <meta property="og:title" content="Qué ajustes hacer para bajar de peso y mantenerlo de forma sostenible" />
+  <meta property="og:description" content="El caso de Andrea, explicado por Veronika Alvarado: sin dietas extremas y sin vivir en el gimnasio." />
+  <meta property="og:url" content="https://metodo.tr4iner.com/testimonio-andrea-va/video" />
+  <meta property="og:image" content="https://metodo.tr4iner.com/assets/andrea-va/vsl-poster.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="675" />
+  <meta property="og:image:alt" content="Veronika Alvarado presentando el caso de Andrea" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <!-- El video es el contenido de la página: su conexión se abre primero.
+       Typeform se conecta también porque su embed baja unos segundos después. -->
+  <link rel="preconnect" href="https://fast.vidalytics.com" crossorigin />
   <link rel="preconnect" href="https://embed.typeform.com" />
+  <link rel="dns-prefetch" href="https://form.typeform.com" />
 
   <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
   <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -254,10 +292,11 @@
       * { animation: none !important; transition: none !important; }
     }
 
+    /* Andrea arranca más abajo: el diseño deja un encabezado vacío arriba. */
+    .hero-sec.andrea { padding-top: 44px; }
+    .hero-sec.andrea .kick { margin-top: 10px; }
     @media (max-width: 640px) {
-      /* El titular va en dos renglones fijos, como en el diseño. */
-      .h1 { font-size: min(1.55rem, 5.8vw); max-width: none; }
-      .h1 .t1 { display: block; white-space: nowrap; }
+      .hero-sec.andrea .kick { margin-top: 2px; }
     }
   </style>
 </head>
@@ -267,14 +306,13 @@
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
   <main id="contenido">
-    <section class="wrap hero-sec" aria-labelledby="video-title">
-      <div class="kick"><span class="kick-bar" aria-hidden="true"></span><span>Caso Real · Rosita</span></div>
-      <h1 class="h1" id="video-title"><span class="t1">Los 4 cambios para bajar grasa</span><span class="frase bloque m-line">sin perder piernas<br class="solo-movil" /> ni glúteos</span></h1>
-      <p class="copy" data-copy>Sin dietas extremas, ni horas de cardio. Mira el video completo antes de contarnos <b>qué es lo que está pasando contigo.</b></p>
-      <div class="video-label"><span>Aquí te explico qué es lo que funciona</span></div>
-      <div class="video-box">
+    <section class="wrap hero-sec andrea" aria-labelledby="video-title">
+      <div class="kick"><span class="kick-bar" aria-hidden="true"></span><span>Caso Real · Andrea</span></div>
+      <h1 class="h1" id="video-title">Qué ajustes hacer para <span class="frase">bajar de peso y mantenerlo de forma sostenible</span></h1>
+      <p class="copy" data-copy>Si sientes que haces dieta, entrenas, bajas de peso pero terminas recuperándolo de nuevo. <b>Mira el video, vas a entender qué necesitas revisar y luego cuéntanos qué está pasando contigo.</b></p>
+      <div class="video-box sin-rotulo">
         <div class="video-host">
-          <div id="vidalytics_embed_RymSJVDkKpFH17Z7" style="width: 100%; position:relative; padding-top: 56.25%;"></div>
+          <div id="vidalytics_embed_QzmpW1qqYB8GFVaI" style="width: 100%; position:relative; padding-top: 56.25%;"></div>
         </div>
       </div>
     </section>
@@ -284,9 +322,9 @@
         <span class="arrow-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#7C2D3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="arrow-bob"><path d="M12 4v16M6 14l6 6 6-6"></path></svg></span>
         <span>Siguiente paso</span>
       </div>
-      <h2 class="h2" id="application-title" data-reveal>Ahora queremos saber <span class="frase bloque m-line">qué está pasando contigo</span></h2>
+      <h2 class="h2" id="application-title" data-reveal>Ahora queremos saber <span class="frase m-line">qué está pasando contigo</span></h2>
       <p class="copy copy-next" data-copy data-reveal>Cuéntanos qué has intentado y qué<br class="solo-movil" /> quieres cambiar. El equipo revisará tus respuestas para entender qué podría estar frenando tus resultados y ver cómo podemos ayudarte.</p>
-      <div class="fbox typeform-frame" data-reveal="card">
+      <div class="fbox form-frame" data-reveal="card">
         <div class="form-loader" id="form-loader" role="status">Cargando evaluación…</div>
         <!-- El embed live 01KHA5… resuelve a este mismo formulario pero fuerza
              shareGaInstance. Se usa el ID real con el SDK (tf.createWidget) para
@@ -323,50 +361,59 @@
         i.getElementsByTagName("head")[0].appendChild(s);
       };}
       vsl(l+"loader.min.js",function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}vli.loadScript(l+"player.min.js",function(){var vec=v[d][ve];t=new vec();t.run(a);});});
-    })(window, document, "Vidalytics", "vidalytics_embed_RymSJVDkKpFH17Z7", "https://fast.vidalytics.com/embeds/IoH8SL8U/RymSJVDkKpFH17Z7/");
+    })(window, document, "Vidalytics", "vidalytics_embed_QzmpW1qqYB8GFVaI", "https://fast.vidalytics.com/embeds/IoH8SL8U/QzmpW1qqYB8GFVaI/");
   </script>
   <script src="/attribution.js"></script>
   <script>
     (function () {
       "use strict";
 
-      var params = new URLSearchParams(window.location.search);
-      var tracked = window.TR4Track && window.TR4Track.getAttribution
-        ? window.TR4Track.getAttribution()
-        : {};
+      var FORM_ID = "CGxeptJu";
+      var FUNNEL_VARIANT = "testimonio-andrea-va-video";
+      // Ver el comentario del registro: estos dos valores son los que hacen que
+      // la salida del Typeform mande a la agenda de Veronika y no a la de AN.
+      var UTM_SOURCE_DIRECTO = "LANDING-ANDREA-VA-DIRECTO";
+      var UTM_CAMPAIGN_DIRECTO = "CASOS-VA";
+
+      var tr4 = window.TR4Track || {};
+      var limpiar = tr4.decodeUtmValue || function (v) { return v == null ? "" : String(v); };
+      var params = tr4.getCanonicalParams
+        ? tr4.getCanonicalParams()
+        : new URLSearchParams(window.location.search);
+      var tracked = tr4.getAttribution ? tr4.getAttribution() : {};
       var typeformLoaded = false;
       var tf = document.getElementById("tf-embed");
       var loader = document.getElementById("form-loader");
-      var frame = document.querySelector(".typeform-frame");
+      var frame = document.querySelector(".form-frame");
 
       Object.keys(tracked).forEach(function (key) {
-        if (!params.has(key) && tracked[key]) params.set(key, tracked[key]);
+        if (!params.get(key) && tracked[key]) params.set(key, tracked[key]);
       });
 
-      // La variante se identifica incluso cuando alguien abre el VSL directamente.
-      if (!params.has("utm_source")) params.set("utm_source", "LANDING-ROSITA-VA-DIRECTO");
-      if (!params.has("utm_campaign")) params.set("utm_campaign", "ROSITA-VA");
-      if (!params.has("sexo")) params.set("sexo", "Mujer");
+      // La variante se identifica incluso si alguien abre el VSL directamente.
+      if (!params.get("utm_source")) params.set("utm_source", UTM_SOURCE_DIRECTO);
+      if (!params.get("utm_campaign")) params.set("utm_campaign", UTM_CAMPAIGN_DIRECTO);
+      if (!params.get("sexo")) params.set("sexo", "Mujer");
       params.set("funnel", "VA");
-      params.set("funnel_variant", "testimonio-rosita-va-video");
+      params.set("funnel_variant", FUNNEL_VARIANT);
 
       function buildHiddenFields() {
         var identityFields = ["first_name", "name", "email", "sexo", "video", "funnel", "funnel_variant"];
-        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
         var hidden = {};
 
         params.forEach(function (value, key) {
-          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
-          if (!allowed || !value) return;
-          // El SDK codifica cada valor por su cuenta: acá van en crudo para que
-          // espacios, tildes y emojis lleguen enteros.
-          hidden[key] = value;
+          var allowed = (tr4.isAttributionKey ? tr4.isAttributionKey(key) : key.indexOf("utm_") === 0) ||
+            identityFields.indexOf(key) !== -1;
+          // fbc y fbp no se leen de la URL: los arma TR4Track con la cookie y el
+          // fbclid del primer aterrizaje, y se agregan abajo.
+          if (!allowed || !value || key === "fbc" || key === "fbp") return;
+          // El SDK codifica cada valor por su cuenta, así que acá van en crudo:
+          // espacios, tildes y emojis llegan enteros. `decodeUtmValue` sólo
+          // deshace lo que ya haya llegado doble-encodeado desde afuera.
+          hidden[key] = limpiar(value);
         });
 
-        // fbc/fbp se toman del dominio actual; no se inventan ni se sustituyen por IDs externos.
-        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
-          ? window.TR4Track.getMetaIds()
-          : {};
+        var metaIds = tr4.getMetaIds ? tr4.getMetaIds() : {};
         Object.keys(metaIds).forEach(function (key) {
           if (metaIds[key]) hidden[key] = metaIds[key];
         });
@@ -376,7 +423,7 @@
 
       function mountTypeform() {
         if (!window.tf || !window.tf.createWidget || !tf) return;
-        window.tf.createWidget("CGxeptJu", {
+        window.tf.createWidget(FORM_ID, {
           container: tf,
           hideHeaders: true,
           opacity: 0,
@@ -387,8 +434,6 @@
           // muchas opciones dejan de cortar el botón de continuar.
           autoResize: true,
           // Explícito porque GA4 va centralizado en GTM, no compartido con el embed.
-          // Ojo: el form sigue tirando el warning de shareGaInstance en consola;
-          // eso viene de su configuración en Typeform, no de acá.
           shareGaInstance: false,
           hidden: buildHiddenFields(),
           onReady: function () {
@@ -418,30 +463,40 @@
         document.head.appendChild(script);
       }
 
+      /*
+        El video es a lo que vino la persona, así que se lleva el ancho de banda
+        primero: el formulario espera a que termine de cargar la página (o 6 s,
+        por si un tag de terceros demora el `load`). En móvil el form queda a un
+        scroll del video, así que con el IntersectionObserver solo se dispararía
+        igual al abrir; por eso la condición es "visible Y cargado".
+      */
+      function cuandoCargue(fn) {
+        if (document.readyState === "complete") { fn(); return; }
+        window.addEventListener("load", fn, { once: true });
+      }
+
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
-        event: "rosita_vsl_view",
-        funnel_variant: "testimonio-rosita-va-video",
+        event: "va_vsl_view",
+        funnel_variant: FUNNEL_VARIANT,
         sexo: "Mujer"
       });
 
       if (params.get("tf_debug") === "1" || !("IntersectionObserver" in window)) {
         loadTypeform();
       } else {
-        // Con rootMargin 0 el embed recién empezaba a bajar cuando el form ya estaba
-        // en pantalla, y el usuario se comía script + iframe + contenido mirando el
-        // "Cargando evaluación…". Se precarga un scroll antes de llegar.
         var observer = new IntersectionObserver(function (entries) {
           if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
           observer.disconnect();
-          loadTypeform();
+          cuandoCargue(function () { window.setTimeout(loadTypeform, 300); });
         }, { rootMargin: "1200px 0px" });
         observer.observe(frame);
 
-        // Red de seguridad: si alguien se queda viendo el VSL sin scrollear, el form
-        // igual queda listo para cuando baje.
-        setTimeout(loadTypeform, 6000);
+        // Red de seguridad: si alguien se queda mirando el VSL sin scrollear, el
+        // formulario igual queda listo para cuando baje.
+        window.setTimeout(loadTypeform, 6000);
       }
+
     })();
   </script>
   <script>
