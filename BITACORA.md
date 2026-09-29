@@ -49,6 +49,23 @@ vieron MET después del cierre.
   `/index-fuerza.html` en `localhost` llegó a GA4 con `utm_campaign=verificacion-local`.
   Filtrable por el hostname y por la campaña.
 
+### ✅ Publicado y verificado en producción
+
+`main` en `9a42272` (merge de `work/ab-titulo-descripcion`), deployment
+`dpl_BkKjgH3KRZbqT5GTCHgf2Dh9qZMg`, **Ready** el 29-sep a las 11:34 de Lima. Verificado con
+`curl` contra `metodo.tr4iner.com`, que no ejecuta JavaScript y no ensucia GA4 ni el CRM:
+
+| Comprobación | Resultado |
+|---|---|
+| `/casos-de-estudio` pago sin cookie, 10 visitas | 200, sin `set-cookie: ab_hero`, sin `Location`; el HTML servido es byte a byte el `index-fuerza.html` nuevo |
+| Con `ab_hero=MET`, 5 visitas | RES las 5 veces |
+| Orgánico | RES, sin cookie |
+| Instrumental en el HTML servido | Cero `gtag` de `ce_hero`, `variant` en `null`, ninguna lectura de `ab_hero` |
+| `/casos-de-estudio/?utm_source=MetaAds&utm_campaign=x%20y&fbclid=abc` | 308 a `/casos-de-estudio` con la query entera |
+| `/medicos` pago sin cookie, 20 visitas | 11 INL y 9 MOD, página coherente con la cookie en las 20 |
+| `/medicos` con `ab_med=INL` o `MOD` (y un `ab_hero` viejo) | Su brazo, sin reescribir la cookie; `/medicos/` también reparte |
+| `/index-metodo` | 200: sigue desplegado sin ruta para poder revertir |
+
 ---
 
 ## 2026-09-29 — Test de HERO cerrado: empate, se queda RES
