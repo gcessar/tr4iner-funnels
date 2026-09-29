@@ -13,6 +13,44 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-29 — Se apaga el test de hero: todo el tráfico ve RES
+
+Rama `work/ab-titulo-descripcion`. Ejecuta la decisión de la entrada de abajo, aprobada por el
+usuario el mismo día. El reparto seguía activo: del 21 al 28-sep, ~3.400 personas por brazo
+vieron MET después del cierre.
+
+### Qué cambió
+
+- **`middleware.ts`:** `/casos-de-estudio` sale del matcher y se borra la lógica del hero. Queda
+  sólo el test de formulario de `/medicos`, con `testMedicos` y `esTraficoDeAds` **idénticas
+  byte a byte** a las de `main`: ese test sigue corriendo y no se toca. Sin middleware, el
+  rewrite de `vercel.json` sirve `index-fuerza.html` (RES) a todo el tráfico.
+- **`index-fuerza.html`:** se quitan el evento `ce_hero_exposure_*` y la lectura de `ab_hero`
+  para `variant`, que queda en `null`. Es el mismo cierre que se hizo con `ab_copy` el 22-ago:
+  la cookie sigue viva 180 días en ~14.000 navegadores, y sin este cambio un visitante con
+  `ab_hero=MET` habría emitido `ce_hero_exposure_met` y registrado `variant=MET` **viendo RES**.
+- **`vercel.json`:** `/casos-de-estudio/` (con barra) redirige con 308 a `/casos-de-estudio`.
+  Sin middleware daba 404 para todos; antes del cierre, sólo para RES.
+- `index-metodo.html` queda desplegado sin ruta, como `index-salud.html`, para poder revertir.
+- Documentación: `AGENTS.md` describe el middleware con un solo test, y `AGENTS.md` y
+  `docs/protocolo-ab.md` corrigen el 4,7% de las agendas por el 9% (ver 16-sep).
+
+### Verificación local
+
+- **Middleware, 15 de 15 comprobaciones** sobre el archivo real, con `@vercel/edge` cargado:
+  el matcher ya no incluye `/casos-de-estudio`, y si igual llegara, nunca reescribe ni pone
+  cookie (tampoco con `ab_hero=MET`). En `/medicos` y `/medicos/`: 2.000 visitas pagas
+  repartidas cerca del 50/50, cookie y página coherentes, orgánico sin cookie, cookie pegajosa
+  sin reescribirse y UTM duplicada de Instagram adentro.
+- **`index-fuerza.html`** con la cookie `ab_hero=MET` puesta: muestra RES, cero eventos
+  `ce_hero` en el `dataLayer`, formulario presente, `index, follow` intacto, cero errores de
+  consola. Los tres scripts parsean y el JSON-LD es válido; `vercel.json` es JSON válido.
+- ⚠️ Esa prueba local se hizo con el panel del navegador, que ahora sí carga GTM: una vista de
+  `/index-fuerza.html` en `localhost` llegó a GA4 con `utm_campaign=verificacion-local`.
+  Filtrable por el hostname y por la campaña.
+
+---
+
 ## 2026-09-29 — Test de HERO cerrado: empate, se queda RES
 
 Rama `work/ab-titulo-descripcion`. Lectura final de `ce_hero_202609` con el criterio declarado
@@ -84,7 +122,8 @@ descarta que lo mejore más de un 5%. Ningún escalón de abajo lo compensa.
 **Queda RES.** El empate deja el control, según la regla declarada el 10-sep. No se publica
 nada nuevo, así que **no se abre cohorte de ratificación**.
 
-Pendiente de aprobación del usuario:
+El usuario aprobó los tres pasos el mismo 29-sep y se ejecutaron: ver «Se apaga el test de
+hero» más arriba. Lo que quedaba pendiente:
 
 1. **Apagar el reparto.** Sigue activo: del 21 al 28-sep entraron otros ~3.400 usuarios por
    brazo. Hay que sacar sólo la rama de `/casos-de-estudio` de `middleware.ts`, sin tocar el
@@ -1132,6 +1171,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-29` — Se apaga el test de hero: todo el tráfico ve RES
 - `2026-09-29` — Test de HERO cerrado: empate, se queda RES
 - `2026-09-26` — Agenda en pausa: los calificados del Typeform van a WhatsApp
 - `2026-09-25` — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
