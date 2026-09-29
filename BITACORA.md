@@ -13,6 +13,102 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-29 — Test de HERO cerrado: empate, se queda RES
+
+Rama `work/ab-titulo-descripcion`. Lectura final de `ce_hero_202609` con el criterio declarado
+el 10-sep y la ventana fijada el 16-sep. Se leyó el 29-sep, ocho días después de lo previsto,
+con la cohorte seguida hasta ese día.
+
+### TL;DR
+
+**Empate: se queda RES.** MET no mejora el registro (−4,1%, p = 0,37), y el intervalo
+descarta que lo mejore más de un 5%. Ningún escalón de abajo lo compensa.
+
+### Setup
+
+- **Ventana:** opt-ins y exposiciones del 11-sep 00:00 al 20-sep 23:59 (Lima). Typeform,
+  agendas y ventas de esa cohorte se siguieron sin corte hasta el 29-sep.
+- **Exposiciones** (usuarios únicos con `ce_hero_exposure_*`): RES 3.778, MET 3.676. La meta
+  era 3.010 por brazo.
+- **Reparto:** 50,7% RES, p = 0,24 ✅. El total de sesiones del rango da 4.183 contra 3.801,
+  pero la suma día por día da 4.052 contra 3.883: esa diferencia sale del estimador de
+  sesiones de GA4, no del reparto. Los usuarios, que son el denominador declarado, están parejos.
+- **Fugas:** 1 de 1.620 opt-ins pagos sin `variant`. 43 orgánicos volvieron con cookie y
+  cuentan para su brazo; 8 correos cayeron en los dos brazos. Los 1.232 opt-ins de la ventana
+  con `variant=VA` son del funnel de Veronika (Rosita, Andrea y su landing), no de este test.
+- **Lector:** la misma lógica de `crm-ventas/scripts/ab-copy-variant-embudo.ts` (rama
+  `work/ab-lector-generalizado`, todavía sin mergear), corrida como port de sólo lectura.
+
+### KPI primario: decide
+
+| Brazo | Exposiciones | Registros | Opt-in | MET contra RES | IC 95% | p |
+|---|---|---|---|---|---|---|
+| RES | 3.778 | 782 | 20,70% | — | — | — |
+| MET | 3.676 | 730 | 19,86% | −4,1% | [−12,3%, +5,0%] | 0,37 |
+
+### Guardarraíl y escalones de abajo
+
+| Escalón | RES | MET | MET contra RES | p | Regla |
+|---|---|---|---|---|---|
+| Typeform por exposición (guardarraíl) | 8,81% (333) | 8,08% (297) | −8,3% | 0,25 | No aplica: MET no ganó |
+| Registro → Typeform | 42,6% | 40,7% | −4,5% | 0,45 | Diagnóstico |
+| Personas que agendaron | 40 | 37 | | | |
+| Agendas por 1.000 exposiciones | 10,59 | 10,07 | 0,95× | 0,82 | Nadie dobla: no habla |
+| Compradores | 7 | 7 | | | Ratifica, no decide |
+
+### Hallazgos secundarios (no deciden)
+
+- Todos los escalones se inclinan levemente hacia RES (entre −4% y −8%) y ninguno es
+  significativo. No son evidencias independientes: el Typeform por exposición arrastra al opt-in.
+- Corte exploratorio por tipo de tráfico: caliente (HOT-TYP) RES 23,9% contra MET 23,1% (−3%,
+  p = 0,64); frío (B2, B4 y REELS-ORG) 18,0% contra 16,9% (−6%, p = 0,34). No aparece la
+  hipótesis de que el método le hablara mejor al tráfico frío.
+- El parcial del 16-sep (−2,6%, p = 0,69) no cambió ni de signo ni de conclusión.
+
+### Confounders detectados
+
+- **14-sep:** se pausaron cuatro adsets de B4 (registrado el 16-sep).
+- **17-sep:** campaña nueva `[TR4INER26] [09] [CE-COLD] [REELS-ORG] [ABO-AGENDA]`, con cinco
+  conjuntos fríos hechos con reels orgánicos (desayunos, proteína, tríceps, rutina de 5 días),
+  y se reactivó A7-SALUD. El 18-sep volvió A10-HOO2. La campaña nueva aportó ~940 usuarios por
+  brazo, un cuarto de la muestra, y fue la que recuperó el volumen.
+- **19-sep:** los puentes del Typeform (`redirectionutmstr4iner*`) cambiaron cómo reconocen
+  VA. **26-sep:** se pausó la agenda y los calificados pasaron a WhatsApp. Los dos cambios
+  tocan el tramo de abajo de la cohorte, no el opt-in.
+- Ninguno sesga RES contra MET: el reparto es aleatorio y simultáneo, así que cada día los dos
+  brazos recibieron la misma mezcla. Sí cambian a quién representa el resultado: tráfico Meta
+  de septiembre, con mucho peso de frío nuevo.
+
+### Decisión
+
+**Queda RES.** El empate deja el control, según la regla declarada el 10-sep. No se publica
+nada nuevo, así que **no se abre cohorte de ratificación**.
+
+Pendiente de aprobación del usuario:
+
+1. **Apagar el reparto.** Sigue activo: del 21 al 28-sep entraron otros ~3.400 usuarios por
+   brazo. Hay que sacar sólo la rama de `/casos-de-estudio` de `middleware.ts`, sin tocar el
+   test de `/medicos` que corre desde el 24-sep, y dejar que `vercel.json` sirva
+   `index-fuerza.html`. `index-metodo.html` queda desplegado sin ruta, como `index-salud.html`.
+2. **Barra final.** Con el reparto apagado, `/casos-de-estudio/` pasa a dar 404 para todos:
+   agregar el redirect a `/casos-de-estudio`.
+3. Corregir el 4,7% de `docs/protocolo-ab.md` y de `AGENTS.md` (ver 16-sep).
+
+### Aprendizajes
+
+- **La promesa del titular no mueve el registro.** Resultado contra método, con la misma
+  página: 7.454 personas y ninguna diferencia. El próximo test de esta landing tiene que
+  cambiar algo más grande (estructura, formulario u oferta); otro cambio de copy del hero no
+  llega al 14% que el tráfico permite detectar.
+- **El protocolo aguantó.** Es el primero de tres tests que no se cortó antes de tiempo: la
+  fecha se movió una sola vez, por volumen y antes de ver números por brazo, y los parciales
+  no decidieron.
+- **Hubo dos cambios de campañas en diez días.** No invalidan un split simultáneo, pero hay
+  que declararlos. La regla de no tocar Meta mientras corre se sostiene por representatividad
+  y volumen, no por sesgo.
+
+---
+
 ## 2026-09-26 — Agenda en pausa: los calificados del Typeform van a WhatsApp
 
 Rama `work/agenda-pausada-whatsapp`. Martin no está disponible hasta el lunes y no
@@ -1036,6 +1132,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-29` — Test de HERO cerrado: empate, se queda RES
 - `2026-09-26` — Agenda en pausa: los calificados del Typeform van a WhatsApp
 - `2026-09-25` — Los registros directos de Rosita y Andrea pasan al diseño «Vino crema»
 - `2026-09-25` — Las cuatro páginas de Veronika pasan al diseño «Vino crema»

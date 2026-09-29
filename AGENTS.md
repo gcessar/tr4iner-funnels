@@ -129,7 +129,11 @@ Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CG
 
 ## A/B testing de la landing
 
-**Al 10-sep-2026 CORRE el test de HERO** (`ce_hero_202609`), sólo contra tráfico pago:
+**Test de HERO** (`ce_hero_202609`, ventana 11→20-sep): **CERRADO el 29-sep: empate, se queda
+`RES`.** Opt-in 20,7% contra 19,9% (MET −4,1%, p = 0,37); el intervalo descarta que MET mejore
+más de un 5%. Detalle en la entrada del 29-sep de `BITACORA.md`. ⚠️ Hasta que se apague, el
+middleware **sigue repartiendo** el tráfico pago: al apagarlo, sacar sólo la rama de
+`/casos-de-estudio` y no tocar el test de `/medicos`.
 
 | Brazo | Archivo | Promesa |
 |---|---|---|
@@ -140,10 +144,8 @@ Cookie `ab_hero`, evento `ce_hero_exposure_res|met`. El orgánico ve el control 
 split. **Mientras corre: no tocar campañas de Meta, ni las páginas del funnel, ni el KPI
 declarado.**
 
-**Cierre estirado el 16-sep por volumen (−21% del plan):** ventana fija del 11 al 20-sep (Lima)
-y lectura el **lunes 21-sep**; la fecha no se vuelve a mover. Los parciales que se le muestran
-al usuario no deciden. Ver la entrada del 16-sep de `BITACORA.md`, que además corrige el 4,7%
-de abajo: la falsa alarma de «un brazo dobla al otro» es ~9%.
+El cierre se estiró una vez, el 16-sep, por volumen. Esa entrada de `BITACORA.md` corrige
+además el 4,7% de abajo: la falsa alarma de «un brazo dobla al otro» es ~9%.
 
 **Protocolo vigente desde el 10-sep — decisión en 7 días, tres niveles:**
 
