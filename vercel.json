@@ -179,6 +179,11 @@
       "permanent": false
     },
     {
+      "source": "/casos-de-estudio/",
+      "destination": "/casos-de-estudio",
+      "permanent": true
+    },
+    {
       "source": "/registro-va",
       "destination": "/casos-de-estudio-va",
       "permanent": false
