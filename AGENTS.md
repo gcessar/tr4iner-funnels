@@ -45,10 +45,9 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 
 | Archivo | Función |
 |---|---|
-| `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite) y **control `RES`** del test de hero. Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. |
-| `index-metodo.html` | **Retador `MET`** del test de hero: idéntico al control salvo título y descripción (promete el método, no el resultado). `noindex` por ser variante. Al editar el funnel, **tocar las dos páginas** o el test deja de aislar el copy. |
-| `middleware.ts` | Split 50/50 en el edge para **dos** tests independientes: hero de `/casos-de-estudio` (cookie `ab_hero`) y formulario de `/medicos` (cookie `ab_med`, despachado antes). Rewrite (nunca redirect), cookies de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
-| `index-salud.html`, `index.html` | Landings anteriores (B y control original), **desplegadas sin ruta** para poder revertir cambiando una línea de `vercel.json`. No editarlas salvo rollback. |
+| `index-fuerza.html` | **Landing viva de Caso de Estudio** (`/casos-de-estudio`, vía rewrite): la ve todo el tráfico desde que el test de hero cerró en empate (29-sep). Titular «Mira cómo alguien como tú transformó su cuerpo». Captura nombre/email/sexo/rango de edad + UTMs y redirige al caso. Sin instrumental de variante hasta el próximo test. |
+| `middleware.ts` | Split 50/50 en el edge para el test de formulario de `/medicos` (cookie `ab_med`). La ruta `/casos-de-estudio` salió del matcher al cerrar el test de hero. Rewrite (nunca redirect), cookies de 180 días, sólo tráfico pago. `package.json` existe sólo para poder importar `@vercel/edge`. |
+| `index-metodo.html`, `index-salud.html`, `index.html` | Retadores y controles de tests anteriores (MET del test de hero, B y control original), **desplegados sin ruta** para poder revertir cambiando una línea. No editarlos salvo rollback. |
 | `casos-de-estudio-va/index.html` | Registro de Veronika. No pregunta sexo: envía `Mujer` y UTMs VA de respaldo. **Desde el 25-sep no tiene carrusel**: los tres perfiles son la única forma de elegir caso y el perfil decide el destino (Flor va a su página de registro; Rosita y Andrea a su `/video`). Si nadie elige, sigue saliendo Flor. Diseño «Vino crema» (ver abajo). |
 | `registro-typeform-optimizado.html`, `registro-typeform-flor.html` | Versiones canónicas editoriales (antes variante A) de Dashiel y Flor. |
 | `testimonio-andrea/index.html`, `testimonio-christian/index.html` | Casos para el rango `mas-35`, con la misma estructura y Typeform que Flor y Dashiel. |
@@ -129,16 +128,20 @@ Los cuatro casos usan Typeform live `01KHA5RZHGV02HW971F4227939` (formulario `CG
 
 ## A/B testing de la landing
 
-**Al 10-sep-2026 CORRE el test de HERO** (`ce_hero_202609`), sólo contra tráfico pago:
+**Test de HERO** (`ce_hero_202609`, ventana 11→20-sep): **CERRADO el 29-sep: empate, se queda
+`RES`.** Opt-in 20,7% contra 19,9% (MET −4,1%, p = 0,37); el intervalo descarta que MET mejore
+más de un 5%. Detalle en las entradas del 29-sep de `BITACORA.md`. El reparto se apagó ese
+mismo día: todo el tráfico ve RES, y se quitaron el evento de exposición y el `variant` del
+opt-in para que la cookie vieja no marque registros.
 
 | Brazo | Archivo | Promesa |
 |---|---|---|
 | `RES` (control) | `index-fuerza.html` | el RESULTADO: «Mira cómo alguien como tú transformó su cuerpo.» |
 | `MET` (retador) | `index-metodo.html` | el MÉTODO: «Mira qué hizo, mes a mes, alguien que empezó como tú.» |
 
-Cookie `ab_hero`, evento `ce_hero_exposure_res|met`. El orgánico ve el control y no entra al
-split. **Mientras corre: no tocar campañas de Meta, ni las páginas del funnel, ni el KPI
-declarado.**
+Usó la cookie `ab_hero` y el evento `ce_hero_exposure_res|met`: no reusarlos. El cierre se
+estiró una vez, el 16-sep, por volumen. **Mientras corre cualquier test: no tocar campañas de
+Meta, ni las páginas del funnel, ni el KPI declarado.**
 
 **Protocolo vigente desde el 10-sep — decisión en 7 días, tres niveles:**
 
@@ -150,9 +153,10 @@ declarado.**
 | **Ratificación** | venta por exposición del ganador | si cae, se revierte | D+90 post-publicación |
 
 A D+7 hay 3.010 exposiciones por brazo: el opt-in detecta un 14% relativo y el Typeform un
-26%. Las **agendas (14 casos/brazo) sólo deciden si un brazo dobla al otro**: simulando dos
-versiones idénticas, una diferencia del 30% aparece por azar el 43% de las veces y la del
-100% sólo el 4,7%. Las **ventas (8 casos) no alcanzan ni así** — la venta por exposición es
+26%. Las **agendas (14 casos/brazo) sólo deciden si un brazo dobla al otro**: con dos
+versiones idénticas, que cualquiera de los dos brazos saque un 30% más aparece por azar la
+mitad de las veces, y que doble al otro, el 9% (corregido el 29-sep: el 4,7% que figuraba era
+de un brazo concreto). Las **ventas (8 casos) no alcanzan ni así** — la venta por exposición es
 0,259% y detectar un 30% pediría 179 días. Por eso las ventas ratifican
 después de publicar en vez de decidir durante el test.
 
