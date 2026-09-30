@@ -38,6 +38,14 @@ Prueba local del script: AN orgánico, AN MetaAds/Caso_Estudio, sin query, `NAVA
 `YOUTUBE-VA-descripcion` y VA con MetaAds → WhatsApp de Veronika. Con el interruptor en `false`,
 VA → `/calendly-va`. `/calendly-an` y `/calendly-va` responden `200` en producción.
 
+### Publicación
+Pedida por el usuario el 30-sep. Merge `05202d7` en `main` → deployment de producción
+`dpl_AwuLEuBjUb2bqEPLCCw65q2UzXr2`, **Ready**. `https://metodo.tr4iner.com/redirectionutmstr4iner2`
+responde `200`, sirve el mismo archivo que `main` (SHA-256 `fbdcb908e9debb0e…`) y el script
+servido pasó los mismos casos que la prueba local.
+
+**Pendiente:** cuando la agenda de Veronika vuelva, pasar `AGENDA_VA_PAUSADA` a `false` y publicar.
+
 ---
 
 ## 2026-09-29 — Se apaga el test de hero: todo el tráfico ve RES
