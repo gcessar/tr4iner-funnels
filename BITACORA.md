@@ -13,6 +13,33 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-09-30 — AN vuelve a la agenda de Calendly; Veronika sigue en WhatsApp
+
+Rama `work/agenda-an-calendly`. Cierra en parte la pausa del 26-sep (ver esa entrada): el
+equipo ya puede atender las llamadas de AN.
+
+### Qué cambió
+- `/redirectionutmstr4iner2`: el tráfico **AN** (orgánico y MetaAds) vuelve a `/calendly-an` con
+  la query completa, igual que antes del 26-sep.
+- El tráfico **VA** sigue yendo al WhatsApp de ManyChat de Veronika (`15677024560`) con el texto
+  largo de transformación física, el mismo que usa `/redirectionutmstr4iner`.
+- El interruptor ahora es sólo de Veronika: `AGENDA_VA_PAUSADA`. En `false`, VA vuelve a
+  `/calendly-va` con la query completa. Se retiró el mensaje corto de MetaAds de este puente
+  porque sólo aplicaba a AN, que ya no pasa por WhatsApp.
+- La detección de VA no cambió (marcador único del repo).
+
+### Impacto esperado en KPIs
+- Vuelven las agendas de AN desde el Typeform. Las de VA siguen en cero: su conversión pasa por
+  ManyChat y no llega a Calendly ni al sheet AGENDAS.
+
+### Verificación
+Prueba local del script: AN orgánico, AN MetaAds/Caso_Estudio, sin query, `NAVA-2026` y
+`VARIANTE-A` → `/calendly-an` con la query idéntica; `TR4INER-VA`, `CASOS-VA`, `ROSITA-VA`,
+`YOUTUBE-VA-descripcion` y VA con MetaAds → WhatsApp de Veronika. Con el interruptor en `false`,
+VA → `/calendly-va`. `/calendly-an` y `/calendly-va` responden `200` en producción.
+
+---
+
 ## 2026-09-29 — Se apaga el test de hero: todo el tráfico ve RES
 
 Rama `work/ab-titulo-descripcion`. Ejecuta la decisión de la entrada de abajo, aprobada por el
@@ -1188,6 +1215,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-09-30` — AN vuelve a la agenda de Calendly; Veronika sigue en WhatsApp
 - `2026-09-29` — Se apaga el test de hero: todo el tráfico ve RES
 - `2026-09-29` — Test de HERO cerrado: empate, se queda RES
 - `2026-09-26` — Agenda en pausa: los calificados del Typeform van a WhatsApp
