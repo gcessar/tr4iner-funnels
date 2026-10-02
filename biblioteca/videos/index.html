@@ -2020,6 +2020,8 @@
         font-size: 14px;
         font-weight: 750;
       }
+      /* Sin las categorías (29-sep), el botón queda a un respiro de la descripción. */
+      .mobile-focus-description ~ .mobile-focus-cta { margin-top: 22px; }
       .mobile-focus-cta i { color: var(--mark); font-size: 18px; font-style: normal; }
       /* Baraja abierta: las miniaturas de lo que viene, en abanico. */
       .mobile-show-library {
@@ -2100,7 +2102,7 @@
       body.mobile-library-mode .mobile-focus-card { padding: 14px; }
       body.mobile-library-mode .mobile-focus-card strong { font-size: 21px; }
       body.mobile-library-mode .mobile-focus-thumb { margin-bottom: 12px; }
-      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px; font-size: 13.5px; }
+      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px !important; font-size: 13.5px; }
       body.mobile-library-mode .mobile-profile-trigger:not([hidden]) { margin-bottom: 28px; }
       body.mobile-library-mode .profile-summary,
       body.mobile-library-mode #next-card { display: none !important; }
@@ -2118,6 +2120,7 @@
       body:not(.mobile-library-mode) .mobile-focus h1 + .mobile-focus-card { margin-top: 24px; }
       .mobile-focus-card { padding-top: 18px; }
       .mobile-focus-description { margin-top: 10px; }
+      .mobile-focus-description ~ .mobile-focus-cta { margin-top: 16px; }
       .mobile-focus-meta { margin: 14px 0 12px; }
     }
     @media (prefers-reduced-motion: reduce) {
