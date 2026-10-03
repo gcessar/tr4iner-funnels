@@ -26,8 +26,9 @@ Rama `work/pase-referidos`. Parte del programa de Pases TR4INER del CRM (ver `do
 - El enlace del evento de Calendly viene del CRM (`GET hub.tr4iner.com/api/pase/{código}`): cambiar de evento no
   obliga a publicar acá. Respaldo si el CRM no responde: el evento de Martin
   `calendly.com/martinmichelucci-tr4iner/pase-tr4iner` (creado el 3-oct, probado incrustado).
-- Beneficios en dos líneas: «El mismo precio que {Nombre}» y «Hasta −$100 de descuento extra». El precio exacto
-  lo da el closer (el de quien invita − $50, o − $100 si su plan es anual).
+- **La página NO muestra el descuento** (decisión del usuario, 3-oct): sólo «precio especial» en el texto. El precio
+  exacto lo da el closer en la llamada (el de quien invita − $50, o − $100 si su plan es anual).
+- Martin apagó el sello «Desarrollado por Calendly» en su cuenta (3-oct); verificado incrustado.
 - Medición propia, sin GTM ni píxel: beacons `text/plain` al CRM de visita, «vio el calendario», «eligió hora» y
   agenda (postMessage de Calendly). El código viaja a Calendly en `utm_content` y el id de la visita en
   `salesforce_uuid`, los únicos parámetros que Calendly guarda además de las UTM.

@@ -10,7 +10,7 @@
   <title>Te regalaron un pase · TR4INER</title>
   <meta name="description" content="Un cliente de TR4INER te invita a empezar con un precio especial. Agenda tu llamada con el equipo." />
   <meta property="og:title" content="Te regalaron un pase TR4INER" />
-  <meta property="og:description" content="Empieza TR4INER con el mismo precio de quien te invitó y hasta $100 de descuento extra." />
+  <meta property="og:description" content="Un cliente de TR4INER te invita a empezar con un precio especial. Agenda tu llamada con el equipo." />
   <meta property="og:type" content="website" />
 
   <!--
@@ -89,23 +89,6 @@
     font-weight: 300;
   }
   .lede strong { color: var(--ink); font-weight: 500; }
-  .beneficios {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin: 18px auto 0;
-    list-style: none;
-  }
-  .beneficios li {
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--ink);
-  }
-  .beneficios li b { font-weight: 500; }
 
   .agenda { margin: 22px auto 0; }
   .agenda-titulo {
@@ -179,10 +162,6 @@
         Un cliente de TR4INER te invita a empezar con un <strong>precio especial</strong>. Agenda una llamada con el
         equipo: te contamos cómo funciona y armamos tu plan.
       </p>
-      <ul class="beneficios" aria-label="Lo que incluye tu pase">
-        <li id="beneficio-precio"><b>El mismo precio</b> de quien te invitó</li>
-        <li><b>Hasta −$100</b> de descuento extra</li>
-      </ul>
     </header>
 
     <section class="agenda" aria-labelledby="agenda-titulo">
@@ -284,12 +263,6 @@
       fuerte.textContent = "precio especial";
       lede.appendChild(fuerte);
       lede.appendChild(document.createTextNode(". Agenda una llamada con el equipo: te contamos cómo funciona y armamos tu plan."));
-      var precio = document.getElementById("beneficio-precio");
-      precio.innerHTML = "";
-      var b = document.createElement("b");
-      b.textContent = "El mismo precio";
-      precio.appendChild(b);
-      precio.appendChild(document.createTextNode(" que " + nombre));
     }
     if (codigoValido) {
       var slug = codigo.split("-")[0];
