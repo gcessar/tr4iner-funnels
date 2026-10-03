@@ -43,8 +43,12 @@ Servidor local que imita el rewrite: nombre desde el código, Calendly carga y a
 calendario empieza dentro de la primera pantalla y no hay scroll horizontal; `/pase/` sin código muestra la
 versión genérica.
 
-### Pendientes
-- Publicar después del deploy del CRM. Probar en el Preview una agenda de prueba con datos del equipo.
+### Publicación (3-oct, con OK del usuario)
+- Mergeado y publicado. Verificado en producción con un código inventado (sin sumar visitas a nadie): carga el
+  calendario de Martin sin sello de Calendly. El CRM responde el nombre de un pase real con CORS correcto.
+- Arreglo en la misma tarde: con un código que no existe la página dejaba el nombre sacado del enlace («Prueba te
+  regaló un pase»); ahora vuelve al texto genérico cuando el CRM dice que el pase no existe.
+- La prueba completa con una agenda real la hace el equipo.
 
 ---
 

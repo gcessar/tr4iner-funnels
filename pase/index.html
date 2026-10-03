@@ -251,7 +251,17 @@
     }
     beaconUnaVez("VISITA");
 
-    // ── Nombre ── primero el del enlace (al instante), después el exacto.
+    // ── Nombre ── primero el del enlace (al instante), después el exacto. Si el
+    // CRM dice que el pase no existe (o fue dado de baja), vuelve el texto
+    // genérico: el nombre del enlace no se puede mostrar sin confirmarlo.
+    var tituloGenerico = document.getElementById("titulo").textContent;
+    var ledeGenerico = document.getElementById("lede").innerHTML;
+    var tituloPagina = document.title;
+    function ponerGenerico() {
+      document.getElementById("titulo").textContent = tituloGenerico;
+      document.getElementById("lede").innerHTML = ledeGenerico;
+      document.title = tituloPagina;
+    }
     function ponerNombre(nombre) {
       if (!nombre) return;
       document.getElementById("titulo").textContent = nombre + " te regaló un pase";
@@ -337,6 +347,7 @@
       .then(function (d) {
         clearTimeout(reloj);
         if (d && d.ok && d.nombre) ponerNombre(d.nombre);
+        else ponerGenerico();
         montarCalendly((d && d.calendlyUrl) || CALENDLY_RESPALDO);
       })
       .catch(function () {
