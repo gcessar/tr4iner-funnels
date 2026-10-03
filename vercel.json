@@ -323,6 +323,10 @@
     {
       "source": "/r/:token",
       "destination": "/biblioteca/verificar/"
+    },
+    {
+      "source": "/pase/:codigo",
+      "destination": "/pase/"
     }
   ]
 }

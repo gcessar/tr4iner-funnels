@@ -13,6 +13,38 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-03 — Página del pase de referidos (`/pase/{código}`)
+
+Rama `work/pase-referidos`. Parte del programa de Pases TR4INER del CRM (ver `docs/pases-referidos.md` en
+`crm-ventas`). **Sin publicar**: depende de que el CRM despliegue `/api/pase/*` y de que el equipo cree el evento
+de Calendly de pases.
+
+### Qué cambió
+- `pase/index.html` + rewrite `/pase/:codigo → /pase/` en `vercel.json` (mismo patrón que `/r/:token`). Un solo
+  HTML para todos los códigos; `noindex, nofollow`.
+- Muestra «{Nombre} te regaló un pase», un copy corto con el beneficio y el **Calendly incrustado** debajo. El
+  nombre sale del código al instante (`maria-k7m2` → «Maria») y se corrige con el exacto que devuelve el CRM.
+- El enlace del evento de Calendly viene del CRM (`GET hub.tr4iner.com/api/pase/{código}`): cambiar de evento no
+  obliga a publicar acá. `CALENDLY_RESPALDO` queda vacío hasta que exista el evento.
+- Medición propia, sin GTM ni píxel: beacons `text/plain` al CRM de visita, «vio el calendario», «eligió hora» y
+  agenda (postMessage de Calendly). El código viaja a Calendly en `utm_content` y el id de la visita en
+  `salesforce_uuid`, los únicos parámetros que Calendly guarda además de las UTM.
+
+### Por qué así
+- Sin píxel ni GTM: la agenda de un invitado no la trajo un anuncio (decisión del usuario: no se reporta a Meta) y
+  la página carga más rápido. El iframe va directo, sin `widget.js`, con preconnect y alto reservado; el mensaje
+  `calendly.page_height` lo ajusta para que no haya doble scroll en el celular.
+
+### Verificación
+Servidor local que imita el rewrite: nombre desde el código, Calendly carga y ajusta el alto, en 375 px el
+calendario empieza dentro de la primera pantalla y no hay scroll horizontal; `/pase/` sin código muestra la
+versión genérica.
+
+### Pendientes
+- Publicar después del deploy del CRM. Probar en el Preview una agenda de prueba con datos del equipo.
+
+---
+
 ## 2026-09-30 — AN vuelve a la agenda de Calendly; Veronika sigue en WhatsApp
 
 Rama `work/agenda-an-calendly`. Cierra en parte la pausa del 26-sep (ver esa entrada): el
@@ -1220,6 +1252,10 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 - A pedido del usuario se eliminan las líneas decorativas antes de la etiqueta del caso y de «Siguiente paso» en Flor, Dashiel, Christian y Andrea. Se reemplazan las rayas del copy visible por punto o coma, conservando el mensaje. Cambio local de CSS y texto.
 
 ## Índice por fecha
+
+**Octubre 2026**
+
+- `2026-10-03` — Página del pase de referidos (`/pase/{código}`)
 
 **Septiembre 2026**
 

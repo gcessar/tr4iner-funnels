@@ -38,6 +38,7 @@ Rutas objetivo del proyecto:
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
 - `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
+- `/pase/{código}` → página del **pase de referidos** de cada cliente (`pase/index.html` por rewrite). Nombre de quien invita + Calendly incrustado del evento de pases. Sin GTM ni píxel; mide con beacons propios al CRM (`hub.tr4iner.com/api/pase/*`). `noindex`. Detalle en `docs/pases-referidos.md` del CRM.
 
 Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archivos `*-clickfunnels*` son compatibilidad temporal. **No son las versiones canónicas ni deben incluirse al decidir rutas o validar el funnel Vercel**, salvo pedido explícito.
 
