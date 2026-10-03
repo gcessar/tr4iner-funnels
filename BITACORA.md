@@ -16,8 +16,7 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 ## 2026-10-03 — Página del pase de referidos (`/pase/{código}`)
 
 Rama `work/pase-referidos`. Parte del programa de Pases TR4INER del CRM (ver `docs/pases-referidos.md` en
-`crm-ventas`). **Sin publicar**: depende de que el CRM despliegue `/api/pase/*` y de que el equipo cree el evento
-de Calendly de pases.
+`crm-ventas`). **Sin publicar**: depende de que el CRM despliegue `/api/pase/*`.
 
 ### Qué cambió
 - `pase/index.html` + rewrite `/pase/:codigo → /pase/` en `vercel.json` (mismo patrón que `/r/:token`). Un solo
@@ -25,7 +24,10 @@ de Calendly de pases.
 - Muestra «{Nombre} te regaló un pase», un copy corto con el beneficio y el **Calendly incrustado** debajo. El
   nombre sale del código al instante (`maria-k7m2` → «Maria») y se corrige con el exacto que devuelve el CRM.
 - El enlace del evento de Calendly viene del CRM (`GET hub.tr4iner.com/api/pase/{código}`): cambiar de evento no
-  obliga a publicar acá. `CALENDLY_RESPALDO` queda vacío hasta que exista el evento.
+  obliga a publicar acá. Respaldo si el CRM no responde: el evento de Martin
+  `calendly.com/martinmichelucci-tr4iner/pase-tr4iner` (creado el 3-oct, probado incrustado).
+- Beneficios en dos líneas: «El mismo precio que {Nombre}» y «Hasta −$100 de descuento extra». El precio exacto
+  lo da el closer (el de quien invita − $50, o − $100 si su plan es anual).
 - Medición propia, sin GTM ni píxel: beacons `text/plain` al CRM de visita, «vio el calendario», «eligió hora» y
   agenda (postMessage de Calendly). El código viaja a Calendly en `utm_content` y el id de la visita en
   `salesforce_uuid`, los únicos parámetros que Calendly guarda además de las UTM.

@@ -10,7 +10,7 @@
   <title>Te regalaron un pase · TR4INER</title>
   <meta name="description" content="Un cliente de TR4INER te invita a empezar con un precio especial. Agenda tu llamada con el equipo." />
   <meta property="og:title" content="Te regalaron un pase TR4INER" />
-  <meta property="og:description" content="Empieza TR4INER con el mismo precio de quien te invitó y un descuento extra." />
+  <meta property="og:description" content="Empieza TR4INER con el mismo precio de quien te invitó y hasta $100 de descuento extra." />
   <meta property="og:type" content="website" />
 
   <!--
@@ -181,8 +181,7 @@
       </p>
       <ul class="beneficios" aria-label="Lo que incluye tu pase">
         <li id="beneficio-precio"><b>El mismo precio</b> de quien te invitó</li>
-        <li><b>−$50</b> en planes de 3 a 6 meses</li>
-        <li><b>−$100</b> en el plan anual</li>
+        <li><b>Hasta −$100</b> de descuento extra</li>
       </ul>
     </header>
 
@@ -213,9 +212,10 @@
 
     // El CRM vive en hub.tr4iner.com. Si el día de mañana cambia, es esta línea.
     var CRM = "https://hub.tr4iner.com/api/pase/";
-    // Respaldo por si el CRM tarda: el enlace real del evento llega en la
-    // respuesta de /api/pase/{codigo} (se edita en el panel, sin publicar acá).
-    var CALENDLY_RESPALDO = "";
+    // Evento de Calendly exclusivo de pases (Martin). El CRM puede mandar otro
+    // en /api/pase/{codigo} (se edita en el panel sin publicar acá); este es el
+    // respaldo si el CRM tarda o no responde.
+    var CALENDLY_RESPALDO = "https://calendly.com/martinmichelucci-tr4iner/pase-tr4iner";
     var ESPERA_MAX_MS = 2500;
 
     var params = new URLSearchParams(location.search);
