@@ -1850,10 +1850,11 @@
       .mobile-profile-trigger strong { font-size: 14px; font-weight: 700; }
       .mobile-profile-trigger svg { flex: none; width: 18px; height: 18px; }
 
+      /* Arriba, no centrado: en pantallas altas el centrado dejaba un hueco sobre el título (2-oct). */
       body.mobile-focus-mode .page {
         min-height: 100svh;
         display: grid;
-        align-content: center;
+        align-content: start;
         padding-top: calc(24px + env(safe-area-inset-top));
         padding-bottom: calc(24px + env(safe-area-inset-bottom));
       }
@@ -2223,7 +2224,7 @@
 
     <div id="program-content" hidden>
       <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
-        <p class="mobile-focus-eyebrow">Tu ruta privada · RUTA TR4INER</p>
+        <p class="mobile-focus-eyebrow">TU RUTA TR4INER</p>
         <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
           <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
