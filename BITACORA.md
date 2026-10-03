@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-02 — Ruta: nada obligatorio; rutina y macros dentro de sus módulos
+
+- **Decisión del equipo (usuario):** ningún video es obligatorio para la rutina ni para el test de macros. Se retira lo construido el 28-sep: ya no existe el modo «sólo Paso 1» ni el candado de la rutina por los videos de pesas.
+- **Inicio:** el primer video y, debajo, el botón amarillo «Mira tus siguientes pasos», que abre el resto de los módulos. Sin «Tu rutina» ni «Conoce tus macros» arriba. En escritorio se ve todo desde el primer momento (paso actual, expediente e índice).
+- **Rutina y test dentro de su módulo:** dejan de ser pasos propios del índice (los números vuelven: hombres 01 Empieza, 02 Pesas, 03 Alimentación, 04 Cómo seguir; mujeres con 02 «El mejor entrenamiento en mujeres»). La tarjeta «Tu rutina de N días · Te toca: Día X» va debajo del primer video de «Entrenamiento de pesas» y «Conoce tus macros» debajo del primer video de «Alimentación», con el formato de borde amarillo de la página; se repinta al cerrar la rutina. Sigue el botón «Ver mi rutina» bajo el video de introducción.
+- **Alimentación:** sólo los 3 primeros videos (dieta, carbohidratos, efecto rebote). «Como saludable», «10 kg sin hambre» y los dos «Plan de comidas» se archivan en el preview (CRM, `hidden`), no se borran.
+- **Verificación:** réplica local reconstruida en `~/Documents/Ruta Tr4iner/herramientas/replica.mts` (el scratchpad se había purgado) con la lógica real del CRM: usuario nuevo hombre 5 días y mujer 4 días en 390 px y escritorio; inicio, índice, tarjetas dentro de los módulos, rutina que abre y macros que llevan al test; sin errores de JavaScript. 65 tests del CRM y 5 del funnel correctos.
+
 ## 2026-09-28 — Ruta: primero el Paso 1, la rutina se gana con los videos de pesas
 
 - **Pedido del usuario (captura del preview en iPhone):** siete correcciones de diseño y sacar Ayuno y Cardio. Funnel `5296838`, CRM `1db71f2`, ambos en preview; producción intacta.
@@ -399,6 +407,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Septiembre 2026**
 
+- `2026-10-02` — Ruta: nada obligatorio; rutina y macros dentro de sus módulos
 - `2026-09-28` — Ruta: primero el Paso 1, la rutina se gana con los videos de pesas
 - `2026-09-26` — Ruta: el diseño vuelve a ser el de producción (decisiones, sin código)
 - `2026-09-23` — Ruta: descanso sin conexión, aviso sin recarga y causa del 403 de Bunny

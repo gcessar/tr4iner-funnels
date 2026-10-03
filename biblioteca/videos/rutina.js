@@ -92,14 +92,19 @@
       if (content && content.firstElementChild !== trigger) content.insertBefore(trigger, content.firstElementChild);
     }
   }
-  function paintTrigger() {
-    var trigger = $('routine-trigger'); if (!trigger) return;
+  // Lo que dicen la tarjeta del inicio y el acceso dentro de «Entrenamiento de pesas».
+  function resumen() {
     var next = nextSession();
     var list = st.weeks[next ? next.week : 0] || [];
+    return {
+      titulo: 'Tu rutina de ' + st.member.frequency + ' días',
+      siguiente: next ? 'Te toca: Día ' + (next.day + 1) + ' · ' + cap(list[next.day].name) : 'Semana completa · empieza de nuevo'
+    };
+  }
+  function paintTrigger() {
+    var trigger = $('routine-trigger'); if (!trigger) return;
     $('routine-trigger-title').textContent = 'Tu rutina · ' + st.member.frequency + ' días';
-    $('routine-trigger-next').textContent = next
-      ? 'Te toca: Día ' + (next.day + 1) + ' · ' + cap(list[next.day].name)
-      : 'Semana completa · empieza de nuevo';
+    $('routine-trigger-next').textContent = resumen().siguiente;
     trigger.hidden = !st.gate.enInicio;
   }
 
@@ -436,6 +441,7 @@
     });
     sheet.addEventListener('close', function () {
       pauseAll(null);
+      document.dispatchEvent(new CustomEvent('ruta:rutina'));
       $('rt-replace').hidden = true;
       var player = $('player'), profile = $('profile-dialog');
       if (!(player && player.open) && !(profile && profile.open)) document.body.classList.remove('modal-open');
@@ -473,6 +479,7 @@
   window.RutinaUI = {
     disponible: function () { return st.loaded; },
     frecuencia: function () { return st.member ? st.member.frequency : null; },
+    resumen: resumen,
     abrir: function () { if (st.gate.activa) open(); },
     activar: function (gate) {
       st.gate = Object.assign({}, st.gate, gate);
