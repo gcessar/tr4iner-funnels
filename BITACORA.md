@@ -50,6 +50,12 @@ versión genérica.
   regaló un pase»); ahora vuelve al texto genérico cuando el CRM dice que el pase no existe.
 - La prueba completa con una agenda real la hace el equipo.
 
+**5-oct — texto nuevo (pedido del usuario):** sin la etiqueta «PASE TR4INER» de arriba; título «{Nombre} te regaló un
+Pase Tr4iner»; descripción en dos párrafos: conversar con el equipo para ver si el Método encaja, y «hasta $100 de
+descuento según la membresía que elijas; {Nombre} también recibirá hasta $100 en su próxima renovación». Sin nombre
+confirmado: «Te regalaron un Pase Tr4iner» y «quien te invitó». El usuario volvió a pedir mostrar el descuento (antes
+había pedido quitarlo): manda el pedido más reciente.
+
 ---
 
 ## 2026-09-30 — AN vuelve a la agenda de Calendly; Veronika sigue en WhatsApp
