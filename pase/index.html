@@ -7,10 +7,10 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="theme-color" content="#FFFFFF" />
-  <title>Te regalaron un pase · TR4INER</title>
-  <meta name="description" content="Un cliente de TR4INER te invita a empezar con un precio especial. Agenda tu llamada con el equipo." />
-  <meta property="og:title" content="Te regalaron un pase TR4INER" />
-  <meta property="og:description" content="Un cliente de TR4INER te invita a empezar con un precio especial. Agenda tu llamada con el equipo." />
+  <title>Te regalaron un Pase Tr4iner</title>
+  <meta name="description" content="Conversa con el equipo de TR4INER para conocer tu situación y ver si el Método Tr4iner encaja con lo que buscas." />
+  <meta property="og:title" content="Te regalaron un Pase Tr4iner" />
+  <meta property="og:description" content="Conversa con el equipo de TR4INER para conocer tu situación y ver si el Método Tr4iner encaja con lo que buscas." />
   <meta property="og:type" content="website" />
 
   <!--
@@ -74,7 +74,7 @@
     padding: 0 2px;
   }
   h1 {
-    margin-top: 14px;
+    margin-top: 0;
     font-family: var(--serif);
     font-weight: 700;
     font-size: clamp(30px, 7vw, 46px);
@@ -89,6 +89,7 @@
     font-weight: 300;
   }
   .lede strong { color: var(--ink); font-weight: 500; }
+  .lede p + p { margin-top: 10px; }
 
   .agenda { margin: 22px auto 0; }
   .agenda-titulo {
@@ -156,12 +157,18 @@
 <body>
   <main class="wrap">
     <header>
-      <span class="lbl">Pase TR4INER</span>
-      <h1 id="titulo">Te regalaron un pase</h1>
-      <p class="lede" id="lede">
-        Un cliente de TR4INER te invita a empezar con un <strong>precio especial</strong>. Agenda una llamada con el
-        equipo: te contamos cómo funciona y armamos tu plan.
-      </p>
+      <h1 id="titulo">Te regalaron un Pase Tr4iner</h1>
+      <div class="lede" id="lede">
+        <p>
+          Por venir invitado por un cliente de TR4INER, puedes conversar con nuestro equipo para conocer tu situación
+          y ver si el Método Tr4iner encaja con lo que estás buscando.
+        </p>
+        <p>
+          Además, si finalmente decides entrar al Método, tendrás <strong>hasta $100 de descuento</strong>, según la
+          membresía que elijas. Al hacerlo, quien te invitó también recibirá hasta $100 de descuento en su próxima
+          renovación por haberte invitado.
+        </p>
+      </div>
     </header>
 
     <section class="agenda" aria-labelledby="agenda-titulo">
@@ -264,15 +271,28 @@
     }
     function ponerNombre(nombre) {
       if (!nombre) return;
-      document.getElementById("titulo").textContent = nombre + " te regaló un pase";
-      document.title = nombre + " te regaló un pase · TR4INER";
-      document.getElementById("lede").innerHTML = "";
+      document.getElementById("titulo").textContent = nombre + " te regaló un Pase Tr4iner";
+      document.title = nombre + " te regaló un Pase Tr4iner";
+      // Texto armado con nodos y no con innerHTML: el nombre viene de afuera.
       var lede = document.getElementById("lede");
-      lede.appendChild(document.createTextNode("Por los resultados que está logrando, " + nombre + " puede invitar a alguien a empezar TR4INER con un "));
+      lede.innerHTML = "";
+      var p1 = document.createElement("p");
+      p1.textContent =
+        "Por venir de su parte, puedes conversar con nuestro equipo para conocer tu situación y ver si el Método " +
+        "Tr4iner encaja con lo que estás buscando.";
+      var p2 = document.createElement("p");
+      p2.appendChild(document.createTextNode("Además, si finalmente decides entrar al Método, tendrás "));
       var fuerte = document.createElement("strong");
-      fuerte.textContent = "precio especial";
-      lede.appendChild(fuerte);
-      lede.appendChild(document.createTextNode(". Agenda una llamada con el equipo: te contamos cómo funciona y armamos tu plan."));
+      fuerte.textContent = "hasta $100 de descuento";
+      p2.appendChild(fuerte);
+      p2.appendChild(
+        document.createTextNode(
+          ", según la membresía que elijas. Al hacerlo, " + nombre +
+            " también recibirá hasta $100 de descuento en su próxima renovación por haberte invitado."
+        )
+      );
+      lede.appendChild(p1);
+      lede.appendChild(p2);
     }
     if (codigoValido) {
       var slug = codigo.split("-")[0];
