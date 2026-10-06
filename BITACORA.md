@@ -60,10 +60,10 @@ del CRM entran con `source="empezar-va"` y caen en «Sin caso». Detalle del pan
 workflow de n8n en la entrada del mismo día de la bitácora del CRM.
 
 ### Pendientes
-- Crear y activar el workflow de n8n `Typeform FORM VA (/empezar-va) → CRM` (JSON en
-  `crm-ventas/docs/n8n-backups/2026-10-06-typeform-form-va-empezar-va.json`) y conectar
-  el webhook en Typeform. Sin eso, el panel cuenta los formularios pero no llega ningún
-  lead al CRM.
+- Workflow de n8n `Typeform FORM VA (/empezar-va) → CRM` (`3y1bm2RnRTNZ7oD7`): **creado y
+  activo** el 6-oct con OK del usuario. Falta conectar en Typeform (FORM VA → Connect →
+  Webhooks) `https://primary-production-0efa.up.railway.app/webhook/typeform-empezar-va`;
+  sin eso, el panel cuenta los formularios pero no llega ningún lead al CRM.
 - Preview, OK del usuario y merge a `main` de los dos repos.
 
 ---
