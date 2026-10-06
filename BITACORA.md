@@ -59,12 +59,30 @@ Puerta nueva de VA sin opt-in: no suma en «Registros» del embudo de casos. Sus
 del CRM entran con `source="empezar-va"` y caen en «Sin caso». Detalle del panel y del
 workflow de n8n en la entrada del mismo día de la bitácora del CRM.
 
+### Prueba de punta a punta (6-oct, antes de publicar)
+Respuesta real desde la página con `utm_source=PRUEBA-VA-claude`, `utm_campaign=PRUEBA-VA`,
+`$300 a $600` y el número ficticio `+1 201 555 0142`:
+- Typeform guardó la respuesta (token `7996fyrrzy95hz6m799b1tniyv4ple26`) con las UTMs como hidden.
+- Al enviar, la página (no el iframe) saltó a `api.whatsapp.com/send?phone=15677024560` con el
+  mensaje nuevo.
+- n8n `3y1bm2RnRTNZ7oD7`, ejecución `557506`: adulta → `Parsear Datos` → rama `$300–600` → CRM
+  `created`. La rama de Meta no escribió (sin `fbc`/`fbp`).
+- Lead `cmux4imom000fie04sx8ysfc7` («WhatsApp 015550142»): `source=empezar-va`, funnel VA en
+  first y last touch, asignado por rotación. **Es de prueba: descartarlo en el CRM.**
+
+### Publicación (6-oct, pedida por el usuario)
+PR #5 → merge `59255c3` en `main` → deployment de producción
+`dpl_8ThFEFKBcbRtffZkqxVkT4618xn2`, **Ready**. `https://metodo.tr4iner.com/empezar-va` responde
+`200` y sirve el mismo archivo que `main` (SHA-256 `44fd11428bbbc11a…`); en el dominio real carga el
+video y monta el formulario con los respaldos `EMPEZAR-VA-DIRECTO` / `EMPEZAR-VA`. El panel del CRM
+se publicó en el mismo movimiento (`crm-ventas` PR #59, `dpl_32MAmzLaBM4xrpsDicSFoP7eDT7s`).
+
 ### Pendientes
-- Workflow de n8n `Typeform FORM VA (/empezar-va) → CRM` (`3y1bm2RnRTNZ7oD7`): **creado y
-  activo** el 6-oct con OK del usuario. Falta conectar en Typeform (FORM VA → Connect →
-  Webhooks) `https://primary-production-0efa.up.railway.app/webhook/typeform-empezar-va`;
-  sin eso, el panel cuenta los formularios pero no llega ningún lead al CRM.
-- Preview, OK del usuario y merge a `main` de los dos repos.
+- Descartar el lead de prueba `cmux4imom000fie04sx8ysfc7` y, si se quiere el panel limpio, borrar
+  en Typeform la respuesta de prueba del 6-oct 20:20 UTC.
+- GA4 tiene unas pocas visitas de prueba en `/empezar-va` el 6-oct (localhost y una en producción).
+- Revisar que el flujo de ManyChat de Veronika arranque con el mensaje nuevo.
+- Resultado medido a 14 días: visitas → formularios → llegaron a WhatsApp, y la fuga del panel.
 
 ---
 
