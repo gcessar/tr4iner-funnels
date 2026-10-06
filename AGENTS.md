@@ -36,6 +36,7 @@ Rutas objetivo del proyecto:
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
+- `/empezar-va` → página directa de Veronika: VSL (Vidalytics `B7JmheiJ3cd63CsY`) + formulario PROPIO «FORM VA» (`niqtWgJp`), sin registro previo. Typeform redirige al WhatsApp de ManyChat de Veronika. La única llave hacia la venta es el teléfono del formulario; se decidió no pedir código en WhatsApp (6-oct). Diseño «Negro champán», no «Vino crema». La mide el panel `/empezar-va` de «Funnel VA» en el CRM.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
 - `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
 - `/pase/{código}` → página del **pase de referidos** de cada cliente (`pase/index.html` por rewrite). Nombre de quien invita + Calendly incrustado del evento de pases. Sin GTM ni píxel; mide con beacons propios al CRM (`hub.tr4iner.com/api/pase/*`). `noindex`. Detalle en `docs/pases-referidos.md` del CRM.
@@ -66,6 +67,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `medicos/formulario-visible.html` | **Retador `INL`** del test de formulario: idéntico a `medicos/index.html` salvo que en el celular el formulario queda a la vista en vez de vivir en un modal. `noindex`; se sirve por rewrite bajo `/medicos`. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |
 | `fit4/index.html`, `fit4-va/index.html` | VSL FIT4 públicas de Anthoni/compatibilidad y Veronika. La ruta VA siempre carga su video y eventos propios. |
+| `empezar-va/index.html` | **Página directa de Veronika** (`/empezar-va`, por directorio + `cleanUrls`). Fondo negro, acento champán `#E7CE98`, Lora local; salió de un exporte de Claude Design. Monta `niqtWgJp` con el SDK y manda como hidden sólo lo que el formulario declara: las 5 UTMs (respaldo `EMPEZAR-VA-DIRECTO` / `EMPEZAR-VA`), `video`, `variant`, `fbc`, `fbp`. La redirección final a WhatsApp la configura el Typeform, no la página. `noindex`. |
 | `assets/va/` | Imagen del caso y tema compartido de Veronika. Usa Montserrat 900/300; no publicar los archivos Mont DEMO. |
 | `assets/medicos/` | Posters responsive del hero de Guardias; el futuro video debe conservarlos como fallback y LCP. |
 | `attribution.js` | **TR4Track** canónico: captura reusable de atribución (UTMs + `?video=<id>` de YouTube), persiste el video en `localStorage` como first-touch. Nombre neutro para evitar bloqueadores. |

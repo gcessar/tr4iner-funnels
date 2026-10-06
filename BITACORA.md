@@ -13,6 +13,61 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-06 — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
+
+Rama `work/empezar-va` en los dos repos (funnels y `crm-ventas`).
+
+### Qué cambió
+- **Página nueva `empezar-va/index.html`** → `/empezar-va`. VSL de Vidalytics
+  `B7JmheiJ3cd63CsY` y debajo el formulario «FORM VA» (`niqtWgJp`), que se usa SÓLO acá.
+  Diseño «Negro champán» del exporte de Claude Design (fondo `#000`, acento `#E7CE98`,
+  Lora local). Se corrigieron dos tildes del copy del exporte («qué quieres lograr»,
+  «qué puede estar frenando»), que el propio Typeform ya escribe así.
+- Lógica copiada de Rosita `/video`: SDK `tf.createWidget`, hidden en crudo, `fbc`/`fbp`
+  de TR4Track, normalización de UTMs duplicadas de Instagram, carga del formulario un
+  scroll antes. `redirectTarget: "_parent"` para que el WhatsApp abra en la página y no
+  dentro del iframe. Eventos `empezar_va_view` y `empezar_va_submit` al dataLayer.
+- Sin registro previo: si el enlace llega sin UTMs viajan `utm_source=EMPEZAR-VA-DIRECTO`
+  y `utm_campaign=EMPEZAR-VA` (el `-VA` es lo que hace que el CRM la cuente como VA).
+
+### Configuración del Typeform (hecha por el usuario el 6-oct)
+- Hidden declarados: `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`,
+  `utm_content`, `fbp`, `fbc`, `video`, `variant`. Typeform descarta cualquier otro.
+- Teléfono obligatorio.
+- Final con redirección a
+  `https://api.whatsapp.com/send?phone=15677024560&text=Hola%20Vero!%20Acabo%20de%20responder%20tu%20formulario%20y%20quiero%20saber%20cu%C3%A1l%20es%20mi%20siguiente%20paso.`
+  (texto nuevo, distinto del de los puentes VA: **revisar que el flujo de ManyChat de
+  Veronika se dispare con él**).
+- Sin lógica para menores: responden todo y llegan a WhatsApp; n8n los frena antes del CRM.
+
+### Trazabilidad: la decisión
+No hay correo: la única llave hacia la venta es el teléfono del formulario. Se evaluó
+pedir un código en el mensaje de WhatsApp para recuperar a quien deja un número falso u
+otro número, y el usuario lo descartó para no tocar la experiencia. **La fuga se asume y
+se mide**: el panel de «Funnel VA» muestra cuántos formularios no aparecen en el WhatsApp
+de Vero con el número que dejaron.
+
+### Verificación (local)
+- Desktop y 375 px: video y formulario cargan, sin scroll horizontal; el formulario
+  (tema blanco de Typeform) se lee sobre el negro.
+- Con UTMs sintéticas + `fbclid` el iframe recibe `utm_*`, `fbc` y `fbp`; sin UTMs, los
+  respaldos `EMPEZAR-VA-DIRECTO` / `EMPEZAR-VA`.
+- Ojo: esas pruebas dejaron 3 visitas de localhost en GA4 para `/empezar-va` el 6-oct.
+
+### Impacto esperado en KPIs
+Puerta nueva de VA sin opt-in: no suma en «Registros» del embudo de casos. Sus leads
+del CRM entran con `source="empezar-va"` y caen en «Sin caso». Detalle del panel y del
+workflow de n8n en la entrada del mismo día de la bitácora del CRM.
+
+### Pendientes
+- Workflow de n8n `Typeform FORM VA (/empezar-va) → CRM` (`3y1bm2RnRTNZ7oD7`): **creado y
+  activo** el 6-oct con OK del usuario. Falta conectar en Typeform (FORM VA → Connect →
+  Webhooks) `https://primary-production-0efa.up.railway.app/webhook/typeform-empezar-va`;
+  sin eso, el panel cuenta los formularios pero no llega ningún lead al CRM.
+- Preview, OK del usuario y merge a `main` de los dos repos.
+
+---
+
 ## 2026-10-03 — Página del pase de referidos (`/pase/{código}`)
 
 Rama `work/pase-referidos`. Parte del programa de Pases TR4INER del CRM (ver `docs/pases-referidos.md` en
@@ -1268,6 +1323,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-06` — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
 - `2026-10-03` — Página del pase de referidos (`/pase/{código}`)
 
 **Septiembre 2026**
