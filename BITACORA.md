@@ -99,6 +99,19 @@ muchos casos», y ante «no quiero seguir viviendo» no daba ninguna línea de a
   tu médico»; inglés en inglés. Desliz menor: a veces menciona el objetivo del test al reencauzar.
 - Se rotó el secreto compartido Vercel ↔ n8n (sólo Preview de la rama + credencial `HBZZI9AG1A2QCpRX`).
 
+**Traspaso (6-oct).** Estado: en el Preview de esta rama, **nada en producción** por decisión del usuario.
+- URL del Preview (siempre el último commit de la rama, con Vercel Authentication):
+  `https://tr4iner-funnels-git-work-ruta-ch-c81579-metodotr4iners-projects.vercel.app/biblioteca/videos/`.
+  Para entrar con sesión: pedir acceso con el correo, copiar el enlace del correo y cambiar `metodo.tr4iner.com`
+  por el dominio del Preview **antes** de abrirlo.
+- **El CEO va a revisar el prompt.** Se le pasó un documento con el prompt textual, un ejemplo del contexto por
+  turno, las reglas del servidor y 7 preguntas: `~/Documents/Ruta Tr4iner/chat-equipo/prompt-agente-chat-ruta.md`
+  (fuera del repo para no tener dos fuentes; la fuente es `lib/ruta-chat-prompt.js`). Sus cambios se pasan al
+  prompt y se prueban en el Preview antes de cualquier publicación.
+- Para probar el agente directo hace falta el secreto, que no quedó guardado en disco: rotarlo en la credencial
+  n8n `HBZZI9AG1A2QCpRX` y en `RUTA_CHAT_SECRET` (Preview de la rama) y volver a desplegar.
+- `main` avanzó mientras tanto (`/empezar-va`): integrarlo en esta rama antes de un eventual merge.
+
 ---
 
 ## 2026-10-03 — Página del pase de referidos (`/pase/{código}`)
