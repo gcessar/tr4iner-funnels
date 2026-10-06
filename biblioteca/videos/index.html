@@ -2155,6 +2155,14 @@
     .thumb-flag { position: absolute; left: 8px; top: 8px; padding: 3px 6px; border-radius: 4px; background: #FFFFFF; color: var(--ink); font: 600 8px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
     /* Las categorías de la señal («HÁBITOS · APLICACIÓN INMEDIATA») no se muestran al miembro. */
     .mobile-focus-meta, .guide-meta { display: none !important; }
+    /* En el teléfono la tarjeta del paso queda en rótulo + portada (6-oct): sin
+       «TU SIGUIENTE ENFOQUE», título, descripción ni botón, en todos los estados.
+       La tarjeta entera sigue abriendo el video y el JS los sigue llenando. */
+    .mobile-focus-kicker,
+    .mobile-focus-card strong,
+    .mobile-focus-description,
+    .mobile-focus-cta { display: none !important; }
+    .mobile-focus-card .mobile-focus-thumb { margin-bottom: 0 !important; }
     /* En la Ruta los macros viven dentro de Alimentación, no en el inicio (29-sep). */
     body.ruta-por-dias #mobile-profile-trigger { display: none !important; }
     /* Rutina y test de macros dentro de su módulo, debajo del primer video (2-oct): el

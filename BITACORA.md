@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-06 — Ruta: la tarjeta del Paso queda en rótulo + portada en el teléfono
+
+- **A pedido del usuario**, sobre `work/ruta-hombres-preview` (rama `work/ruta-ocultar-texto-tarjeta`): en el inicio del teléfono la tarjeta del video ya no muestra «TU SIGUIENTE ENFOQUE», el título, la descripción ni el botón «Ver Paso 1». Queda el rótulo amarillo («Este es el Paso 1» / «Continuar viendo…») y la portada con el play; tocarla sigue abriendo el video.
+- Sólo CSS (`.mobile-focus-kicker`, `.mobile-focus-card strong`, `.mobile-focus-description`, `.mobile-focus-cta`), en todos los estados, incluida la biblioteca abierta. El JS los sigue llenando, así que revertir es borrar la regla. Escritorio (`#next-card`) sin cambios.
+- **Verificación:** servidor local a 375 px con el bloque del Paso forzado visible: los cuatro elementos en `display: none`, rótulo y portada visibles, la portada pegada al borde inferior de la tarjeta y el botón amarillo «Mira tus siguientes pasos» debajo, igual que antes.
+
 ## 2026-10-02 — Ruta: nada obligatorio; rutina y macros dentro de sus módulos
 
 - **Decisión del equipo (usuario):** ningún video es obligatorio para la rutina ni para el test de macros. Se retira lo construido el 28-sep: ya no existe el modo «sólo Paso 1» ni el candado de la rutina por los videos de pesas.
