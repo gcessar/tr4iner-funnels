@@ -72,6 +72,10 @@
     '.rc-card-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;margin-top:14px;padding:0 18px;border-radius:6px;background:var(--ink,#111);color:#fff;font-size:15.5px;font-weight:750;text-decoration:none;transition:background .16s ease}',
     '.rc-card-cta:hover{background:#2B2B2B}',
     '.rc-card-cta i{color:var(--mark,#FFD43B);font-style:normal}',
+    '.rc-help-list{margin:4px 0 0;padding:0;list-style:none}',
+    '.rc-help-list a{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:48px;padding:8px 0;border-bottom:1px solid var(--rule,rgba(17,17,17,.12));color:var(--ink,#111);text-decoration:none;font-size:14.5px}',
+    '.rc-help-list b{font-size:17px;font-weight:750;letter-spacing:-.02em;white-space:nowrap}',
+    '.rc-help-list a:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
     '.rc-card--whatsapp .rc-card-cta{background:var(--card,#fff);color:var(--ink,#111);border:1px solid var(--ink,#111)}',
     '.rc-card--whatsapp .rc-card-cta:hover{background:var(--paper-deep,#F5F5F5)}',
     '.rc-card--whatsapp .rc-card-cta i{color:var(--ink,#111)}',
@@ -157,7 +161,22 @@
   }
 
   // ── Tarjetas ─────────────────────────────────────────────
+  // Líneas de ayuda en crisis: sin botón de venta ni medición, sólo los números.
+  function tarjetaAyuda(t) {
+    var lista = el('ul', { className: 'rc-help-list' }, (t.lineas || []).map(function (l) {
+      return el('li', {}, [el('a', { href: 'tel:' + l.tel }, [
+        el('span', { text: l.nombre }), el('b', { text: l.numero })
+      ])]);
+    }));
+    return el('article', { className: 'rc-card rc-card--ayuda' }, [
+      el('p', { className: 'rc-card-code', text: t.titulo }),
+      lista,
+      t.nota ? el('p', { className: 'rc-card-note', text: t.nota }) : null
+    ]);
+  }
+
   function tarjeta(t) {
+    if (t && t.tipo === 'ayuda') return tarjetaAyuda(t);
     if (!t || !t.url) return null;
     var esWhatsApp = t.tipo === 'whatsapp';
     var hijos = [];

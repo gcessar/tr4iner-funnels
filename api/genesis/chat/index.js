@@ -60,7 +60,7 @@ module.exports = async function chat(request, response) {
     return response.status(200).json(ruta.respuestaDeError(perfil));
   }
 
-  const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados);
+  const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje);
   // Sin email en los logs: alcanza con ver qué pidió el agente y qué se mostró.
   console.log('[ruta-chat]', JSON.stringify({
     mercado: mercado,
