@@ -2169,6 +2169,20 @@
        DOM porque `setupRutaChat` toma de ahí el WhatsApp de respaldo y `updateBridge`
        le escribe el enlace; con ella oculta no se disparan `bisagra_view` ni `bisagra_click`. */
     .conversion-bridge { display: none !important; }
+    /* Módulo «Caso de estudio» (7-oct): reemplaza a la caja negra como salida a los casos.
+       Las comparativas son cuadradas (antes | después): en 16:9 se recortaban, así que
+       van en tarjetas propias, 2 por fila en el teléfono y 4 en escritorio. */
+    .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    @media (min-width: 861px) { .case-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .case-tile { display: flex; flex-direction: column; gap: 6px; padding: 8px 8px 12px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--card); color: var(--ink); text-decoration: none; transition: border-color .16s ease; }
+    .case-tile:hover { border-color: var(--ink); }
+    .case-tile:focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; }
+    .case-photo { display: block; aspect-ratio: 1; margin-bottom: 4px; overflow: hidden; border-radius: 6px; background: var(--paper-deep); }
+    .case-photo img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .case-meta { color: var(--muted); font: 600 8.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .case-tile strong { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+    .case-go { display: inline-flex; align-items: center; gap: 5px; margin-top: auto; padding-top: 4px; font-size: 12.5px; font-weight: 700; }
+    .case-go i { font-style: normal; }
     /* En la Ruta los macros viven dentro de Alimentación, no en el inicio (29-sep). */
     body.ruta-por-dias #mobile-profile-trigger { display: none !important; }
     /* Rutina y test de macros dentro de su módulo, debajo del primer video (2-oct): el
@@ -3154,6 +3168,7 @@
           section.appendChild(body);
           libraryEl.appendChild(section);
         });
+        if (shown > 0 && state.bloque === 'todos') libraryEl.appendChild(mkCasosGroup());
 
         emptyEl.classList.toggle('visible', shown === 0);
         if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
@@ -3161,6 +3176,58 @@
         setTimeout(checkReveals, 250);
 
         updateProgressUI();
+      }
+
+      // ── Módulo «Caso de estudio» ────────────────────────────
+      // Los cuatro casos del funnel, para todos: el miembro elige el más parecido a él.
+      var CASOS = [
+        { id: 'flor', nombre: 'Flor de María', perfil: 'Mujer · 18 a 35 años', ruta: '/testimonio-flor' },
+        { id: 'dashiel', nombre: 'Dashiel', perfil: 'Hombre · 18 a 35 años', ruta: '/testimonio-dashiel' },
+        { id: 'andrea', nombre: 'Andrea Loayza', perfil: 'Mujer · más de 35', ruta: '/testimonio-andrea' },
+        { id: 'christian', nombre: 'Christian Barrantes', perfil: 'Hombre · más de 35', ruta: '/testimonio-christian' }
+      ];
+
+      function mkCasosGroup() {
+        // Sigue la numeración de lo que ya está en el índice, sin huecos.
+        var numero = String(libraryEl.querySelectorAll('.route-group').length + 1).padStart(2, '0');
+        var section = document.createElement('details');
+        section.className = 'route-group route-casos';
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': Caso de estudio');
+        var visto = false;
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+            if (otro !== section) otro.open = false;
+          });
+          // Hace de `bisagra_view` ahora que la caja negra no se ve: abrir el módulo.
+          if (!visto) { visto = true; track('bisagra_view', { estado: estadoBisagra(), origen: 'modulo_casos' }); }
+        });
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + numero + '</span>' +
+            '<span class="index-copy"><strong>Caso de estudio</strong><small>Cuatro transformaciones reales, contadas paso a paso.</small></span>' +
+            '<b class="index-status">4 CASOS</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body">' +
+            '<p class="bloque-desc">Elige el caso más parecido a ti. Al final podrás responder una evaluación y conocer el siguiente paso que te corresponde.</p>' +
+            '<div class="case-grid">' + CASOS.map(function (c) {
+              return '<a class="case-tile" data-caso="' + c.id + '" href="' + escapeHtml(urlCaso(c.ruta)) + '">' +
+                '<span class="case-photo"><img src="/assets/casos-optin/' + c.id + '-240.webp" srcset="/assets/casos-optin/' + c.id + '-240.webp 240w, /assets/casos-optin/' + c.id + '-480.webp 480w" ' +
+                  'sizes="(min-width: 861px) 170px, calc((100vw - 64px) / 2)" width="480" height="480" loading="lazy" decoding="async" alt="' + escapeHtml(c.nombre) + ': antes a la izquierda y después a la derecha" /></span>' +
+                '<span class="case-meta">' + escapeHtml(c.perfil) + '</span>' +
+                '<strong>' + escapeHtml(c.nombre) + '</strong>' +
+                '<span class="case-go">Ver caso <i aria-hidden="true">→</i></span>' +
+              '</a>';
+            }).join('') + '</div>' +
+          '</div>';
+        section.querySelectorAll('.case-tile').forEach(function (a) {
+          // Mismo evento que el botón de la bisagra: el lead scoring ya lo lee como intención.
+          a.addEventListener('click', function () {
+            track('bisagra_click', { estado: estadoBisagra(), caso: a.getAttribute('data-caso'), origen: 'modulo_casos' });
+          });
+        });
+        return section;
       }
 
       function ensureLibraryRendered() {
@@ -3937,10 +4004,14 @@
         // El copy de las dos ofertas es fijo; lo unico que cambia por sexo es
         // a que caso entra el primer boton.
 
-        var base = new URL(
-          state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
-          window.location.origin
-        );
+        cta.href = urlCaso(state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel');
+        cta.setAttribute('data-estado', estado);
+      }
+
+      // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
+      // bisagra (oculta desde el 7-oct) y el módulo «Caso de estudio».
+      function urlCaso(ruta) {
+        var base = new URL(ruta, window.location.origin);
         var p = new URLSearchParams();
         if (lead.nombre || nombre) p.set('first_name', lead.nombre || nombre);
         if (lead.email || email) p.set('email', lead.email || email);
@@ -3954,10 +4025,8 @@
         var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
         Object.keys(storedAttr).forEach(function (k) { if (!attr[k]) attr[k] = storedAttr[k]; });
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
-        var q = p.toString().replace(/%40/g, '@');
-        base.search = q;
-        cta.href = base.toString();
-        cta.setAttribute('data-estado', estado);
+        base.search = p.toString().replace(/%40/g, '@');
+        return base.toString();
       }
 
       document.getElementById('bridge-cta').addEventListener('click', function () {

@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-07 — Ruta: módulo «Caso de estudio» con los cuatro casos
+
+- **A pedido del usuario**, en `work/ruta-hombres-preview`: con la caja negra oculta, la salida a los casos pasa a ser **un módulo más del índice**, al final: «Caso de estudio · Cuatro transformaciones reales, contadas paso a paso.», rótulo `4 CASOS`, siempre abierto (no depende del calendario) y numerado detrás del último módulo (05 en hombres, 06 en mujeres).
+- Adentro: «Elige el caso más parecido a ti…» y **Flor de María, Dashiel, Andrea Loayza y Christian Barrantes** para todos, con su perfil (mujer/hombre · 18 a 35 / más de 35) y las comparativas de `assets/casos-optin/`. Son cuadradas, así que van en tarjetas propias (2×2 en el teléfono, 4 en fila en escritorio) y no en las de video, que las recortaban a 16:9.
+- **Enlaces:** salen de `urlCaso()`, la misma lógica de la bisagra (ahora compartida): `first_name`, `email` (con `@`), `sexo` del miembro y toda la atribución, la fresca del navegador encima de la guardada en el CRM. Navegan en la misma pestaña. El CRM no manda el rango de edad del miembro, así que `rango_edad` no viaja.
+- **Medición:** abrir el módulo dispara `bisagra_view` y cada caso `bisagra_click`, los dos con `origen: 'modulo_casos'` (y `caso`, en el clic), para que el lead scoring siga leyendo la misma intención. Ojo al comparar con antes del 7-oct: `bisagra_view` contaba ver la caja en pantalla; ahora cuenta abrir el módulo.
+- **Verificación:** réplica local, mujer 4 días con UTMs y `fbclid` sintéticos: módulo 06 tras cinco módulos, cuatro enlaces con nombre, email, sexo, UTMs, `fbclid`, `fbc` y `fbp`; abrir y tocar Andrea emitieron los dos eventos; 2×2 a 375 px y 4 columnas de 163 px a 1280 px; las cuatro imágenes 200. Captura en `~/Documents/Ruta Tr4iner/capturas/2026-10-07-modulo-caso-de-estudio-movil.jpg`.
+
 ## 2026-10-07 — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
 
 - **A pedido del usuario**, en `work/ruta-hombres-preview`:
@@ -1507,6 +1515,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-07` — Ruta: módulo «Caso de estudio» con los cuatro casos
 - `2026-10-07` — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
 - `2026-10-07` — Ruta + chat del equipo juntos en un solo preview
 - `2026-10-07` — Ruta: título del índice y texto general de los reemplazos
