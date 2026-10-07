@@ -2164,6 +2164,11 @@
     .mobile-focus-description,
     .mobile-focus-cta { display: none !important; }
     .mobile-focus-card .mobile-focus-thumb { margin-bottom: 0 !important; }
+    /* La caja negra de las dos ofertas («Míralo aquí» / «Aplica a mi asesoría») se
+       oculta (7-oct): la salida hacia el equipo es el botón fijo del chat. Queda en el
+       DOM porque `setupRutaChat` toma de ahí el WhatsApp de respaldo y `updateBridge`
+       le escribe el enlace; con ella oculta no se disparan `bisagra_view` ni `bisagra_click`. */
+    .conversion-bridge { display: none !important; }
     /* En la Ruta los macros viven dentro de Alimentación, no en el inicio (29-sep). */
     body.ruta-por-dias #mobile-profile-trigger { display: none !important; }
     /* Rutina y test de macros dentro de su módulo, debajo del primer video (2-oct): el
@@ -2506,7 +2511,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/videos/rutina.js?v=20261007-alternativa"></script>
-  <script src="/biblioteca/assets/ruta-chat.js"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261007-icono"></script>
   <script>
     (async function () {
       'use strict';

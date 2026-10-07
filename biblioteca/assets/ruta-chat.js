@@ -21,12 +21,14 @@
 
 
   var CSS = [
-    '.rc-launch{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 20px 0 16px;border:0;border-radius:999px;background:var(--ink,#111);color:#fff;font:700 15px/1 var(--sans,system-ui,sans-serif);letter-spacing:-.01em;cursor:pointer;box-shadow:0 14px 34px -14px rgba(0,0,0,.55);transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,background .16s ease}',
+    '.rc-launch{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;border-radius:50%;background:var(--ink,#111);color:#fff;font:700 15px/1 var(--sans,system-ui,sans-serif);letter-spacing:-.01em;cursor:pointer;box-shadow:0 14px 34px -14px rgba(0,0,0,.55);transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,background .16s ease}',
     '.rc-launch:hover{background:#2B2B2B}',
     '.rc-launch:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:3px}',
     '.rc-launch[hidden]{display:none}',
     '.rc-launch.is-waiting{transform:translateY(14px);opacity:0;pointer-events:none}',
-    '.rc-launch-mark{width:9px;height:9px;border-radius:2px;background:var(--mark,#FFD43B);flex:none}',
+    // Sólo ícono (7-oct): el cuadrito amarillo de la marca queda como insignia en la esquina.
+    '.rc-launch svg{width:24px;height:24px}',
+    '.rc-launch-mark{position:absolute;top:9px;right:9px;width:10px;height:10px;border-radius:3px;background:var(--mark,#FFD43B);box-shadow:0 0 0 2px var(--ink,#111)}',
     'body.modal-open .rc-launch,body.mobile-video-playing .rc-launch,#tour:not([hidden]) ~ .rc-launch{display:none}',
 
     '.rc{position:fixed;inset:0 0 0 auto;width:min(440px,100vw);height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--rule-strong,rgba(17,17,17,.24));background:var(--card,#fff);color:var(--ink,#111);font-family:var(--sans,system-ui,sans-serif);overscroll-behavior:contain}',
@@ -96,7 +98,7 @@
     '.rc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
 
     '@media (max-width:719px){',
-    '.rc-launch{right:16px;bottom:calc(16px + env(safe-area-inset-bottom));min-height:48px;padding:0 18px 0 14px;font-size:14.5px}',
+    '.rc-launch{right:16px;bottom:calc(16px + env(safe-area-inset-bottom));width:52px;height:52px}',
     '.rc{inset:auto 0 0 0;width:100vw;height:min(92dvh,780px);border-left:0;border-top:1px solid var(--rule-strong,rgba(17,17,17,.24));border-radius:14px 14px 0 0}',
     '.rc[open]{animation-name:rc-in-up}',
     '.rc-head{padding-top:10px}',
@@ -339,10 +341,11 @@
     estilo.textContent = CSS;
     document.head.appendChild(estilo);
 
-    ui.launch = el('button', { type: 'button', className: 'rc-launch is-waiting', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog' }, [
-      el('span', { className: 'rc-launch-mark', 'aria-hidden': 'true' }),
-      el('span', { text: 'Habla con el equipo' })
+    // Sin texto: el nombre accesible y el tooltip dicen qué abre.
+    ui.launch = el('button', { type: 'button', className: 'rc-launch is-waiting', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog', 'aria-label': 'Habla con el equipo', title: 'Habla con el equipo' }, [
+      el('span', { className: 'rc-launch-mark', 'aria-hidden': 'true' })
     ]);
+    ui.launch.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 3.5V16A2.5 2.5 0 0 1 4 13.5v-7A2.5 2.5 0 0 1 6.5 4z"/></svg>');
 
     var cerrar = el('button', { type: 'button', className: 'rc-close', 'aria-label': 'Cerrar el chat' });
     cerrar.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';

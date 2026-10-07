@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-07 — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
+
+- **A pedido del usuario**, en `work/ruta-hombres-preview`:
+- **Caja negra oculta** (`.conversion-bridge`: «¿Quieres ver cómo funciona nuestro método…? Míralo aquí» y «¿Quieres que te ayude a estar en forma? Aplica a mi asesoría aquí»), en teléfono y escritorio. Sólo CSS: el bloque sigue en el DOM porque `setupRutaChat` toma de ahí el WhatsApp de respaldo y `updateBridge` le escribe el enlace al caso.
+- **Impacto en medición:** sin la caja no se disparan `bisagra_view` ni `bisagra_click`, y desde la Ruta ya no hay salida al caso de Dashiel/Flor. La única salida hacia el equipo es el botón fijo del chat (y su respaldo de WhatsApp adentro).
+- **Botón del chat:** deja el texto «Habla con el equipo» y queda en un círculo negro de 56 px (52 en el teléfono) con ícono de chat y el cuadrito amarillo de marca como insignia. El nombre accesible y el tooltip siguen diciendo «Habla con el equipo». `ruta-chat.js` pasa a `?v=20261007-icono`.
+- **Verificación:** réplica local (hombre 3 días) a 375 px y 1280 px: caja negra en `display: none`, botón redondo sin texto, el clic abre el chat con sus respuestas sugeridas, sin errores de consola.
+
 ## 2026-10-07 — Ruta + chat del equipo juntos en un solo preview
 
 - **A pedido del usuario.** Rama `work/ruta-preview-con-chat` (y `work/ruta-hombres-preview`, ver abajo) = `work/ruta-ocultar-texto-tarjeta` (Ruta por días de `work/ruta-hombres-preview` + los ajustes del 6 y 7-oct) con `work/ruta-chat-agente` fusionada encima. **Sólo preview: nada a `main`.** El chat sigue esperando la revisión del prompt (entrada del 5-oct).
@@ -1499,6 +1507,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-07` — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
 - `2026-10-07` — Ruta + chat del equipo juntos en un solo preview
 - `2026-10-07` — Ruta: título del índice y texto general de los reemplazos
 - `2026-10-06` — Ruta: la tarjeta del Paso queda en rótulo + portada en el teléfono
