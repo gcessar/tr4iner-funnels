@@ -5,7 +5,8 @@
 - **A pedido del usuario**, en la misma rama `work/ruta-ocultar-texto-tarjeta`:
 - **Índice:** el bloque «ÍNDICE DE TU RUTA / Lo que sigue, en orden. / SEGÚN TU PERFIL» queda en un solo título, **«Sigue en orden estos pasos.»**, con `text-wrap: balance` para que no deje «pasos.» solo en la segunda línea. `#route-index-order` sigue en el DOM con `hidden` porque el JS le escribe «SE ABRE DÍA A DÍA».
 - **Alternativas del ejercicio** (`rutina.js`, `openReplace`): sale «Cambia por la alternativa del entrenador» y «Si es a una mano o pierna, haz las repeticiones por lado», que no tenía sentido en ejercicios a dos manos. Queda un texto general que sirve para cualquier reemplazo: «Se mantienen N series × reps y X s de descanso; elige de nuevo el peso.» Versión del script en el HTML a `20261007-reemplazo` para que el teléfono no use el texto viejo de la caché.
-- **Verificación:** servidor local a 375 px: título en dos líneas parejas («Sigue en orden / estos pasos.»), sin rótulos; `rutina.js` servido sin las dos frases y sin errores de sintaxis. El diálogo de alternativas no se abrió en vivo (necesita una rutina cargada desde el CRM).
+- **Verificación:** réplica local con la lógica del CRM (`~/Documents/Ruta Tr4iner/herramientas/replica.mts`, apuntada a este worktree), hombre 3 días, 375 px: tarjeta del Paso sólo con rótulo + portada «Empieza aquí»; índice con los módulos reales bajo «Sigue en orden / estos pasos.», sin rótulos; en la rutina, «Buscar un reemplazo» abre el diálogo con «Se mantienen 3 series × 6 a 10 y 90 s de descanso; elige de nuevo el peso.».
+- **Ojo:** `work/ruta-chat-agente` (chat del equipo) sale de `main` y no tiene la Ruta por días; esta rama no lo incluye. Juntar las dos es una integración aparte.
 
 ## 2026-10-06 — Ruta: la tarjeta del Paso queda en rótulo + portada en el teléfono
 
