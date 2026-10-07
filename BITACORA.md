@@ -2,12 +2,12 @@
 
 ## 2026-10-07 — Ruta + chat del equipo juntos en un solo preview
 
-- **A pedido del usuario.** Rama `work/ruta-preview-con-chat` = `work/ruta-ocultar-texto-tarjeta` (Ruta por días de `work/ruta-hombres-preview` + los ajustes del 6 y 7-oct) con `work/ruta-chat-agente` fusionada encima. **Sólo preview: nada a `main`.** El chat sigue esperando la revisión del prompt (entrada del 5-oct).
+- **A pedido del usuario.** Rama `work/ruta-preview-con-chat` (y `work/ruta-hombres-preview`, ver abajo) = `work/ruta-ocultar-texto-tarjeta` (Ruta por días de `work/ruta-hombres-preview` + los ajustes del 6 y 7-oct) con `work/ruta-chat-agente` fusionada encima. **Sólo preview: nada a `main`.** El chat sigue esperando la revisión del prompt (entrada del 5-oct).
 - La fusión trae también lo que `main` tenía cuando nació la rama del chat (páginas VA, `/medicos`, pase de referidos); `/empezar-va` y lo posterior de `main` no, porque el chat salió antes.
 - **`middleware.ts`:** la base es la de `main` (sólo el test de `/medicos`; el de hero cerró el 29-sep, así que su bloque viejo de la rama de la Ruta no vuelve). Se le suma la protección del preview de la Ruta (`bibliotecaPreview` / `privatePreview`, clave del equipo) para `/biblioteca`, `/api/genesis` y `/r`. En producción `isPreview()` es falso y esas rutas siguen de largo. El chat (`/api/genesis/chat`) queda detrás de la misma clave en el preview.
 - **`biblioteca/videos/index.html`:** se cargan los dos scripts, `rutina.js` y `ruta-chat.js`; `setupRutaChat()` entra sin cambios (usa `bridge-advisory`, `estadoBisagra()`, `memberSession`, `lead`, que la Ruta conserva).
 - **Verificación:** réplica local (hombre 3 días, 375 px): Ruta con módulos reales, «Sigue en orden estos pasos», sin errores de consola; el chat se inicia, el botón «Habla con el equipo» aparece abajo a la derecha y la salida de asesoría abre el chat. La réplica no simula el agente: la respuesta real sólo se ve en Vercel con `RUTA_CHAT_SECRET`.
-- **Variables de Vercel:** están atadas por rama (las de la Ruta a `work/ruta-hombres-preview`, `RUTA_CHAT_SECRET` a `work/ruta-chat-agente`). Esta rama nueva no tiene ninguna hasta que se le asignen.
+- **Dónde se ve (decisión del usuario):** la unión se subió también a **`work/ruta-hombres-preview`** (avance rápido), que ya tiene las 7 variables de la Ruta; el enlace de preview que usa el equipo pasa a mostrar Ruta + chat. Las variables son «sensibles» y Vercel no deja leerlas ni copiarlas, sólo cambiarles la rama: **`RUTA_CHAT_SECRET` se movió de `work/ruta-chat-agente` a `work/ruta-hombres-preview`**. El preview ya publicado de la rama del chat sigue andando, pero una subida nueva a `work/ruta-chat-agente` saldría sin la clave: el trabajo del chat sigue en `work/ruta-hombres-preview`. `work/ruta-preview-con-chat` queda sin variables (su preview da «entorno no disponible»).
 
 ## 2026-10-07 — Ruta: título del índice y texto general de los reemplazos
 
