@@ -1,5 +1,12 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-07 — Ruta: título del índice y texto general de los reemplazos
+
+- **A pedido del usuario**, en la misma rama `work/ruta-ocultar-texto-tarjeta`:
+- **Índice:** el bloque «ÍNDICE DE TU RUTA / Lo que sigue, en orden. / SEGÚN TU PERFIL» queda en un solo título, **«Sigue en orden estos pasos.»**, con `text-wrap: balance` para que no deje «pasos.» solo en la segunda línea. `#route-index-order` sigue en el DOM con `hidden` porque el JS le escribe «SE ABRE DÍA A DÍA».
+- **Alternativas del ejercicio** (`rutina.js`, `openReplace`): sale «Cambia por la alternativa del entrenador» y «Si es a una mano o pierna, haz las repeticiones por lado», que no tenía sentido en ejercicios a dos manos. Queda un texto general que sirve para cualquier reemplazo: «Se mantienen N series × reps y X s de descanso; elige de nuevo el peso.» Versión del script en el HTML a `20261007-reemplazo` para que el teléfono no use el texto viejo de la caché.
+- **Verificación:** servidor local a 375 px: título en dos líneas parejas («Sigue en orden / estos pasos.»), sin rótulos; `rutina.js` servido sin las dos frases y sin errores de sintaxis. El diálogo de alternativas no se abrió en vivo (necesita una rutina cargada desde el CRM).
+
 ## 2026-10-06 — Ruta: la tarjeta del Paso queda en rótulo + portada en el teléfono
 
 - **A pedido del usuario**, sobre `work/ruta-hombres-preview` (rama `work/ruta-ocultar-texto-tarjeta`): en el inicio del teléfono la tarjeta del video ya no muestra «TU SIGUIENTE ENFOQUE», el título, la descripción ni el botón «Ver Paso 1». Queda el rótulo amarillo («Este es el Paso 1» / «Continuar viendo…») y la portada con el play; tocarla sigue abriendo el video.

@@ -50,7 +50,7 @@ dialog.routine-sheet:has(#rest-timer:not([hidden])) .routine-scroll { padding-bo
 .rt-progress i { display: block; height: 100%; background: var(--mark); transition: width .3s ease; }
 .rt-progress p { margin: 6px 0 0; color: var(--muted); font: 600 8.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 
-/* Ejercicios: las mismas filas numeradas del índice «Lo que sigue, en orden». */
+/* Ejercicios: las mismas filas numeradas del índice «Sigue en orden estos pasos». */
 .rt-ex { border-bottom: 1px solid var(--rule-strong); }
 .rt-ex.is-open { margin: 0 -8px; padding: 0 8px; box-shadow: inset 4px 0 0 var(--mark); }
 .rt-row { width: 100%; display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 12px; padding: 14px 2px; border: 0; background: none; color: var(--ink); cursor: pointer; text-align: left; font-family: var(--sans); }

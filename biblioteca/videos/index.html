@@ -1473,6 +1473,7 @@
       font-weight: 560;
       letter-spacing: -.03em;
       line-height: 1.05;
+      text-wrap: balance;
     }
     .index-head > span {
       color: var(--muted);
@@ -2338,10 +2339,11 @@
           <section class="editorial-index rv" aria-labelledby="route-index-title">
             <div class="index-head">
               <div>
-                <p class="section-code">ÍNDICE DE TU RUTA</p>
-                <h2 id="route-index-title" tabindex="-1">Lo que sigue, en orden.</h2>
+                <h2 id="route-index-title" tabindex="-1">Sigue en orden estos pasos.</h2>
               </div>
-              <span id="route-index-order">SEGÚN TU PERFIL</span>
+              <!-- Oculto a pedido (7-oct): el título solo ya dice qué hacer. Se deja
+                   en el DOM porque el JS le escribe «SE ABRE DÍA A DÍA». -->
+              <span id="route-index-order" hidden>SEGÚN TU PERFIL</span>
             </div>
             <div class="filters-wrap" hidden aria-hidden="true">
               <div class="filters" id="filters"></div>
@@ -2503,7 +2505,7 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20261002-accesos"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261007-reemplazo"></script>
   <script>
     (async function () {
       'use strict';

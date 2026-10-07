@@ -350,8 +350,9 @@
     var ex = exerciseBySlot(slot); if (!ex) return;
     st.replaceSlot = slot; st.replaceFocus = trigger;
     var replaced = ex.replacementIndex !== null && ex.replacementIndex !== undefined;
-    $('rt-replace-text').textContent = 'Cambia por la alternativa del entrenador. Se mantienen ' + ex.sets + ' series × ' + ex.reps +
-      ' y ' + ex.rest + ' s de descanso; elige de nuevo el peso. Si es a una mano o pierna, haz las repeticiones por lado.';
+    // Texto general: sirve para cualquier reemplazo, sea a dos manos o a una.
+    $('rt-replace-text').textContent = 'Se mantienen ' + ex.sets + ' series × ' + ex.reps +
+      ' y ' + ex.rest + ' s de descanso; elige de nuevo el peso.';
     var options = '<div class="rt-alt is-current"><strong>' + esc(ex.name) + '<small>La actual</small></strong></div>';
     if (replaced) options += '<button type="button" class="rt-alt" data-restore><strong>' + esc(ex.originalName) + '<small>El original del entrenador</small></strong><i aria-hidden="true">→</i></button>';
     ex.alternatives.forEach(function (name, i) {
