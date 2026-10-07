@@ -1,5 +1,14 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-07 — Chat de la Ruta: historial en el CRM y memoria separada de WhatsApp
+
+- **A pedido del usuario**, en `work/ruta-hombres-preview` (+ CRM `work/ruta-drip-paises`, ver su bitácora). Decisiones: el admin ve los chats; **no se avisa** en el chat que se guarda; se guarda sin plazo y, si se elimina un miembro, se borra todo lo suyo; la memoria de la Ruta se separa de la de los bots de WhatsApp.
+- **Antes:** la conversación sólo vivía en la tabla `n8n_chat_histories` de la credencial «Manychat Memory», **compartida con el bot de AN y VERO-BOT**, sin fecha por mensaje, con la salida cruda del modelo (no lo que el servidor corrigió) y sin vínculo con ventas.
+- **Ahora `/api/genesis/chat`:** antes de llamar al agente pide al CRM la memoria (`GET chat-log`, últimos 10 turnos de lo que la persona leyó, con nota de la tarjeta que vio) y la manda a n8n como `historial`; después guarda el turno (`POST chat-log`): mensaje, respuesta mostrada, opciones, tarjeta, salida cruda del modelo, calificación, nota al agente, mercado, país por IP, estado en la Ruta, `promptVersion` (hash de 10 caracteres de `lib/ruta-chat-prompt.js`) y latencia. Si el agente falla, el turno queda con `error`. Las dos llamadas al CRM tienen 3 s de tope y nunca cortan el chat.
+- `lib/genesis-proxy.js`: `forward()` acepta `body` propio y `timeoutMs`.
+- **n8n:** el agente deja de usar el nodo de memoria Postgres; arma el contexto con el `historial` que llega. Los mensajes viejos de la Ruta en `n8n_chat_histories` (pruebas del preview) no se borraron.
+- **Verificación:** 3 pruebas nuevas en `tests/ruta-chat-log.test.cjs` (memoria al agente, turno guardado con lo que vio la persona, error del agente, CRM caído); 8 de 8 correctas.
+
 ## 2026-10-07 — Ruta: módulo «Caso de estudio» con los cuatro casos
 
 - **A pedido del usuario**, en `work/ruta-hombres-preview`: con la caja negra oculta, la salida a los casos pasa a ser **un módulo más del índice**, al final: «Caso de estudio · Cuatro transformaciones reales, contadas paso a paso.», rótulo `4 CASOS`, siempre abierto (no depende del calendario) y numerado detrás del último módulo (05 en hombres, 06 en mujeres).
@@ -1515,6 +1524,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-07` — Chat de la Ruta: historial en el CRM y memoria separada de WhatsApp
 - `2026-10-07` — Ruta: módulo «Caso de estudio» con los cuatro casos
 - `2026-10-07` — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
 - `2026-10-07` — Ruta + chat del equipo juntos en un solo preview

@@ -1,11 +1,35 @@
+const crypto = require('crypto');
 const { forward } = require('../../../lib/genesis-proxy');
 const ruta = require('../../../lib/ruta-chat');
 const PROMPT = require('../../../lib/ruta-chat-prompt');
 
-// El agente corre en n8n («RUTA-CHAT · Equipo») porque ahí ya está la
-// credencial de OpenAI y la memoria de conversaciones de los otros bots.
+// El agente corre en n8n («RUTA-CHAT · Equipo») porque ahí está la credencial de
+// OpenAI. La memoria ya no: vive en el CRM (7-oct), junto al historial que ve el
+// admin, y se le pasa al agente en cada pedido.
 const AGENTE_URL = 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat';
 const ESCALONES = ['apertura', 'piso', 'promo', 'llamada'];
+// Cada turno guardado dice con qué prompt se respondió: así se comparan versiones contra ventas.
+const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT).digest('hex').slice(0, 10);
+
+// El historial y el registro son accesorios: si el CRM tarda o falla, el chat sigue.
+async function historialDe(request, response, conversacion) {
+  try {
+    const r = await forward(request, response, 'chat-log?conversacion=' + encodeURIComponent(conversacion), { method: 'GET', deferResponse: true, timeoutMs: 3000 });
+    return r && r.status === 200 && Array.isArray(r.payload.historial) ? r.payload.historial : [];
+  } catch (error) {
+    console.error('[ruta-chat] sin historial del CRM:', error.message);
+    return [];
+  }
+}
+
+async function guardarTurno(request, response, turno) {
+  try {
+    const r = await forward(request, response, 'chat-log', { method: 'POST', deferResponse: true, body: turno, timeoutMs: 3000 });
+    if (!r || r.status !== 200) console.error('[ruta-chat] el CRM no guardó el turno:', r && r.status);
+  } catch (error) {
+    console.error('[ruta-chat] el CRM no guardó el turno:', error.message);
+  }
+}
 
 function cuerpo(request) {
   if (request.body && typeof request.body === 'object') return request.body;
@@ -44,12 +68,23 @@ module.exports = async function chat(request, response) {
   const mercado = ruta.mercadoPara(geo, body.eco || {});
   const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 600));
 
+  const historial = await historialDe(request, response, conversacion);
+  const base = {
+    conversacion: conversacion,
+    mensajeUsuario: mensaje,
+    mercado: mercado,
+    paisIp: geo.pais || null,
+    estadoRuta: perfil.estado_ruta || null,
+    promptVersion: PROMPT_VERSION
+  };
+
   let cruda;
+  const inicio = Date.now();
   try {
     const upstream = await fetch(AGENTE_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'x-ruta-chat-secret': secreto },
-      body: JSON.stringify({ sesion: 'ruta:' + perfil.email + ':' + conversacion, sistema: sistema, mensaje: mensaje }),
+      body: JSON.stringify({ sesion: 'ruta:' + perfil.email + ':' + conversacion, sistema: sistema, mensaje: mensaje, historial: historial }),
       signal: AbortSignal.timeout(28000)
     });
     if (!upstream.ok) throw new Error('agente respondió ' + upstream.status);
@@ -57,8 +92,13 @@ module.exports = async function chat(request, response) {
     if (Array.isArray(cruda)) cruda = cruda[0];
   } catch (error) {
     console.error('[ruta-chat] sin respuesta del agente:', error.message);
-    return response.status(200).json(ruta.respuestaDeError(perfil));
+    const fallo = ruta.respuestaDeError(perfil);
+    await guardarTurno(request, response, Object.assign({}, base, {
+      mensajeEquipo: fallo.mensaje, tarjeta: fallo.tarjeta, error: true, latenciaMs: Date.now() - inicio
+    }));
+    return response.status(200).json(fallo);
   }
+  const latenciaMs = Date.now() - inicio;
 
   const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje);
   // Sin email en los logs: alcanza con ver qué pidió el agente y qué se mostró.
@@ -72,6 +112,19 @@ module.exports = async function chat(request, response) {
     nivel: respuesta.registro.calificacion.nivel,
     objeciones_precio: respuesta.registro.calificacion.objeciones_precio,
     montos_invalidos: respuesta.registro.montos_invalidos
+  }));
+
+  // Se guarda lo que leyó la persona (ya corregido) y, aparte, lo que propuso el modelo.
+  await guardarTurno(request, response, Object.assign({}, base, {
+    mensajeEquipo: respuesta.mensaje,
+    opciones: respuesta.opciones,
+    tarjeta: respuesta.tarjeta,
+    agente: cruda && typeof cruda === 'object' ? cruda : null,
+    calificacion: respuesta.registro.calificacion,
+    accion: respuesta.registro.accion,
+    escalonPedido: respuesta.registro.escalon_pedido,
+    ajuste: respuesta.ajuste,
+    latenciaMs: latenciaMs
   }));
 
   return response.status(200).json({
