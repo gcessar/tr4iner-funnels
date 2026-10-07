@@ -1,7 +1,16 @@
 import { next, rewrite } from "@vercel/edge";
 import { isPreview, teamPreviewEnabled, previewConfigured, verifyTeamCookie } from "./lib/genesis-team";
 
-export const config = { matcher: ["/casos-de-estudio", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
+// Hoy corre un solo test: el de formulario en /medicos. El de hero de
+// /casos-de-estudio (`ce_hero_202609`) cerró el 29-sep en empate y su ruta salió
+// del matcher: `vercel.json` sirve `index-fuerza.html` (RES) a todo el tráfico, y
+// la cookie `ab_hero` que quedó en los navegadores ya no decide nada. Resultado en
+// la entrada del 29-sep de BITACORA.md.
+//
+// La Ruta suma /biblioteca, /api/genesis y /r: en los Preview los cierra con la
+// clave del equipo (`bibliotecaPreview`); en producción `isPreview()` es falso y
+// siguen de largo sin tocar nada.
+export const config = { matcher: ["/medicos", "/medicos/", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
 
 function privatePreview(response: Response) {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
@@ -50,30 +59,55 @@ async function bibliotecaPreview(req: Request, url: URL) {
 }
 
 /*
-  Test de HERO — 10-sep-2026. `ce_hero_202609`.
+  Test de FORMULARIO en /medicos — 24-sep-2026. `med_form_202609`.
 
-  Qué se compara: **la promesa del hero**, título y descripción como una sola
-  unidad. Está declarado así ANTES de ver datos, y el resultado se adjudica al
-  conjunto: no se va a poder saber si pesó el título o la bajada.
+  Qué se compara: **cómo aparece el formulario en el celular**. Nada más.
 
-    RES (control)  index-fuerza.html   promete el RESULTADO
-                   «Mira cómo alguien como tú transformó su cuerpo.»
-    MET (retador)  index-metodo.html   promete el MÉTODO
-                   «Mira qué hizo, mes a mes, alguien que empezó como tú.»
+    MOD (control)  medicos/index.html                 el formulario vive en un modal
+                   que se abre al tocar el play falso o «Ver el caso completo».
+    INL (retador)  medicos/formulario-visible.html    el formulario está a la vista,
+                   debajo de la foto de Flor, sin tocar nada.
 
-  Por qué MET: el activo real del funnel son cuatro análisis paso a paso, no
-  cuatro antes/después. El obstáculo #1 que declararon los 837 compradores del
-  estudio fue «no tengo una estructura clara» (44%), y la bajada del control hoy
-  es una instrucción de interfaz («selecciona tu sexo y rango de edad»), no una
-  propuesta de valor — la bitácora del 8-sep lo dejó anotado como pendiente.
+  Por qué: el 98,9% del tráfico de /medicos es móvil y ahí la primera pantalla no
+  tiene formulario. Registra 13,0% de las visitas contra ~21,6% de
+  /casos-de-estudio, que lo muestra de entrada — pero esa comparación mezcla
+  páginas, anuncios y audiencias distintas, así que no prueba nada. Este test sí.
 
-  Los dos archivos son idénticos salvo ese bloque: 38.598 contra 38.616 bytes.
-  Si pesaran distinto se estaría midiendo velocidad, no copy.
+  En escritorio los dos brazos son idénticos (el formulario ya está a la vista),
+  y es el 1% del tráfico. KPI y reglas de decisión: entrada del 24-sep en
+  BITACORA.md.
 */
+function testMedicos(url: URL, cookie: string) {
+  // Cookie y etiquetas ESTRENADAS, por la misma razón que el test de hero: `MOD` e
+  // `INL` no aparecen nunca en `OptIn.variant` (hay VA, RES, MET, A, B y C) y los
+  // 242 opt-ins históricos de médicos tienen la columna vacía.
+  const previa = /(?:^|;\s*)ab_med=(MOD|INL)/.exec(cookie)?.[1];
 
-// Igual que en los dos tests anteriores: sólo tráfico pago. El orgánico rebota
-// muy por debajo del pago y mezclarlos diluye el segmento que se quiere leer.
-// El orgánico ve el control y no gasta un lugar del experimento.
+  let variante = previa;
+  let reciénAsignada = false;
+
+  if (!variante) {
+    if (!esTraficoDeAds(url)) return next();
+    variante = Math.random() < 0.5 ? "MOD" : "INL";
+    reciénAsignada = true;
+  }
+
+  // MOD es la página tal cual: `next()` sirve medicos/index.html.
+  const res =
+    variante === "INL" ? rewrite(new URL("/medicos/formulario-visible", url)) : next();
+
+  if (reciénAsignada) {
+    res.headers.append(
+      "set-cookie",
+      `ab_med=${variante}; Path=/; Max-Age=15552000; SameSite=Lax`,
+    );
+  }
+  return res;
+}
+
+// Sólo tráfico pago, como en todos los tests de este repo: el orgánico rebota muy
+// por debajo del pago y mezclarlos diluye el segmento que se quiere leer. El
+// orgánico ve el control y no gasta un lugar del experimento.
 function esTraficoDeAds(url: URL): boolean {
   // Instagram puede duplicar UTMs y dejar el primer valor vacío. Gana el primer
   // valor no vacío, no `.get()` a ciegas.
@@ -85,42 +119,12 @@ function esTraficoDeAds(url: URL): boolean {
 
 export default async function middleware(req: Request) {
   const url = new URL(req.url);
-  if (url.pathname !== "/casos-de-estudio") return bibliotecaPreview(req, url);
   const cookie = req.headers.get("cookie") ?? "";
 
-  // Cookie ESTRENADA. `ab_ce` (A/B) y `ab_copy` (B/C) siguen vivas 180 días en
-  // navegadores de visitantes viejos: reusar cualquiera de las dos arrastraría
-  // asignaciones de experimentos que ya no existen.
-  //
-  // Y las etiquetas también son nuevas. Los tests 1 y 2 compartieron el nombre
-  // «B» —se estrenó cookie pero no el nombre del brazo— y el día del cruce quedó
-  // ilegible: incluyéndolo ganaba uno, excluyéndolo el otro. `RES`/`MET` no se
-  // usaron nunca, no se confunden entre sí ni con A/B/C, y se leen de un vistazo
-  // en la columna `variant` de la tabla `OptIn`.
-  const previa = /(?:^|;\s*)ab_hero=(RES|MET)/.exec(cookie)?.[1];
-
-  let variante = previa;
-  let reciénAsignada = false;
-
-  if (!variante) {
-    // Sin cookie y sin ser tráfico pago: ve el control y no se marca.
-    if (!esTraficoDeAds(url)) return next();
-    variante = Math.random() < 0.5 ? "RES" : "MET";
-    reciénAsignada = true;
+  if (url.pathname === "/medicos" || url.pathname === "/medicos/") {
+    return testMedicos(url, cookie);
   }
 
-  // rewrite, nunca redirect: la URL sigue siendo /casos-de-estudio, las UTMs
-  // quedan intactas y Meta no ve una redirección que le ensucie el tracking.
-  //
-  // RES no necesita rewrite propio: `next()` continúa al rewrite que ya está en
-  // vercel.json (/casos-de-estudio → /index-fuerza), que es el control.
-  const res = variante === "MET" ? rewrite(new URL("/index-metodo", url)) : next();
-
-  if (reciénAsignada) {
-    res.headers.append(
-      "set-cookie",
-      `ab_hero=${variante}; Path=/; Max-Age=15552000; SameSite=Lax`,
-    );
-  }
-  return res;
+  // Todo lo demás que deja pasar el matcher es de la Ruta.
+  return bibliotecaPreview(req, url);
 }

@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "framework": null,
+  "functions": {
+    "api/genesis/chat/index.js": { "maxDuration": 30 }
+  },
   "redirects": [
     {
       "source": "/",
@@ -179,6 +182,11 @@
       "permanent": false
     },
     {
+      "source": "/casos-de-estudio/",
+      "destination": "/casos-de-estudio",
+      "permanent": true
+    },
+    {
       "source": "/registro-va",
       "destination": "/casos-de-estudio-va",
       "permanent": false
@@ -318,6 +326,10 @@
     {
       "source": "/r/:token",
       "destination": "/biblioteca/verificar/"
+    },
+    {
+      "source": "/pase/:codigo",
+      "destination": "/pase/"
     }
   ]
 }

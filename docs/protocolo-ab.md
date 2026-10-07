@@ -77,19 +77,25 @@ significativa. Es una regla de decisión, no una prueba.
 indistinguible del azar — pero una enorme, no. Se simularon dos versiones **idénticas** para
 ver qué produce la casualidad sola con esa muestra:
 
-| Diferencia observada | Probabilidad de verla por puro azar |
+| Cualquiera de los dos brazos saca… | Probabilidad de verlo por puro azar |
 |---|---|
-| 30% o más | 43% de las veces |
-| 50% o más | 20% de las veces |
-| **100% o más** | **4,7% de las veces** |
+| 30% más que el otro | 50% de las veces |
+| 50% más que el otro | 31% de las veces |
+| **el doble que el otro** | **9% de las veces** |
 
 Por eso: **si un brazo saca el doble de agendas que el otro, eso decide.** Cualquier
-diferencia menor no se mira para decidir, porque casi la mitad de las veces aparece sin que
-haya ninguna diferencia real.
+diferencia menor no se mira para decidir, porque la mitad de las veces aparece sin que haya
+ninguna diferencia real. Aun así, es la regla más débil del protocolo: el doble aparece por
+azar casi una vez de cada once, por encima del 5% que se le exige al opt-in. Antes del
+próximo test hay que decidir si se mantiene o se exige más.
 
-**4. Las ventas no deciden ni así.** Con 8 casos por brazo, incluso una diferencia del 100%
-sale por azar el 11,7% de las veces. Se miran, se anotan, pero no votan. Pasan a la
-ratificación.
+> Corregido el 29-sep-2026. La tabla anterior decía 43%, 20% y 4,7%: mezclaba dos maneras de
+> medir, y el 4,7% era la probabilidad de que **un brazo concreto** doblara al otro. La regla
+> dispara con cualquiera de los dos, así que la cifra que corresponde es el 9%.
+
+**4. Las ventas no deciden ni así.** Con 8 casos por brazo, que cualquiera de los dos brazos
+doble al otro sale por azar el 23% de las veces, casi una de cada cuatro. Se miran, se anotan,
+pero no votan. Pasan a la ratificación.
 
 **El error que esto evita.** Lo intuitivo es pensar: «las agendas ocurren en 3 días, así que
 en 7 ya puedo compararlas». Las agendas efectivamente ocurren — el problema no es el tiempo

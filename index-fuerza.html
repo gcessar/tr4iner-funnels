@@ -46,31 +46,11 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
-  <script>
-    // Test de HERO (10-sep-2026): promesa de RESULTADO (esta página) contra promesa
-    // de MÉTODO (`index-metodo.html`). Una exposición por vista asignada.
-    //
-    // Cookie y etiquetas ESTRENADAS a propósito. Los dos tests anteriores compartieron
-    // el nombre «B» y el día del cruce quedó ilegible: incluyéndolo ganaba uno,
-    // excluyéndolo el otro. `RES`/`MET` no se usaron nunca y no se confunden con
-    // A/B/C ni entre sí. La cookie `ab_hero` tampoco: `ab_ce` y `ab_copy` siguen
-    // vivas 180 días en navegadores de visitantes viejos.
-    //
-    // El informe usa usuarios/sesiones que contienen el evento, NUNCA eventCount.
-    (function () {
-      var match = /(?:^|;\s*)ab_hero=(RES|MET)/.exec(document.cookie);
-      if (!match) return;
-      var variant = match[1];
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-      window.gtag('event', 'ce_hero_exposure_' + variant.toLowerCase(), {
-        send_to: 'G-CGWMFER9V4',
-        experiment_id: 'ce_hero_202609',
-        experiment_variant: variant,
-        non_interaction: true
-      });
-    })();
-  </script>
+  <!-- El evento de exposición `ce_hero_exposure_*` se quitó al cerrar el test de hero
+       el 29-sep-2026 (empate, quedó esta página). Igual que con `ab_copy` en agosto:
+       leía la cookie `ab_hero`, que sigue viva 180 días, así que un visitante con
+       `ab_hero=MET` habría emitido `ce_hero_exposure_met` **estando en RES** y ensuciado
+       la serie del experimento cerrado. El próximo test estrena cookie Y etiquetas. -->
 
   <!-- Indexable a propósito. El `noindex` que traía este archivo servía cuando era
        UNA VARIANTE de un test: ahí sí había que evitar que /index-fuerza compitiera
@@ -636,12 +616,11 @@
       });
     }
     var videoId = window.TR4Track ? window.TR4Track.getVideo() : null;
-    // Test de hero: `variant` vuelve a viajar en el opt-in. Es lo único que permite
-    // separar los registros de cada brazo en la tabla `OptIn` del CRM — el sheet
-    // `LEADS` no tiene esa columna y nunca sirve para leer un A/B.
-    // Sin cookie queda null: el visitante orgánico está fuera del experimento y no
-    // debe mezclarse con ninguno de los dos brazos.
-    var abVariant = (/(?:^|;\s*)ab_hero=(RES|MET)/.exec(document.cookie) || [])[1] || null;
+    // Cerrado el test de hero (29-sep), `variant` deja de viajar en el opt-in: sin dos
+    // brazos no hay nada que separar, y seguir leyendo la cookie `ab_hero` (viva 180
+    // días) marcaría como "MET" a registros que ya vieron RES. Queda null hasta el
+    // próximo test, igual que el tráfico orgánico.
+    var abVariant = null;
     // Redundancia: si no vino utm_content, usamos el video ahí para que GA4/Meta lo vean.
     if (videoId && !utmData.utm_content) utmData.utm_content = videoId;
 

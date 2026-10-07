@@ -15,11 +15,16 @@
 
   <script>
     // Evita el flash de la tipografía AN cuando la confirmación pertenece a Veronika.
+    // Tiene que usar EXACTAMENTE el mismo criterio que `hasVaUtm()` más abajo: si
+    // uno reconoce VA y el otro no, sale el video de Veronika con la tipografía de
+    // Anthoni. Marcador anclado: VA como token entre `-` o `_`.
     (function () {
+      var marcador = /(^|[-_])VA($|[-_])/i;
       var params = new URLSearchParams(window.location.search);
-      var isVA = params.get("funnel") === "VA" || /va/i.test(params.get("funnel_variant") || "");
+      var isVA = (params.get("funnel") || "").trim().toUpperCase() === "VA" ||
+        marcador.test(params.get("funnel_variant") || "");
       params.forEach(function (value, key) {
-        if (key.indexOf("utm_") === 0 && value.toUpperCase().indexOf("-VA-") !== -1) isVA = true;
+        if (key.indexOf("utm_") === 0 && marcador.test(value)) isVA = true;
       });
       if (isVA) document.documentElement.classList.add("va-context");
     })();
@@ -588,11 +593,22 @@
       };
     }
 
+    // Misma definición de "tráfico VA" que /redirectfit4, /fit4 y los dos puentes
+    // del Typeform: VA como token delimitado por `-` o `_`. Esta página usaba una
+    // tercera definición —`-VA-` con guión a los DOS lados— que no reconocía los
+    // valores que más viajan porque terminan en VA: `CASOS-VA`, `STORIES-VA`,
+    // `ROSITA-VA`. Resultado medido sobre el sheet de agendas: 297 de 683 agendas
+    // con marcador VA (43%) veían el video de Anthoni. El marcador anclado además
+    // corrige el falso positivo de `funnel_variant`, que con `/va/i` daba VA ante
+    // cualquier `VARIANTE-A`.
+    const VA_MARKER = /(^|[-_])VA($|[-_])/i;
+
     function hasVaUtm() {
       const urlParams = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
-      if (urlParams.get("funnel") === "VA" || /va/i.test(urlParams.get("funnel_variant") || "")) return true;
+      if ((urlParams.get("funnel") || "").trim().toUpperCase() === "VA") return true;
+      if (VA_MARKER.test(urlParams.get("funnel_variant") || "")) return true;
       for (const [key, value] of urlParams.entries()) {
-        if (key.indexOf("utm_") === 0 && value.toUpperCase().indexOf("-VA-") !== -1) {
+        if (key.indexOf("utm_") === 0 && VA_MARKER.test(value)) {
           return true;
         }
       }

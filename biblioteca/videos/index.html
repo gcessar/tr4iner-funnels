@@ -2506,6 +2506,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/videos/rutina.js?v=20261007-alternativa"></script>
+  <script src="/biblioteca/assets/ruta-chat.js"></script>
   <script>
     (async function () {
       'use strict';
@@ -3958,6 +3959,31 @@
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
       });
 
+      // ── Chat del equipo ─────────────────────────────────────
+      // Sólo para miembros con sesión: el servidor la necesita para saber con
+      // quién habla y hasta dónde puede ofrecer.
+      function setupRutaChat() {
+        if (!memberSession || !window.TR4RutaChat) return;
+        var advisory = document.getElementById('bridge-advisory');
+        var listo = window.TR4RutaChat.init({
+          nombre: String(lead.nombre || '').split(' ')[0],
+          email: lead.email || '',
+          estado: estadoBisagra(),
+          whatsapp: advisory ? advisory.href : null,
+          track: track
+        });
+        if (!listo || !advisory) return;
+        // La segunda salida de la bisagra abre el chat; WhatsApp sigue como
+        // respaldo dentro del propio chat.
+        advisory.removeAttribute('target');
+        advisory.addEventListener('click', function (event) {
+          event.preventDefault();
+          window.TR4RutaChat.open();
+        });
+        var nota = advisory.parentNode.querySelector('small');
+        if (nota) nota.textContent = 'Te respondemos aquí mismo, al instante.';
+      }
+
       // ── Tour de primera entrada ─────────────────────────────
       var TOUR_KEY = 'tr4_tour_genesis_route_v2';
       var tourIndex = 0;
@@ -4090,6 +4116,7 @@
       prepararRuta();
       setupMobileExperience();
       updateBridge();
+      setupRutaChat();
       maybeStartTour();
       showAnnouncement();
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.

@@ -23,10 +23,44 @@
     document.addEventListener("DOMContentLoaded", function () {
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
-      const campaign = urlParams.get("utm_campaign");
-      const isVa = campaign === "TR4INER-VA" || campaign === "CASOS-VA";
-      const destination = isVa ? "/calendly-va" : "/calendly-an";
 
+      // Misma definición de "tráfico VA" que ya aplican /redirectfit4 y /fit4.
+      // Antes se comparaba utm_campaign contra dos valores exactos, y cualquier
+      // otro texto mandaba a la agenda de Anthoni a un lead de Veronika: el
+      // respaldo ROSITA-VA de /testimonio-rosita-va, que viaja cuando el enlace
+      // llega sin UTMs, y cualquier campaña propia que ella estrene.
+      // Typeform sólo reenvía las cinco UTMs, así que funnel/funnel_variant casi
+      // nunca llegan hasta acá; se leen igual porque el puente también se abre
+      // desde enlaces directos que sí los traen.
+      const campaign = (urlParams.get("utm_campaign") || "").trim().toUpperCase();
+      const funnel = (urlParams.get("funnel") || "").trim().toUpperCase();
+      const funnelVariant = (urlParams.get("funnel_variant") || "").trim();
+      const vaMarker = /(^|[-_])VA($|[-_])/i;
+
+      const isVa = campaign === "TR4INER-VA" ||
+        campaign === "CASOS-VA" ||
+        funnel === "VA" ||
+        vaMarker.test(funnelVariant) ||
+        Array.from(urlParams.entries()).some(function (entry) {
+          return entry[0].toLowerCase().indexOf("utm_") === 0 && vaMarker.test(entry[1]);
+        });
+
+      // AN (orgánico y MetaAds) volvió a la agenda de Calendly el 30-sep-2026.
+      // La de Veronika sigue en pausa desde el 26-sep: sus calificados van a su
+      // WhatsApp de ManyChat con el mismo texto que usa /redirectionutmstr4iner,
+      // así ManyChat los recibe igual que siempre. Para devolverla a
+      // /calendly-va basta con pasar esto a false.
+      const AGENDA_VA_PAUSADA = true;
+
+      if (isVa && AGENDA_VA_PAUSADA) {
+        const message = "Hola! Necesito ayuda con mi transformacion fisica y buscaba conocer mas sobre los programas que ofrece Tr4iner.";
+        window.location.replace(
+          "https://api.whatsapp.com/send?phone=15677024560&text=" + encodeURIComponent(message)
+        );
+        return;
+      }
+
+      const destination = isVa ? "/calendly-va" : "/calendly-an";
       window.location.replace(window.location.origin + destination + queryString);
     });
   </script>
