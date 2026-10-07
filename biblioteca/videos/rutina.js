@@ -357,7 +357,7 @@
     if (replaced) options += '<button type="button" class="rt-alt" data-restore><strong>' + esc(ex.originalName) + '<small>El original del entrenador</small></strong><i aria-hidden="true">→</i></button>';
     ex.alternatives.forEach(function (name, i) {
       if (replaced && i === ex.replacementIndex) return;
-      options += '<button type="button" class="rt-alt" data-alternative="' + i + '"><strong>' + esc(name) + '<small>Alternativa del entrenador</small></strong><i aria-hidden="true">→</i></button>';
+      options += '<button type="button" class="rt-alt" data-alternative="' + i + '"><strong>' + esc(name) + '<small>Alternativa a reemplazar</small></strong><i aria-hidden="true">→</i></button>';
     });
     $('rt-replace-options').innerHTML = options;
     $('rt-replace').hidden = false;
