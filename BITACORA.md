@@ -8,6 +8,7 @@
 - `lib/genesis-proxy.js`: `forward()` acepta `body` propio y `timeoutMs`.
 - **n8n:** el agente deja de usar el nodo de memoria Postgres; arma el contexto con el `historial` que llega. Los mensajes viejos de la Ruta en `n8n_chat_histories` (pruebas del preview) no se borraron.
 - **Verificación:** 3 pruebas nuevas en `tests/ruta-chat-log.test.cjs` (memoria al agente, turno guardado con lo que vio la persona, error del agente, CRM caído); 8 de 8 correctas.
+- **Publicado en preview (7-oct):** CRM `4f284f8` Ready con la migración `20261007000000_ruta_chat` aplicada en su rama Neon; funnel `e1290b7` Ready `dpl_9EAKz4bPjLxb5QEM8CFR1kggyc5c` (el aviso de GitHub se perdió tras los 500 del push y la publicación se pidió por API desde el mismo commit de la rama). n8n `bxFzkGlbxYYVdqCH` actualizado: sin el nodo «Memoria», `Preparar` arma el mensaje con el `historial` (va en el mensaje de usuario, no en el de sistema) y las ejecuciones exitosas ya no se guardan (`saveDataSuccessExecution: none`): el registro completo vive en el CRM. Respaldo del workflow anterior en `~/Documents/Ruta Tr4iner/chat-equipo/`. **Falta la prueba de punta a punta** con la clave del equipo y una sesión de miembro.
 
 ## 2026-10-07 — Ruta: módulo «Caso de estudio» con los cuatro casos
 
