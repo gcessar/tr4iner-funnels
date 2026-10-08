@@ -1897,8 +1897,17 @@
         line-height: .98;
         text-wrap: balance;
       }
-      /* Sin la bajada del título (28-sep), la tarjeta deja lugar para su rótulo amarillo. */
-      body:not(.mobile-library-mode) .mobile-focus h1 + .mobile-focus-card { margin-top: 30px; }
+      /* La bajada vuelve el 7-oct, ahora para decir qué hacer con el primer video. */
+      .mobile-focus-lead {
+        max-width: 360px;
+        margin: 14px 0 0;
+        color: var(--ink-soft);
+        font-size: 15px;
+        line-height: 1.5;
+        text-wrap: pretty;
+      }
+      /* La tarjeta deja lugar arriba para su rótulo amarillo. */
+      body:not(.mobile-library-mode) .mobile-focus-lead + .mobile-focus-card { margin-top: 30px; }
       .mobile-focus-card {
         position: relative;
         width: 100%;
@@ -2119,7 +2128,8 @@
     @media (max-width: 640px) and (max-height: 700px) {
       body.mobile-focus-mode .page { align-content: start; }
       .mobile-focus h1 { font-size: clamp(30px, 9vw, 38px); }
-      body:not(.mobile-library-mode) .mobile-focus h1 + .mobile-focus-card { margin-top: 24px; }
+      .mobile-focus-lead { margin-top: 10px; }
+      body:not(.mobile-library-mode) .mobile-focus-lead + .mobile-focus-card { margin-top: 24px; }
       .mobile-focus-card { padding-top: 18px; }
       .mobile-focus-description { margin-top: 10px; }
       .mobile-focus-description ~ .mobile-focus-cta { margin-top: 16px; }
@@ -2253,7 +2263,8 @@
     <div id="program-content" hidden>
       <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
         <p class="mobile-focus-eyebrow">TU RUTA TR4INER</p>
-        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
+        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por aquí.</h1>
+        <p class="mobile-focus-lead">Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
           <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
           <span class="mobile-focus-thumb" id="mobile-focus-thumb">
@@ -2274,7 +2285,7 @@
         <button type="button" class="mobile-show-library" id="mobile-show-library">
           <span class="deck" id="mobile-deck" aria-hidden="true"></span>
           <span class="deck-copy">
-            <strong>MIRA TUS SIGUIENTES PASOS</strong>
+            <strong>VER TUS SIGUIENTES PASOS</strong>
             <small id="mobile-deck-count">Míralos <b>ANTES</b> de ver tu rutina y tus macros, de lo contrario no sabrás cómo llevarlos a cabo.</small>
           </span>
           <i aria-hidden="true">→</i>

@@ -1,5 +1,10 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-07 — Ruta: «{Nombre}, empieza por aquí.» y bajada nueva en el inicio del teléfono
+
+- **A pedido del usuario**, en `work/ruta-hombres-preview`: el título pasa de «{Nombre}, empieza por una sola orientación.» a **«{Nombre}, empieza por aquí.»**; vuelve la bajada debajo (se había quitado el 28-sep) con **«Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.»** (se agregaron las tildes de «cómo» y «qué»); el botón amarillo dice **«VER TUS SIGUIENTES PASOS»** en vez de «MIRA TUS SIGUIENTES PASOS». Con la biblioteca abierta la bajada sigue oculta, como antes.
+- **Verificación:** réplica local, hombre 3 días: a 375×812 y 375×667 todo entra en la primera pantalla (en 667 el botón amarillo termina a 574 px), 24 px entre la bajada y la tarjeta para el rótulo amarillo, sin desborde horizontal.
+
 ## 2026-10-07 — Chat de la Ruta: historial en el CRM y memoria separada de WhatsApp
 
 - **A pedido del usuario**, en `work/ruta-hombres-preview` (+ CRM `work/ruta-drip-paises`, ver su bitácora). Decisiones: el admin ve los chats; **no se avisa** en el chat que se guarda; se guarda sin plazo y, si se elimina un miembro, se borra todo lo suyo; la memoria de la Ruta se separa de la de los bots de WhatsApp.
@@ -1525,6 +1530,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-07` — Ruta: «{Nombre}, empieza por aquí.» y bajada nueva en el inicio del teléfono
 - `2026-10-07` — Chat de la Ruta: historial en el CRM y memoria separada de WhatsApp
 - `2026-10-07` — Ruta: módulo «Caso de estudio» con los cuatro casos
 - `2026-10-07` — Ruta: sin la caja negra de las dos ofertas; chat con botón de ícono
