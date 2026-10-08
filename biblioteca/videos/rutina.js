@@ -155,7 +155,7 @@
   // Hosts de los MP4 de ejercicios: la zona de Bunny y el dominio de Cloudflare R2, que guarda
   // los mismos archivos con la misma estructura. Un host fuera de la lista cae al iframe de
   // Bunny, así que el dominio de R2 tiene que estar acá antes de cargar `r2Host` en el CRM.
-  var VIDEO_HOSTS = [/^[a-z0-9-]+\.b-cdn\.net$/i];
+  var VIDEO_HOSTS = [/^[a-z0-9-]+\.b-cdn\.net$/i, /^video\.mediatr4iner\.com$/i];
   function cdnBase(ex) {
     var host = ex.videoHost || '';
     if (!VIDEO_HOSTS.some(function (re) { return re.test(host); }) || !/^[0-9a-f-]{36}$/i.test(ex.videoId || '')) return null;

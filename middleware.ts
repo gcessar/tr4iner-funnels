@@ -17,8 +17,9 @@ function privatePreview(response: Response) {
   response.headers.set("Vercel-CDN-Cache-Control", "no-store");
   response.headers.set("CDN-Cache-Control", "no-store");
   response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  // Hacia otros dominios sólo viaja el origen, nunca la ruta ni el enlace compartido. Bunny
-  // exige ese origen para servir los videos de ejercicios, que la página reproduce directo.
+  // Hacia otros dominios sólo viaja el origen, nunca la ruta ni el enlace compartido. Bunny y
+  // la regla de Cloudflare de video.mediatr4iner.com (R2) exigen ese origen para servir los
+  // videos de ejercicios, que la página reproduce directo.
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   // También bloquea los píxeles noscript: ni el navegador sin JavaScript cuenta como un lead real.
   response.headers.set("Content-Security-Policy", [
@@ -26,10 +27,10 @@ function privatePreview(response: Response) {
     "script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com https://iframe.mediadelivery.net https://player.mediadelivery.net",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https://i.ytimg.com https://*.b-cdn.net https://*.mediadelivery.net",
-    "connect-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.b-cdn.net https://*.mediadelivery.net",
+    "img-src 'self' data: blob: https://i.ytimg.com https://*.b-cdn.net https://*.mediadelivery.net https://video.mediatr4iner.com",
+    "connect-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.b-cdn.net https://*.mediadelivery.net https://video.mediatr4iner.com",
     "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://iframe.mediadelivery.net https://player.mediadelivery.net",
-    "media-src 'self' blob: https://*.b-cdn.net https://*.mediadelivery.net",
+    "media-src 'self' blob: https://*.b-cdn.net https://*.mediadelivery.net https://video.mediatr4iner.com",
     "worker-src 'self'", "manifest-src 'self'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'self'"
   ].join("; "));
   return response;
