@@ -152,9 +152,42 @@
       '<div class="rt-verror" hidden><p>No se pudo cargar el video. Revisa tu conexión.</p><button type="button" data-vretry>Reintentar</button></div>' +
     '</div>';
   }
+  // Hosts de los MP4 de ejercicios: la zona de Bunny y el dominio de Cloudflare R2, que guarda
+  // los mismos archivos con la misma estructura. Un host fuera de la lista cae al iframe de
+  // Bunny, así que el dominio de R2 tiene que estar acá antes de cargar `r2Host` en el CRM.
+  var VIDEO_HOSTS = [/^[a-z0-9-]+\.b-cdn\.net$/i];
   function cdnBase(ex) {
-    if (!/^[a-z0-9-]+\.b-cdn\.net$/i.test(ex.videoHost || '') || !/^[0-9a-f-]{36}$/i.test(ex.videoId || '')) return null;
-    return 'https://' + ex.videoHost + '/' + ex.videoId + '/';
+    var host = ex.videoHost || '';
+    if (!VIDEO_HOSTS.some(function (re) { return re.test(host); }) || !/^[0-9a-f-]{36}$/i.test(ex.videoId || '')) return null;
+    return 'https://' + host + '/' + ex.videoId + '/';
+  }
+
+  // ── Medición de los videos de ejercicios ──
+  // El clip va en bucle mientras se hace la serie: «% visto» no dice nada. Se cuentan
+  // reproducciones (cada play) y segundos con el video corriendo y la página a la vista, y
+  // el CRM los suma por miembro. Es nuestra, no del proveedor: no cambia al pasar a R2.
+  var vistas = {};
+  function medir(ex, plays, segundos) {
+    var v = vistas[ex.videoId] || (vistas[ex.videoId] = { exercise: ex.name, plays: 0, seconds: 0 });
+    v.plays += plays; v.seconds += segundos;
+    if (v.seconds >= 20) enviarVistas(false);
+  }
+  function enviarVistas(todo) {
+    Object.keys(vistas).forEach(function (videoId) {
+      var v = vistas[videoId];
+      if (!todo && v.seconds < 20) return;
+      // El CRM acepta hasta 120 s por envío; lo que sobra (p. ej. lo juntado sin red) va en el próximo.
+      var envio = { videoId: videoId, exercise: v.exercise, plays: v.plays, seconds: Math.min(120, todo ? Math.round(v.seconds) : Math.floor(v.seconds)) };
+      if (!envio.plays && !envio.seconds) return;
+      v.plays = 0; v.seconds = Math.max(0, v.seconds - envio.seconds);
+      // keepalive: el envío sobrevive aunque se cierre la hoja o la pestaña.
+      fetch('/api/genesis/exercise-view', { method: 'POST', credentials: 'same-origin', keepalive: true,
+        headers: { 'content-type': 'application/json' }, body: JSON.stringify(envio) })
+        .catch(function () {
+          // Sin red (el gimnasio): se guarda para el próximo envío en vez de perderlo.
+          var actual = vistas[videoId]; actual.plays += envio.plays; actual.seconds += envio.seconds;
+        });
+    });
   }
 
   // ── Reproductor de ejercicios ──
@@ -191,7 +224,16 @@
         cancelAnimationFrame(box.raf); tick();
       });
       video.addEventListener('waiting', function () { box.classList.add('is-loading'); });
+      // `play` sale sólo al dar play (no al volver del buffer ni en cada vuelta del bucle).
+      video.addEventListener('play', function () { box.visto = video.currentTime; medir(ex, 1, 0); });
+      video.addEventListener('timeupdate', function () {
+        var avance = video.currentTime - (box.visto || 0);
+        box.visto = video.currentTime;
+        // Un salto hacia atrás es la vuelta del bucle y uno grande es un adelanto: no suman.
+        if (avance > 0 && avance < 1.5 && !document.hidden) medir(ex, 0, avance);
+      });
       video.addEventListener('pause', function () {
+        enviarVistas(true);
         box.classList.remove('is-playing', 'is-loading'); box.classList.add('is-paused');
         box.querySelector('[data-vplay]').setAttribute('aria-label', 'Reproducir la demostración');
         cancelAnimationFrame(box.raf);
@@ -506,6 +548,7 @@
       bindSheet();
       warmCdn();
       document.addEventListener('visibilitychange', function () { if (document.hidden) pauseAll(null); });
+      window.addEventListener('pagehide', function () { enviarVistas(true); });
       placeTrigger();
       var mq = window.matchMedia('(max-width: 640px)');
       if (mq.addEventListener) mq.addEventListener('change', placeTrigger); else mq.addListener(placeTrigger);
