@@ -9,7 +9,11 @@
   - **Medición nueva (pedido del usuario: tener los KPIs en el CRM):** el `<video>` cuenta reproducciones (evento `play`, que no se repite al volver del buffer ni en cada vuelta del bucle) y segundos reproducidos con la página visible (avances de `timeupdate` entre 0 y 1,5 s, así que el salto del bucle no suma).
   - Lo acumulado se manda a `POST /api/genesis/exercise-view` (proxy nuevo en `api/genesis/exercise-view/`) al llegar a 20 s, al pausar, al cerrar la hoja y en `pagehide`, con `keepalive`. Sin red se guarda para el próximo envío. Script a `20261008-medicion`.
 - **Verificación:** réplica local con la lógica del CRM de esta rama (hombre 3 días). Como Bunny responde 403 a `localhost`, la réplica sirvió el MP4 con el referer de producción. 32,1 s reproducidos se registraron como 1 reproducción + 20 s (envío automático) + 12 s (al cerrar la hoja); pausar a los 12,9 s guardó 13 s. Sin errores de consola. 8 tests del funnel correctos.
-- **Pendiente:** que el usuario cree la cuenta de Cloudflare, registre el dominio, cree el bucket `ruta-videos` y el token de R2, y corra `crm-ventas/scripts/copiar-ejercicios-bunny-r2.mjs`. Después se suma el dominio a `VIDEO_HOSTS` y a la CSP del preview (`middleware.ts`), se carga `r2Host`, se integra en `work/ruta-hombres-preview` y se prueba en el teléfono. Nada en producción.
+- **Dominio (8-oct):** el usuario registró **`mediatr4iner.com`** en Cloudflare, con los nameservers ya en Cloudflare (`ace`/`nelci`). Los videos se sirven en **`video.mediatr4iner.com`**, que ya está en `VIDEO_HOSTS` y en la CSP del preview (`middleware.ts`). No cambia nada mientras el CRM no cargue `r2Host`. Script a `20261008-r2`.
+- **Pendiente:**
+  - Que el usuario cree el bucket `ruta-videos`, le conecte `video.mediatr4iner.com`, arme la regla de caché y la WAF de referer, cree el token de R2 y corra `crm-ventas/scripts/copiar-ejercicios-bunny-r2.mjs`.
+  - Después: verificar, cargar `r2Host`, integrar en `work/ruta-hombres-preview` y probar en el teléfono.
+  - Nada en producción.
 
 ## 2026-10-07 — Ruta: «{Nombre}, empieza por aquí.» y bajada nueva en el inicio del teléfono
 
