@@ -4,6 +4,7 @@
 
 - **A pedido del usuario**, en `work/ruta-hombres-preview`: el título pasa de «{Nombre}, empieza por una sola orientación.» a **«{Nombre}, empieza por aquí.»**; vuelve la bajada debajo (se había quitado el 28-sep) con **«Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.»** (se agregaron las tildes de «cómo» y «qué»); el botón amarillo dice **«VER TUS SIGUIENTES PASOS»** en vez de «MIRA TUS SIGUIENTES PASOS». Con la biblioteca abierta la bajada sigue oculta, como antes.
 - **Verificación:** réplica local, hombre 3 días: a 375×812 y 375×667 todo entra en la primera pantalla (en 667 el botón amarillo termina a 574 px), 24 px entre la bajada y la tarjeta para el rótulo amarillo, sin desborde horizontal.
+- **Título y bajada según el avance (a pregunta del usuario):** eran fijos y seguían diciendo «empieza… mira este video primero» cuando la tarjeta ya mostraba el segundo video. Ahora siguen al rótulo (`esPasoUno()` en `renderNextCard`): Paso 1 → «{Nombre}, empieza por aquí.» + la bajada de arriba; si ya empezó o terminó algún video → **«{Nombre}, sigue por aquí.»** + **«Este es tu siguiente video. Míralo para seguir avanzando en orden en tu Ruta Tr4iner.»** (texto elegido por el usuario). Sin nombre, el título arranca con mayúscula. Réplica: sin videos vistos sale el primero; con la bienvenida vista, «sigue por aquí» sobre «Tu rutina de 3 días» y rótulo «Continuar viendo donde te quedaste».
 
 ## 2026-10-07 — Chat de la Ruta: historial en el CRM y memoria separada de WhatsApp
 

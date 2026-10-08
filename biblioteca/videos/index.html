@@ -2263,8 +2263,8 @@
     <div id="program-content" hidden>
       <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
         <p class="mobile-focus-eyebrow">TU RUTA TR4INER</p>
-        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por aquí.</h1>
-        <p class="mobile-focus-lead">Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.</p>
+        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span><span id="mobile-focus-title-text">empieza por aquí.</span></h1>
+        <p class="mobile-focus-lead" id="mobile-focus-lead">Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
           <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
           <span class="mobile-focus-thumb" id="mobile-focus-thumb">
@@ -3896,6 +3896,13 @@
         document.getElementById('nx-description').textContent = signal.description;
         document.getElementById('nx-category').textContent = signal.category;
         document.getElementById('mobile-focus-name').textContent = first ? first + ', ' : '';
+        // El título y la bajada siguen al rótulo: «empieza» sólo antes del primer
+        // video; después la tarjeta ya muestra el que sigue (7-oct).
+        var titulo = pasoUno ? 'empieza por aquí.' : 'sigue por aquí.';
+        document.getElementById('mobile-focus-title-text').textContent = first ? titulo : titulo.charAt(0).toUpperCase() + titulo.slice(1);
+        document.getElementById('mobile-focus-lead').textContent = pasoUno
+          ? 'Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.'
+          : 'Este es tu siguiente video. Míralo para seguir avanzando en orden en tu Ruta Tr4iner.';
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
