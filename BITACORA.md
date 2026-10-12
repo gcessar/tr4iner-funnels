@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-12 — Ruta: los videos de ejercicios pasan a Cloudflare R2 en el preview
+
+- **Qué:** con los 57 clips copiados y verificados en `video.mediatr4iner.com`, el CRM carga `r2Host` y la rutina los reproduce desde R2. Esta página no cambia: `VIDEO_HOSTS` y la CSP del preview ya aceptaban el host desde el 8-oct. Detalle de la configuración de Cloudflare y de la copia en la bitácora del CRM (misma fecha).
+- **Integración:** `work/ruta-videos-r2` se integra en `work/ruta-hombres-preview` sin mezcla (la rama del preview no se había movido), y la del CRM en `work/ruta-drip-paises`. Producción intacta.
+- **Pendiente:**
+  - Probar en iPhone y Android reales que los clips arranquen al toque y que la regla de referer no corte nada. Si un teléfono no manda el origen, el clip da 403 igual que en Bunny; se arregla permitiendo el referer vacío.
+  - Mirar en el panel la medición «Videos de ejercicios».
+  - Pedir el `colo` desde Lima y otros países.
+  - Más adelante: lecciones a R2, testimonios y cierre de la biblioteca 658343 de Bunny (después de unos 30 días de respaldo, con OK del usuario).
+
 ## 2026-10-08 — Ruta: videos de ejercicios listos para pasar de Bunny a Cloudflare R2, y medición de reproducciones
 
 - **Decisión del usuario (plan aprobado el 8-oct):** los videos de la Ruta van a **Cloudflare R2**, no a Stream. El 2-oct se comparó Bunny contra **Stream**, que cobra por minuto visto ($1 cada 1.000) y sube con cada usuario. R2 no cobra salida de datos. Con 10.000 miembros × 60 min se estima **~$1–5/mes contra ~$261 en Bunny y ~$600 en Stream**. Dominio **nuevo sólo para videos**, registrado en Cloudflare: `media.tr4iner.com` exigía mudar los DNS de `tr4iner.com` desde IONOS (correo de Google, Brevo, Vercel, ActiveCampaign y 7 verificaciones). Se verificó: los términos de Cloudflare permiten video guardado en R2 (Developer Platform); el CNAME parcial exige plan Business y la zona de subdominio, Enterprise. Plan completo y fuentes en `~/.claude/plans/investiga-sobre-como-tendriamos-radiant-pillow.md`.
