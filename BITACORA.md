@@ -46,6 +46,11 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
   `/testimonio-flor` en producción (crudo, `@` literal, `fbp`). El formulario aparece y el
   iframe carga; sin errores propios (los dos que se ven son los envíos de ManyChat que la prueba
   corta a propósito, igual en producción).
+- **Publicado** con OK del usuario: `main` en `61aa361`, deployment
+  `dpl_9vULDv6dL6xRSHsL1i77CB3DaGdx` **Ready**. En producción las cuatro tienen el fondo y la
+  placa nuevos; el formulario aparece, el Typeform carga con los `hidden` crudos (campaña con
+  corchetes, `@` literal, `rango_edad`); los enlaces legales van a `tr4iner.com` y siguen en
+  `noindex, nofollow`.
 
 ## 2026-10-13 — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
 
