@@ -40,6 +40,10 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
   elegidos y nombre y correo mal cargados, la validación marca los dos campos y el botón dice
   «Ver el caso de Flor»; la prueba cortaba cualquier POST y **no salió ningún registro** a n8n
   ni al CRM (sólo beacons de analítica).
+- **Publicado** con OK del usuario: `main` en `588874b`, deployment
+  `dpl_AL3RvyV8nENJQBVranUGJTKZPkGs` **Ready** (sale también el arreglo de grises de las páginas
+  de agenda). En producción: fondo `#F2F3F5`, placa del formulario, `index` y canonical
+  intactos, y al elegir Hombre + más de 35 el botón dice «Ver el caso de Christian».
 - **Para leer el efecto:** no es un test aleatorio. Comparar el opt-in de las semanas
   siguientes con el ~20% del test de hero orienta, pero no prueba causa.
 
