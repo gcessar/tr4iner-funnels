@@ -26,6 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="preconnect" href="https://video.mediatr4iner.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261002-accesos" />
 
@@ -712,11 +713,13 @@
       aspect-ratio: 16 / 9;
       background: #000;
     }
-    .player-frame iframe {
+    .player-frame iframe,
+    .player-frame video {
       width: 100%;
       height: 100%;
       display: block;
       border: none;
+      background: #000;
     }
     .player-bar {
       display: flex;
@@ -2699,7 +2702,10 @@
                     thumb: content.thumbnail || null,
                     description: content.description || '',
                     resources: Array.isArray(content.resources) ? content.resources : [],
-                    intentLevel: content.intentLevel
+                    intentLevel: content.intentLevel,
+                    // Lección que ya salió de YouTube: la versión de R2 de su sexo y edad. Sólo
+                    // se acepta el dominio de videos; cualquier otra cosa sigue por YouTube.
+                    video: content.video && /^https:\/\/video\.mediatr4iner\.com\/[a-z0-9][a-z0-9\/-]*\/$/.test(content.video.base || '') ? content.video : null
                   });
                 });
               });
@@ -3378,7 +3384,8 @@
             if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
             var d = ytPlayer.getDuration();
             var t = ytPlayer.getCurrentTime();
-            if (document.visibilityState === 'visible' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) watchedDelta += 5;
+            var reproduciendo = ytPlayer.reproduciendo ? ytPlayer.reproduciendo() : ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+            if (document.visibilityState === 'visible' && reproduciendo) watchedDelta += 5;
             if (watchedDelta >= 20) pushProgress(v, false);
             if (d > 0 && t / d >= 0.85) {
               pushProgress(v, false);
@@ -3386,6 +3393,50 @@
             }
           } catch (e) { /* player en transición */ }
         }, 5000);
+      }
+
+      // Lecciones en R2 (13-oct): <video> propio. Expone lo mismo que la medición le pide al
+      // reproductor de YouTube (duración, posición, si reproduce, destruir), así el avance, el
+      // 85 % y la reanudación funcionan igual y siguen atados a la misma lección.
+      function calidadLeccion() {
+        var red = navigator.connection || {};
+        if (red.saveData || /(^|-)2g|3g/.test(red.effectiveType || '')) return '360p';
+        var alto = playerFrame.getBoundingClientRect().height || 360;
+        // El alto del cuadro contra los píxeles reales de la pantalla: nítido sin bajar de más.
+        return alto * Math.min(window.devicePixelRatio || 1, 3) > 500 ? '720p' : '480p';
+      }
+      function nativePlayer(v) {
+        var el = document.createElement('video');
+        el.controls = true;
+        el.playsInline = true;
+        el.setAttribute('webkit-playsinline', '');
+        el.preload = 'auto';
+        el.poster = v.thumb || (v.video.base + 'thumbnail.jpg');
+        el.src = v.video.base + 'play_' + calidadLeccion() + '.mp4';
+        playerFrame.innerHTML = '';
+        playerFrame.appendChild(el);
+        el.addEventListener('loadedmetadata', function () {
+          var saved = remoteProgress[v.id];
+          if (saved && saved.lastPositionSeconds > 5 && saved.maxPercent < 95) {
+            try { el.currentTime = saved.lastPositionSeconds; } catch (e) { /* todavía sin rangos */ }
+          }
+        }, { once: true });
+        el.addEventListener('playing', function () { startPoll(v); });
+        el.addEventListener('ended', function () {
+          pushProgress(v, false);
+          completarAuto(v);
+          stopPoll();
+        });
+        // El toque que abrió la lección habilita el sonido; si el navegador igual lo frena,
+        // queda el botón de play del propio video.
+        var intento = el.play();
+        if (intento && intento.catch) intento.catch(function () { /* sin autoplay */ });
+        return {
+          getDuration: function () { return el.duration || 0; },
+          getCurrentTime: function () { return el.currentTime || 0; },
+          reproduciendo: function () { return !el.paused && !el.ended; },
+          destroy: function () { el.pause(); el.removeAttribute('src'); el.load(); }
+        };
       }
 
       function plainIframe(v) {
@@ -3537,6 +3588,7 @@
         document.body.classList.add('mobile-video-playing');
         player.showModal();
         syncModalState();
+        if (v.video) { ytPlayer = nativePlayer(v); return; }
         loadYT(function (ok) {
           if (myOpen !== openId || !player.open) return;
           if (ok) {
