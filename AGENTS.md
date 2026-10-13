@@ -216,6 +216,15 @@ El teléfono, que la landing no pide, sale del `hidden` de Typeform y es el úni
 las agendas de WhatsApp — sin él se subcuenta más de la mitad. Script de lectura:
 `crm-ventas/scripts/ab-copy-variant-embudo.ts`.
 
+## Videos en Cloudflare R2 (regla del usuario, 13-oct-2026)
+
+Todo video que se suba a R2 (`video.mediatr4iner.com`) y se muestre en **cualquier** proyecto de TR4INER: **ningún usuario lo puede descargar ni hacer clic derecho sobre él.**
+
+- Sin `controls` del navegador (traen «Descargar» y «Guardar video como»). El reproductor de referencia es `.lv` / `nativePlayer()` de `biblioteca/videos/index.html`: el diseño de los videos de la rutina (play negro con triángulo y anillo amarillos, barra amarilla) y **la única opción de menú es la velocidad**.
+- Siempre `controlslist="nodownload noremoteplayback"`, `disablepictureinpicture`, `disableremoteplayback`, y `preventDefault()` en `contextmenu` y `dragstart`.
+- Eso saca toda forma visible de descargar, pero la URL del MP4 se puede copiar desde las herramientas del navegador. La regla WAF del dominio y la decisión sobre URLs firmadas están en `BITACORA.md`.
+- Se sube con `crm-ventas/scripts/subir-videos-r2.mjs`, en carpetas legibles (`--prefijo`, `--nombre`), nunca arrastrando archivos al panel de Cloudflare.
+
 ## Convenciones
 
 - **Comentarios:** el **porqué**, en español rioplatense.
