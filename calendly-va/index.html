@@ -19,12 +19,24 @@
   <meta name="description" content="Elige el horario de tu sesión de evaluación con el equipo de TR4INER." />
   <link rel="canonical" href="https://metodo.tr4iner.com/calendly-va/" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://calendly.com" />
+  <link rel="preconnect" href="https://assets.calendly.com" crossorigin />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
   <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@300;500;900&family=Poppins:wght@500&display=swap" rel="stylesheet" />
+  <!-- Las mismas familias que antes servía Google (Poppins 500, Instrument Sans, JetBrains
+       Mono), desde el propio sitio: sin la hoja bloqueante ni la cadena googleapis → gstatic,
+       que pesa en los navegadores de Instagram y Facebook. Montserrat salía: estaba detrás de
+       Poppins en el fallback y nunca se veía. -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/poppins-normal-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/instrument-sans-normal-latin.woff2" crossorigin>
+  <style>
+  @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url(/assets/fonts/instrument-sans-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+  @font-face{font-family:'Instrument Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url(/assets/fonts/instrument-sans-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400 600;font-display:swap;src:url(/assets/fonts/jetbrains-mono-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+  @font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/poppins-normal-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+  @font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url(/assets/fonts/poppins-normal-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+  </style>
 
   <style>
       :root {
@@ -40,8 +52,16 @@
         --rust: #B87355;
         --yellow: #F5C518;
         --max: 900px;
+        /* Superficie única: los bloques se separan por aire, no por líneas. La placa del video
+           es del mismo color que el fondo y se despega sólo con luz y sombra (neumorfismo). */
+        --surface: #FAF7F2;
+        --neu-dark: rgba(120, 92, 58, 0.17);
+        --neu-dark-soft: rgba(120, 92, 58, 0.11);
+        --neu-light: #FFFFFF;
+        --radius-plate: 26px;
+        --radius-soft: 16px;
         --gutter: clamp(14px, 4vw, 28px);
-        --serif: "Poppins", "Montserrat", Arial, sans-serif;
+        --serif: "Poppins", Arial, sans-serif;
         --sans: "Instrument Sans", -apple-system, sans-serif;
         --mono: "JetBrains Mono", ui-monospace, monospace;
         --display-weight: 500;
@@ -69,7 +89,7 @@
       body {
         min-height: 100dvh;
         overflow-x: hidden;
-        background: var(--bg);
+        background: var(--surface);
         color: var(--ink);
         font-family: var(--sans);
         font-size: 17px;
@@ -115,66 +135,12 @@
       .page {
         width: min(100%, var(--max));
         margin: 0 auto;
-        padding: calc(20px + env(safe-area-inset-top)) var(--gutter) calc(62px + env(safe-area-inset-bottom));
-      }
-
-      .masthead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 36px;
-        padding: 0 10px 14px;
-        border-bottom: 1px solid var(--rule);
-        font-family: var(--mono);
-        font-size: var(--meta-size);
-        font-weight: var(--meta-weight);
-        line-height: 1;
-        letter-spacing: var(--meta-tracking);
-        text-transform: uppercase;
-        white-space: nowrap;
-      }
-
-      .masthead-date {
-        color: var(--muted);
-        font-weight: 400;
-      }
-
-      .masthead-date::before {
-        content: "";
-        display: inline-block;
-        width: 5px;
-        height: 5px;
-        margin: 0 9px 1px 0;
-        border-radius: 50%;
-        background: rgba(184, 115, 85, 0.58);
+        padding: calc(clamp(28px, 7vw, 72px) + env(safe-area-inset-top)) var(--gutter) calc(48px + env(safe-area-inset-bottom));
       }
 
       .hero {
         max-width: 760px;
         margin-bottom: 28px;
-      }
-
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
-        color: var(--rust);
-        font-family: var(--mono);
-        font-size: var(--meta-size);
-        font-weight: var(--meta-weight);
-        letter-spacing: var(--meta-tracking);
-        text-transform: uppercase;
-      }
-
-      .status::before {
-        content: "";
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--rust);
-        animation: statusPulse 2.2s ease-in-out infinite;
       }
 
       h1 {
@@ -204,15 +170,14 @@
         text-wrap: pretty;
       }
 
-      .video-card,
-      .proof-card {
-        border: 1px solid var(--rule-strong);
-        background: rgba(255, 253, 248, 0.35);
-      }
-
       .video-card {
-        margin-top: 28px;
-        padding: 14px;
+        margin-top: clamp(28px, 5vw, 44px);
+        padding: 12px;
+        border-radius: var(--radius-plate);
+        background: var(--surface);
+        box-shadow:
+          20px 20px 44px var(--neu-dark),
+          -20px -20px 44px var(--neu-light);
       }
 
       .section-label {
@@ -241,8 +206,9 @@
         min-height: 0;
         overflow: hidden;
         aspect-ratio: 16 / 9;
-        border: 1px solid var(--rule-strong);
+        border-radius: calc(var(--radius-plate) - 12px);
         background: #111;
+        isolation: isolate;
       }
 
       .video-container > div {
@@ -253,32 +219,7 @@
       }
 
       .agenda-panel {
-        position: relative;
-        margin-top: 18px;
-        overflow: hidden;
-        padding: 26px 28px 28px;
-        border: 1px solid var(--rule-strong);
-        border-top: 2px solid rgba(184, 115, 85, 0.72);
-        background:
-          repeating-linear-gradient(
-            to bottom,
-            transparent 0,
-            transparent 43px,
-            rgba(10, 10, 10, 0.035) 43px,
-            rgba(10, 10, 10, 0.035) 44px
-          ),
-          var(--bg-deeper);
-      }
-
-      .agenda-panel::after {
-        content: "";
-        position: absolute;
-        top: 11px;
-        right: 11px;
-        width: 8px;
-        height: 8px;
-        border-top: 1px solid rgba(184, 115, 85, 0.72);
-        border-right: 1px solid rgba(184, 115, 85, 0.72);
+        margin-top: clamp(30px, 5vw, 44px);
       }
 
       .agenda-action {
@@ -296,16 +237,22 @@
         min-height: 58px;
         padding: 10px 12px 10px 20px;
         border: 0;
-        border-radius: 2px;
+        border-radius: var(--radius-soft);
         background: var(--ink);
         color: #F5F1E5;
+        box-shadow: 0 18px 32px -16px rgba(10, 10, 10, 0.55);
         cursor: pointer;
         font-family: var(--sans);
         font-size: 14px;
         font-weight: 650;
         letter-spacing: 0.07em;
         text-transform: uppercase;
-        transition: color 220ms ease, transform 220ms ease;
+        transition: color 220ms ease, transform 220ms ease, box-shadow 220ms ease;
+      }
+
+      .calendar-button:active {
+        transform: translateY(1px);
+        box-shadow: 0 10px 22px -14px rgba(10, 10, 10, 0.55);
       }
 
       .calendar-button:hover {
@@ -339,9 +286,7 @@
       }
 
       .proof-card {
-        margin-top: 26px;
-        overflow: hidden;
-        padding: 18px;
+        margin-top: clamp(64px, 11vw, 104px);
       }
 
       .proof-head {
@@ -349,7 +294,7 @@
         align-items: end;
         justify-content: space-between;
         gap: 18px;
-        margin-bottom: 15px;
+        margin-bottom: 22px;
       }
 
       .proof-card h2 {
@@ -381,30 +326,37 @@
 
       .carousel-controls button {
         display: grid;
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
         place-items: center;
-        border: 1px solid var(--rule-strong);
+        border: 0;
         border-radius: 50%;
-        background: var(--bg);
+        background: var(--surface);
         color: var(--ink);
+        box-shadow:
+          5px 5px 12px var(--neu-dark-soft),
+          -5px -5px 12px var(--neu-light);
         cursor: pointer;
         font-family: var(--serif);
         font-size: 21px;
         line-height: 1;
-        transition: background 180ms ease, color 180ms ease;
+        transition: box-shadow 180ms ease;
       }
 
-      .carousel-controls button:hover {
-        background: var(--ink);
-        color: var(--bg);
+      .carousel-controls button:hover,
+      .carousel-controls button:active {
+        box-shadow:
+          inset 4px 4px 9px var(--neu-dark-soft),
+          inset -4px -4px 9px var(--neu-light);
       }
 
       .story-carousel {
         display: flex;
-        gap: 12px;
+        gap: 14px;
         overflow-x: auto;
-        padding-bottom: 8px;
+        /* El relleno deja ver la sombra de las tarjetas, que el overflow recortaría al ras. */
+        margin-top: -10px;
+        padding: 10px 0 26px;
         scroll-behavior: smooth;
         scroll-snap-type: x mandatory;
         scrollbar-width: none;
@@ -419,10 +371,11 @@
         flex: 0 0 clamp(210px, 22vw, 240px);
         min-height: 0;
         overflow: hidden;
-        border: 1px solid var(--rule);
-        border-radius: 2px;
-        background: var(--bg-deeper);
+        border: 0;
+        border-radius: 13px;
+        background: transparent;
         color: var(--ink);
+        box-shadow: 0 16px 28px -18px var(--neu-dark);
         cursor: pointer;
         scroll-snap-align: start;
         text-align: left;
@@ -443,7 +396,6 @@
         height: auto;
         aspect-ratio: 50 / 74;
         object-fit: contain;
-        background: var(--bg-deeper);
       }
 
       .story-card div {
@@ -473,9 +425,7 @@
       }
 
       .fine-print {
-        margin-top: 30px;
-        padding-top: 15px;
-        border-top: 1px solid var(--rule);
+        margin-top: clamp(48px, 9vw, 80px);
         color: var(--muted-2);
         font-family: var(--mono);
         font-size: 9.5px;
@@ -483,6 +433,18 @@
         letter-spacing: 0.1em;
         text-align: center;
         text-transform: uppercase;
+      }
+
+      .fine-print a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: transparent;
+        text-underline-offset: 3px;
+        transition: text-decoration-color 180ms ease;
+      }
+
+      .fine-print a:hover {
+        text-decoration-color: currentColor;
       }
 
       .mobile-book {
@@ -502,10 +464,18 @@
         color: #F5F1E5;
         box-shadow: 0 18px 50px rgba(10, 10, 10, 0.22);
         cursor: pointer;
+        transition: opacity 240ms ease, transform 240ms ease;
         font-family: var(--mono);
         font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.03em;
+      }
+
+      /* Mientras el botón principal está a la vista no hace falta un segundo «Elegir horario». */
+      .mobile-book.is-tucked {
+        opacity: 0;
+        transform: translateY(18px);
+        pointer-events: none;
       }
 
       .mobile-book b {
@@ -619,23 +589,13 @@
         line-height: 1;
       }
 
-      @keyframes statusPulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.35; transform: scale(0.82); }
-      }
 
       @media (max-width: 760px) {
         .page {
-          padding-top: calc(18px + env(safe-area-inset-top));
-          padding-bottom: calc(88px + env(safe-area-inset-bottom));
+          padding-top: calc(26px + env(safe-area-inset-top));
+          padding-bottom: calc(96px + env(safe-area-inset-bottom));
         }
 
-        .masthead {
-          gap: 10px;
-          margin-bottom: 32px;
-          font-size: 8px;
-          letter-spacing: 0.13em;
-        }
 
         .hero {
           margin-bottom: 20px;
@@ -646,12 +606,20 @@
         }
 
         .video-card {
-          margin-top: 22px;
+          margin-top: 24px;
           padding: 8px;
+          border-radius: 20px;
+          box-shadow:
+            12px 12px 26px var(--neu-dark),
+            -12px -12px 26px var(--neu-light);
+        }
+
+        .video-container {
+          border-radius: 13px;
         }
 
         .agenda-panel {
-          padding: 20px 14px 22px;
+          margin-top: 26px;
         }
 
         .calendar-button {
@@ -663,6 +631,13 @@
         .proof-head {
           align-items: start;
           flex-direction: column;
+        }
+
+        /* En el celular el carrusel va de borde a borde, con la primera tarjeta alineada al texto. */
+        .story-carousel {
+          margin-inline: calc(var(--gutter) * -1);
+          padding-inline: var(--gutter);
+          scroll-padding-inline: var(--gutter);
         }
 
         .story-card {
@@ -684,10 +659,6 @@
       }
 
       @media (max-width: 390px) {
-        .masthead {
-          font-size: 7.4px;
-          letter-spacing: 0.11em;
-        }
 
         h1 {
           font-size: 35px;
@@ -720,16 +691,13 @@
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
   <a class="skip-link" href="#main-content">Saltar al contenido</a>
   <main class="page" id="main-content">
-    <header class="masthead"><span>Veronika Alvarado / Estudio</span><span class="masthead-date">Agenda privada</span></header>
 
     <section class="hero" aria-labelledby="hero-title">
-      <div class="status">Tu aplicación calificó</div>
       <h1 id="hero-title">Elige tu horario para la <em>sesión de evaluación.</em></h1>
       <p class="dek">Agenda el espacio que realmente puedas atender. En la llamada revisamos si tu caso encaja con el acompañamiento.</p>
     </section>
 
     <section class="video-card" aria-label="Mensaje antes de agendar">
-      <div class="section-label">Mensaje breve</div>
       <div class="video-container">
         <div id="vidalytics_embed_2s1vpHRi_hOARyIm" style="width: 100%; position: relative; padding-top: 56.25%;"></div>
       </div>
@@ -816,7 +784,7 @@
       </div>
     </aside>
 
-    <div class="fine-print">© 2026 TR4INER · BodyMindFitCo LLC · Privacidad · Términos</div>
+    <footer class="fine-print">© 2026 TR4INER · BodyMindFitCo LLC · <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a> · <a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a></footer>
   </main>
 
   <button class="mobile-book open-calendly" type="button">
@@ -835,7 +803,7 @@
     <div class="calendar-modal-inner">
       <button class="calendar-modal-close" type="button" aria-label="Cerrar calendario">×</button>
       <div class="calendar-loader">Cargando calendario…</div>
-      <iframe id="calendar-frame" src="" loading="lazy" title="Reserva tu sesión en Calendly"></iframe>
+      <iframe id="calendar-frame" src="" title="Reserva tu sesión en Calendly"></iframe>
     </div>
   </div>
 
@@ -918,12 +886,18 @@
         }
       });
 
+      // Calendly arranca a cargar en cuanto el dedo toca el botón (o el mouse lo roza), no
+      // recién con el clic: son unos cientos de ms menos de «Cargando calendario…». No se
+      // carga antes para que cada visita no cuente como vista del calendario.
+      function loadCalendar() {
+        if (calendarLoaded || !calendarFrame) return;
+        calendarFrame.src = calendlyUrl.toString();
+        calendarLoaded = true;
+      }
+
       function openCalendar() {
         if (!calendarModal || !calendarFrame) return;
-        if (!calendarLoaded) {
-          calendarFrame.src = calendlyUrl.toString();
-          calendarLoaded = true;
-        }
+        loadCalendar();
         calendarModal.classList.add("open");
         calendarModal.setAttribute("aria-hidden", "false");
         document.documentElement.classList.add("modal-open");
@@ -937,8 +911,20 @@
       }
 
       document.querySelectorAll(".open-calendly").forEach(function (button) {
+        button.addEventListener("pointerdown", loadCalendar, { passive: true });
+        button.addEventListener("mouseenter", loadCalendar, { passive: true });
+        button.addEventListener("focus", loadCalendar);
         button.addEventListener("click", openCalendar);
       });
+
+      var mobileBook = document.querySelector(".mobile-book");
+      var agendaPanel = document.getElementById("agenda");
+      if (mobileBook && agendaPanel && "IntersectionObserver" in window) {
+        mobileBook.classList.add("is-tucked");
+        new IntersectionObserver(function (entries) {
+          mobileBook.classList.toggle("is-tucked", entries[0].isIntersecting);
+        }).observe(agendaPanel);
+      }
 
       if (calendarClose) calendarClose.addEventListener("click", closeCalendar);
       if (calendarModal) {
