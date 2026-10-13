@@ -1,5 +1,22 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-13 — Ruta: reproductor de lecciones sin descarga, con el diseño de la rutina y menú de velocidad
+
+- **Regla del usuario para todo video de R2:** no se tiene que poder descargar. Lleva el mismo color y diseño de controles que los videos de la rutina, y **la única opción de menú es la velocidad**.
+- **Lecciones (`biblioteca/videos/index.html`, `.lv`):** el `<video>` deja los controles del navegador, que traían «Descargar» y «Guardar video como».
+  - Controles propios: play grande negro con triángulo y anillo amarillos; barra amarilla que se arrastra para adelantar; play/pausa, tiempo en mono, sonido y pantalla completa (en iPhone la del propio video).
+  - Menú de velocidad 1× a 2×, en fila horizontal porque en el teléfono el cuadro mide ~200 px de alto.
+  - Los controles se esconden a los 2,5 s mientras corre; el primer toque sólo los muestra.
+  - Teclado: espacio/K, flechas ±5 s, M, Esc cierra el menú.
+  - Sin clic derecho, sin arrastrar, sin picture-in-picture, sin enviar a otra pantalla y con `controlslist="nodownload"`. Error con «Reintentar» desde donde iba.
+- **Ejercicios (`rutina.js`, a `20261013-sin-descarga`):** ya tenían controles propios. Se suma el bloqueo del clic derecho y de arrastrar, `controlslist="nodownload noremoteplayback"` y `disableremoteplayback`.
+- **Límite:** esto saca toda forma visible de descargar, pero no protege la URL. La regla WAF deja pasar pedidos **sin referer** en `/lecciones/` y en los ejercicios (sólo `/testimonios/` exige origen, ver la entrada de `main` de los testimonios), así que pegar la URL en otra pestaña todavía baja el MP4. Exigir el origen ahí puede cortar a teléfonos que piden el video sin referer (por eso se había abierto). La protección de fondo son URLs firmadas que vencen. Pendiente de decisión del usuario.
+- **Verificación (réplica local, hombre 26-35):**
+  - Sale su versión. Controles visibles con el diseño de la rutina; el menú entra completo a 369 px.
+  - 1,5× aplicado; la barra al 50 % salta a 23,5 de 47,1 s; clic derecho y arrastrar bloqueados.
+  - Medición completa a 1,5× (inicio, avance, vista y final con `iv038ZlizMs`); al terminar, «Ver de nuevo».
+  - La rutina sigue sirviendo desde `video.mediatr4iner.com` con el clic derecho bloqueado. Sin errores de consola.
+
 ## 2026-10-13 — Ruta: el Paso 1 «Empieza aquí» sale de YouTube y se reproduce desde R2
 
 - **Pedido del usuario:** la lección «EMPIEZA AQUÍ» pasa a los 6 videos nuevos, uno por sexo y tramo de edad, subidos a Cloudflare R2. Es la primera lección que deja YouTube. El CRM elige la versión de cada miembro (ver su bitácora).
