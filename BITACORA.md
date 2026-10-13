@@ -1,5 +1,17 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-13 — Ruta: el Paso 1 «Empieza aquí» sale de YouTube y se reproduce desde R2
+
+- **Pedido del usuario:** la lección «EMPIEZA AQUÍ» pasa a los 6 videos nuevos, uno por sexo y tramo de edad, subidos a Cloudflare R2. Es la primera lección que deja YouTube. El CRM elige la versión de cada miembro (ver su bitácora).
+- **`biblioteca/videos/index.html`:**
+  - Si la lección trae `video` del catálogo (sólo se acepta `https://video.mediatr4iner.com/…/`), se abre en un `<video>` propio con la portada del equipo. Elige 720p o 480p según el alto del cuadro, y 360p con ahorro de datos o red lenta.
+  - El `<video>` expone lo mismo que la medición le pide al reproductor de YouTube: duración, posición, si reproduce, destruir. Avance cada 20 s, 85 % = vista y reanudación funcionan igual, con el mismo `youtubeId` como clave.
+  - Las lecciones sin `video` siguen en YouTube sin cambios. Suma `preconnect` a `video.mediatr4iner.com`.
+- **Verificación (réplica local, `~/Documents/Ruta Tr4iner/herramientas/replica-r2.mts`):**
+  - Hombre 18-25: se abre el `<video>` de `lecciones/empieza-aqui--hombre-18-25--4414848d/`. Reproducido completo (por el proxy de la réplica, porque R2 rechaza localhost): inicio, avance a 20, 40 y 45 s, 85 % y final con `videoId` `iv038ZlizMs`, y la lección quedó vista.
+  - Mujer 36+ a 375 px: su carpeta, portada de mujeres, 480p, sin «provisional».
+  - «El mejor entrenamiento en mujeres» sigue abriendo YouTube. Sin errores de consola.
+
 ## 2026-10-12 — Ruta: los videos de ejercicios pasan a Cloudflare R2 en el preview
 
 - **Qué:** con los 57 clips copiados y verificados en `video.mediatr4iner.com`, el CRM carga `r2Host` y la rutina los reproduce desde R2. Esta página no cambia: `VIDEO_HOSTS` y la CSP del preview ya aceptaban el host desde el 8-oct. Detalle de la configuración de Cloudflare y de la copia en la bitácora del CRM (misma fecha).
