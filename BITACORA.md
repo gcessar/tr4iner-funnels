@@ -13,6 +13,40 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-13 — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única
+
+- **Pedido del usuario:** llevar el diseño de `/casos-de-estudio` a las cuatro páginas a las que
+  deriva (`registro-typeform-flor.html`, `registro-typeform-optimizado.html`,
+  `testimonio-andrea/index.html`, `testimonio-christian/index.html`). Rama
+  `work/testimonios-rediseno`; mismo cambio en las cuatro, que siguen siendo idénticas salvo
+  copy, video y el prefijo `flor-`/`case-` de unas clases sin uso.
+- **Qué cambió:**
+  - Fondo `#F2F3F5` y `theme-color` igual.
+  - Sin líneas: se fueron el marco del video, el de la tarjeta del formulario, su esquina
+    decorativa, la raya sobre la firma, el aro del avatar y la raya del pie.
+  - El **video va sobre una placa neumórfica** del color del fondo, como en `/calendly-an`.
+  - La **tarjeta del formulario es apenas más clara (`#FAFBFC`)**, con la misma luz y sombra:
+    ese es el fondo que pinta el Typeform adentro de su iframe (medido en la captura), y el
+    formulario externo no se toca. Si la tarjeta fuera del gris del fondo, el Typeform se vería
+    como un rectángulo blanco pegado.
+  - `#typeform-cta` recorta con `overflow` para su animación de entrada: se le dio relleno
+    compensado con margen negativo (60 px en escritorio, 40 arriba y abajo en el celular) para
+    que la sombra no se corte en seco.
+  - Sale la fila «Análisis · Video / Activa el sonido» sobre el video, como «Mensaje breve» en
+    las páginas de agenda: el propio Vidalytics dice «clic aquí para escuchar». La sección
+    conserva su nombre accesible («Análisis en video»).
+  - **Flor y Dashiel tenían «Privacidad» y «Términos» con `href="#"`:** ahora enlazan a
+    `tr4iner.com`, como ya hacían Andrea y Christian.
+  - Grises a `#636A71` (4,94:1 sobre el fondo nuevo).
+- **Sin cambios:** tipografía, copy, el resaltador amarillo de «Caso de estudio · Análisis paso
+  a paso», el Typeform y sus pisos de alto, el aviso a los 3 s, `data-tf-hidden`, el botón fijo
+  de escritorio y toda la atribución.
+- **Verificación (Chrome real, 375 y 1280 px):** capturas de las cuatro. Con UTMs de Meta,
+  `email` y `rango_edad` en la URL, el `data-tf-hidden` de las cuatro locales es idéntico al de
+  `/testimonio-flor` en producción (crudo, `@` literal, `fbp`). El formulario aparece y el
+  iframe carga; sin errores propios (los dos que se ven son los envíos de ManyChat que la prueba
+  corta a propósito, igual en producción).
+
 ## 2026-10-13 — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
 
 - **Pedido del usuario:** llevar a la landing (`index-fuerza.html`) el diseño que se publicó ese
@@ -1483,6 +1517,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única
 - `2026-10-13` — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
