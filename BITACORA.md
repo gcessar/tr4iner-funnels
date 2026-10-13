@@ -13,6 +13,53 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-13 — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
+
+- **Pedido del usuario:** las dos páginas de agenda van a recibir tráfico directo de Meta Ads
+  (ya no sólo quien viene del Typeform). Quitar la cabecera («Anthoni Montalván / Estudio» ·
+  «Agenda privada») y «Tu aplicación calificó» para empezar en el titular; sacar las líneas que
+  separan los bloques; look más limpio y premium **sin tocar tipografía ni agregar texto
+  resaltado**; sombra neumórfica en el VSL de Vidalytics.
+- **Rama `work/calendly-rediseno`.** No es un A/B: se publica directo cuando el usuario apruebe
+  el preview.
+- **Qué cambió (mismo cambio en las dos):**
+  - Fuera la cabecera, «Tu aplicación calificó» y la etiqueta «Mensaje breve» del video (el
+    video ya se explica solo). El copy restante no cambia.
+  - Sin bordes ni líneas: ni en el video, ni en la caja de la agenda (se fueron también el
+    rayado de fondo, el filete de color y la esquina), ni en la prueba social, las tarjetas o el
+    pie. Los bloques se separan por aire.
+  - **VSL sobre una placa neumórfica:** del mismo color que el fondo, se despega sólo con luz
+    (arriba a la izquierda) y sombra (abajo a la derecha); esquinas de 26 px (20 en el
+    celular). Para que la luz se vea, AN pasa de fondo blanco puro a `#F2F3F5`; VA conserva su
+    crema `#FAF7F2`. Las flechas del carrusel usan la misma luz y se hunden al tocarlas.
+  - Botón de agenda con esquinas de 16 px y sombra suave; tarjetas de testimonios sin marco.
+  - «Privacidad» y «Términos» del pie pasan a ser enlaces a `tr4iner.com` (Meta revisa que la
+    página de destino los tenga).
+- **Para la conversión:**
+  - En el celular (375 px) el botón «Elegir horario» termina a 535 px: entra en la primera
+    pantalla junto al video.
+  - **AN:** el botón fijo de abajo se esconde mientras el principal está a la vista y aparece
+    cuando se sale de la pantalla (antes había dos «Elegir horario» a la vez). VA lo sigue
+    teniendo oculto por `va-theme.css`.
+  - Calendly empieza a cargar al tocar el botón (`pointerdown`) o al pasarle el mouse, no
+    recién con el clic: menos espera en «Cargando calendario…». No se precarga para todos para
+    no contar cada visita como vista del calendario. Se quitó `loading="lazy"` del iframe: con
+    `src` vacío no ahorraba nada y dentro del modal oculto impedía la precarga.
+  - **VA deja de pedir sus fuentes a Google:** Poppins 500, Instrument Sans y JetBrains Mono
+    salen del propio sitio (los mismos archivos que se autoalojaron el 7-ago), sin la hoja
+    bloqueante ni la cadena googleapis → gstatic. Montserrat salía: estaba detrás de Poppins y
+    nunca se veía.
+  - Sin cambios en la atribución: Calendly sigue recibiendo todas las UTMs, `fbclid`, `email`
+    y demás, y VA sigue marcando `funnel=VA`.
+- **Verificación (Chrome real, 375 y 1280 px):** la tipografía calculada de 11 elementos es
+  idéntica a la de producción en las dos páginas. 0 pedidos a Google Fonts. Con
+  `?utm_source=MetaAds&utm_campaign=PRUEBA-%5BX%5D&fbclid=abc123`, Calendly recibe
+  `utm_campaign=PRUEBA-[X]` sin encodear y el `fbclid`. Sin errores propios de la página (el
+  widget de ManyChat que mete GTM se bloquea en localhost, igual que antes).
+- **Pendiente:** aprobación del preview y publicación; mirar en el CRM la tasa de agenda de
+  este tráfico nuevo de Meta, que no se puede comparar con la del tráfico que venía del
+  Typeform.
+
 ## 2026-10-13 — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
 
 - **Pedido del usuario:** sacar de Vimeo los testimonios del carrusel «Prueba real» de las dos
@@ -65,6 +112,9 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
   (`cf-cache-status: HIT`) aunque el objeto estaba en R2. Se arregló purgando esas URLs por
   API. Al subir algo nuevo a `video.mediatr4iner.com`, si un archivo da 404 recién subido,
   purgar antes de reintentar.
+- **Publicado:** `main` en `6be9321`, deployment `dpl_DqiSfou2bosafCSPcjzEUp6YPhz5` **Ready** en
+  `metodo.tr4iner.com`. En producción el testimonio arranca desde R2 a 720p en ~0,2 s, sin
+  caer al respaldo.
 - **Pendiente:** probar en un iPhone y un Android reales que reproduzcan desde R2 y no desde
   el respaldo; mirar en GA4 el evento `testimonio_respaldo_vimeo` en los próximos días.
 
@@ -1396,6 +1446,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
 - `2026-10-06` — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
 - `2026-10-03` — Página del pase de referidos (`/pase/{código}`)
