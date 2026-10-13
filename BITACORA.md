@@ -13,6 +13,36 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-13 — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
+
+- **Pedido del usuario:** llevar a la landing (`index-fuerza.html`) el diseño que se publicó ese
+  mismo día en `/calendly-an` y `/calendly-va`. Rama `work/casos-rediseno`. No hay ningún test
+  corriendo en esta página: se publica directo cuando el usuario apruebe el preview.
+- **Qué cambió (todo en un bloque CSS al final de la hoja, para que revertir sea borrarlo):**
+  - Fondo `#F2F3F5` en vez de blanco puro, el mismo de `/calendly-an`.
+  - Se fueron la línea entre la galería y el formulario, la del pie y el marco con filete
+    amarillo del formulario en escritorio.
+  - El **formulario va sobre una placa neumórfica** (en el celular también): es el único
+    objeto que convierte y es la única pieza en relieve.
+  - Opciones de sexo y edad en relieve; la elegida se hunde y conserva su borde de tinta, su
+    crema y su tilde. Nombre y correo como campos hundidos, con borde de tinta al enfocar y
+    rojo si hay error. Esquinas de 14 px; el botón amarillo lleva sombra suave.
+  - Fotos de la galería con esquinas suaves y sombra; flechas de escritorio con la misma luz.
+  - `theme-color` `#F2F3F5` para que la barra del navegador del celular tome el mismo gris.
+- **Sin cambios:** tipografía, copy, el resaltado amarillo del titular (es el control RES que
+  ganó el test de hero), el marcado, el SEO, el JSON-LD y toda la lógica del formulario.
+- **Contraste:** los grises de esta familia se calcularon contra blanco; sobre `#F2F3F5`,
+  `#6E757D` y `#6B7278` bajaban a 4,2 y 4,4:1, por debajo de AA. Pasan a `#636A71` (4,94:1).
+  **Mismo arreglo en `/calendly-an`**, que había salido así a producción esa mañana. En
+  `/calendly-va` el gris del pie (`#8B857D`, 3,4:1 sobre el crema, ya de antes) pasa a
+  `#716B64` (4,93:1).
+- **Verificación (Chrome real, 375 y 1280 px):** capturas antes y después. Con sexo y edad
+  elegidos y nombre y correo mal cargados, la validación marca los dos campos y el botón dice
+  «Ver el caso de Flor»; la prueba cortaba cualquier POST y **no salió ningún registro** a n8n
+  ni al CRM (sólo beacons de analítica).
+- **Para leer el efecto:** no es un test aleatorio. Comparar el opt-in de las semanas
+  siguientes con el ~20% del test de hero orienta, pero no prueba causa.
+
 ## 2026-10-13 — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
 
 - **Pedido del usuario:** las dos páginas de agenda van a recibir tráfico directo de Meta Ads
@@ -56,8 +86,11 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
   `?utm_source=MetaAds&utm_campaign=PRUEBA-%5BX%5D&fbclid=abc123`, Calendly recibe
   `utm_campaign=PRUEBA-[X]` sin encodear y el `fbclid`. Sin errores propios de la página (el
   widget de ManyChat que mete GTM se bloquea en localhost, igual que antes).
-- **Pendiente:** aprobación del preview y publicación; mirar en el CRM la tasa de agenda de
-  este tráfico nuevo de Meta, que no se puede comparar con la del tráfico que venía del
+- **Publicado** con OK del usuario: `main` en `2b448dc`, deployment
+  `dpl_C1VpQbi1TMuTpq61VADyXC8TaxYe` **Ready**. En producción: 0 pedidos a Google Fonts,
+  testimonio desde R2 sin respaldo, Calendly con UTMs y `fbclid`, botón fijo de AN escondido al
+  cargar.
+- **Pendiente:** mirar en el CRM la tasa de agenda de este tráfico nuevo de Meta, que no se puede comparar con la del tráfico que venía del
   Typeform.
 
 ## 2026-10-13 — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
@@ -1446,6 +1479,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
 - `2026-10-06` — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
