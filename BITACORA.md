@@ -13,6 +13,49 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-13 — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
+
+- **Pedido del usuario:** sacar de Vimeo los testimonios del carrusel «Prueba real» de las dos
+  páginas de agenda y servirlos desde Cloudflare R2, como los ejercicios de la Ruta.
+- **Videos:** los 11 (Same Leon, Ana Briones, Fernando Peña, Guadalupe Eligio, Victoria
+  Sifuentes, Anzonny Malave, Leticia Pereira, Daniel Alarcón, Josefa Damian, Dashiell
+  Ezequiel, Irene Salom) son verticales 1080×1920, de 17 a 90 s. Se bajaron del HLS público
+  del reproductor de Vimeo (la mejor variante, 1080p60) y se codificaron igual que los
+  ejercicios: H.264 a 30 cuadros, 720p ~1,2 Mbps / 480p / 360p, AAC y `faststart`, más
+  portada del segundo 1. Bucket `ruta-videos`, carpeta `testimonios/{slug}-{idVimeo}/`
+  (`play_720p.mp4`, `play_480p.mp4`, `play_360p.mp4`, `thumbnail.jpg`, `original.mp4`),
+  caché de un año.
+  Son ~435 MB entre los 11 (el 720p pesa de 2,9 a 14,8 MB): el bucket queda en ~12,1 GB,
+  unos US$ 0,03 al mes. Script de una sola vez fuera de git (reusa `r2-s3.mjs` del CRM y las
+  credenciales S3 del token de cuenta de Cloudflare del Llavero). Los videos siguen en Vimeo.
+- **Páginas (`calendly-an-optimizado.html`, `calendly-va/index.html`):** el lightbox deja el
+  iframe de Vimeo por un `<video>` nativo. `data-video` apunta a la carpeta de R2 y el JS
+  elige 720p; con ahorro de datos o 2G baja a 360p y con 3G a 480p. Al cerrar se corta la
+  descarga. Ya no se carga ningún script ni iframe de Vimeo. Las portadas de las tarjetas
+  pasan de PNG a WebP (1,1 MB → 298 KB las 11, mismas medidas y transparencia). Las `-B`
+  archivadas y `/biblioteca/` siguen con los PNG, que no se borran.
+- **Sin descarga (pedido del usuario el mismo día):** `controlslist="nodownload
+  noremoteplayback"` saca «Descargar» del menú del reproductor en Chrome y Android, se anula
+  el clic derecho sobre el video («Guardar video como…») y se apaga el picture-in-picture.
+  No es una protección total: quien abra las herramientas del navegador ve la URL del MP4, y
+  la regla WAF deja pasar el referer vacío, así que pegada en otra pestaña se reproduce. Que
+  otra web los incruste sí da 403.
+- **Regla WAF de `video.mediatr4iner.com`:** deja pasar `metodo.tr4iner.com`, `miembro.` y el
+  preview de la Ruta, y también el referer vacío; otra web da 403. **Los previews de Vercel
+  de esta rama dan 403 en los testimonios**: se probó en local quitando el referer de la
+  pestaña. En producción no hace falta tocar la regla.
+- **Verificación:** las dos páginas abren el lightbox y reproducen desde R2 a 720×1280 sin
+  errores; al cerrar se pausa y se suelta el archivo. Desde el dominio público: rangos 206,
+  caché `HIT`, `Cache-Control` inmutable; el 720p y el original decodifican sin errores.
+  Los 55 archivos responden 200 en tres pedidos seguidos.
+- **Incidente durante la subida:** dos archivos de Daniel Alarcón (`play_720p.mp4` y
+  `thumbnail.jpg`) respondieron 404 justo después de subirse, y el CDN guardó ese 404
+  (`cf-cache-status: HIT`) aunque el objeto estaba en R2. Se arregló purgando esas URLs por
+  API. Al subir algo nuevo a `video.mediatr4iner.com`, si un archivo da 404 recién subido,
+  purgar antes de reintentar.
+- **Pendiente:** probar en un teléfono real después del deploy. Los videos siguen en Vimeo:
+  no se borró nada.
+
 ## 2026-10-06 — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
 
 Rama `work/empezar-va` en los dos repos (funnels y `crm-ventas`).
@@ -1341,6 +1384,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — `/calendly-an` y `/calendly-va`: los 11 testimonios pasan de Vimeo a R2
 - `2026-10-06` — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
 - `2026-10-03` — Página del pase de referidos (`/pase/{código}`)
 
