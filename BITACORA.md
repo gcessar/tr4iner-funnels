@@ -13,6 +13,22 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
 ---
 
+## 2026-10-13 — Testimonios de `/calendly-an` y `/calendly-va` con el reproductor de R2 de la Ruta (preview)
+
+- **Pedido del usuario:** los testimonios usan el mismo reproductor que las lecciones de la Ruta (regla de `AGENTS.md`: sin descarga ni clic derecho, diseño de la rutina, sólo menú de velocidad). Primero en preview; a producción sólo con su OK.
+- **`assets/tr4-video/tr4-video.js` (nuevo):** el reproductor compartido. `TR4Video.montar(contenedor, { base, archivo, poster, titulo, alError })` dibuja sus propios controles y trae su CSS:
+  - Play negro con triángulo y anillo amarillos, barra amarilla que adelanta, tiempo, sonido y pantalla completa.
+  - Velocidad 1× a 2× en fila horizontal.
+  - Sin controles del navegador, clic derecho, arrastrar, picture-in-picture ni envío a otra pantalla.
+  - Es el mismo diseño y la misma lógica que `nativePlayer()` de la Ruta (`work/ruta-hombres-preview`). Cuando la Ruta llegue a `main`, conviene que use este archivo en vez de su copia.
+- **Las dos páginas:** el `<video controls>` del lightbox pasa a `#lightbox-player` montado con `TR4Video`.
+  - Sin cambios: la calidad (`testimonyQuality()`), el respaldo de Vimeo con su evento `testimonio_respaldo_vimeo` (ahora es el `alError` del reproductor) y el cierre, que suelta el archivo.
+  - Las dos siguen idénticas en esta parte.
+- **Verificación (servidor local con proxy a R2):**
+  - `/calendly-an`: el 403 de localhost abre Vimeo desde el segundo en que iba y manda el evento.
+  - Con proxy, Ana Briones se reproduce a 720p en el cuadro 9:16 con los controles nuevos. El menú de velocidad entra en el cuadro (265 de 383 px), 1,75× aplicado, clic derecho bloqueado.
+  - Al cerrar se destruye y queda vacío. `/calendly-va` igual. Sin errores de consola.
+
 ## 2026-10-13 — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
 
 - **Pedido del usuario:** vale para todos los videos que se suban a R2 y se muestren en cualquier proyecto de TR4INER. Queda escrita en `AGENTS.md` (sección «Videos en Cloudflare R2») para Claude y Codex.
@@ -1530,6 +1546,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — Testimonios de `/calendly-an` y `/calendly-va` con el reproductor de R2 de la Ruta (preview)
 - `2026-10-13` — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
 - `2026-10-13` — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única
 - `2026-10-13` — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
