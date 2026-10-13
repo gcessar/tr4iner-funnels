@@ -1,13 +1,5 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-13 — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
-
-- **Pedido del usuario:** vale para todos los videos que se suban a R2 y se muestren en cualquier proyecto de TR4INER. Queda escrita en `AGENTS.md` (sección «Videos en Cloudflare R2») para Claude y Codex.
-- Reproductor de referencia: el de lecciones de la Ruta (`work/ruta-hombres-preview`), con el diseño de la rutina y sólo menú de velocidad.
-- **Pendiente:**
-  - Pasar los testimonios de `/calendly-an` y `/calendly-va` al mismo reproductor, primero en preview.
-  - Enlaces que vencen (URLs firmadas), para que tampoco sirva copiar la dirección del MP4.
-
 Registro de decisiones, cambios y resultados del proyecto de funnels de adquisición.  
 Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 
@@ -20,6 +12,14 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 > Para filtrar un mes: `grep -n "^## 2026-08" BITACORA.md`
 
 ---
+
+## 2026-10-13 — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
+
+- **Pedido del usuario:** vale para todos los videos que se suban a R2 y se muestren en cualquier proyecto de TR4INER. Queda escrita en `AGENTS.md` (sección «Videos en Cloudflare R2») para Claude y Codex.
+- Reproductor de referencia: el de lecciones de la Ruta (`work/ruta-hombres-preview`), con el diseño de la rutina y sólo menú de velocidad.
+- **Pendiente:**
+  - Pasar los testimonios de `/calendly-an` y `/calendly-va` al mismo reproductor, primero en preview.
+  - Enlaces que vencen (URLs firmadas), para que tampoco sirva copiar la dirección del MP4.
 
 ## 2026-10-13 — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única
 
@@ -1530,6 +1530,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-13` — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
 - `2026-10-13` — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única
 - `2026-10-13` — `/casos-de-estudio`: mismo lenguaje de superficie única que las páginas de agenda
 - `2026-10-13` — `/calendly-an` y `/calendly-va`: rediseño minimalista para tráfico directo de Meta Ads
