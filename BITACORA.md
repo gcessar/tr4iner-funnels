@@ -28,6 +28,11 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
   - `/calendly-an`: el 403 de localhost abre Vimeo desde el segundo en que iba y manda el evento.
   - Con proxy, Ana Briones se reproduce a 720p en el cuadro 9:16 con los controles nuevos. El menú de velocidad entra en el cuadro (265 de 383 px), 1,75× aplicado, clic derecho bloqueado.
   - Al cerrar se destruye y queda vacío. `/calendly-va` igual. Sin errores de consola.
+- **Regla WAF (para ver el preview con R2 y no con Vimeo):** se sumó el alias `tr4iner-funnels-git-work-testimo-a1eebf-metodotr4iners-projects.vercel.app`.
+  - Respaldo previo: `~/Documents/Ruta Tr4iner/respaldos-cloudflare/waf-video-mediatr4iner-2026-10-13-antes-preview-testimonios.json`.
+  - Verificado con `fetch` desde Node: ese alias, producción, `miembro.` y el preview de la Ruta dan 206; otra web, 403; sin referer, testimonios 403 y lecciones o ejercicios 206 (como estaba).
+  - Sacar el alias cuando la rama se publique o se descarte.
+  - **Ojo al probar desde zsh:** `${r:+-H "Referer: $r"}` no se parte en palabras y curl manda el encabezado mal formado. Eso dio un falso «todo 403» justo después del cambio; producción nunca estuvo rota.
 
 ## 2026-10-13 — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
 
