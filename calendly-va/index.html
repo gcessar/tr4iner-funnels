@@ -536,6 +536,16 @@
         display: none;
       }
 
+      /* El reproductor compartido de R2 (assets/tr4-video) ocupa todo el cuadro 9:16. */
+      .lightbox-player {
+        position: absolute;
+        inset: 0;
+      }
+
+      .lightbox-player[hidden] {
+        display: none;
+      }
+
       .calendar-modal-inner {
         position: relative;
         width: min(100%, 980px);
@@ -795,7 +805,7 @@
   <div class="lightbox" id="video-lightbox" aria-hidden="true" role="dialog" aria-label="Video testimonio">
     <div class="lightbox-inner">
       <button class="lightbox-close" type="button" aria-label="Cerrar video">×</button>
-      <video id="lightbox-video" controls controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback playsinline preload="none" title="Video testimonio"></video>
+      <div class="lightbox-player" id="lightbox-player"></div>
     </div>
   </div>
 
@@ -854,6 +864,8 @@
   </script>
 
   <script src="/attribution.js"></script>
+  <!-- Reproductor de R2 sin descarga ni clic derecho, con los controles de la Ruta (regla en AGENTS.md). -->
+  <script src="/assets/tr4-video/tr4-video.js?v=20261013"></script>
   <script>
     (function () {
       var qp = new URLSearchParams(window.location.search);
@@ -937,7 +949,8 @@
       var prev = document.querySelector(".carousel-prev");
       var next = document.querySelector(".carousel-next");
       var lightbox = document.getElementById("video-lightbox");
-      var video = document.getElementById("lightbox-video");
+      var playerBox = document.getElementById("lightbox-player");
+      var reproductor = null;
       var close = document.querySelector(".lightbox-close");
 
       function scrollStories(direction) {
@@ -969,7 +982,7 @@
       function removeFallbackFrame() {
         var frame = document.getElementById("lightbox-frame");
         if (frame) frame.parentNode.removeChild(frame);
-        if (video) video.hidden = false;
+        if (playerBox) playerBox.hidden = false;
       }
 
       // La regla WAF de video.mediatr4iner.com exige el origen de la página en los testimonios.
@@ -977,47 +990,47 @@
       // testimonio sigue en Vimeo y se abre ahí, desde donde iba, en vez de dejar el cuadro negro.
       function fallbackToVimeo() {
         var id = (/-(\d+)\/$/.exec(currentBase) || [])[1];
-        if (!id || !lightbox.classList.contains("open")) return;
+        if (!id || !lightbox.classList.contains("open")) return false;
         currentBase = "";
-        var at = Math.floor(video.currentTime || 0);
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
-        video.hidden = true;
+        var at = Math.floor(reproductor ? reproductor.getCurrentTime() : 0);
+        if (reproductor) { reproductor.destruir(); reproductor = null; }
+        playerBox.hidden = true;
         var frame = document.createElement("iframe");
         frame.id = "lightbox-frame";
         frame.title = "Video testimonio";
         frame.allow = "autoplay; fullscreen";
         frame.src = "https://player.vimeo.com/video/" + id + "?autoplay=1" + (at ? "#t=" + at + "s" : "");
-        video.parentNode.appendChild(frame);
+        playerBox.parentNode.appendChild(frame);
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ event: "testimonio_respaldo_vimeo", testimonio_vimeo_id: id });
+        return true;
       }
 
       function openLightbox(base) {
-        if (!lightbox || !video) return;
+        if (!lightbox || !playerBox || !window.TR4Video) return;
         removeFallbackFrame();
         currentBase = base;
-        video.poster = base + "thumbnail.jpg";
-        video.src = base + testimonyQuality();
+        if (reproductor) reproductor.destruir();
         // El toque en la tarjeta habilita el play con sonido; si el navegador igual lo frena,
-        // quedan los controles a la vista.
-        var playing = video.play();
-        if (playing && playing.catch) playing.catch(function () {});
+        // queda el botón de play del reproductor.
+        reproductor = window.TR4Video.montar(playerBox, {
+          base: base,
+          archivo: testimonyQuality(),
+          titulo: "Video testimonio",
+          alError: fallbackToVimeo
+        });
         lightbox.classList.add("open");
         lightbox.setAttribute("aria-hidden", "false");
         document.documentElement.classList.add("modal-open");
       }
 
       function closeLightbox() {
-        if (!lightbox || !video) return;
+        if (!lightbox || !playerBox) return;
         currentBase = "";
         lightbox.classList.remove("open");
         lightbox.setAttribute("aria-hidden", "true");
         removeFallbackFrame();
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
+        if (reproductor) { reproductor.destruir(); reproductor = null; }
         document.documentElement.classList.remove("modal-open");
       }
 
@@ -1025,10 +1038,6 @@
       if (next) next.addEventListener("click", function () { scrollStories(1); });
       if (carousel) window.setInterval(advanceStories, 4200);
       if (close) close.addEventListener("click", closeLightbox);
-      // Sin menú contextual sobre el video: saca «Guardar video como…» (el resto lo cubre
-      // controlslist="nodownload").
-      if (video) video.addEventListener("contextmenu", function (event) { event.preventDefault(); });
-      if (video) video.addEventListener("error", fallbackToVimeo);
       if (lightbox) {
         lightbox.addEventListener("click", function (event) {
           if (event.target === lightbox) closeLightbox();
