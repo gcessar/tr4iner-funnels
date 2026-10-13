@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F2F3F5">
 
   <script>
     /*
@@ -482,6 +483,95 @@
     .form-heading h2 { font-family: var(--display); font-size: 24px; line-height: 1.15; font-weight: 600; letter-spacing: -.02em; }
     .firma { padding-top: 40px; }
     .foot { margin-top: 24px; }
+  }
+  /* ── Superficie única (13-oct-2026) ─────────────────────
+     Mismo lenguaje que /calendly-an: los bloques se separan por aire, no por
+     líneas, y el formulario —el único objeto que convierte— va sobre una placa
+     neumórfica del mismo color que el fondo, que se despega sólo con luz y
+     sombra. Por eso el fondo deja el blanco puro: sin un gris apenas más oscuro
+     la luz de arriba a la izquierda no se ve. Tipografía y copy no cambian.
+     Vive en un solo bloque al final para que revertir sea borrarlo. */
+  :root {
+    --bg: #F2F3F5;
+    --neu-dark: rgba(32, 41, 52, 0.15);
+    --neu-dark-soft: rgba(32, 41, 52, 0.10);
+    --neu-light: #FFFFFF;
+    /* Los grises de arriba estaban calculados contra blanco; sobre #F2F3F5
+       bajaban a 4,2-4,4:1. #636A71 da 4,94:1. */
+    --muted: #636A71;
+    --label: #636A71;
+    --radius: 14px;
+  }
+
+  form {
+    border: 0;
+    padding: 22px 18px 24px;
+    border-radius: 22px;
+    background: var(--bg);
+    box-shadow: 12px 12px 26px var(--neu-dark), -12px -12px 26px var(--neu-light);
+  }
+
+  /* Opciones en relieve; la elegida se hunde y conserva su tilde y su crema. */
+  .case {
+    border-color: transparent;
+    background: var(--bg);
+    box-shadow: 4px 4px 10px var(--neu-dark-soft), -4px -4px 10px var(--neu-light);
+    transition: box-shadow 160ms ease, background 150ms ease, border-color 150ms ease;
+  }
+  .case:hover {
+    border-color: transparent;
+    box-shadow: 6px 6px 14px var(--neu-dark-soft), -6px -6px 14px var(--neu-light);
+  }
+  .case:has(input:checked) {
+    border-color: var(--ink);
+    box-shadow: inset 3px 3px 7px rgba(120, 96, 20, 0.14), inset -3px -3px 7px rgba(255, 255, 255, 0.7);
+  }
+
+  /* Campos hundidos en la placa. El borde transparente conserva la medida y al
+     enfocar vuelve a la tinta, para que se vea dónde se está escribiendo. */
+  input[type="text"], input[type="email"] {
+    border-color: transparent;
+    background: var(--bg);
+    box-shadow: inset 3px 3px 7px var(--neu-dark-soft), inset -3px -3px 7px var(--neu-light);
+  }
+  input[type="text"]:focus, input[type="email"]:focus { border-color: var(--ink); }
+  input[aria-invalid="true"] { border-color: var(--error); }
+
+  button[type="submit"] {
+    box-shadow: 0 16px 28px -16px rgba(120, 92, 0, 0.6);
+    transition: filter 140ms ease, transform 90ms ease, box-shadow 140ms ease;
+  }
+  button[type="submit"]:active { box-shadow: 0 8px 18px -12px rgba(120, 92, 0, 0.6); }
+
+  .proof-case img { border-radius: 12px; box-shadow: 0 14px 26px -16px var(--neu-dark); }
+
+  .gallery-controls button {
+    border: 0;
+    background: var(--bg);
+    box-shadow: 5px 5px 12px var(--neu-dark-soft), -5px -5px 12px var(--neu-light);
+    transition: box-shadow 160ms ease;
+  }
+  .gallery-controls button:hover,
+  .gallery-controls button:active {
+    filter: none;
+    box-shadow: inset 4px 4px 9px var(--neu-dark-soft), inset -4px -4px 9px var(--neu-light);
+  }
+
+  .foot { border-top: 0; padding-top: 0; margin-top: 28px; }
+  .foot a { border-bottom-color: rgba(99, 106, 113, 0.35); }
+
+  @media (max-width: 899px) {
+    form { margin-top: 32px; }
+    .proof-case img { border-radius: 8px; box-shadow: 0 10px 18px -12px var(--neu-dark); }
+  }
+
+  @media (min-width: 900px) {
+    form {
+      padding: 32px;
+      border-radius: 26px;
+      box-shadow: 20px 20px 44px var(--neu-dark), -20px -20px 44px var(--neu-light);
+    }
+    .foot { margin-top: 32px; }
   }
   </style>
 </head>
