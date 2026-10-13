@@ -31,30 +31,42 @@ Cada entrada incluye: qué cambió, por qué, y resultado esperado o medido.
 - **Páginas (`calendly-an-optimizado.html`, `calendly-va/index.html`):** el lightbox deja el
   iframe de Vimeo por un `<video>` nativo. `data-video` apunta a la carpeta de R2 y el JS
   elige 720p; con ahorro de datos o 2G baja a 360p y con 3G a 480p. Al cerrar se corta la
-  descarga. Ya no se carga ningún script ni iframe de Vimeo. Las portadas de las tarjetas
+  descarga. Vimeo ya no se carga, salvo como respaldo (ver abajo). Las portadas de las tarjetas
   pasan de PNG a WebP (1,1 MB → 298 KB las 11, mismas medidas y transparencia). Las `-B`
   archivadas y `/biblioteca/` siguen con los PNG, que no se borran.
 - **Sin descarga (pedido del usuario el mismo día):** `controlslist="nodownload
   noremoteplayback"` saca «Descargar» del menú del reproductor en Chrome y Android, se anula
   el clic derecho sobre el video («Guardar video como…») y se apaga el picture-in-picture.
-  No es una protección total: quien abra las herramientas del navegador ve la URL del MP4, y
-  la regla WAF deja pasar el referer vacío, así que pegada en otra pestaña se reproduce. Que
-  otra web los incruste sí da 403.
-- **Regla WAF de `video.mediatr4iner.com`:** deja pasar `metodo.tr4iner.com`, `miembro.` y el
-  preview de la Ruta, y también el referer vacío; otra web da 403. **Los previews de Vercel
-  de esta rama dan 403 en los testimonios**: se probó en local quitando el referer de la
-  pestaña. En producción no hace falta tocar la regla.
+  No es una protección total: quien abra las herramientas del navegador ve la URL del MP4.
+- **Regla WAF de `video.mediatr4iner.com` (cambiada por API a pedido del usuario):** ya dejaba
+  pasar `metodo.tr4iner.com`, `miembro.` y el preview de la Ruta, y también el referer vacío
+  (eso se agregó después del 12-oct sin quedar anotado; lo más probable es que haya sido por
+  teléfonos que piden el video sin origen). Ahora **`/testimonios/` exige el origen**: sin
+  referer da 403, así que pegar la URL en otra pestaña ya no sirve para bajarlo. Los
+  ejercicios siguen aceptando el referer vacío. Respaldo de la regla anterior en
+  `~/Documents/Ruta Tr4iner/respaldos-cloudflare/waf-video-mediatr4iner-2026-10-13-antes.json`;
+  volver atrás = sacar la condición `or starts_with(http.request.uri.path, "/testimonios/")`.
+- **Respaldo en Vimeo:** si R2 rechaza el video (el `error` del `<video>`, p. ej. un iPhone sin
+  origen que choca con la regla), el lightbox abre el mismo testimonio en Vimeo desde el
+  segundo en que iba y manda `testimonio_respaldo_vimeo` (con `testimonio_vimeo_id`) al
+  dataLayer. **Por eso no hay que borrar los videos de Vimeo.** Si ese evento aparece seguido
+  en GA4, la regla está cortando a gente real y conviene aflojarla.
+- **Previews de Vercel:** sus dominios no están en la regla, así que ahí los testimonios caen
+  siempre al respaldo de Vimeo.
 - **Verificación:** las dos páginas abren el lightbox y reproducen desde R2 a 720×1280 sin
   errores; al cerrar se pausa y se suelta el archivo. Desde el dominio público: rangos 206,
   caché `HIT`, `Cache-Control` inmutable; el 720p y el original decodifican sin errores.
-  Los 55 archivos responden 200 en tres pedidos seguidos.
+  Los 55 archivos responden 200 en tres pedidos seguidos. Con la regla nueva: testimonios sin
+  referer y otra web 403, `metodo.` y `miembro.` 206; un ejercicio sin referer sigue en 206.
+  En local (localhost no está permitido) el 403 abre el respaldo de Vimeo con su evento; al
+  cerrar se limpia y al reabrir con permiso vuelve a R2.
 - **Incidente durante la subida:** dos archivos de Daniel Alarcón (`play_720p.mp4` y
   `thumbnail.jpg`) respondieron 404 justo después de subirse, y el CDN guardó ese 404
   (`cf-cache-status: HIT`) aunque el objeto estaba en R2. Se arregló purgando esas URLs por
   API. Al subir algo nuevo a `video.mediatr4iner.com`, si un archivo da 404 recién subido,
   purgar antes de reintentar.
-- **Pendiente:** probar en un teléfono real después del deploy. Los videos siguen en Vimeo:
-  no se borró nada.
+- **Pendiente:** probar en un iPhone y un Android reales que reproduzcan desde R2 y no desde
+  el respaldo; mirar en GA4 el evento `testimonio_respaldo_vimeo` en los próximos días.
 
 ## 2026-10-06 — Página directa de Veronika: `/empezar-va` (VSL + formulario propio → WhatsApp)
 
