@@ -21,6 +21,7 @@
 
   <link rel="preconnect" href="https://calendly.com" />
   <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas.
        Antes había que resolver DNS y TLS contra fonts.googleapis y
        fonts.gstatic antes de dibujar una sola letra. Ahora: 0 peticiones
@@ -563,11 +564,12 @@
         box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
       }
 
-      .lightbox iframe {
+      .lightbox video {
         display: block;
         width: 100%;
         height: 100%;
-        border: 0;
+        object-fit: contain;
+        background: #000;
       }
 
       .calendar-modal-inner {
@@ -762,58 +764,58 @@
       </div>
 
       <div class="story-carousel" id="story-carousel">
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925219212">
-          <img src="/assets/testimonios/same-leon.png" alt="Testimonio de Same Leon" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/same-leon-925219212/">
+          <img src="/assets/testimonios/same-leon.webp" alt="Testimonio de Same Leon" loading="lazy" width="188" height="270" />
           <div><b>Same Leon, Chile</b><span>Pasó de 89 a 69 kg y del 30% al 20% de grasa en 12 meses, sin dietas extremas.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856509800">
-          <img src="/assets/testimonios/hanna-briyu.png" alt="Testimonio de Ana Briones" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/ana-briones-856509800/">
+          <img src="/assets/testimonios/hanna-briyu.webp" alt="Testimonio de Ana Briones" loading="lazy" width="188" height="270" />
           <div><b>Ana Briones, Perú</b><span>Enfermera de UCI y madre de dos: perdió 13 kg sin pasar hambre ni dejar su vida.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856846588">
-          <img src="/assets/testimonios/fernando-pena.png" alt="Testimonio de Fernando Peña" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/fernando-pena-856846588/">
+          <img src="/assets/testimonios/fernando-pena.webp" alt="Testimonio de Fernando Peña" loading="lazy" width="188" height="270" />
           <div><b>Fernando Peña, Perú</b><span>A sus 57 años bajó 7 kg y 5 puntos de grasa. Hoy le dicen que se ve más joven.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245130">
-          <img src="/assets/testimonios/guadalupe-eligio.png" alt="Testimonio de Guadalupe Eligio" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/guadalupe-eligio-925245130/">
+          <img src="/assets/testimonios/guadalupe-eligio.webp" alt="Testimonio de Guadalupe Eligio" loading="lazy" width="188" height="270" />
           <div><b>Guadalupe Eligio, EE UU</b><span>A los 48 perdió 10 kg empezando desde cero, sin saber qué era un macro.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245461">
-          <img src="/assets/testimonios/victoria-sifuentes.png" alt="Testimonio de Victoria Sifuentes" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/victoria-sifuentes-925245461/">
+          <img src="/assets/testimonios/victoria-sifuentes.webp" alt="Testimonio de Victoria Sifuentes" loading="lazy" width="188" height="270" />
           <div><b>Victoria Sifuentes, Perú</b><span>Llegó por salud tras un cuadro de estrés y terminó bajando 10 kg entrenando desde casa.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218713">
-          <img src="/assets/testimonios/anzonny.png" alt="Testimonio de Anzonny Malave" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/anzonny-malave-925218713/">
+          <img src="/assets/testimonios/anzonny.webp" alt="Testimonio de Anzonny Malave" loading="lazy" width="188" height="270" />
           <div><b>Anzonny Malave, Chile</b><span>Bajó del 26% al 18% de grasa en solo 6 meses, sin ensaladas tristes ni comida desabrida.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/856835613">
-          <img src="/assets/testimonios/leticia-pereida.png" alt="Testimonio de Leticia Pereira" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/leticia-pereira-856835613/">
+          <img src="/assets/testimonios/leticia-pereida.webp" alt="Testimonio de Leticia Pereira" loading="lazy" width="188" height="270" />
           <div><b>Leticia Pereira, EE UU</b><span>Perdió 10 kg y definió el abdomen que otras dietas nunca le dieron, sin quedar débil.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218766">
-          <img src="/assets/testimonios/dany.png" alt="Testimonio de Daniel Alarcón" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/daniel-alarcon-925218766/">
+          <img src="/assets/testimonios/dany.webp" alt="Testimonio de Daniel Alarcón" loading="lazy" width="188" height="270" />
           <div><b>Daniel Alarcón, México</b><span>Perdió 11 kg y llegó al 17% de grasa en solo 6 meses, con un plan hecho a su medida.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245204">
-          <img src="/assets/testimonios/josefa.png" alt="Testimonio de Josefa Damian" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/josefa-damian-925245204/">
+          <img src="/assets/testimonios/josefa.webp" alt="Testimonio de Josefa Damian" loading="lazy" width="188" height="270" />
           <div><b>Josefa Damian, EE UU</b><span>A sus 46 años perdió 11 kg y recuperó una autoestima que creía perdida.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925218792">
-          <img src="/assets/testimonios/dashiel.png" alt="Testimonio de Dashiell Ezequiel" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/dashiell-ezequiel-925218792/">
+          <img src="/assets/testimonios/dashiel.webp" alt="Testimonio de Dashiell Ezequiel" loading="lazy" width="188" height="270" />
           <div><b>Dashiell Ezequiel, Perú</b><span>Bajó del 32% al 22% de grasa viviendo solo, cocinándose él mismo y sin dejar los dulces.</span></div>
         </button>
 
-        <button class="story-card" type="button" data-video="https://player.vimeo.com/video/925245166">
-          <img src="/assets/testimonios/irene.png" alt="Testimonio de Irene Salom" loading="lazy" width="188" height="270" />
+        <button class="story-card" type="button" data-video="https://video.mediatr4iner.com/testimonios/irene-salom-925245166/">
+          <img src="/assets/testimonios/irene.webp" alt="Testimonio de Irene Salom" loading="lazy" width="188" height="270" />
           <div><b>Irene Salom, EE UU</b><span>Entrenó desde casa y siguió comiendo lo mismo que su familia, sin platos aparte.</span></div>
         </button>
       </div>
@@ -830,7 +832,7 @@
   <div class="lightbox" id="video-lightbox" aria-hidden="true" role="dialog" aria-label="Video testimonio">
     <div class="lightbox-inner">
       <button class="lightbox-close" type="button" aria-label="Cerrar video">×</button>
-      <iframe id="lightbox-frame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video testimonio"></iframe>
+      <video id="lightbox-video" controls controlslist="nodownload noremoteplayback" disablepictureinpicture disableremoteplayback playsinline preload="none" title="Video testimonio"></video>
     </div>
   </div>
 
@@ -948,7 +950,7 @@
       var prev = document.querySelector(".carousel-prev");
       var next = document.querySelector(".carousel-next");
       var lightbox = document.getElementById("video-lightbox");
-      var frame = document.getElementById("lightbox-frame");
+      var video = document.getElementById("lightbox-video");
       var close = document.querySelector(".lightbox-close");
 
       function scrollStories(direction) {
@@ -966,19 +968,35 @@
         }
       }
 
-      function openLightbox(url) {
-        if (!lightbox || !frame) return;
-        frame.src = url + "?autoplay=1";
+      // Los testimonios salen de R2 (video.mediatr4iner.com) en 720/480/360p. 720p alcanza
+      // para el lightbox de 420 px en pantallas 3x; con ahorro de datos o red lenta se baja.
+      function testimonyQuality() {
+        var c = navigator.connection || {};
+        if (c.saveData || /^(slow-)?2g$/.test(c.effectiveType || "")) return "play_360p.mp4";
+        if (c.effectiveType === "3g") return "play_480p.mp4";
+        return "play_720p.mp4";
+      }
+
+      function openLightbox(base) {
+        if (!lightbox || !video) return;
+        video.poster = base + "thumbnail.jpg";
+        video.src = base + testimonyQuality();
+        // El toque en la tarjeta habilita el play con sonido; si el navegador igual lo frena,
+        // quedan los controles a la vista.
+        var playing = video.play();
+        if (playing && playing.catch) playing.catch(function () {});
         lightbox.classList.add("open");
         lightbox.setAttribute("aria-hidden", "false");
         document.documentElement.classList.add("modal-open");
       }
 
       function closeLightbox() {
-        if (!lightbox || !frame) return;
+        if (!lightbox || !video) return;
         lightbox.classList.remove("open");
         lightbox.setAttribute("aria-hidden", "true");
-        frame.src = "";
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
         document.documentElement.classList.remove("modal-open");
       }
 
@@ -986,6 +1004,9 @@
       if (next) next.addEventListener("click", function () { scrollStories(1); });
       if (carousel) window.setInterval(advanceStories, 4200);
       if (close) close.addEventListener("click", closeLightbox);
+      // Sin menú contextual sobre el video: saca «Guardar video como…» (el resto lo cubre
+      // controlslist="nodownload").
+      if (video) video.addEventListener("contextmenu", function (event) { event.preventDefault(); });
       if (lightbox) {
         lightbox.addEventListener("click", function (event) {
           if (event.target === lightbox) closeLightbox();
