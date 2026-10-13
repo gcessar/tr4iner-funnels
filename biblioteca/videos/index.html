@@ -710,16 +710,63 @@
       backdrop-filter: blur(4px);
     }
     .player-frame {
+      position: relative;
       aspect-ratio: 16 / 9;
       background: #000;
     }
-    .player-frame iframe,
-    .player-frame video {
+    .player-frame iframe {
       width: 100%;
       height: 100%;
       display: block;
       border: none;
-      background: #000;
+    }
+    /* Reproductor de lecciones en R2 (13-oct): mismo diseño que los videos de la rutina
+       (play negro con triángulo y anillo amarillos, barra amarilla, botones redondos
+       translúcidos). Sin controles del navegador: no hay «Descargar» ni «Guardar video».
+       El único menú es la velocidad. */
+    .lv { position: absolute; inset: 0; overflow: hidden; background: #000; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    .lv video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .lv-play { position: absolute; left: 50%; top: 50%; z-index: 2; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--ink); box-shadow: 0 4px 14px rgba(22, 19, 14, .4); cursor: pointer; transition: opacity .18s ease, transform .18s ease; }
+    .lv-play svg { width: 18px; height: 18px; margin-left: 3px; fill: var(--mark); }
+    .lv-play:active { transform: scale(.94); }
+    .lv.is-playing .lv-play { opacity: 0; pointer-events: none; }
+    .lv-spin { position: absolute; inset: -4px; border: 2px solid transparent; border-top-color: var(--mark); border-right-color: var(--mark); border-radius: 50%; opacity: 0; }
+    .lv.is-loading .lv-play { opacity: 1; }
+    .lv.is-loading .lv-spin { opacity: 1; animation: lv-spin .7s linear infinite; }
+    @keyframes lv-spin { to { transform: rotate(360deg); } }
+    .lv-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 22px 10px 8px; background: linear-gradient(to top, rgba(0, 0, 0, .62), rgba(0, 0, 0, 0)); transition: opacity .2s ease; }
+    .lv.is-playing.is-idle .lv-bar { opacity: 0; pointer-events: none; }
+    .lv.is-playing.is-idle { cursor: none; }
+    .lv-seek { position: relative; height: 18px; display: flex; align-items: center; }
+    .lv-track { position: relative; width: 100%; height: 3px; overflow: hidden; border-radius: 2px; background: rgba(255, 255, 255, .28); transition: height .15s ease; }
+    .lv-fill { display: block; height: 100%; background: var(--mark); transform: scaleX(0); transform-origin: left center; }
+    .lv-seek:hover .lv-track, .lv-seek:focus-within .lv-track { height: 5px; }
+    .lv-seek input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+    .lv-row { position: relative; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .lv-btn { flex: none; width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(17, 17, 17, .62); color: #FFFFFF; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .lv-btn svg { width: 16px; height: 16px; }
+    .lv-btn[aria-pressed="true"] { background: var(--mark); color: var(--ink); }
+    .lv-toggle { background: var(--ink); }
+    .lv-toggle svg { width: 12px; height: 12px; fill: var(--mark); }
+    .lv-time { color: #FFFFFF; font: 500 11px/1 var(--mono); letter-spacing: .04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .lv-gap { flex: 1; }
+    .lv-speed { width: auto; min-width: 46px; padding: 0 10px; border-radius: 17px; font: 600 12px/1 var(--mono); }
+    /* Fila horizontal y no lista: en un teléfono el video mide ~200 px de alto y una lista no entra. */
+    .lv-menu { position: absolute; right: 0; bottom: 42px; z-index: 3; padding: 6px; border-radius: 10px; background: rgba(17, 17, 17, .94); box-shadow: 0 10px 28px rgba(0, 0, 0, .45); }
+    .lv-menu[hidden] { display: none; }
+    .lv-menu p { margin: 2px 6px 6px; color: rgba(255, 255, 255, .6); font: 500 10px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+    .lv-opciones { display: flex; gap: 4px; }
+    .lv-menu button { min-width: 44px; min-height: 32px; padding: 0 8px; border: 0; border-radius: 6px; background: rgba(255, 255, 255, .08); color: #FFFFFF; font: 600 12px/1 var(--mono); white-space: nowrap; cursor: pointer; }
+    .lv-menu button:hover { background: rgba(255, 255, 255, .16); }
+    .lv-menu button:focus-visible { outline: 2px solid var(--mark); outline-offset: 1px; }
+    .lv-menu button[aria-checked="true"] { background: var(--mark); color: var(--ink); }
+    .lv-error { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: rgba(17, 17, 17, .82); color: #FFFFFF; text-align: center; font: 400 13px/1.4 var(--sans); }
+    .lv-error[hidden] { display: none; }
+    .lv-error p { margin: 0; }
+    .lv-error button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--mark); color: var(--ink); cursor: pointer; font: 700 13px var(--sans); }
+    .lv:fullscreen, .lv:-webkit-full-screen { width: 100%; height: 100%; }
+    @media (prefers-reduced-motion: reduce) {
+      .lv.is-loading .lv-spin { animation: none; border-color: var(--mark); }
     }
     .player-bar {
       display: flex;
@@ -2538,7 +2585,7 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20261008-r2"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261013-sin-descarga"></script>
   <script src="/biblioteca/assets/ruta-chat.js?v=20261007-icono"></script>
   <script>
     (async function () {
@@ -3405,37 +3452,199 @@
         // El alto del cuadro contra los píxeles reales de la pantalla: nítido sin bajar de más.
         return alto * Math.min(window.devicePixelRatio || 1, 3) > 500 ? '720p' : '480p';
       }
+      var LV_ICON = {
+        play: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>',
+        pause: '<svg viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="0" width="3.6" height="14" rx="1"/><rect x="7.4" y="0" width="3.6" height="14" rx="1"/></svg>',
+        sound: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6.3 6.3 0 0 1 0 9"/></svg>',
+        muted: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 6l4 4M14.5 6l-4 4"/></svg>',
+        expand: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg>'
+      };
+      var LV_VELOCIDADES = [1, 1.25, 1.5, 1.75, 2];
+      function lvTiempo(s) {
+        s = Math.max(0, Math.floor(s || 0));
+        return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+      }
+      function lvVelocidad(r) { return String(r).replace('.', ',') + '×'; }
+
       function nativePlayer(v) {
-        var el = document.createElement('video');
-        el.controls = true;
-        el.playsInline = true;
-        el.setAttribute('webkit-playsinline', '');
-        el.preload = 'auto';
+        playerFrame.innerHTML =
+          '<div class="lv is-loading" tabindex="-1">' +
+            // Sin `controls`: los del navegador traen «Descargar» y «Guardar video como».
+            '<video playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback noplaybackrate"></video>' +
+            '<button type="button" class="lv-play" aria-label="Reproducir">' + LV_ICON.play + '<i class="lv-spin" aria-hidden="true"></i></button>' +
+            '<div class="lv-bar">' +
+              '<div class="lv-seek"><div class="lv-track" aria-hidden="true"><i class="lv-fill"></i></div>' +
+                '<input type="range" min="0" max="1000" step="1" value="0" aria-label="Posición del video"></div>' +
+              '<div class="lv-row">' +
+                '<button type="button" class="lv-btn lv-toggle" aria-label="Reproducir">' + LV_ICON.play + '</button>' +
+                '<span class="lv-time">0:00 / 0:00</span><span class="lv-gap"></span>' +
+                '<div class="lv-speed-wrap">' +
+                  '<button type="button" class="lv-btn lv-speed" aria-haspopup="menu" aria-expanded="false" aria-label="Velocidad de reproducción: 1×">1×</button>' +
+                  '<div class="lv-menu" role="menu" aria-label="Velocidad de reproducción" hidden><p>Velocidad</p><div class="lv-opciones">' +
+                    LV_VELOCIDADES.map(function (r) { return '<button type="button" role="menuitemradio" aria-checked="' + (r === 1) + '" data-rate="' + r + '">' + lvVelocidad(r) + '</button>'; }).join('') +
+                  '</div></div>' +
+                '</div>' +
+                '<button type="button" class="lv-btn" data-lv-sound aria-label="Silenciar" aria-pressed="false">' + LV_ICON.sound + '</button>' +
+                '<button type="button" class="lv-btn" data-lv-full aria-label="Ver en pantalla completa">' + LV_ICON.expand + '</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="lv-error" hidden><p>No se pudo cargar el video. Revisa tu conexión.</p><button type="button">Reintentar</button></div>' +
+          '</div>';
+        var box = playerFrame.firstChild;
+        var el = box.querySelector('video');
+        var seek = box.querySelector('.lv-seek input');
+        var fill = box.querySelector('.lv-fill');
+        var tiempo = box.querySelector('.lv-time');
+        var toggle = box.querySelector('.lv-toggle');
+        var grande = box.querySelector('.lv-play');
+        var speed = box.querySelector('.lv-speed');
+        var menu = box.querySelector('.lv-menu');
+        var sonido = box.querySelector('[data-lv-sound]');
+        var errorBox = box.querySelector('.lv-error');
+        var arrastrando = false, quieto = null;
+
         el.poster = v.thumb || (v.video.base + 'thumbnail.jpg');
         el.src = v.video.base + 'play_' + calidadLeccion() + '.mp4';
-        playerFrame.innerHTML = '';
-        playerFrame.appendChild(el);
+        // Clic derecho, arrastrar o mantener apretado no ofrecen guardar el video.
+        box.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+        el.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        function pintar() {
+          var d = el.duration || 0, t = el.currentTime || 0;
+          if (!arrastrando) {
+            fill.style.transform = 'scaleX(' + (d ? t / d : 0) + ')';
+            seek.value = d ? Math.round(t / d * 1000) : 0;
+          }
+          seek.setAttribute('aria-valuetext', lvTiempo(t) + ' de ' + lvTiempo(d));
+          tiempo.textContent = lvTiempo(t) + ' / ' + lvTiempo(d);
+        }
+        function estado() {
+          var corriendo = !el.paused && !el.ended;
+          box.classList.toggle('is-playing', corriendo);
+          toggle.innerHTML = corriendo ? LV_ICON.pause : LV_ICON.play;
+          toggle.setAttribute('aria-label', corriendo ? 'Pausar' : 'Reproducir');
+          grande.setAttribute('aria-label', el.ended ? 'Ver de nuevo' : 'Reproducir');
+          if (!corriendo) despertar();
+        }
+        // Los controles se esconden a los 2,5 s sin tocar nada mientras el video corre.
+        function despertar() {
+          box.classList.remove('is-idle');
+          clearTimeout(quieto);
+          quieto = setTimeout(function () { if (!el.paused && menu.hidden) box.classList.add('is-idle'); }, 2500);
+        }
+        function alternar() {
+          if (el.paused || el.ended) {
+            errorBox.hidden = true;
+            var intento = el.play();
+            if (intento && intento.catch) intento.catch(function () { box.classList.remove('is-loading'); estado(); });
+          } else el.pause();
+        }
+        function cerrarMenu() { menu.hidden = true; speed.setAttribute('aria-expanded', 'false'); }
+
         el.addEventListener('loadedmetadata', function () {
           var saved = remoteProgress[v.id];
           if (saved && saved.lastPositionSeconds > 5 && saved.maxPercent < 95) {
             try { el.currentTime = saved.lastPositionSeconds; } catch (e) { /* todavía sin rangos */ }
           }
+          pintar();
         }, { once: true });
-        el.addEventListener('playing', function () { startPoll(v); });
+        el.addEventListener('timeupdate', pintar);
+        el.addEventListener('waiting', function () { box.classList.add('is-loading'); });
+        el.addEventListener('playing', function () { box.classList.remove('is-loading'); estado(); startPoll(v); });
+        el.addEventListener('pause', estado);
         el.addEventListener('ended', function () {
+          estado();
           pushProgress(v, false);
           completarAuto(v);
           stopPoll();
         });
+        el.addEventListener('error', function () { box.classList.remove('is-loading'); errorBox.hidden = false; });
+        el.addEventListener('click', function () {
+          // En el teléfono el primer toque con los controles escondidos sólo los muestra.
+          if (box.classList.contains('is-idle')) { despertar(); return; }
+          alternar();
+        });
+        grande.addEventListener('click', alternar);
+        toggle.addEventListener('click', alternar);
+        seek.addEventListener('input', function () {
+          arrastrando = true;
+          fill.style.transform = 'scaleX(' + (seek.value / 1000) + ')';
+          if (el.duration) tiempo.textContent = lvTiempo(seek.value / 1000 * el.duration) + ' / ' + lvTiempo(el.duration);
+        });
+        seek.addEventListener('change', function () {
+          if (el.duration) el.currentTime = seek.value / 1000 * el.duration;
+          arrastrando = false;
+          despertar();
+        });
+        speed.addEventListener('click', function () {
+          var abrir = menu.hidden;
+          menu.hidden = !abrir;
+          speed.setAttribute('aria-expanded', String(abrir));
+          if (abrir) (menu.querySelector('[aria-checked="true"]') || menu.querySelector('button')).focus();
+          despertar();
+        });
+        menu.addEventListener('click', function (e) {
+          var opcion = e.target.closest('[data-rate]');
+          if (!opcion) return;
+          el.playbackRate = Number(opcion.dataset.rate);
+          menu.querySelectorAll('[data-rate]').forEach(function (b) { b.setAttribute('aria-checked', String(b === opcion)); });
+          speed.textContent = lvVelocidad(el.playbackRate);
+          speed.setAttribute('aria-label', 'Velocidad de reproducción: ' + lvVelocidad(el.playbackRate));
+          cerrarMenu();
+          speed.focus();
+        });
+        box.addEventListener('click', function (e) { if (!menu.hidden && !e.target.closest('.lv-speed-wrap')) cerrarMenu(); });
+        sonido.addEventListener('click', function () {
+          el.muted = !el.muted;
+          sonido.innerHTML = el.muted ? LV_ICON.muted : LV_ICON.sound;
+          sonido.setAttribute('aria-label', el.muted ? 'Activar el sonido' : 'Silenciar');
+          sonido.setAttribute('aria-pressed', String(el.muted));
+        });
+        box.querySelector('[data-lv-full]').addEventListener('click', function () {
+          // iPhone sólo deja pantalla completa sobre el propio <video> (su reproductor no ofrece descargar).
+          if (el.webkitEnterFullscreen && !document.fullscreenEnabled) { el.webkitEnterFullscreen(); return; }
+          var pedir = box.requestFullscreen || box.webkitRequestFullscreen;
+          if (document.fullscreenElement) document.exitFullscreen();
+          else if (pedir) pedir.call(box);
+        });
+        errorBox.querySelector('button').addEventListener('click', function () {
+          var donde = el.currentTime;
+          errorBox.hidden = true;
+          box.classList.add('is-loading');
+          el.load();
+          el.addEventListener('loadedmetadata', function () { el.currentTime = donde; }, { once: true });
+          alternar();
+        });
+        box.addEventListener('pointermove', despertar);
+        box.addEventListener('keydown', function (e) {
+          if (e.target.closest('.lv-menu')) {
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrarMenu(); speed.focus(); }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+              var opciones = Array.prototype.slice.call(menu.querySelectorAll('[data-rate]'));
+              var i = opciones.indexOf(e.target) + (e.key === 'ArrowRight' ? 1 : -1);
+              e.preventDefault();
+              opciones[(i + opciones.length) % opciones.length].focus();
+            }
+            return;
+          }
+          if (e.target === seek && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+          var tecla = e.key.toLowerCase();
+          if (tecla === ' ' || tecla === 'k') { if (e.target.tagName !== 'BUTTON' || tecla === 'k') { e.preventDefault(); alternar(); } }
+          else if (tecla === 'arrowright') { el.currentTime = Math.min(el.duration || 0, el.currentTime + 5); }
+          else if (tecla === 'arrowleft') { el.currentTime = Math.max(0, el.currentTime - 5); }
+          else if (tecla === 'm') sonido.click();
+          else return;
+          despertar();
+        });
+
         // El toque que abrió la lección habilita el sonido; si el navegador igual lo frena,
-        // queda el botón de play del propio video.
-        var intento = el.play();
-        if (intento && intento.catch) intento.catch(function () { /* sin autoplay */ });
+        // queda el botón de play.
+        alternar();
         return {
           getDuration: function () { return el.duration || 0; },
           getCurrentTime: function () { return el.currentTime || 0; },
           reproduciendo: function () { return !el.paused && !el.ended; },
-          destroy: function () { el.pause(); el.removeAttribute('src'); el.load(); }
+          destroy: function () { clearTimeout(quieto); el.pause(); el.removeAttribute('src'); el.load(); }
         };
       }
 

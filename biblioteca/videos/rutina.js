@@ -142,7 +142,7 @@
     }
     // La portada se pinta con el HTML; el archivo de video se elige después, al medir la tarjeta.
     return '<div class="rt-video ' + forma + '" data-player="' + esc(ex.slot) + '" role="group" aria-label="Demostración de ' + esc(ex.name) + '">' +
-      '<video playsinline webkit-playsinline loop preload="none" disablepictureinpicture poster="' + esc(cdnBase(ex) + 'thumbnail.jpg') + '"></video>' +
+      '<video playsinline webkit-playsinline loop preload="none" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback" poster="' + esc(cdnBase(ex) + 'thumbnail.jpg') + '"></video>' +
       '<button type="button" class="rt-play" data-vplay aria-label="Reproducir la demostración">' + ICON.play + '<i class="rt-spin" aria-hidden="true"></i></button>' +
       '<div class="rt-vtools">' +
         '<button type="button" class="rt-vtool" data-vsound aria-label="Silenciar" aria-pressed="false">' + ICON.sound + '</button>' +
@@ -245,6 +245,9 @@
       });
       // Tocar el video pausa o sigue, como en cualquier app de video.
       video.addEventListener('click', function () { togglePlay(box); });
+      // Ningún video de R2 se ofrece para descargar: sin «Guardar video como…» ni arrastrarlo.
+      box.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+      video.addEventListener('dragstart', function (e) { e.preventDefault(); });
     });
   }
   function paintSound(box) {
