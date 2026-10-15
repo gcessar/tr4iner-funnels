@@ -37,7 +37,7 @@ Rutas objetivo del proyecto:
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
 - `/empezar-va` → página directa de Veronika: VSL (Vidalytics `B7JmheiJ3cd63CsY`) + formulario PROPIO «FORM VA» (`niqtWgJp`), sin registro previo. Typeform redirige al WhatsApp de ManyChat de Veronika. La única llave hacia la venta es el teléfono del formulario; se decidió no pedir código en WhatsApp (6-oct). Diseño «Negro champán», no «Vino crema». La mide el panel `/empezar-va` de «Funnel VA» en el CRM.
-- `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero.
+- `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero. **Desde el 15-oct-2026 `/biblioteca/videos/` es la Ruta Tr4iner** (módulos por días y por calendario, rutina, videos de R2, chat del equipo); su catálogo lo sirve el CRM (`genesis-preview-catalog.json`).
 - `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
 - `/pase/{código}` → página del **pase de referidos** de cada cliente (`pase/index.html` por rewrite). Nombre de quien invita + Calendly incrustado del evento de pases. Sin GTM ni píxel; mide con beacons propios al CRM (`hub.tr4iner.com/api/pase/*`). `noindex`. Detalle en `docs/pases-referidos.md` del CRM.
 
@@ -62,7 +62,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
-| `biblioteca/` | Videoteca / recursos. |
+| `biblioteca/` | Videoteca / recursos. `biblioteca/videos/` es la **Ruta Tr4iner** en producción desde el 15-oct-2026 (`index.html`, `rutina.js`, `assets/ruta-chat.js`); el preview del equipo (`work/ruta-hombres-preview`) se cierra con la clave del equipo en `middleware.ts`. |
 | `medicos/index.html` | Landing completa de **Médicos / Guardias** (`/medicos/`), con relato de 24 horas y Calendly diferido. |
 | `medicos/formulario-visible.html` | **Retador `INL`** del test de formulario: idéntico a `medicos/index.html` salvo que en el celular el formulario queda a la vista en vez de vivir en un modal. `noindex`; se sirve por rewrite bajo `/medicos`. |
 | `fit4challenge-video-clickfunnels.html` | Página del challenge Fit4. |

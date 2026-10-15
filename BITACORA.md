@@ -15,7 +15,19 @@
   - Guarda con `PATCH /api/genesis/me` → CRM `PATCH /session`, manda `ruta_dias_elegidos` y recarga con su rutina.
   - Si cierra la ventana ve los videos, y se le vuelve a pedir en la próxima visita. Ese día el tour espera.
 - **Verificación:** réplica local, mujer 36+ sin días. La ventana abre; al elegir 4 se guarda, recarga y no vuelve a aparecer, sin errores. Captura: `~/Documents/Ruta Tr4iner/capturas/dias-telefono-2026-10-15.png`. Tests del repo 8/8.
-- **Variable pendiente en producción:** `RUTA_CHAT_SECRET`. Se rota junto con la credencial de n8n `Ruta Chat · secreto Vercel` al publicar.
+- **Chat:** la rama también trae lo que otra sesión subió al preview (`work/ruta-hombres-preview`): el agente califica y deriva a WhatsApp con una sola pregunta.
+- **Secreto del chat rotado** (el anterior no estaba guardado en ningún lado):
+  - Nueva credencial n8n `D4t4ho0L1Sd0yz8x` («Ruta Chat · secreto Vercel (producción, 15-oct)»), y el webhook de `RUTA-CHAT` (`bxFzkGlbxYYVdqCH`) apunta a ella. Activo, `versionId === activeVersionId`.
+  - Mismo valor en `RUTA_CHAT_SECRET` de Production y del Preview de `work/ruta-hombres-preview`, que se volvió a desplegar.
+  - Con un secreto falso el webhook da 403; con el nuevo, 200.
+  - La credencial vieja `HBZZI9AG1A2QCpRX` queda sin uso, por si hay que volver atrás.
+- **Publicado:** `main` en `842cfc7`, deployment `dpl_5pC2m9d1cNNPVRuZtWvw16HKP6LY` **Ready** en `metodo.tr4iner.com`.
+  - `/biblioteca/videos/`, `/biblioteca/`, `/calendly-an`, `/casos-de-estudio`, `rutina.js`, `tr4-video.js` y `/api/genesis/config` responden 200; `config` dice `teamPreview:false`.
+  - Sin sesión, `/api/genesis/catalog`, `/me` y `/workout` dan 401, como corresponde.
+- **CRM:** publicado en `hub.tr4iner.com` con las 6 migraciones aplicadas y el catálogo de la Ruta sembrado (ver la bitácora del CRM).
+- **Pendiente:**
+  - Sacar de la regla WAF el alias del preview de testimonios (`testimo-a1eebf`), que ya no hace falta. Preguntar antes, como toda edición del WAF.
+  - Pasar el `nativePlayer()` de la Ruta a `assets/tr4-video/tr4-video.js`.
 
 ## 2026-10-15 — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
 
