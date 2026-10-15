@@ -1,5 +1,22 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)
+
+- **Pedido del usuario:** «mandemos todo a producción», CRM y páginas. Decisiones del 15-oct:
+  - Sale la Ruta completa, con el chat del equipo.
+  - A los miembros actuales se les piden los días al entrar.
+  - Se incluyen las UTMs hacia los casos (`work/ruta-casos-utm`).
+- **Rama:** `work/ruta-lanzamiento`, que junta `main` + `work/testimonios-reproductor` (testimonios de `/calendly-an` y VA con el reproductor compartido) + `work/ruta-casos-utm` (que trae toda la Ruta).
+  - Único conflicto: esta bitácora, con las dos partes conservadas.
+  - El índice de octubre sumó las entradas de la Ruta que le faltaban.
+- **`middleware.ts`:** el test de `/medicos` sigue igual. Lo nuevo de la Ruta (`/biblioteca`, `/api/genesis`, `/r`) sólo actúa en los Preview; en producción `isPreview()` es falso y deja pasar todo.
+- **Días de entrenamiento para los 141 miembros de antes**, que no los tienen:
+  - Al entrar se abre `#dias-dialog` con las mismas opciones que el registro («¿Cuántas veces a la semana puedes entrenar?», 3/4/5).
+  - Guarda con `PATCH /api/genesis/me` → CRM `PATCH /session`, manda `ruta_dias_elegidos` y recarga con su rutina.
+  - Si cierra la ventana ve los videos, y se le vuelve a pedir en la próxima visita. Ese día el tour espera.
+- **Verificación:** réplica local, mujer 36+ sin días. La ventana abre; al elegir 4 se guarda, recarga y no vuelve a aparecer, sin errores. Captura: `~/Documents/Ruta Tr4iner/capturas/dias-telefono-2026-10-15.png`. Tests del repo 8/8.
+- **Variable pendiente en producción:** `RUTA_CHAT_SECRET`. Se rota junto con la credencial de n8n `Ruta Chat · secreto Vercel` al publicar.
+
 ## 2026-10-15 — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
 
 **Rama:** `work/ruta-casos-utm` (desde `work/ruta-videos-r2`, `6bc6e66`; integra hasta `46bdb03`). **Estado:** sin integrar ni publicar.
@@ -1933,6 +1950,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-15` — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)
 - `2026-10-15` — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
 - `2026-10-15` — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
 - `2026-10-15` — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
