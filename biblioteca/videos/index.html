@@ -929,6 +929,12 @@
     }
     .profile-dialog-close svg { width: 14px; height: 14px; }
     .profile-dialog-body { padding: 26px 22px 24px; }
+    /* Días de entrenamiento para los miembros de antes de la Ruta (15-oct): mismas opciones que el registro. */
+    .dias-dek { margin: 10px 0 18px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+    .dias-opciones { display: grid; gap: 10px; }
+    .dias-opciones .route-access:disabled { opacity: .55; cursor: progress; }
+    .dias-error { margin: 14px 0 0; color: #A83A22; font-size: 13px; font-weight: 500; }
+    .dias-error[hidden] { display: none !important; }
     .profile-dialog-route,
     .profile-dialog-body dt,
     .profile-dialog-progress > span {
@@ -2512,6 +2518,25 @@
     </div>
   </dialog>
 
+  <dialog class="profile-dialog" id="dias-dialog" aria-labelledby="dias-title">
+    <div class="profile-dialog-head">
+      <span>Tu semana de entrenamiento</span>
+      <button type="button" class="profile-dialog-close" id="dias-close" aria-label="Elegir más tarde">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="profile-dialog-body">
+      <h2 id="dias-title">¿Cuántas veces a la semana puedes entrenar?</h2>
+      <p class="dias-dek">Elige lo que puedas mantener. Prepararemos tu rutina con esos días.</p>
+      <div class="dias-opciones">
+        <button type="button" class="route-access" data-dias="3"><span><strong>3 veces por semana</strong></span><i aria-hidden="true">→</i></button>
+        <button type="button" class="route-access" data-dias="4"><span><strong>4 veces por semana</strong></span><i aria-hidden="true">→</i></button>
+        <button type="button" class="route-access" data-dias="5"><span><strong>5 veces por semana</strong></span><i aria-hidden="true">→</i></button>
+      </div>
+      <p class="dias-error" id="dias-error" role="alert" hidden>No pudimos guardarlo. Inténtalo de nuevo.</p>
+    </div>
+  </dialog>
+
   <dialog class="routine-sheet" id="routine-sheet" aria-labelledby="routine-title">
     <div class="routine-head">
       <span id="routine-head-label">Tu rutina</span>
@@ -3361,7 +3386,8 @@
 
       function syncModalState() {
         var routineSheet = document.getElementById('routine-sheet');
-        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open)));
+        var diasDialog = document.getElementById('dias-dialog');
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open) || (diasDialog && diasDialog.open)));
       }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
@@ -4336,6 +4362,43 @@
         if (nota) nota.textContent = 'Te respondemos aquí mismo, al instante.';
       }
 
+      // ── Días de entrenamiento ───────────────────────────────
+      // Los miembros de antes de la Ruta (lanzamiento del 15-oct) no eligieron días al registrarse
+      // y sin ellos no hay rutina. Se piden una vez al entrar; la elección queda en el CRM y la
+      // página se recarga con su rutina. Si cierra la ventana, ve los videos y se le vuelve a pedir.
+      function pedirDias() {
+        var dialogo = document.getElementById('dias-dialog');
+        var dias = memberSession && Number(memberSession.member.trainingDays);
+        if (!dialogo || !memberSession || !rutaPorDias || gateActivo || [3, 4, 5].indexOf(dias) !== -1) return false;
+        var botones = dialogo.querySelectorAll('[data-dias]');
+        var error = document.getElementById('dias-error');
+        botones.forEach(function (boton) {
+          boton.addEventListener('click', async function () {
+            var elegidos = Number(boton.getAttribute('data-dias'));
+            error.hidden = true;
+            botones.forEach(function (b) { b.disabled = true; });
+            try {
+              var respuesta = await fetch('/api/genesis/me', {
+                method: 'PATCH',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ training_days: elegidos })
+              });
+              if (!respuesta.ok) throw new Error('CRM ' + respuesta.status);
+              track('ruta_dias_elegidos', { dias: elegidos });
+              window.location.reload();
+            } catch (e) {
+              error.hidden = false;
+              botones.forEach(function (b) { b.disabled = false; });
+            }
+          });
+        });
+        document.getElementById('dias-close').addEventListener('click', function () { dialogo.close(); });
+        dialogo.addEventListener('close', syncModalState);
+        dialogo.showModal();
+        syncModalState();
+        return true;
+      }
+
       // ── Tour de primera entrada ─────────────────────────────
       var TOUR_KEY = 'tr4_tour_genesis_route_v2';
       var tourIndex = 0;
@@ -4469,7 +4532,8 @@
       setupMobileExperience();
       updateBridge();
       setupRutaChat();
-      maybeStartTour();
+      // Primero los días (sin ellos no hay rutina); el tour queda para cuando vuelve con la rutina.
+      if (!pedirDias()) maybeStartTour();
       showAnnouncement();
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
       if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
