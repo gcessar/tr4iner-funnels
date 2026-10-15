@@ -30,6 +30,12 @@ cambios). Se rotó otra vez el secreto Vercel ↔ n8n, ahora en el Preview de es
   atiende una persona y no el bot de AN (que cotiza US$250).
 - Con «Quiero que me guíen 1 a 1» a veces deriva sin preguntar nada: lo toma como intención fuerte.
 
+**Mismo día — más corto (pedido del usuario: «settear brevemente y derivar»).** La agenda de llamadas desde el chat
+queda para más adelante. El saludo ya es la única pregunta («Cuéntanos qué te gustaría lograr y te conectamos con el
+equipo», respuestas rápidas «Bajar grasa», «Ganar músculo», «Tengo una duda») y en cuanto la persona dice qué quiere,
+el agente la deriva en esa misma respuesta. Fuera las preguntas de qué probó y de salud. Probado: las dos respuestas
+rápidas y «quiero que me guíen» derivan al primer mensaje; «hola» y «¿cuánto cuesta?» hacen una pregunta y derivan.
+
 ---
 
 ## 2026-10-15 — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
