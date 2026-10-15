@@ -1,5 +1,20 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
+
+- **Pedido del usuario:** llamado debajo de «El mejor entrenamiento en mujeres según la Ciencia y tu Edad»: «Conoce el paso a paso para lograr tu cambio físico. Esto es exactamente lo que hicimos con una de mis alumnas.».
+  - 18-25 y 26-35 → `/testimonio-flor`; 36+ → `/testimonio-andrea`.
+- **Cómo:** `#player-cta` toma texto y destino del `cta` que manda el catálogo del CRM (`lessonCta`, por lección y edad). La página no conoce la edad del miembro.
+  - Sólo acepta `whatsapp` o `/testimonio-…`.
+  - Un caso se arma con `urlCaso()`, igual que el módulo «Caso de estudio»: nombre, email, sexo y toda la atribución del miembro. Abre en la misma pestaña, como los casos del módulo.
+  - El WhatsApp de «Tu rutina» pasó al mismo mecanismo; su URL quedó en `WHATSAPP_RUTA`.
+- **Medición:** al caso, `bisagra_click` con `origen: 'video_cta'`, `caso` y `sesion`; es el mismo evento que el lead scoring ya lee como intención. A WhatsApp, `ruta_cta_whatsapp`.
+- **Verificación:** réplica local con UTMs sintéticas (`utm_source=PRUEBA-RUTA&utm_medium=GENESIS&utm_campaign=CTA-VIDEO`).
+  - Mujer 18-25 y 26-35 → `/testimonio-flor`; 36+ → `/testimonio-andrea`. Las tres llevan las UTMs.
+  - «Tu rutina» sigue abriendo WhatsApp en otra pestaña. Sin errores de página.
+  - Script: `~/Documents/Ruta Tr4iner/herramientas/cta-casos.mjs`. Captura: `capturas/cta-caso-andrea-2026-10-15.png`.
+- **Pendiente, ajeno a este cambio:** `urlCaso()` no manda `rango_edad`, que las páginas de caso pasan al Typeform. Lo revisa la sesión de UTMs de la Ruta hacia los casos.
+
 ## 2026-10-15 — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
 
 - **Pedido del usuario:** que la atención se centre en el llamado a WhatsApp.
