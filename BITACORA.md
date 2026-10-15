@@ -1,5 +1,16 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
+
+- **Pedido del usuario:** que la atención se centre en el llamado a WhatsApp.
+  - Fuera de **todos** los videos el aviso «Te lo recomendamos en orden» (`#player-hint`, `pendienteAntesDe`, `renderPlayerHint`).
+  - Fuera de «Tu rutina» el botón «Ver mi rutina de N días» y su texto (`#player-routine`; en `rutina.js` salen `paintPlayerBox` y `botonReproductor`, y en `rutina.css` sus estilos).
+  - El usuario eligió sacar los dos, no sólo el aviso.
+- **La rutina sigue a mano:** el acceso «Tu rutina» vive dentro del módulo de pesas (decisión del 2-oct). En la réplica abre la hoja de la rutina sin errores.
+- Debajo de «Tu rutina» queda sólo el llamado a WhatsApp. En las demás lecciones la hoja se oculta si no hay descripción ni recursos.
+- `rutina.js` y `rutina.css` cambian de versión en la URL (`?v=20261015-sin-boton-reproductor`) para que no quede la copia vieja en caché.
+- **Verificación:** réplica local con Chrome. «Tu rutina» muestra sólo `#player-cta`, «Sobrecarga» no muestra hoja, y no hay errores de página. Captura: `~/Documents/Ruta Tr4iner/capturas/reproductor-rutina-2026-10-15.png`.
+
 ## 2026-10-15 — Ruta: llamado a WhatsApp debajo del primer video de pesas
 
 - **Pedido del usuario:** debajo del primer video de «Entrenamiento de pesas» («Tu Rutina de 3/4/5 días por semana», `ruta-rutina-intro`), un llamado al WhatsApp de ManyChat para todos los miembros: «Si quieres que te ayude con tu cambio físico, más información aquí.»
