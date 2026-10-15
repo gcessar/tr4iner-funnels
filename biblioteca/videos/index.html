@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://i.ytimg.com" />
   <link rel="preconnect" href="https://video.mediatr4iner.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261002-accesos" />
+  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261015-sin-boton-reproductor" />
 
   <style>
     :root {
@@ -810,42 +810,6 @@
       border-top: 1px solid rgba(244, 239, 230, 0.14);
     }
     .player-sheet[hidden] { display: none !important; }
-    .player-hint {
-      margin-bottom: 16px;
-      padding: 13px 14px;
-      border: 1px solid rgba(242, 199, 68, 0.42);
-      border-left: 3px solid var(--mark);
-      border-radius: 8px;
-      background: rgba(242, 199, 68, 0.08);
-    }
-    .player-hint[hidden] { display: none !important; }
-    .player-hint-code {
-      margin: 0 0 6px;
-      color: var(--mark);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-    }
-    .player-hint p + p, #player-hint-text {
-      margin: 0;
-      color: rgba(244, 239, 230, 0.86);
-      font-size: 13.5px;
-      line-height: 1.5;
-    }
-    .player-hint-cta {
-      margin-top: 10px;
-      padding: 0;
-      border: 0;
-      background: none;
-      color: var(--mark);
-      cursor: pointer;
-      font-family: var(--sans);
-      font-size: 13.5px;
-      font-weight: 600;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
     .player-desc {
       margin: 0;
       color: rgba(244, 239, 230, 0.72);
@@ -885,7 +849,7 @@
     }
     .player-resources a:hover { background: rgba(244, 239, 230, 0.08); border-color: rgba(244, 239, 230, 0.42); }
     .player-resources a i { font-style: normal; color: var(--mark); }
-    /* Llamado a WhatsApp bajo el primer video de pesas (15-oct): mismo amarillo que el aviso de orden. */
+    /* Llamado a WhatsApp bajo el primer video de pesas (15-oct): lo único debajo de ese video. */
     .player-cta {
       display: flex;
       align-items: center;
@@ -907,7 +871,7 @@
     .player-cta:hover { background: rgba(242, 199, 68, 0.16); }
     .player-cta i { font-style: normal; color: var(--mark); }
     .player-cta[hidden] { display: none !important; }
-    .player-sheet > .player-cta:first-child { margin-top: 0; }
+    .player-desc[hidden] + .player-cta { margin-top: 0; }
     .player-close svg { width: 13px; height: 13px; }
 
     /* ── Enfoque móvil + expediente bajo demanda ── */
@@ -2503,12 +2467,6 @@
       </button>
     </div>
     <div class="player-sheet" id="player-sheet" hidden>
-      <div class="player-routine" id="player-routine" hidden></div>
-      <div class="player-hint" id="player-hint" hidden>
-        <p class="player-hint-code">TE LO RECOMENDAMOS EN ORDEN</p>
-        <p id="player-hint-text"></p>
-        <button type="button" class="player-hint-cta" id="player-hint-cta"></button>
-      </div>
       <p class="player-desc" id="player-desc" hidden></p>
       <a class="player-cta" id="player-cta" href="https://api.whatsapp.com/send?phone=17439014239&amp;text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa." target="_blank" rel="noopener" hidden>
         <span>Si quieres que te ayude con tu cambio físico, más información aquí.</span> <i aria-hidden="true">→</i>
@@ -2611,7 +2569,7 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20261013-sin-descarga"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261015-sin-boton-reproductor"></script>
   <script src="/biblioteca/assets/ruta-chat.js?v=20261007-icono"></script>
   <script>
     (async function () {
@@ -3750,37 +3708,6 @@
         return lista;
       }
 
-      // Primera orientacion pendiente por delante de la que se esta abriendo.
-      // No bloquea nada: solo alimenta el aviso de recomendacion del popup.
-      function pendienteAntesDe(id) {
-        var lista = rutaOrdenada();
-        var indice = -1;
-        for (var i = 0; i < lista.length; i++) {
-          if (lista[i].v.id === id) { indice = i; break; }
-        }
-        if (indice <= 0) return null;
-        var primera = null;
-        for (var j = 0; j < indice && !primera; j++) {
-          if (!isDone(lista[j].v.id)) primera = lista[j];
-        }
-        return primera ? { item: primera } : null;
-      }
-
-      function renderPlayerHint(v) {
-        var caja = document.getElementById('player-hint');
-        var previo = pendienteAntesDe(v.id);
-        if (!previo) { caja.hidden = true; return; }
-        document.getElementById('player-hint-text').textContent =
-          'Para entender mejor qué necesitas para tu objetivo, te recomendamos ver primero los pasos previos de tu ruta. Puedes seguir con este ahora si prefieres.';
-        var cta = document.getElementById('player-hint-cta');
-        cta.textContent = 'Ver «' + previo.item.v.title + '» →';
-        cta.onclick = function () {
-          closePlayer();
-          openPlayer(previo.item.v, previo.item.b);
-        };
-        caja.hidden = false;
-      }
-
       // Ficha del video: descripcion y recursos que se editan desde el CMS.
       function renderPlayerSheet(v) {
         var sheet = document.getElementById('player-sheet');
@@ -3803,18 +3730,15 @@
           list.appendChild(item);
         });
         box.hidden = recursos.length === 0;
-        // Debajo del video de introducción de pesas va la puerta a la rutina.
-        var rutinaBox = document.getElementById('player-routine');
-        var esIntroRutina = v.slug === 'ruta-rutina-intro' && window.RutinaUI && window.RutinaUI.disponible();
-        rutinaBox.hidden = !esIntroRutina;
-        if (esIntroRutina) window.RutinaUI.botonReproductor(rutinaBox, closePlayer);
-        // Pedido del usuario (15-oct): bajo el primer video de pesas, para todos, el WhatsApp de
-        // ManyChat de Anthoni con el mismo texto que la asesoría de la bisagra (ManyChat lo reconoce).
+        // Pedido del usuario (15-oct): bajo el primer video de pesas, para todos, sólo el WhatsApp
+        // de ManyChat de Anthoni con el mismo texto que la asesoría de la bisagra (ManyChat lo
+        // reconoce). Ahí ya no va el botón de la rutina —sigue en «Tu rutina» dentro del módulo—
+        // ni, en ningún video, el aviso «Te lo recomendamos en orden»: la atención va al llamado.
         var cta = document.getElementById('player-cta');
         var conCta = v.slug === 'ruta-rutina-intro';
         cta.hidden = !conCta;
         cta.setAttribute('data-sesion', v.id);
-        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden && !esIntroRutina && !conCta;
+        sheet.hidden = !texto && recursos.length === 0 && !conCta;
       }
 
       function openPlayer(v, b) {
@@ -3823,7 +3747,6 @@
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
-        renderPlayerHint(v);
         renderPlayerSheet(v);
         playerFrame.innerHTML = '<div id="yt-target"></div>';
         document.body.classList.add('mobile-video-playing');

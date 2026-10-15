@@ -26,8 +26,7 @@
     replaceSlot: null, pending: Promise.resolve(), loaded: false, lastFocus: null, replaceFocus: null,
     // La página decide cuándo se activa (videos de pesas vistos) y si va en el inicio.
     // Hasta que lo diga, la rutina no se muestra ni se abre.
-    gate: { activa: false, enInicio: false, faltan: 0, total: 0, modulo: 'Entrenamiento de pesas' },
-    box: null, cerrarReproductor: null };
+    gate: { activa: false, enInicio: false, faltan: 0, total: 0, modulo: 'Entrenamiento de pesas' } };
 
   async function api(path, options) {
     var response, data = null;
@@ -106,24 +105,6 @@
     $('routine-trigger-title').textContent = 'Tu rutina · ' + st.member.frequency + ' días';
     $('routine-trigger-next').textContent = resumen().siguiente;
     trigger.hidden = !st.gate.enInicio;
-  }
-
-  // Debajo del video de introducción: el botón si ya está activa; si no, cuánto falta.
-  function paintPlayerBox() {
-    var box = st.box;
-    if (!box || !box.isConnected || box.hidden) return;
-    if (st.gate.activa) {
-      box.innerHTML = '<button type="button" class="player-routine-cta">Ver mi rutina de ' + st.member.frequency + ' días <span aria-hidden="true">→</span></button>' +
-        '<p class="player-routine-note">Tus ejercicios, series, repeticiones y descansos, sesión por sesión. También la tienes en el inicio.</p>';
-      box.querySelector('button').onclick = function () {
-        if (st.cerrarReproductor) st.cerrarReproductor();
-        setTimeout(function () { open(); }, 0);
-      };
-      return;
-    }
-    var faltan = st.gate.faltan;
-    box.innerHTML = '<p class="player-routine-locked">' + ICON.lock + '<span>Tu rutina de ' + st.member.frequency + ' días se activa cuando termines los ' + st.gate.total +
-      ' videos de ' + esc(st.gate.modulo) + '. ' + (faltan === 1 ? 'Te falta 1.' : 'Te faltan ' + faltan + '.') + '</span></p>';
   }
 
   // ── Hoja de la rutina ──
@@ -531,13 +512,6 @@
       st.gate = Object.assign({}, st.gate, gate);
       if (!st.loaded) return;
       paintTrigger();
-      paintPlayerBox();
-    },
-    // Botón «Ver mi rutina» debajo del video de introducción del módulo de pesas.
-    botonReproductor: function (container, cerrarReproductor) {
-      st.box = container;
-      st.cerrarReproductor = cerrarReproductor;
-      paintPlayerBox();
     },
     init: async function (ctx) {
       try {
