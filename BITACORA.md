@@ -1,5 +1,35 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
+
+**Rama:** `work/ruta-casos-utm` (desde `work/ruta-videos-r2`, `6bc6e66`). **Estado:** sin integrar ni publicar.
+
+- **Pedido del usuario:** que las UTMs con las que la persona entró a la Ruta lleguen a los casos de estudio. Esas páginas son las mismas del funnel Caso de Estudio, y no se puede perder la trazabilidad de ninguno de los dos.
+- **Lo que ya funcionaba:** `urlCaso()` (módulo «Caso de estudio» y bisagra) ya reenviaba toda la atribución, la del navegador más la que el CRM guardó en el alta (`/api/genesis/me`).
+- **El hueco:** nada marcaba el cruce, salvo por casualidad. El CRM separa ese toque con `isGenesisRelay` (`utm_medium=GENESIS`), pero ese medium sólo lo traen los anuncios pagos de la Ruta. Quien entró por orgánico (`utm_campaign=GENESIS` sin medium) o sin UTMs llegaba al Typeform como un toque AN de hoy, y su campaña vieja se quedaba con el last touch.
+- **Por qué el medium:** el Typeform `CGxeptJu` sólo declara email, first_name, sexo, video, variant, fbc, fbp y las cinco UTMs (ejecución n8n 565029). `funnel` y `funnel_variant` se pierden ahí, y su salida sólo reenvía las cinco UTMs. El medium llega al CRM, a Calendly y a AGENDAS sin pisar la campaña ni el source.
+- **Cambio (`biblioteca/videos/index.html`, `urlCaso()`):**
+  1. Siempre `utm_medium=RUTA-TR4INER`. El usuario eligió ese valor en vez de `GENESIS`. No lleva token VA, así que la salida del Typeform sigue yendo a `/calendly-an`. El medium del alta no se pierde: queda en `BibliotecaLead.utmMedium` del CRM.
+  2. Las UTMs van en bloque, de una sola fuente: si el navegador trae alguna fresca se usa ese juego entero; si no, el del CRM. Antes se completaban campo por campo y salían combinaciones falsas (source del alta + campaña de un correo de hoy). `fbclid`, `fbc`, `fbp` y `video` se siguen completando sueltos.
+  - No se tocaron los testimonios, `attribution.js`, el Typeform, n8n ni el CRM.
+- **⚠️ Antes de publicar, el CRM tiene que aceptar `RUTA-TR4INER`:** hoy `isGenesisRelay` compara sólo con `GENESIS`.
+  - Si esta página sale primero, ningún cruce se reconoce, ni siquiera los pagos, que hoy sí se reconocen.
+  - El cambio del CRM es sumar el valor en `src/lib/genesis-attribution.ts`, con su test.
+  - Mientras la Ruta viva sólo en el preview del equipo, no afecta a miembros reales.
+- **Verificación (código real de las páginas en Node con DOM simulado, sin GTM para no ensuciar GA4 ni Vidalytics):**
+  - Ruta → testimonio → `data-tf-hidden` → lo que guarda Typeform → salida → Calendly.
+  - Seis escenarios: pago, orgánico, sin UTMs, clic fresco completo, clic fresco con sólo campaña y miembro con UTM VA.
+  - Las cuatro páginas de testimonio, en su versión de `main` (la que queda al integrar: desde la base común sólo `main` las cambió).
+  - En todos llega `utm_medium=RUTA-TR4INER` y la campaña, el source, el content y el term originales quedan intactos.
+  - El miembro con source `-VA-` sale hacia Veronika, como ya pasaba.
+  - Los scripts de la página compilan.
+  - No se probó en el preview real: la Ruta pide sesión de miembro o la clave del equipo.
+- **Pendientes:**
+  - CRM: `isGenesisRelay` acepta `RUTA-TR4INER`.
+  - CRM: excluir ese medium del Funnel AN (leads y usuarios GA4 de `/testimonio-*`).
+  - Revisar en el preview, con un miembro de prueba, la URL de cada caso y la fila de AGENDAS.
+  - Aparte: el testimonio ignora el `fbc` que llega en la URL y arma uno nuevo con fecha de hoy desde `fbclid` (el Pixel también). Meta ve un clic viejo como reciente.
+
 ## 2026-10-15 — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
 
 - **Pedido del usuario:** que la atención se centre en el llamado a WhatsApp.
