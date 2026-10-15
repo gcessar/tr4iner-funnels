@@ -154,7 +154,8 @@
     return {
       rol: 'equipo',
       texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' ¿En qué te ayudamos?',
-      opciones: ['Quiero que me guíen 1 a 1', '¿Cuánto cuesta?', 'Tengo una duda']
+      // Sin «¿Cuánto cuesta?» (15-oct): el precio sale después de entender el caso.
+      opciones: ['Quiero que me guíen 1 a 1', 'Quiero cambiar mi físico', 'Tengo una duda']
     };
   }
 

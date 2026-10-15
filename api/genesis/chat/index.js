@@ -7,7 +7,8 @@ const PROMPT = require('../../../lib/ruta-chat-prompt');
 // OpenAI. La memoria ya no: vive en el CRM (7-oct), junto al historial que ve el
 // admin, y se le pasa al agente en cada pedido.
 const AGENTE_URL = 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat';
-const ESCALONES = ['apertura', 'piso', 'promo', 'llamada'];
+// Desde el 15-oct el chat sólo muestra el precio de referencia del plan.
+const ESCALONES = ['apertura'];
 // Cada turno guardado dice con qué prompt se respondió: así se comparan versiones contra ventas.
 const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT).digest('hex').slice(0, 10);
 
