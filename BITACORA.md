@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
+
+- **Por qué:** el CRM pasó a `gru1` porque Neon está en São Paulo (ver la bitácora del CRM). Las funciones de este proyecto son todas de la Ruta (`api/genesis/*`, puentes al CRM, más el chat a n8n) y seguían en Washington (`iad1`). Cada pantalla de la Ruta cruzaba el continente en cada llamada al CRM.
+- **Cambio:** `"regions": ["gru1"]` en `vercel.json`. Las páginas estáticas y `middleware.ts` (edge) no cambian. El chat a n8n (Railway) suma un poco de distancia, pero espera al modelo de todos modos.
+- Volver atrás es borrar esa línea.
+
 ## 2026-10-15 — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)
 
 - **Pedido del usuario:** «mandemos todo a producción», CRM y páginas. Decisiones del 15-oct:
@@ -2000,6 +2006,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-15` — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
 - `2026-10-15` — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)
 - `2026-10-15` — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
 - `2026-10-15` — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
