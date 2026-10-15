@@ -1,12 +1,16 @@
 <!doctype html>
 <html lang="es-419">
 <head>
+  <script>window.TR4_RUNTIME = {ready:false,teamPreview:false,analyticsEnabled:false,automationEnabled:false};</script>
+  <script src="/api/genesis/config?format=js"></script>
+  <script>if(window.TR4_RUNTIME.teamPreview){var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/api/genesis/manifest';document.head.appendChild(manifest);var icon=document.createElement('link');icon.rel='apple-touch-icon';icon.href='/biblioteca/icons/icon-192.png';document.head.appendChild(icon);}</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    if(window.TR4_RUNTIME.analyticsEnabled) (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
@@ -22,7 +26,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="preconnect" href="https://video.mediatr4iner.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261015-sin-boton-reproductor" />
 
   <style>
     :root {
@@ -704,6 +710,7 @@
       backdrop-filter: blur(4px);
     }
     .player-frame {
+      position: relative;
       aspect-ratio: 16 / 9;
       background: #000;
     }
@@ -712,6 +719,54 @@
       height: 100%;
       display: block;
       border: none;
+    }
+    /* Reproductor de lecciones en R2 (13-oct): mismo diseño que los videos de la rutina
+       (play negro con triángulo y anillo amarillos, barra amarilla, botones redondos
+       translúcidos). Sin controles del navegador: no hay «Descargar» ni «Guardar video».
+       El único menú es la velocidad. */
+    .lv { position: absolute; inset: 0; overflow: hidden; background: #000; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+    .lv video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .lv-play { position: absolute; left: 50%; top: 50%; z-index: 2; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: var(--ink); box-shadow: 0 4px 14px rgba(22, 19, 14, .4); cursor: pointer; transition: opacity .18s ease, transform .18s ease; }
+    .lv-play svg { width: 18px; height: 18px; margin-left: 3px; fill: var(--mark); }
+    .lv-play:active { transform: scale(.94); }
+    .lv.is-playing .lv-play { opacity: 0; pointer-events: none; }
+    .lv-spin { position: absolute; inset: -4px; border: 2px solid transparent; border-top-color: var(--mark); border-right-color: var(--mark); border-radius: 50%; opacity: 0; }
+    .lv.is-loading .lv-play { opacity: 1; }
+    .lv.is-loading .lv-spin { opacity: 1; animation: lv-spin .7s linear infinite; }
+    @keyframes lv-spin { to { transform: rotate(360deg); } }
+    .lv-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 22px 10px 8px; background: linear-gradient(to top, rgba(0, 0, 0, .62), rgba(0, 0, 0, 0)); transition: opacity .2s ease; }
+    .lv.is-playing.is-idle .lv-bar { opacity: 0; pointer-events: none; }
+    .lv.is-playing.is-idle { cursor: none; }
+    .lv-seek { position: relative; height: 18px; display: flex; align-items: center; }
+    .lv-track { position: relative; width: 100%; height: 3px; overflow: hidden; border-radius: 2px; background: rgba(255, 255, 255, .28); transition: height .15s ease; }
+    .lv-fill { display: block; height: 100%; background: var(--mark); transform: scaleX(0); transform-origin: left center; }
+    .lv-seek:hover .lv-track, .lv-seek:focus-within .lv-track { height: 5px; }
+    .lv-seek input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+    .lv-row { position: relative; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .lv-btn { flex: none; width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgba(17, 17, 17, .62); color: #FFFFFF; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .lv-btn svg { width: 16px; height: 16px; }
+    .lv-btn[aria-pressed="true"] { background: var(--mark); color: var(--ink); }
+    .lv-toggle { background: var(--ink); }
+    .lv-toggle svg { width: 12px; height: 12px; fill: var(--mark); }
+    .lv-time { color: #FFFFFF; font: 500 11px/1 var(--mono); letter-spacing: .04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .lv-gap { flex: 1; }
+    .lv-speed { width: auto; min-width: 46px; padding: 0 10px; border-radius: 17px; font: 600 12px/1 var(--mono); }
+    /* Fila horizontal y no lista: en un teléfono el video mide ~200 px de alto y una lista no entra. */
+    .lv-menu { position: absolute; right: 0; bottom: 42px; z-index: 3; padding: 6px; border-radius: 10px; background: rgba(17, 17, 17, .94); box-shadow: 0 10px 28px rgba(0, 0, 0, .45); }
+    .lv-menu[hidden] { display: none; }
+    .lv-menu p { margin: 2px 6px 6px; color: rgba(255, 255, 255, .6); font: 500 10px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+    .lv-opciones { display: flex; gap: 4px; }
+    .lv-menu button { min-width: 44px; min-height: 32px; padding: 0 8px; border: 0; border-radius: 6px; background: rgba(255, 255, 255, .08); color: #FFFFFF; font: 600 12px/1 var(--mono); white-space: nowrap; cursor: pointer; }
+    .lv-menu button:hover { background: rgba(255, 255, 255, .16); }
+    .lv-menu button:focus-visible { outline: 2px solid var(--mark); outline-offset: 1px; }
+    .lv-menu button[aria-checked="true"] { background: var(--mark); color: var(--ink); }
+    .lv-error { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: rgba(17, 17, 17, .82); color: #FFFFFF; text-align: center; font: 400 13px/1.4 var(--sans); }
+    .lv-error[hidden] { display: none; }
+    .lv-error p { margin: 0; }
+    .lv-error button { min-height: 36px; padding: 0 14px; border: 0; border-radius: 6px; background: var(--mark); color: var(--ink); cursor: pointer; font: 700 13px var(--sans); }
+    .lv:fullscreen, .lv:-webkit-full-screen { width: 100%; height: 100%; }
+    @media (prefers-reduced-motion: reduce) {
+      .lv.is-loading .lv-spin { animation: none; border-color: var(--mark); }
     }
     .player-bar {
       display: flex;
@@ -755,42 +810,6 @@
       border-top: 1px solid rgba(244, 239, 230, 0.14);
     }
     .player-sheet[hidden] { display: none !important; }
-    .player-hint {
-      margin-bottom: 16px;
-      padding: 13px 14px;
-      border: 1px solid rgba(242, 199, 68, 0.42);
-      border-left: 3px solid var(--mark);
-      border-radius: 8px;
-      background: rgba(242, 199, 68, 0.08);
-    }
-    .player-hint[hidden] { display: none !important; }
-    .player-hint-code {
-      margin: 0 0 6px;
-      color: var(--mark);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-    }
-    .player-hint p + p, #player-hint-text {
-      margin: 0;
-      color: rgba(244, 239, 230, 0.86);
-      font-size: 13.5px;
-      line-height: 1.5;
-    }
-    .player-hint-cta {
-      margin-top: 10px;
-      padding: 0;
-      border: 0;
-      background: none;
-      color: var(--mark);
-      cursor: pointer;
-      font-family: var(--sans);
-      font-size: 13.5px;
-      font-weight: 600;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
     .player-desc {
       margin: 0;
       color: rgba(244, 239, 230, 0.72);
@@ -830,6 +849,29 @@
     }
     .player-resources a:hover { background: rgba(244, 239, 230, 0.08); border-color: rgba(244, 239, 230, 0.42); }
     .player-resources a i { font-style: normal; color: var(--mark); }
+    /* Llamado debajo del video (15-oct): lo define el CRM por lección; es lo único bajo el video. */
+    .player-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(242, 199, 68, 0.42);
+      border-left: 3px solid var(--mark);
+      border-radius: 8px;
+      background: rgba(242, 199, 68, 0.08);
+      color: var(--paper);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-decoration: none;
+      transition: background 160ms ease;
+    }
+    .player-cta:hover { background: rgba(242, 199, 68, 0.16); }
+    .player-cta i { font-style: normal; color: var(--mark); }
+    .player-cta[hidden] { display: none !important; }
+    .player-desc[hidden] + .player-cta { margin-top: 0; }
     .player-close svg { width: 13px; height: 13px; }
 
     /* ── Enfoque móvil + expediente bajo demanda ── */
@@ -1468,6 +1510,7 @@
       font-weight: 560;
       letter-spacing: -.03em;
       line-height: 1.05;
+      text-wrap: balance;
     }
     .index-head > span {
       color: var(--muted);
@@ -1845,10 +1888,11 @@
       .mobile-profile-trigger strong { font-size: 14px; font-weight: 700; }
       .mobile-profile-trigger svg { flex: none; width: 18px; height: 18px; }
 
+      /* Arriba, no centrado: en pantallas altas el centrado dejaba un hueco sobre el título (2-oct). */
       body.mobile-focus-mode .page {
         min-height: 100svh;
         display: grid;
-        align-content: center;
+        align-content: start;
         padding-top: calc(24px + env(safe-area-inset-top));
         padding-bottom: calc(24px + env(safe-area-inset-bottom));
       }
@@ -1890,14 +1934,17 @@
         line-height: .98;
         text-wrap: balance;
       }
+      /* La bajada vuelve el 7-oct, ahora para decir qué hacer con el primer video. */
       .mobile-focus-lead {
         max-width: 360px;
-        margin: 14px 0 22px;
+        margin: 14px 0 0;
         color: var(--ink-soft);
         font-size: 15px;
         line-height: 1.5;
         text-wrap: pretty;
       }
+      /* La tarjeta deja lugar arriba para su rótulo amarillo. */
+      body:not(.mobile-library-mode) .mobile-focus-lead + .mobile-focus-card { margin-top: 30px; }
       .mobile-focus-card {
         position: relative;
         width: 100%;
@@ -2021,6 +2068,8 @@
         font-size: 14px;
         font-weight: 750;
       }
+      /* Sin las categorías (29-sep), el botón queda a un respiro de la descripción. */
+      .mobile-focus-description ~ .mobile-focus-cta { margin-top: 22px; }
       .mobile-focus-cta i { color: var(--mark); font-size: 18px; font-style: normal; }
       /* Baraja abierta: las miniaturas de lo que viene, en abanico. */
       .mobile-show-library {
@@ -2031,9 +2080,10 @@
         gap: 14px;
         margin: 14px 0 0;
         padding: 12px 14px;
-        border: 1px solid var(--rule-strong);
+        /* El mismo amarillo del rótulo «Este es el Paso 1»: se lee como parte del paso. */
+        border: 1px solid var(--mark);
         border-radius: 8px;
-        background: var(--card);
+        background: var(--mark);
         color: var(--ink);
         cursor: pointer;
         font-family: var(--sans);
@@ -2061,17 +2111,17 @@
       .mobile-show-library .deck i:nth-child(2) { transform: translate(-50%, -50%) rotate(0deg); z-index: 2; }
       .mobile-show-library .deck i:nth-child(3) { transform: translate(-50%, -50%) rotate(13deg) translateX(13px); }
       .mobile-show-library .deck-copy { flex: 1 1 auto; min-width: 0; }
-      .mobile-show-library .deck-copy strong { display: block; font-size: 15px; font-weight: 700; }
+      .mobile-show-library .deck-copy strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.005em; }
       .mobile-show-library .deck-copy small {
         display: block;
-        margin-top: 2px;
-        color: var(--muted);
-        font-family: var(--mono);
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: .1em;
+        margin-top: 4px;
+        color: var(--ink);
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.35;
       }
-      .mobile-show-library > i { color: var(--muted); font-size: 17px; font-style: normal; }
+      .mobile-show-library .deck-copy small b { font-weight: 800; }
+      .mobile-show-library > i { color: var(--ink); font-size: 17px; font-style: normal; }
       @media (prefers-reduced-motion: reduce) {
         .mobile-focus-play::after { animation: none; }
       }
@@ -2100,7 +2150,7 @@
       body.mobile-library-mode .mobile-focus-card { padding: 14px; }
       body.mobile-library-mode .mobile-focus-card strong { font-size: 21px; }
       body.mobile-library-mode .mobile-focus-thumb { margin-bottom: 12px; }
-      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px; font-size: 13.5px; }
+      body.mobile-library-mode .mobile-focus-cta { min-height: 46px; margin-top: 14px !important; font-size: 13.5px; }
       body.mobile-library-mode .mobile-profile-trigger:not([hidden]) { margin-bottom: 28px; }
       body.mobile-library-mode .profile-summary,
       body.mobile-library-mode #next-card { display: none !important; }
@@ -2115,9 +2165,11 @@
     @media (max-width: 640px) and (max-height: 700px) {
       body.mobile-focus-mode .page { align-content: start; }
       .mobile-focus h1 { font-size: clamp(30px, 9vw, 38px); }
-      .mobile-focus-lead { margin: 10px 0 16px; }
+      .mobile-focus-lead { margin-top: 10px; }
+      body:not(.mobile-library-mode) .mobile-focus-lead + .mobile-focus-card { margin-top: 24px; }
       .mobile-focus-card { padding-top: 18px; }
       .mobile-focus-description { margin-top: 10px; }
+      .mobile-focus-description ~ .mobile-focus-cta { margin-top: 16px; }
       .mobile-focus-meta { margin: 14px 0 12px; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -2134,6 +2186,61 @@
         transition: none;
       }
     }
+
+    /* ── Ruta por días: módulos que todavía no se abren ──
+       Se ven en el índice para anticipar lo que viene, con su fecha y las
+       portadas en gris: se entiende que existe pero que aún no toca. */
+    .route-group.is-locked .index-copy strong { color: var(--ink-soft); }
+    .route-group.is-locked .index-status { display: inline-flex; align-items: center; gap: 5px; color: var(--ink); }
+    .route-group.is-locked .lock-icon { width: 9px; height: 10px; flex: none; }
+    .locked-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 6px 0 16px; }
+    .locked-thumbs span { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--rule); border-radius: 7px; background: var(--paper-deep); }
+    .locked-thumbs img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(.9); opacity: .45; }
+    .locked-thumbs i { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink); }
+    .locked-thumbs i svg { width: 14px; height: 16px; }
+    .locked-date { margin: 0 0 6px; font-family: var(--serif); font-size: 19px; font-weight: 560; line-height: 1.2; }
+    /* Rótulo sobre la portada: en la meta competía con el botón de marcar como vista. */
+    .thumb-flag { position: absolute; left: 8px; top: 8px; padding: 3px 6px; border-radius: 4px; background: #FFFFFF; color: var(--ink); font: 600 8px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    /* Las categorías de la señal («HÁBITOS · APLICACIÓN INMEDIATA») no se muestran al miembro. */
+    .mobile-focus-meta, .guide-meta { display: none !important; }
+    /* En el teléfono la tarjeta del paso queda en rótulo + portada (6-oct): sin
+       «TU SIGUIENTE ENFOQUE», título, descripción ni botón, en todos los estados.
+       La tarjeta entera sigue abriendo el video y el JS los sigue llenando. */
+    .mobile-focus-kicker,
+    .mobile-focus-card strong,
+    .mobile-focus-description,
+    .mobile-focus-cta { display: none !important; }
+    .mobile-focus-card .mobile-focus-thumb { margin-bottom: 0 !important; }
+    /* La caja negra de las dos ofertas («Míralo aquí» / «Aplica a mi asesoría») se
+       oculta (7-oct): la salida hacia el equipo es el botón fijo del chat. Queda en el
+       DOM porque `setupRutaChat` toma de ahí el WhatsApp de respaldo y `updateBridge`
+       le escribe el enlace; con ella oculta no se disparan `bisagra_view` ni `bisagra_click`. */
+    .conversion-bridge { display: none !important; }
+    /* Módulo «Caso de estudio» (7-oct): reemplaza a la caja negra como salida a los casos.
+       Las comparativas son cuadradas (antes | después): en 16:9 se recortaban, así que
+       van en tarjetas propias, 2 por fila en el teléfono y 4 en escritorio. */
+    .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    @media (min-width: 861px) { .case-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    .case-tile { display: flex; flex-direction: column; gap: 6px; padding: 8px 8px 12px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--card); color: var(--ink); text-decoration: none; transition: border-color .16s ease; }
+    .case-tile:hover { border-color: var(--ink); }
+    .case-tile:focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; }
+    .case-photo { display: block; aspect-ratio: 1; margin-bottom: 4px; overflow: hidden; border-radius: 6px; background: var(--paper-deep); }
+    .case-photo img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .case-meta { color: var(--muted); font: 600 8.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+    .case-tile strong { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+    .case-go { display: inline-flex; align-items: center; gap: 5px; margin-top: auto; padding-top: 4px; font-size: 12.5px; font-weight: 700; }
+    .case-go i { font-style: normal; }
+    /* En la Ruta los macros viven dentro de Alimentación, no en el inicio (29-sep). */
+    body.ruta-por-dias #mobile-profile-trigger { display: none !important; }
+    /* Rutina y test de macros dentro de su módulo, debajo del primer video (2-oct): el
+       mismo formato que «Conoce tus macros», a lo ancho de la lista de videos. */
+    .route-access { grid-column: 1 / -1; width: 100%; min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 16px; border: 1px solid var(--ink); border-left: 4px solid var(--mark); border-radius: 7px; background: var(--card); color: var(--ink); cursor: pointer; font-family: var(--sans); text-align: left; }
+    .route-access small { display: block; color: var(--muted); font: 600 8.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .route-access strong { display: block; margin-top: 4px; font-size: 16px; font-weight: 750; letter-spacing: -.01em; text-transform: uppercase; }
+    .route-access em { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 13px; font-style: normal; line-height: 1.35; }
+    .route-access > i { flex: none; font-size: 18px; font-style: normal; }
+    .route-access:hover { background: var(--paper-deep); }
+    @media (max-width: 560px) { .locked-thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   </style>
 </head>
 <body>
@@ -2192,9 +2299,9 @@
 
     <div id="program-content" hidden>
       <section class="mobile-focus" id="mobile-focus" hidden aria-labelledby="mobile-focus-title">
-        <p class="mobile-focus-eyebrow">Tu ruta privada · RUTA TR4INER</p>
-        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span>empieza por una sola orientación.</h1>
-        <p class="mobile-focus-lead">No necesitas verlo todo hoy. Abre este video y llévate una sola acción clara.</p>
+        <p class="mobile-focus-eyebrow">TU RUTA TR4INER</p>
+        <h1 id="mobile-focus-title"><span id="mobile-focus-name"></span><span id="mobile-focus-title-text">empieza por aquí.</span></h1>
+        <p class="mobile-focus-lead" id="mobile-focus-lead">Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.</p>
         <button type="button" class="mobile-focus-card" id="mobile-focus-open">
           <span class="mobile-focus-badge" id="mobile-focus-badge">Este es el Paso 1</span>
           <span class="mobile-focus-thumb" id="mobile-focus-thumb">
@@ -2215,13 +2322,20 @@
         <button type="button" class="mobile-show-library" id="mobile-show-library">
           <span class="deck" id="mobile-deck" aria-hidden="true"></span>
           <span class="deck-copy">
-            <strong>Ver siguientes Pasos</strong>
-            <small id="mobile-deck-count"></small>
+            <strong>VER TUS SIGUIENTES PASOS</strong>
+            <small id="mobile-deck-count">Míralos <b>ANTES</b> de ver tu rutina y tus macros, de lo contrario no sabrás cómo llevarlos a cabo.</small>
           </span>
           <i aria-hidden="true">→</i>
         </button>
       </section>
 
+      <button type="button" class="routine-trigger" id="routine-trigger" aria-haspopup="dialog" aria-controls="routine-sheet" hidden>
+        <span>
+          <strong id="routine-trigger-title">Tu rutina</strong>
+          <small id="routine-trigger-next"></small>
+        </span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
+      </button>
       <button type="button" class="mobile-profile-trigger" id="mobile-profile-trigger" aria-haspopup="dialog" aria-controls="profile-dialog" hidden>
         <span>
           <strong id="mobile-profile-trigger-value">CONOCE TUS MACROS</strong>
@@ -2292,10 +2406,11 @@
           <section class="editorial-index rv" aria-labelledby="route-index-title">
             <div class="index-head">
               <div>
-                <p class="section-code">ÍNDICE DE TU RUTA</p>
-                <h2 id="route-index-title" tabindex="-1">Lo que sigue, en orden.</h2>
+                <h2 id="route-index-title" tabindex="-1">Sigue en orden estos pasos.</h2>
               </div>
-              <span>SEGÚN TU PERFIL</span>
+              <!-- Oculto a pedido (7-oct): el título solo ya dice qué hacer. Se deja
+                   en el DOM porque el JS le escribe «SE ABRE DÍA A DÍA». -->
+              <span id="route-index-order" hidden>SEGÚN TU PERFIL</span>
             </div>
             <div class="filters-wrap" hidden aria-hidden="true">
               <div class="filters" id="filters"></div>
@@ -2352,12 +2467,8 @@
       </button>
     </div>
     <div class="player-sheet" id="player-sheet" hidden>
-      <div class="player-hint" id="player-hint" hidden>
-        <p class="player-hint-code">TE LO RECOMENDAMOS EN ORDEN</p>
-        <p id="player-hint-text"></p>
-        <button type="button" class="player-hint-cta" id="player-hint-cta"></button>
-      </div>
       <p class="player-desc" id="player-desc" hidden></p>
+      <a class="player-cta" id="player-cta" href="#" hidden><span></span> <i aria-hidden="true">→</i></a>
       <div class="player-resources" id="player-resources" hidden>
         <p class="player-resources-code">RECURSOS DE ESTA ORIENTACIÓN</p>
         <ul id="player-resources-list"></ul>
@@ -2401,6 +2512,47 @@
     </div>
   </dialog>
 
+  <dialog class="routine-sheet" id="routine-sheet" aria-labelledby="routine-title">
+    <div class="routine-head">
+      <span id="routine-head-label">Tu rutina</span>
+      <button type="button" class="profile-dialog-close" id="routine-close" aria-label="Cerrar rutina">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="routine-scroll" id="routine-scroll"><div id="routine-body"></div></div>
+    <aside class="rest-bar" id="rest-timer" aria-label="Temporizador de descanso" hidden>
+      <div class="rest-top">
+        <div><span class="rest-label">Descanso</span><strong id="timer-value" role="timer">01:30</strong></div>
+        <div class="rest-btns">
+          <button type="button" id="timer-add">+30 s</button>
+          <button type="button" id="timer-pause">Pausar</button>
+          <button type="button" id="timer-close" aria-label="Cerrar descanso">✕</button>
+        </div>
+      </div>
+      <div class="rest-track" aria-hidden="true"><i id="timer-fill"></i></div>
+      <p class="rest-note"><span id="push-status" role="status"></span><button type="button" class="rest-alert" id="timer-alert" aria-pressed="false">Activar avisos</button></p>
+    </aside>
+    <div class="rt-replace" id="rt-replace" hidden>
+      <div class="rt-replace-dim" data-close-replace></div>
+      <section class="rt-replace-sheet" role="dialog" aria-modal="true" aria-labelledby="rt-replace-title">
+        <div class="rt-grabber" aria-hidden="true"></div>
+        <p class="rt-eyebrow">Alternativas del ejercicio</p>
+        <h3 id="rt-replace-title">¿Está ocupado o te falta el equipo?</h3>
+        <p id="rt-replace-text"></p>
+        <div id="rt-replace-options"></div>
+        <button type="button" class="rt-replace-cancel" data-close-replace>Cancelar</button>
+      </section>
+    </div>
+    <p class="routine-toast" id="toast" role="status" hidden></p>
+    <div class="routine-sr" id="announcer" aria-live="polite"></div>
+  </dialog>
+  <dialog class="push-help" id="push-help" aria-labelledby="push-help-title">
+    <div class="push-help-head"><span>Avisos de descanso</span><button type="button" class="profile-dialog-close" data-close="push-help" aria-label="Cerrar" onclick="this.closest('dialog').close()"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button></div>
+    <h2 id="push-help-title">Entrena sin mirar el reloj.</h2>
+    <div id="push-help-text"></div>
+    <button type="button" id="push-enable">Activar notificaciones</button>
+    <button type="button" id="push-disable" hidden>Desactivar en este dispositivo</button>
+  </dialog>
   <div class="tour" id="tour" hidden aria-hidden="true">
     <div class="tour-spot" id="tour-spot" aria-hidden="true"></div>
     <section class="tour-card" id="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title">
@@ -2415,6 +2567,8 @@
   </div>
 
   <script src="/attribution.js"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261015-sin-boton-reproductor"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261007-icono"></script>
   <script>
     (async function () {
       'use strict';
@@ -2531,45 +2685,72 @@
       }
 
       var activeAnnouncement = null;
+      var catalogFailed = false;
+      var rutaPorDias = false;
       var announcementShown = false;
       if (memberSession) {
+        // Un fallo nunca debe reactivar el catálogo antiguo y saltarse el calendario del CRM.
+        BLOQUES = []; VIDEOS = [];
         try {
           var catalogResponse = await fetch('/api/genesis/catalog', { cache: 'no-store' });
           if (catalogResponse.ok) {
             var catalogData = await catalogResponse.json();
-            if (catalogData.modules && catalogData.modules.length) {
+            if (Array.isArray(catalogData.modules)) {
               BLOQUES = catalogData.modules.map(function (module) {
                 var editorialBlock = EDITORIAL_BLOCKS[module.slug];
                 return {
                   id: module.slug,
+                  locked: module.locked === true,
+                  unlockAt: module.unlockAt,
+                  unlockAfterDays: module.unlockAfterDays,
+                  teaser: module.teaser || null,
                   num: module.num,
                   name: editorialBlock ? editorialBlock.name : module.title,
                   desc: editorialBlock ? editorialBlock.desc : (module.description || '')
                 };
               });
+              rutaPorDias = BLOQUES.some(function (b) { return b.id.indexOf('ruta-') === 0; });
               VIDEOS = [];
               catalogData.modules.forEach(function (module) {
                 module.contents.forEach(function (content) {
                   VIDEOS.push({
                     id: content.youtubeId,
                     bloque: module.slug,
+                    slug: content.slug,
                     sexo: content.audience === 'WOMEN' ? 'mujer' : (content.audience === 'MEN' ? 'hombre' : 'all'),
                     // Los titulos de la base son los de YouTube, de captacion.
-                    // Solo mandan cuando alguien los edito desde el CMS.
-                    title: content.titleEdited
+                    // Solo mandan cuando alguien los edito desde el CMS. En la
+                    // Ruta por dias el titulo lo define siempre el CRM.
+                    title: content.titleEdited || module.slug.indexOf('ruta-') === 0
                       ? content.title
                       : (EDITORIAL_TITLES[content.youtubeId] || content.title),
+                    // Mientras no exista el video final se muestra uno del canal, y
+                    // el equipo tiene que poder distinguirlo a simple vista.
+                    provisional: /provisional/i.test(content.description || ''),
+                    // Portada diseñada por el equipo; sin ella, la de YouTube.
+                    thumb: content.thumbnail || null,
                     description: content.description || '',
                     resources: Array.isArray(content.resources) ? content.resources : [],
-                    intentLevel: content.intentLevel
+                    intentLevel: content.intentLevel,
+                    // Lección que ya salió de YouTube: la versión de R2 de su sexo y edad. Sólo
+                    // se acepta el dominio de videos; cualquier otra cosa sigue por YouTube.
+                    video: content.video && /^https:\/\/video\.mediatr4iner\.com\/[a-z0-9][a-z0-9\/-]*\/$/.test(content.video.base || '') ? content.video : null,
+                    // Llamado debajo del video, según la lección y la edad (lo decide el CRM). Sólo
+                    // el WhatsApp de ManyChat o una página de caso de este mismo sitio.
+                    cta: content.cta && typeof content.cta.texto === 'string' && content.cta.texto.trim() &&
+                      /^(whatsapp|\/testimonio-[a-z]+(-[a-z]+)*)$/.test(content.cta.destino || '') ? content.cta : null
                   });
                 });
               });
             }
             activeAnnouncement = catalogData.announcement || null;
-          }
-        } catch (e) { /* el catálogo embebido mantiene el programa disponible */ }
+          } else { catalogFailed = true; }
+        } catch (e) { catalogFailed = true; }
       }
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && BLOQUES.some(function (b) { return b.locked && b.unlockAt && Date.parse(b.unlockAt) <= Date.now(); })) window.location.reload();
+      });
 
       var state = {
         sexo: normalizeSexo(params.get('sexo') || lead.sexo),
@@ -2800,7 +2981,9 @@
       }
       // Con plan hecho, los bloques se muestran en el orden de la ruta personalizada.
       function bloquesOrdenados() {
-        if (!plan || !plan.ruta) return BLOQUES;
+        // La Ruta por días se recorre en el orden en que se abre: el test solo
+        // calcula los macros, ya no reordena los módulos.
+        if (rutaPorDias || !plan || !plan.ruta) return BLOQUES;
         var orden = plan.ruta;
         return BLOQUES.slice().sort(function (a, b) {
           var ia = orden.indexOf(a.id), ib = orden.indexOf(b.id);
@@ -2821,6 +3004,7 @@
       saveProgreso();
 
       function isDone(id) { return progreso.indexOf(id) !== -1; }
+
       function saveProgreso() {
         try { window.localStorage.setItem(PROGRESO_KEY, JSON.stringify(progreso)); } catch (e) { /* incógnito */ }
       }
@@ -2909,10 +3093,63 @@
       window.addEventListener('scroll', checkReveals, { passive: true });
       window.addEventListener('resize', checkReveals, { passive: true });
 
+      // ── Módulos que se abren por fecha ──
+      // Se publican por fecha: una fecha concreta se entiende mejor que «a los 2 días».
+      function aperturaDe(b) {
+        var at = new Date(b.unlockAt || '');
+        if (isNaN(at.getTime())) return { corta: 'PRÓXIMAMENTE', larga: 'Se abre a los ' + (b.unlockAfterDays || 0) + ' días de confirmar tu plaza.' };
+        var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+        var dia = new Date(at); dia.setHours(0, 0, 0, 0);
+        var faltan = Math.round((dia - hoy) / 86400000);
+        var hora = at.toLocaleTimeString('es-419', { hour: 'numeric', minute: '2-digit' });
+        if (faltan <= 0) return { corta: 'SE ABRE HOY', larga: 'Se abre hoy a las ' + hora + '.' };
+        if (faltan === 1) return { corta: 'SE ABRE MAÑANA', larga: 'Se abre mañana a las ' + hora + '.' };
+        var fecha = at.toLocaleDateString('es-419', { day: 'numeric', month: 'short' }).replace('.', '');
+        return {
+          corta: 'SE ABRE EL ' + fecha.toUpperCase(),
+          larga: 'Se abre el ' + at.toLocaleDateString('es-419', { weekday: 'long' }) + ' ' + at.toLocaleDateString('es-419', { day: 'numeric', month: 'long' }) + '.'
+        };
+      }
+
+      function mkLockedGroup(b, orden) {
+        var apertura = aperturaDe(b);
+        var numero = String(orden + 1).padStart(2, '0');
+        var section = document.createElement('details');
+        section.className = 'route-group is-locked';
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+            if (otro !== section) otro.open = false;
+          });
+        });
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': ' + b.name + '. ' + apertura.larga);
+        var teaser = b.teaser || {};
+        var portadas = Array.isArray(teaser.thumbnails) ? teaser.thumbnails.slice(0, 4) : [];
+        var cantidad = Number(teaser.count) || 0;
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + numero + '</span>' +
+            '<span class="index-copy"><strong>' + escapeHtml(b.name) + '</strong><small>' + escapeHtml(b.desc) + '</small></span>' +
+            '<b class="index-status"><svg class="lock-icon" viewBox="0 0 12 14" aria-hidden="true"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg>' + escapeHtml(apertura.corta) + '</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body locked-body">' +
+            (portadas.length ? '<div class="locked-thumbs" aria-hidden="true">' + portadas.map(function (src) {
+              // Cuatro en fila: alcanza con la portada chica.
+              return '<span><img src="' + escapeHtml(String(src).replace(/-960\.webp$/, '-480.webp')) + '" alt="" width="320" height="180" loading="lazy" decoding="async" /><i><svg viewBox="0 0 12 14"><path d="M3 6V4.2a3 3 0 0 1 6 0V6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1.5" y="6" width="9" height="7" rx="1.5" fill="currentColor"/></svg></i></span>';
+            }).join('') + '</div>' : '') +
+            '<p class="locked-date">' + escapeHtml(apertura.larga) + '</p>' +
+            '<p class="bloque-desc">' + (cantidad ? cantidad + (cantidad === 1 ? ' orientación te espera' : ' orientaciones te esperan') + ' en este paso. ' : '') +
+              'Mientras tanto, sigue con lo que ya tienes abierto.</p>' +
+          '</div>';
+        return section;
+      }
+
       function renderLibrary() {
         libraryRendered = true;
         libraryEl.innerHTML = '';
         var shown = 0;
+        if (rutaPorDias) document.getElementById('route-index-order').textContent = 'SE ABRE DÍA A DÍA';
 
         var enRuta = bloquesOrdenados();
         var firstPendingBlockId = null;
@@ -2924,8 +3161,16 @@
           }
           return false;
         });
-        enRuta.forEach(function (b, orden) {
+        // La rutina ocupa un número en el índice: los módulos que siguen se corren uno.
+        var numero = 0;
+        enRuta.forEach(function (b) {
           if (state.bloque !== 'todos' && state.bloque !== b.id) return;
+          var orden = numero++;
+          if (b.locked) {
+            libraryEl.appendChild(mkLockedGroup(b, orden));
+            shown++;
+            return;
+          }
           var vids = videosDe(b.id);
           if (vids.length === 0) return;
           shown += vids.length;
@@ -2961,28 +3206,78 @@
           bar.innerHTML = '<i data-bar="' + escapeHtml(b.id) + '"></i>';
           body.appendChild(bar);
 
-          var desc = document.createElement('p');
-          desc.className = 'bloque-desc';
-          desc.textContent = 'Abre la orientación que más conecta con lo que necesitas aplicar ahora.';
-          body.appendChild(desc);
-
           var grid = document.createElement('div');
           grid.className = 'grid';
 
           vids.forEach(function (v, i) {
             grid.appendChild(mkCard(v, b, i));
+            if (i === 0) accesosDe(b.id).forEach(function (clave) { grid.appendChild(mkAcceso(clave)); });
           });
 
           body.appendChild(grid);
           section.appendChild(body);
           libraryEl.appendChild(section);
         });
+        if (shown > 0 && state.bloque === 'todos') libraryEl.appendChild(mkCasosGroup());
 
         emptyEl.classList.toggle('visible', shown === 0);
+        if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
         requestAnimationFrame(checkReveals);
         setTimeout(checkReveals, 250);
 
         updateProgressUI();
+      }
+
+      // ── Módulo «Caso de estudio» ────────────────────────────
+      // Los cuatro casos del funnel, para todos: el miembro elige el más parecido a él.
+      var CASOS = [
+        { id: 'flor', nombre: 'Flor de María', perfil: 'Mujer · 18 a 35 años', ruta: '/testimonio-flor' },
+        { id: 'dashiel', nombre: 'Dashiel', perfil: 'Hombre · 18 a 35 años', ruta: '/testimonio-dashiel' },
+        { id: 'andrea', nombre: 'Andrea Loayza', perfil: 'Mujer · más de 35', ruta: '/testimonio-andrea' },
+        { id: 'christian', nombre: 'Christian Barrantes', perfil: 'Hombre · más de 35', ruta: '/testimonio-christian' }
+      ];
+
+      function mkCasosGroup() {
+        // Sigue la numeración de lo que ya está en el índice, sin huecos.
+        var numero = String(libraryEl.querySelectorAll('.route-group').length + 1).padStart(2, '0');
+        var section = document.createElement('details');
+        section.className = 'route-group route-casos';
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': Caso de estudio');
+        var visto = false;
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) {
+            if (otro !== section) otro.open = false;
+          });
+          // Hace de `bisagra_view` ahora que la caja negra no se ve: abrir el módulo.
+          if (!visto) { visto = true; track('bisagra_view', { estado: estadoBisagra(), origen: 'modulo_casos' }); }
+        });
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + numero + '</span>' +
+            '<span class="index-copy"><strong>Caso de estudio</strong><small>Cuatro transformaciones reales, contadas paso a paso.</small></span>' +
+            '<b class="index-status">4 CASOS</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body">' +
+            '<p class="bloque-desc">Elige el caso más parecido a ti. Al final podrás responder una evaluación y conocer el siguiente paso que te corresponde.</p>' +
+            '<div class="case-grid">' + CASOS.map(function (c) {
+              return '<a class="case-tile" data-caso="' + c.id + '" href="' + escapeHtml(urlCaso(c.ruta)) + '">' +
+                '<span class="case-photo"><img src="/assets/casos-optin/' + c.id + '-240.webp" srcset="/assets/casos-optin/' + c.id + '-240.webp 240w, /assets/casos-optin/' + c.id + '-480.webp 480w" ' +
+                  'sizes="(min-width: 861px) 170px, calc((100vw - 64px) / 2)" width="480" height="480" loading="lazy" decoding="async" alt="' + escapeHtml(c.nombre) + ': antes a la izquierda y después a la derecha" /></span>' +
+                '<span class="case-meta">' + escapeHtml(c.perfil) + '</span>' +
+                '<strong>' + escapeHtml(c.nombre) + '</strong>' +
+                '<span class="case-go">Ver caso <i aria-hidden="true">→</i></span>' +
+              '</a>';
+            }).join('') + '</div>' +
+          '</div>';
+        section.querySelectorAll('.case-tile').forEach(function (a) {
+          // Mismo evento que el botón de la bisagra: el lead scoring ya lo lee como intención.
+          a.addEventListener('click', function () {
+            track('bisagra_click', { estado: estadoBisagra(), caso: a.getAttribute('data-caso'), origen: 'modulo_casos' });
+          });
+        });
+        return section;
       }
 
       function ensureLibraryRendered() {
@@ -2998,22 +3293,35 @@
           .replace(/'/g, '&#039;');
       }
 
+      // Las portadas propias vienen en dos anchos (-480/-960.webp): el navegador baja la
+      // chica en las tarjetas del teléfono y la grande en pantallas densas.
+      function atributosPortada(url) {
+        if (!/-960\.webp$/.test(url)) return '';
+        return ' srcset="' + escapeHtml(url.replace(/-960\.webp$/, '-480.webp')) + ' 480w, ' + escapeHtml(url) + ' 960w"' +
+          ' sizes="(max-width: 640px) 92vw, 420px"';
+      }
+
       function mkCard(v, b, index) {
         var card = document.createElement('article');
         card.className = 'vcard' + (isDone(v.id) ? ' done' : '');
         card.style.setProperty('--i', index % 6);
         card.setAttribute('data-video-id', v.id);
 
-        var badge = v.sexo === 'mujer'
+        // En la Ruta cada miembro sólo recibe lo de su sexo: el rótulo no agrega nada.
+        var badge = rutaPorDias ? '' : v.sexo === 'mujer'
           ? '<span class="badge">Para mujeres</span>'
           : (v.sexo === 'hombre' ? '<span class="badge">Para hombres</span>' : '');
 
         card.innerHTML =
           '<button type="button" class="vmain" aria-label="Ver orientación: ' + escapeHtml(v.title) + '">' +
             '<span class="thumb">' +
-              '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
-                'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />' +
+              (v.thumb
+                ? '<img src="' + escapeHtml(v.thumb) + '"' + atributosPortada(v.thumb) + ' alt="" width="640" height="360" loading="lazy" decoding="async" ' +
+                  'onerror="this.onerror=null;this.removeAttribute(\'srcset\');this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />'
+                : '<img src="https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/maxresdefault.jpg" alt="" width="640" height="360" loading="lazy" ' +
+                  'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + escapeHtml(v.id) + '/hqdefault.jpg\'" />') +
               '<span class="play" aria-hidden="true"><svg aria-hidden="true" viewBox="0 0 12 14"><path d="M0 0l12 7-12 7z"/></svg></span>' +
+              (v.provisional ? '<span class="thumb-flag">Video provisional</span>' : '') +
             '</span>' +
             '<span class="vbody">' +
               '<span class="vmeta"><span>ORIENTACIÓN · ' + escapeHtml(b.name) + '</span>' + badge + '</span>' +
@@ -3052,7 +3360,8 @@
       var playerLastFocus = null;
 
       function syncModalState() {
-        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open));
+        var routineSheet = document.getElementById('routine-sheet');
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open)));
       }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
@@ -3108,7 +3417,8 @@
             if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
             var d = ytPlayer.getDuration();
             var t = ytPlayer.getCurrentTime();
-            if (document.visibilityState === 'visible' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) watchedDelta += 5;
+            var reproduciendo = ytPlayer.reproduciendo ? ytPlayer.reproduciendo() : ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+            if (document.visibilityState === 'visible' && reproduciendo) watchedDelta += 5;
             if (watchedDelta >= 20) pushProgress(v, false);
             if (d > 0 && t / d >= 0.85) {
               pushProgress(v, false);
@@ -3118,6 +3428,212 @@
         }, 5000);
       }
 
+      // Lecciones en R2 (13-oct): <video> propio. Expone lo mismo que la medición le pide al
+      // reproductor de YouTube (duración, posición, si reproduce, destruir), así el avance, el
+      // 85 % y la reanudación funcionan igual y siguen atados a la misma lección.
+      function calidadLeccion() {
+        var red = navigator.connection || {};
+        if (red.saveData || /(^|-)2g|3g/.test(red.effectiveType || '')) return '360p';
+        var alto = playerFrame.getBoundingClientRect().height || 360;
+        // El alto del cuadro contra los píxeles reales de la pantalla: nítido sin bajar de más.
+        return alto * Math.min(window.devicePixelRatio || 1, 3) > 500 ? '720p' : '480p';
+      }
+      var LV_ICON = {
+        play: '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>',
+        pause: '<svg viewBox="0 0 12 14" aria-hidden="true"><rect x="1" y="0" width="3.6" height="14" rx="1"/><rect x="7.4" y="0" width="3.6" height="14" rx="1"/></svg>',
+        sound: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12.5 3.5a6.3 6.3 0 0 1 0 9"/></svg>',
+        muted: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor" stroke="none"/><path d="M10.5 6l4 4M14.5 6l-4 4"/></svg>',
+        expand: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg>'
+      };
+      var LV_VELOCIDADES = [1, 1.25, 1.5, 1.75, 2];
+      function lvTiempo(s) {
+        s = Math.max(0, Math.floor(s || 0));
+        return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+      }
+      function lvVelocidad(r) { return String(r).replace('.', ',') + '×'; }
+
+      function nativePlayer(v) {
+        playerFrame.innerHTML =
+          '<div class="lv is-loading" tabindex="-1">' +
+            // Sin `controls`: los del navegador traen «Descargar» y «Guardar video como».
+            '<video playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback noplaybackrate"></video>' +
+            '<button type="button" class="lv-play" aria-label="Reproducir">' + LV_ICON.play + '<i class="lv-spin" aria-hidden="true"></i></button>' +
+            '<div class="lv-bar">' +
+              '<div class="lv-seek"><div class="lv-track" aria-hidden="true"><i class="lv-fill"></i></div>' +
+                '<input type="range" min="0" max="1000" step="1" value="0" aria-label="Posición del video"></div>' +
+              '<div class="lv-row">' +
+                '<button type="button" class="lv-btn lv-toggle" aria-label="Reproducir">' + LV_ICON.play + '</button>' +
+                '<span class="lv-time">0:00 / 0:00</span><span class="lv-gap"></span>' +
+                '<div class="lv-speed-wrap">' +
+                  '<button type="button" class="lv-btn lv-speed" aria-haspopup="menu" aria-expanded="false" aria-label="Velocidad de reproducción: 1×">1×</button>' +
+                  '<div class="lv-menu" role="menu" aria-label="Velocidad de reproducción" hidden><p>Velocidad</p><div class="lv-opciones">' +
+                    LV_VELOCIDADES.map(function (r) { return '<button type="button" role="menuitemradio" aria-checked="' + (r === 1) + '" data-rate="' + r + '">' + lvVelocidad(r) + '</button>'; }).join('') +
+                  '</div></div>' +
+                '</div>' +
+                '<button type="button" class="lv-btn" data-lv-sound aria-label="Silenciar" aria-pressed="false">' + LV_ICON.sound + '</button>' +
+                '<button type="button" class="lv-btn" data-lv-full aria-label="Ver en pantalla completa">' + LV_ICON.expand + '</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="lv-error" hidden><p>No se pudo cargar el video. Revisa tu conexión.</p><button type="button">Reintentar</button></div>' +
+          '</div>';
+        var box = playerFrame.firstChild;
+        var el = box.querySelector('video');
+        var seek = box.querySelector('.lv-seek input');
+        var fill = box.querySelector('.lv-fill');
+        var tiempo = box.querySelector('.lv-time');
+        var toggle = box.querySelector('.lv-toggle');
+        var grande = box.querySelector('.lv-play');
+        var speed = box.querySelector('.lv-speed');
+        var menu = box.querySelector('.lv-menu');
+        var sonido = box.querySelector('[data-lv-sound]');
+        var errorBox = box.querySelector('.lv-error');
+        var arrastrando = false, quieto = null;
+
+        el.poster = v.thumb || (v.video.base + 'thumbnail.jpg');
+        el.src = v.video.base + 'play_' + calidadLeccion() + '.mp4';
+        // Clic derecho, arrastrar o mantener apretado no ofrecen guardar el video.
+        box.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+        el.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        function pintar() {
+          var d = el.duration || 0, t = el.currentTime || 0;
+          if (!arrastrando) {
+            fill.style.transform = 'scaleX(' + (d ? t / d : 0) + ')';
+            seek.value = d ? Math.round(t / d * 1000) : 0;
+          }
+          seek.setAttribute('aria-valuetext', lvTiempo(t) + ' de ' + lvTiempo(d));
+          tiempo.textContent = lvTiempo(t) + ' / ' + lvTiempo(d);
+        }
+        function estado() {
+          var corriendo = !el.paused && !el.ended;
+          box.classList.toggle('is-playing', corriendo);
+          toggle.innerHTML = corriendo ? LV_ICON.pause : LV_ICON.play;
+          toggle.setAttribute('aria-label', corriendo ? 'Pausar' : 'Reproducir');
+          grande.setAttribute('aria-label', el.ended ? 'Ver de nuevo' : 'Reproducir');
+          if (!corriendo) despertar();
+        }
+        // Los controles se esconden a los 2,5 s sin tocar nada mientras el video corre.
+        function despertar() {
+          box.classList.remove('is-idle');
+          clearTimeout(quieto);
+          quieto = setTimeout(function () { if (!el.paused && menu.hidden) box.classList.add('is-idle'); }, 2500);
+        }
+        function alternar() {
+          if (el.paused || el.ended) {
+            errorBox.hidden = true;
+            var intento = el.play();
+            if (intento && intento.catch) intento.catch(function () { box.classList.remove('is-loading'); estado(); });
+          } else el.pause();
+        }
+        function cerrarMenu() { menu.hidden = true; speed.setAttribute('aria-expanded', 'false'); }
+
+        el.addEventListener('loadedmetadata', function () {
+          var saved = remoteProgress[v.id];
+          if (saved && saved.lastPositionSeconds > 5 && saved.maxPercent < 95) {
+            try { el.currentTime = saved.lastPositionSeconds; } catch (e) { /* todavía sin rangos */ }
+          }
+          pintar();
+        }, { once: true });
+        el.addEventListener('timeupdate', pintar);
+        el.addEventListener('waiting', function () { box.classList.add('is-loading'); });
+        el.addEventListener('playing', function () { box.classList.remove('is-loading'); estado(); startPoll(v); });
+        el.addEventListener('pause', estado);
+        el.addEventListener('ended', function () {
+          estado();
+          pushProgress(v, false);
+          completarAuto(v);
+          stopPoll();
+        });
+        el.addEventListener('error', function () { box.classList.remove('is-loading'); errorBox.hidden = false; });
+        el.addEventListener('click', function () {
+          // En el teléfono el primer toque con los controles escondidos sólo los muestra.
+          if (box.classList.contains('is-idle')) { despertar(); return; }
+          alternar();
+        });
+        grande.addEventListener('click', alternar);
+        toggle.addEventListener('click', alternar);
+        seek.addEventListener('input', function () {
+          arrastrando = true;
+          fill.style.transform = 'scaleX(' + (seek.value / 1000) + ')';
+          if (el.duration) tiempo.textContent = lvTiempo(seek.value / 1000 * el.duration) + ' / ' + lvTiempo(el.duration);
+        });
+        seek.addEventListener('change', function () {
+          if (el.duration) el.currentTime = seek.value / 1000 * el.duration;
+          arrastrando = false;
+          despertar();
+        });
+        speed.addEventListener('click', function () {
+          var abrir = menu.hidden;
+          menu.hidden = !abrir;
+          speed.setAttribute('aria-expanded', String(abrir));
+          if (abrir) (menu.querySelector('[aria-checked="true"]') || menu.querySelector('button')).focus();
+          despertar();
+        });
+        menu.addEventListener('click', function (e) {
+          var opcion = e.target.closest('[data-rate]');
+          if (!opcion) return;
+          el.playbackRate = Number(opcion.dataset.rate);
+          menu.querySelectorAll('[data-rate]').forEach(function (b) { b.setAttribute('aria-checked', String(b === opcion)); });
+          speed.textContent = lvVelocidad(el.playbackRate);
+          speed.setAttribute('aria-label', 'Velocidad de reproducción: ' + lvVelocidad(el.playbackRate));
+          cerrarMenu();
+          speed.focus();
+        });
+        box.addEventListener('click', function (e) { if (!menu.hidden && !e.target.closest('.lv-speed-wrap')) cerrarMenu(); });
+        sonido.addEventListener('click', function () {
+          el.muted = !el.muted;
+          sonido.innerHTML = el.muted ? LV_ICON.muted : LV_ICON.sound;
+          sonido.setAttribute('aria-label', el.muted ? 'Activar el sonido' : 'Silenciar');
+          sonido.setAttribute('aria-pressed', String(el.muted));
+        });
+        box.querySelector('[data-lv-full]').addEventListener('click', function () {
+          // iPhone sólo deja pantalla completa sobre el propio <video> (su reproductor no ofrece descargar).
+          if (el.webkitEnterFullscreen && !document.fullscreenEnabled) { el.webkitEnterFullscreen(); return; }
+          var pedir = box.requestFullscreen || box.webkitRequestFullscreen;
+          if (document.fullscreenElement) document.exitFullscreen();
+          else if (pedir) pedir.call(box);
+        });
+        errorBox.querySelector('button').addEventListener('click', function () {
+          var donde = el.currentTime;
+          errorBox.hidden = true;
+          box.classList.add('is-loading');
+          el.load();
+          el.addEventListener('loadedmetadata', function () { el.currentTime = donde; }, { once: true });
+          alternar();
+        });
+        box.addEventListener('pointermove', despertar);
+        box.addEventListener('keydown', function (e) {
+          if (e.target.closest('.lv-menu')) {
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cerrarMenu(); speed.focus(); }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+              var opciones = Array.prototype.slice.call(menu.querySelectorAll('[data-rate]'));
+              var i = opciones.indexOf(e.target) + (e.key === 'ArrowRight' ? 1 : -1);
+              e.preventDefault();
+              opciones[(i + opciones.length) % opciones.length].focus();
+            }
+            return;
+          }
+          if (e.target === seek && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+          var tecla = e.key.toLowerCase();
+          if (tecla === ' ' || tecla === 'k') { if (e.target.tagName !== 'BUTTON' || tecla === 'k') { e.preventDefault(); alternar(); } }
+          else if (tecla === 'arrowright') { el.currentTime = Math.min(el.duration || 0, el.currentTime + 5); }
+          else if (tecla === 'arrowleft') { el.currentTime = Math.max(0, el.currentTime - 5); }
+          else if (tecla === 'm') sonido.click();
+          else return;
+          despertar();
+        });
+
+        // El toque que abrió la lección habilita el sonido; si el navegador igual lo frena,
+        // queda el botón de play.
+        alternar();
+        return {
+          getDuration: function () { return el.duration || 0; },
+          getCurrentTime: function () { return el.currentTime || 0; },
+          reproduciendo: function () { return !el.paused && !el.ended; },
+          destroy: function () { clearTimeout(quieto); el.pause(); el.removeAttribute('src'); el.load(); }
+        };
+      }
+
       function plainIframe(v) {
         playerFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + v.id +
           '?autoplay=1&rel=0&playsinline=1&iv_load_policy=3" title="' + v.title.replace(/"/g, '&quot;') +
@@ -3125,43 +3641,73 @@
       }
 
       // La ruta entera en orden, para saber que viene antes que que.
+      // ── Accesos de la Ruta dentro de sus módulos (2-oct) ──
+      // Ningún video es obligatorio: la rutina vive dentro de «Entrenamiento de pesas» y el
+      // test de macros dentro de «Alimentación», cada uno debajo del primer video del módulo.
+      var ACCESOS = {
+        rutina: {
+          modulo: 'ruta-pesas',
+          existe: function () { return !!(window.RutinaUI && window.RutinaUI.disponible()); },
+          etiqueta: 'Tu rutina',
+          titulo: function () { return window.RutinaUI.resumen().titulo; },
+          texto: function () { return window.RutinaUI.resumen().siguiente; },
+          abrir: function () { window.RutinaUI.abrir(); }
+        },
+        macros: {
+          modulo: 'ruta-alimentacion',
+          existe: function () { return true; },
+          etiqueta: 'Test de macros',
+          titulo: function () { return 'Conoce tus macros'; },
+          texto: function () { return plan ? 'Tus calorías y macros de cada día.' : 'Un test corto calcula tus calorías y macros para empezar.'; },
+          // Con el test hecho se ven sus macros; sin él, va directo al test.
+          abrir: function () {
+            if (!plan) { window.location.href = planUrl(); return; }
+            profileLastFocus = document.activeElement;
+            profileDialog.showModal();
+            syncModalState();
+          }
+        }
+      };
+      function accesosDe(moduloId) {
+        return Object.keys(ACCESOS).filter(function (clave) {
+          return rutaPorDias && ACCESOS[clave].modulo === moduloId && ACCESOS[clave].existe();
+        });
+      }
+      function mkAcceso(clave) {
+        var acceso = ACCESOS[clave];
+        var boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'route-access';
+        boton.dataset.acceso = clave;
+        boton.innerHTML = '<span><small>' + escapeHtml(acceso.etiqueta) + '</small><strong></strong><em></em></span><i aria-hidden="true">→</i>';
+        pintarAcceso(boton);
+        boton.addEventListener('click', function () { acceso.abrir(); });
+        return boton;
+      }
+      function pintarAcceso(boton) {
+        var acceso = ACCESOS[boton.dataset.acceso];
+        boton.querySelector('strong').textContent = acceso.titulo();
+        boton.querySelector('em').textContent = acceso.texto();
+        boton.setAttribute('aria-label', acceso.titulo() + '. ' + acceso.texto());
+      }
+      // «Te toca: Día X» cambia al marcar ejercicios: se repinta al cerrar la rutina.
+      document.addEventListener('ruta:rutina', function () {
+        document.querySelectorAll('.route-access').forEach(pintarAcceso);
+      });
+
+      function prepararRuta() {
+        if (!rutaPorDias) return;
+        document.body.classList.add('ruta-por-dias');
+        // La rutina está abierta para todos y su acceso vive dentro del módulo, no en el inicio.
+        if (window.RutinaUI && window.RutinaUI.activar) window.RutinaUI.activar({ activa: true, enInicio: false });
+      }
+
       function rutaOrdenada() {
         var lista = [];
         bloquesOrdenados().forEach(function (b) {
           videosDe(b.id).forEach(function (v) { lista.push({ v: v, b: b }); });
         });
         return lista;
-      }
-
-      // Primera orientacion pendiente por delante de la que se esta abriendo.
-      // No bloquea nada: solo alimenta el aviso de recomendacion del popup.
-      function pendienteAntesDe(id) {
-        var lista = rutaOrdenada();
-        var indice = -1;
-        for (var i = 0; i < lista.length; i++) {
-          if (lista[i].v.id === id) { indice = i; break; }
-        }
-        if (indice <= 0) return null;
-        var primera = null;
-        for (var j = 0; j < indice && !primera; j++) {
-          if (!isDone(lista[j].v.id)) primera = lista[j];
-        }
-        return primera ? { item: primera } : null;
-      }
-
-      function renderPlayerHint(v) {
-        var caja = document.getElementById('player-hint');
-        var previo = pendienteAntesDe(v.id);
-        if (!previo) { caja.hidden = true; return; }
-        document.getElementById('player-hint-text').textContent =
-          'Para entender mejor qué necesitas para tu objetivo, te recomendamos ver primero los pasos previos de tu ruta. Puedes seguir con este ahora si prefieres.';
-        var cta = document.getElementById('player-hint-cta');
-        cta.textContent = 'Ver «' + previo.item.v.title + '» →';
-        cta.onclick = function () {
-          closePlayer();
-          openPlayer(previo.item.v, previo.item.b);
-        };
-        caja.hidden = false;
       }
 
       // Ficha del video: descripcion y recursos que se editan desde el CMS.
@@ -3186,7 +3732,28 @@
           list.appendChild(item);
         });
         box.hidden = recursos.length === 0;
-        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden;
+        // Llamado debajo del video (pedidos del usuario, 15-oct): el CRM dice texto y destino. Ya no
+        // van el botón de la rutina —sigue en «Tu rutina» dentro del módulo— ni, en ningún video, el
+        // aviso «Te lo recomendamos en orden»: la atención va al llamado.
+        var cta = document.getElementById('player-cta');
+        var llamado = v.cta;
+        cta.hidden = !llamado;
+        if (llamado) {
+          cta.querySelector('span').textContent = llamado.texto;
+          cta.setAttribute('data-destino', llamado.destino);
+          cta.setAttribute('data-sesion', v.id);
+          if (llamado.destino === 'whatsapp') {
+            cta.href = WHATSAPP_RUTA;
+            cta.target = '_blank';
+            cta.rel = 'noopener';
+          } else {
+            // Un caso de estudio: con los datos del miembro y toda su atribución, como el módulo de casos.
+            cta.href = urlCaso(llamado.destino);
+            cta.removeAttribute('target');
+            cta.removeAttribute('rel');
+          }
+        }
+        sheet.hidden = !texto && recursos.length === 0 && !llamado;
       }
 
       function openPlayer(v, b) {
@@ -3195,12 +3762,12 @@
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
         document.getElementById('player-title').textContent = v.title;
-        renderPlayerHint(v);
         renderPlayerSheet(v);
         playerFrame.innerHTML = '<div id="yt-target"></div>';
         document.body.classList.add('mobile-video-playing');
         player.showModal();
         syncModalState();
+        if (v.video) { ytPlayer = nativePlayer(v); return; }
         loadYT(function (ok) {
           if (myOpen !== openId || !player.open) return;
           if (ok) {
@@ -3477,9 +4044,20 @@
         return 'https://i.ytimg.com/vi/' + id + '/' + (alta ? 'maxresdefault' : 'hqdefault') + '.jpg';
       }
 
-      function pintarMiniatura(img, id) {
-        img.onerror = function () { img.onerror = null; img.src = urlMiniatura(id, false); };
-        img.src = urlMiniatura(id, true);
+      function pintarMiniatura(img, v) {
+        if (v.thumb) {
+          // Si la portada no carga, la de YouTube: nunca un hueco en la tarjeta principal.
+          img.onerror = function () { img.onerror = null; img.removeAttribute('srcset'); img.src = urlMiniatura(v.id, false); };
+          if (/-960\.webp$/.test(v.thumb)) {
+            img.srcset = v.thumb.replace(/-960\.webp$/, '-480.webp') + ' 480w, ' + v.thumb + ' 960w';
+            img.sizes = '(max-width: 640px) 92vw, 560px';
+          } else { img.removeAttribute('srcset'); }
+          img.src = v.thumb;
+          return;
+        }
+        img.removeAttribute('srcset');
+        img.onerror = function () { img.onerror = null; img.src = urlMiniatura(v.id, false); };
+        img.src = urlMiniatura(v.id, true);
       }
 
       // Las tres siguientes orientaciones, en abanico, como acceso a lo que viene.
@@ -3498,13 +4076,14 @@
         deck.innerHTML = '';
         siguientes.forEach(function (item) {
           var carta = document.createElement('i');
-          carta.style.backgroundImage = 'url("' + urlMiniatura(item.v.id, false) + '")';
+          var portada = item.v.thumb ? item.v.thumb.replace(/-960\.webp$/, '-480.webp') : urlMiniatura(item.v.id, false);
+          carta.style.backgroundImage = 'url("' + portada + '")';
           deck.appendChild(carta);
         });
         var restantes = lista.length - desde;
-        cuenta.textContent = restantes > 0
-          ? restantes + (restantes === 1 ? ' ORIENTACIÓN MÁS' : ' ORIENTACIONES MÁS')
-          : 'TODA TU RUTA';
+        if (!cuenta.dataset.aviso) cuenta.dataset.aviso = cuenta.innerHTML;
+        if (restantes > 0) cuenta.innerHTML = cuenta.dataset.aviso;
+        else cuenta.textContent = 'Ya viste todos tus pasos. Repásalos cuando quieras.';
       }
 
       // Paso 1 = todavía no terminó ninguna orientación y tampoco dejó esta
@@ -3548,11 +4127,18 @@
         document.getElementById('nx-description').textContent = signal.description;
         document.getElementById('nx-category').textContent = signal.category;
         document.getElementById('mobile-focus-name').textContent = first ? first + ', ' : '';
+        // El título y la bajada siguen al rótulo: «empieza» sólo antes del primer
+        // video; después la tarjeta ya muestra el que sigue (7-oct).
+        var titulo = pasoUno ? 'empieza por aquí.' : 'sigue por aquí.';
+        document.getElementById('mobile-focus-title-text').textContent = first ? titulo : titulo.charAt(0).toUpperCase() + titulo.slice(1);
+        document.getElementById('mobile-focus-lead').textContent = pasoUno
+          ? 'Mira este video primero, te voy a explicar cómo seguir tu Ruta Tr4iner para saber qué ver y en qué orden avanzar.'
+          : 'Este es tu siguiente video. Míralo para seguir avanzando en orden en tu Ruta Tr4iner.';
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
-        pintarMiniatura(document.getElementById('guide-img'), nextVideo.id);
-        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo.id);
+        pintarMiniatura(document.getElementById('guide-img'), nextVideo);
+        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo);
         pintarBaraja();
         mobileFocusOpen.setAttribute('aria-label', accion + ': ' + nextVideo.title);
       }
@@ -3667,10 +4253,18 @@
         // El copy de las dos ofertas es fijo; lo unico que cambia por sexo es
         // a que caso entra el primer boton.
 
-        var base = new URL(
-          state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel',
-          window.location.origin
-        );
+        cta.href = urlCaso(state.sexo === 'Mujer' ? '/testimonio-flor' : '/testimonio-dashiel');
+        cta.setAttribute('data-estado', estado);
+      }
+
+      // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
+      // bisagra (oculta desde el 7-oct) y el módulo «Caso de estudio».
+      function urlCaso(ruta) {
+        // `utm_medium` con el que la Ruta marca a quien abre un caso. El CRM lo
+        // tiene que reconocer como cruce (`isGenesisRelay`), igual que el GENESIS
+        // de los anuncios: si no, la campaña vieja se queda con el last touch.
+        var RUTA_UTM_MEDIUM = 'RUTA-TR4INER';
+        var base = new URL(ruta, window.location.origin);
         var p = new URLSearchParams();
         if (lead.nombre || nombre) p.set('first_name', lead.nombre || nombre);
         if (lead.email || email) p.set('email', lead.email || email);
@@ -3682,17 +4276,65 @@
         // eso es un clic más nuevo que el del alta.
         var storedAttr = (memberSession && memberSession.attribution) || {};
         var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
-        Object.keys(storedAttr).forEach(function (k) { if (!attr[k]) attr[k] = storedAttr[k]; });
+        // Las UTMs van en bloque, de una sola fuente: si el navegador trae alguna
+        // fresca se usa ese juego entero. Completarlo campo por campo armaba
+        // combinaciones que nunca existieron (el source del alta con la campaña
+        // de un correo de hoy). fbclid/fbc/fbp/video sí se completan sueltos.
+        var traeUtmsFrescas = Object.keys(attr).some(function (k) { return k.indexOf('utm_') === 0; });
+        Object.keys(storedAttr).forEach(function (k) {
+          if (traeUtmsFrescas && k.indexOf('utm_') === 0) return;
+          if (!attr[k]) attr[k] = storedAttr[k];
+        });
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
-        var q = p.toString().replace(/%40/g, '@');
-        base.search = q;
-        cta.href = base.toString();
-        cta.setAttribute('data-estado', estado);
+        // Marca del cruce Ruta → caso. Las páginas de testimonio son las mismas
+        // del funnel Caso de Estudio, y Typeform sólo guarda y reenvía las cinco
+        // UTMs (`funnel`/`funnel_variant` se pierden ahí): el medium es el único
+        // lugar donde la marca llega al CRM, a Calendly y a AGENDAS sin pisar la
+        // campaña ni el source que trajeron a la persona. Sin token VA a propósito,
+        // para que la salida del Typeform no la confunda con tráfico de Veronika.
+        p.set('utm_medium', RUTA_UTM_MEDIUM);
+        base.search = p.toString().replace(/%40/g, '@');
+        return base.toString();
       }
 
       document.getElementById('bridge-cta').addEventListener('click', function () {
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
       });
+      // El WhatsApp de ManyChat de Anthoni, con el mismo texto que la asesoría de la bisagra:
+      // ManyChat lo reconoce. Va para todos, como pidió el usuario.
+      var WHATSAPP_RUTA = 'https://api.whatsapp.com/send?phone=17439014239&text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa.';
+      document.getElementById('player-cta').addEventListener('click', function () {
+        var destino = this.getAttribute('data-destino') || '';
+        var sesion = this.getAttribute('data-sesion') || '';
+        if (destino === 'whatsapp') { track('ruta_cta_whatsapp', { sesion: sesion }); return; }
+        // Mismo evento que los casos del módulo: el lead scoring ya lo lee como intención.
+        track('bisagra_click', { estado: estadoBisagra(), caso: destino.replace('/testimonio-', ''), origen: 'video_cta', sesion: sesion });
+      });
+
+      // ── Chat del equipo ─────────────────────────────────────
+      // Sólo para miembros con sesión: el servidor la necesita para saber con
+      // quién habla y hasta dónde puede ofrecer.
+      function setupRutaChat() {
+        if (!memberSession || !window.TR4RutaChat) return;
+        var advisory = document.getElementById('bridge-advisory');
+        var listo = window.TR4RutaChat.init({
+          nombre: String(lead.nombre || '').split(' ')[0],
+          email: lead.email || '',
+          estado: estadoBisagra(),
+          whatsapp: advisory ? advisory.href : null,
+          track: track
+        });
+        if (!listo || !advisory) return;
+        // La segunda salida de la bisagra abre el chat; WhatsApp sigue como
+        // respaldo dentro del propio chat.
+        advisory.removeAttribute('target');
+        advisory.addEventListener('click', function (event) {
+          event.preventDefault();
+          window.TR4RutaChat.open();
+        });
+        var nota = advisory.parentNode.querySelector('small');
+        if (nota) nota.textContent = 'Te respondemos aquí mismo, al instante.';
+      }
 
       // ── Tour de primera entrada ─────────────────────────────
       var TOUR_KEY = 'tr4_tour_genesis_route_v2';
@@ -3823,10 +4465,23 @@
       renderOnboard();
       renderFilters();
       renderNextCard();
+      prepararRuta();
       setupMobileExperience();
       updateBridge();
+      setupRutaChat();
       maybeStartTour();
       showAnnouncement();
+      // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
+      if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
+        window.RutinaUI.init({
+          abrir: params.get('rutina') === '1',
+          // Con la rutina cargada entra al índice como paso propio y toma su frecuencia.
+          alCargar: function () {
+            if (libraryRendered) renderLibrary();
+            prepararRuta();
+          }
+        });
+      }
       if (memberSession && plan && params.get('video')) {
         var requested = VIDEOS.find(function (item) { return item.id === params.get('video'); });
         var requestedBlock = requested && BLOQUES.find(function (item) { return item.id === requested.bloque; });

@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "framework": null,
+  "functions": {
+    "api/genesis/chat/index.js": { "maxDuration": 30 }
+  },
   "redirects": [
     {
       "source": "/",

@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="es-419">
 <head>
+  <script>window.TR4_RUNTIME = {ready:false,teamPreview:false,analyticsEnabled:false,automationEnabled:false};</script>
+  <script src="/api/genesis/config?format=js"></script>
+  <script>if(window.TR4_RUNTIME.teamPreview){var manifest=document.createElement('link');manifest.rel='manifest';manifest.href='/api/genesis/manifest';document.head.appendChild(manifest);var icon=document.createElement('link');icon.rel='apple-touch-icon';icon.href='/biblioteca/icons/icon-192.png';document.head.appendChild(icon);}</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
@@ -110,6 +114,11 @@
           body: JSON.stringify({ identifier: document.getElementById('identifier').value.trim(), video: params.get('video') })
         }).then(function (response) {
           if (!response.ok) throw new Error('No se pudo solicitar el acceso');
+          return response.json();
+        }).then(function(data) {
+          if (window.TR4_RUNTIME.teamPreview && data.devLink) {
+            var link=document.createElement('a');link.href=data.devLink;link.textContent='Correo de prueba: abrir mi ruta →';document.getElementById('status').replaceChildren(link);
+          }
           document.getElementById('status').hidden = false;
           button.textContent = 'Enlace solicitado';
           if (window.TR4Track && TR4Track.track) TR4Track.track('genesis_access_requested');
