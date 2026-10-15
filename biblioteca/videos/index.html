@@ -885,6 +885,29 @@
     }
     .player-resources a:hover { background: rgba(244, 239, 230, 0.08); border-color: rgba(244, 239, 230, 0.42); }
     .player-resources a i { font-style: normal; color: var(--mark); }
+    /* Llamado a WhatsApp bajo el primer video de pesas (15-oct): mismo amarillo que el aviso de orden. */
+    .player-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(242, 199, 68, 0.42);
+      border-left: 3px solid var(--mark);
+      border-radius: 8px;
+      background: rgba(242, 199, 68, 0.08);
+      color: var(--paper);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-decoration: none;
+      transition: background 160ms ease;
+    }
+    .player-cta:hover { background: rgba(242, 199, 68, 0.16); }
+    .player-cta i { font-style: normal; color: var(--mark); }
+    .player-cta[hidden] { display: none !important; }
+    .player-sheet > .player-cta:first-child { margin-top: 0; }
     .player-close svg { width: 13px; height: 13px; }
 
     /* ── Enfoque móvil + expediente bajo demanda ── */
@@ -2487,6 +2510,9 @@
         <button type="button" class="player-hint-cta" id="player-hint-cta"></button>
       </div>
       <p class="player-desc" id="player-desc" hidden></p>
+      <a class="player-cta" id="player-cta" href="https://api.whatsapp.com/send?phone=17439014239&amp;text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa." target="_blank" rel="noopener" hidden>
+        <span>Si quieres que te ayude con tu cambio físico, más información aquí.</span> <i aria-hidden="true">→</i>
+      </a>
       <div class="player-resources" id="player-resources" hidden>
         <p class="player-resources-code">RECURSOS DE ESTA ORIENTACIÓN</p>
         <ul id="player-resources-list"></ul>
@@ -3782,7 +3808,13 @@
         var esIntroRutina = v.slug === 'ruta-rutina-intro' && window.RutinaUI && window.RutinaUI.disponible();
         rutinaBox.hidden = !esIntroRutina;
         if (esIntroRutina) window.RutinaUI.botonReproductor(rutinaBox, closePlayer);
-        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden && !esIntroRutina;
+        // Pedido del usuario (15-oct): bajo el primer video de pesas, para todos, el WhatsApp de
+        // ManyChat de Anthoni con el mismo texto que la asesoría de la bisagra (ManyChat lo reconoce).
+        var cta = document.getElementById('player-cta');
+        var conCta = v.slug === 'ruta-rutina-intro';
+        cta.hidden = !conCta;
+        cta.setAttribute('data-sesion', v.id);
+        sheet.hidden = !texto && recursos.length === 0 && document.getElementById('player-hint').hidden && !esIntroRutina && !conCta;
       }
 
       function openPlayer(v, b) {
@@ -4310,6 +4342,9 @@
 
       document.getElementById('bridge-cta').addEventListener('click', function () {
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
+      });
+      document.getElementById('player-cta').addEventListener('click', function () {
+        track('ruta_cta_whatsapp', { sesion: this.getAttribute('data-sesion') || '' });
       });
 
       // ── Chat del equipo ─────────────────────────────────────
