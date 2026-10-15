@@ -2,16 +2,17 @@
 
 ## 2026-10-15 — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
 
-**Rama:** `work/ruta-casos-utm` (desde `work/ruta-videos-r2`, `6bc6e66`). **Estado:** sin integrar ni publicar.
+**Rama:** `work/ruta-casos-utm` (desde `work/ruta-videos-r2`, `6bc6e66`; integra hasta `46bdb03`). **Estado:** sin integrar ni publicar.
 
 - **Pedido del usuario:** que las UTMs con las que la persona entró a la Ruta lleguen a los casos de estudio. Esas páginas son las mismas del funnel Caso de Estudio, y no se puede perder la trazabilidad de ninguno de los dos.
-- **Lo que ya funcionaba:** `urlCaso()` (módulo «Caso de estudio» y bisagra) ya reenviaba toda la atribución, la del navegador más la que el CRM guardó en el alta (`/api/genesis/me`).
+- **Lo que ya funcionaba:** `urlCaso()` ya reenviaba toda la atribución, la del navegador más la que el CRM guardó en el alta (`/api/genesis/me`).
 - **El hueco:** nada marcaba el cruce, salvo por casualidad. El CRM separa ese toque con `isGenesisRelay` (`utm_medium=GENESIS`), pero ese medium sólo lo traen los anuncios pagos de la Ruta. Quien entró por orgánico (`utm_campaign=GENESIS` sin medium) o sin UTMs llegaba al Typeform como un toque AN de hoy, y su campaña vieja se quedaba con el last touch.
 - **Por qué el medium:** el Typeform `CGxeptJu` sólo declara email, first_name, sexo, video, variant, fbc, fbp y las cinco UTMs (ejecución n8n 565029). `funnel` y `funnel_variant` se pierden ahí, y su salida sólo reenvía las cinco UTMs. El medium llega al CRM, a Calendly y a AGENDAS sin pisar la campaña ni el source.
-- **Cambio (`biblioteca/videos/index.html`, `urlCaso()`):**
+- **Cambio (`biblioteca/videos/index.html`, `urlCaso()`):** cubre los tres usos de la función: el módulo «Caso de estudio» (`origen: 'modulo_casos'`), el llamado debajo del video que manda el CRM (`origen: 'video_cta'`, entrada de abajo) y la bisagra oculta.
   1. Siempre `utm_medium=RUTA-TR4INER`. El usuario eligió ese valor en vez de `GENESIS`. No lleva token VA, así que la salida del Typeform sigue yendo a `/calendly-an`. El medium del alta no se pierde: queda en `BibliotecaLead.utmMedium` del CRM.
   2. Las UTMs van en bloque, de una sola fuente: si el navegador trae alguna fresca se usa ese juego entero; si no, el del CRM. Antes se completaban campo por campo y salían combinaciones falsas (source del alta + campaña de un correo de hoy). `fbclid`, `fbc`, `fbp` y `video` se siguen completando sueltos.
   - No se tocaron los testimonios, `attribution.js`, el Typeform, n8n ni el CRM.
+  - **`rango_edad` no se agrega.** El Typeform `CGxeptJu` no lo declara como campo oculto (ver la lista de arriba), así que se pierde igual que hoy en el funnel Caso de Estudio. La pregunta de edad del propio formulario sigue mandando. Sumarlo sólo serviría si se declara en Typeform. Además, la Ruta tendría que pedírselo al CRM (`session.lead.edadRango`).
 - **⚠️ Antes de publicar, el CRM tiene que aceptar `RUTA-TR4INER`:** hoy `isGenesisRelay` compara sólo con `GENESIS`.
   - Si esta página sale primero, ningún cruce se reconoce, ni siquiera los pagos, que hoy sí se reconocen.
   - El cambio del CRM es sumar el valor en `src/lib/genesis-attribution.ts`, con su test.
@@ -19,7 +20,7 @@
 - **Verificación (código real de las páginas en Node con DOM simulado, sin GTM para no ensuciar GA4 ni Vidalytics):**
   - Ruta → testimonio → `data-tf-hidden` → lo que guarda Typeform → salida → Calendly.
   - Seis escenarios: pago, orgánico, sin UTMs, clic fresco completo, clic fresco con sólo campaña y miembro con UTM VA.
-  - Las cuatro páginas de testimonio, en su versión de `main` (la que queda al integrar: desde la base común sólo `main` las cambió).
+  - Destinos `/testimonio-flor` y `/testimonio-andrea` (los del llamado del video). Las cuatro páginas de testimonio, en su versión de `main` (la que queda al integrar: desde la base común sólo `main` las cambió).
   - En todos llega `utm_medium=RUTA-TR4INER` y la campaña, el source, el content y el term originales quedan intactos.
   - El miembro con source `-VA-` sale hacia Veronika, como ya pasaba.
   - Los scripts de la página compilan.
@@ -29,6 +30,21 @@
   - CRM: excluir ese medium del Funnel AN (leads y usuarios GA4 de `/testimonio-*`).
   - Revisar en el preview, con un miembro de prueba, la URL de cada caso y la fila de AGENDAS.
   - Aparte: el testimonio ignora el `fbc` que llega en la URL y arma uno nuevo con fecha de hoy desde `fbclid` (el Pixel también). Meta ve un clic viejo como reciente.
+
+## 2026-10-15 — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
+
+- **Pedido del usuario:** llamado debajo de «El mejor entrenamiento en mujeres según la Ciencia y tu Edad»: «Conoce el paso a paso para lograr tu cambio físico. Esto es exactamente lo que hicimos con una de mis alumnas.».
+  - 18-25 y 26-35 → `/testimonio-flor`; 36+ → `/testimonio-andrea`.
+- **Cómo:** `#player-cta` toma texto y destino del `cta` que manda el catálogo del CRM (`lessonCta`, por lección y edad). La página no conoce la edad del miembro.
+  - Sólo acepta `whatsapp` o `/testimonio-…`.
+  - Un caso se arma con `urlCaso()`, igual que el módulo «Caso de estudio»: nombre, email, sexo y toda la atribución del miembro. Abre en la misma pestaña, como los casos del módulo.
+  - El WhatsApp de «Tu rutina» pasó al mismo mecanismo; su URL quedó en `WHATSAPP_RUTA`.
+- **Medición:** al caso, `bisagra_click` con `origen: 'video_cta'`, `caso` y `sesion`; es el mismo evento que el lead scoring ya lee como intención. A WhatsApp, `ruta_cta_whatsapp`.
+- **Verificación:** réplica local con UTMs sintéticas (`utm_source=PRUEBA-RUTA&utm_medium=GENESIS&utm_campaign=CTA-VIDEO`).
+  - Mujer 18-25 y 26-35 → `/testimonio-flor`; 36+ → `/testimonio-andrea`. Las tres llevan las UTMs.
+  - «Tu rutina» sigue abriendo WhatsApp en otra pestaña. Sin errores de página.
+  - Script: `~/Documents/Ruta Tr4iner/herramientas/cta-casos.mjs`. Captura: `capturas/cta-caso-andrea-2026-10-15.png`.
+- **Pendiente, ajeno a este cambio:** `urlCaso()` no manda `rango_edad`, que las páginas de caso pasan al Typeform. Lo revisa la sesión de UTMs de la Ruta hacia los casos.
 
 ## 2026-10-15 — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
 

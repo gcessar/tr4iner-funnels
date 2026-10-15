@@ -849,7 +849,7 @@
     }
     .player-resources a:hover { background: rgba(244, 239, 230, 0.08); border-color: rgba(244, 239, 230, 0.42); }
     .player-resources a i { font-style: normal; color: var(--mark); }
-    /* Llamado a WhatsApp bajo el primer video de pesas (15-oct): lo único debajo de ese video. */
+    /* Llamado debajo del video (15-oct): lo define el CRM por lección; es lo único bajo el video. */
     .player-cta {
       display: flex;
       align-items: center;
@@ -2468,9 +2468,7 @@
     </div>
     <div class="player-sheet" id="player-sheet" hidden>
       <p class="player-desc" id="player-desc" hidden></p>
-      <a class="player-cta" id="player-cta" href="https://api.whatsapp.com/send?phone=17439014239&amp;text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa." target="_blank" rel="noopener" hidden>
-        <span>Si quieres que te ayude con tu cambio físico, más información aquí.</span> <i aria-hidden="true">→</i>
-      </a>
+      <a class="player-cta" id="player-cta" href="#" hidden><span></span> <i aria-hidden="true">→</i></a>
       <div class="player-resources" id="player-resources" hidden>
         <p class="player-resources-code">RECURSOS DE ESTA ORIENTACIÓN</p>
         <ul id="player-resources-list"></ul>
@@ -2736,7 +2734,11 @@
                     intentLevel: content.intentLevel,
                     // Lección que ya salió de YouTube: la versión de R2 de su sexo y edad. Sólo
                     // se acepta el dominio de videos; cualquier otra cosa sigue por YouTube.
-                    video: content.video && /^https:\/\/video\.mediatr4iner\.com\/[a-z0-9][a-z0-9\/-]*\/$/.test(content.video.base || '') ? content.video : null
+                    video: content.video && /^https:\/\/video\.mediatr4iner\.com\/[a-z0-9][a-z0-9\/-]*\/$/.test(content.video.base || '') ? content.video : null,
+                    // Llamado debajo del video, según la lección y la edad (lo decide el CRM). Sólo
+                    // el WhatsApp de ManyChat o una página de caso de este mismo sitio.
+                    cta: content.cta && typeof content.cta.texto === 'string' && content.cta.texto.trim() &&
+                      /^(whatsapp|\/testimonio-[a-z]+(-[a-z]+)*)$/.test(content.cta.destino || '') ? content.cta : null
                   });
                 });
               });
@@ -3730,15 +3732,28 @@
           list.appendChild(item);
         });
         box.hidden = recursos.length === 0;
-        // Pedido del usuario (15-oct): bajo el primer video de pesas, para todos, sólo el WhatsApp
-        // de ManyChat de Anthoni con el mismo texto que la asesoría de la bisagra (ManyChat lo
-        // reconoce). Ahí ya no va el botón de la rutina —sigue en «Tu rutina» dentro del módulo—
-        // ni, en ningún video, el aviso «Te lo recomendamos en orden»: la atención va al llamado.
+        // Llamado debajo del video (pedidos del usuario, 15-oct): el CRM dice texto y destino. Ya no
+        // van el botón de la rutina —sigue en «Tu rutina» dentro del módulo— ni, en ningún video, el
+        // aviso «Te lo recomendamos en orden»: la atención va al llamado.
         var cta = document.getElementById('player-cta');
-        var conCta = v.slug === 'ruta-rutina-intro';
-        cta.hidden = !conCta;
-        cta.setAttribute('data-sesion', v.id);
-        sheet.hidden = !texto && recursos.length === 0 && !conCta;
+        var llamado = v.cta;
+        cta.hidden = !llamado;
+        if (llamado) {
+          cta.querySelector('span').textContent = llamado.texto;
+          cta.setAttribute('data-destino', llamado.destino);
+          cta.setAttribute('data-sesion', v.id);
+          if (llamado.destino === 'whatsapp') {
+            cta.href = WHATSAPP_RUTA;
+            cta.target = '_blank';
+            cta.rel = 'noopener';
+          } else {
+            // Un caso de estudio: con los datos del miembro y toda su atribución, como el módulo de casos.
+            cta.href = urlCaso(llamado.destino);
+            cta.removeAttribute('target');
+            cta.removeAttribute('rel');
+          }
+        }
+        sheet.hidden = !texto && recursos.length === 0 && !llamado;
       }
 
       function openPlayer(v, b) {
@@ -4285,8 +4300,15 @@
       document.getElementById('bridge-cta').addEventListener('click', function () {
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
       });
+      // El WhatsApp de ManyChat de Anthoni, con el mismo texto que la asesoría de la bisagra:
+      // ManyChat lo reconoce. Va para todos, como pidió el usuario.
+      var WHATSAPP_RUTA = 'https://api.whatsapp.com/send?phone=17439014239&text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa.';
       document.getElementById('player-cta').addEventListener('click', function () {
-        track('ruta_cta_whatsapp', { sesion: this.getAttribute('data-sesion') || '' });
+        var destino = this.getAttribute('data-destino') || '';
+        var sesion = this.getAttribute('data-sesion') || '';
+        if (destino === 'whatsapp') { track('ruta_cta_whatsapp', { sesion: sesion }); return; }
+        // Mismo evento que los casos del módulo: el lead scoring ya lo lee como intención.
+        track('bisagra_click', { estado: estadoBisagra(), caso: destino.replace('/testimonio-', ''), origen: 'video_cta', sesion: sesion });
       });
 
       // ── Chat del equipo ─────────────────────────────────────
