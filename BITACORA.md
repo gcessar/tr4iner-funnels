@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-15 — Ruta: llamado a WhatsApp debajo del primer video de pesas
+
+- **Pedido del usuario:** debajo del primer video de «Entrenamiento de pesas» («Tu Rutina de 3/4/5 días por semana», `ruta-rutina-intro`), un llamado al WhatsApp de ManyChat para todos los miembros: «Si quieres que te ayude con tu cambio físico, más información aquí.»
+- **Cómo:** `#player-cta` en la hoja del reproductor, debajo de la descripción. Sólo se muestra en esa lección.
+  - Mismo amarillo y filete del aviso «Te lo recomendamos en orden».
+  - Abre `api.whatsapp.com` con el número de ManyChat de Anthoni (`17439014239`) y el mismo texto precargado que la asesoría de la bisagra, «Hola, vengo de mi Ruta Tr4iner y quiero asesoría.», para no romper disparadores de ManyChat. Va para todos, también tráfico VA, como pidió el usuario.
+  - No abre el chat del equipo: va directo a WhatsApp.
+- **Medición:** el clic manda el evento `ruta_cta_whatsapp` con la lección (`sesion`).
+- **Verificación:** en la réplica local, una mujer de 26-35 con 4 días ve el llamado debajo de «Ver mi rutina de 4 días» y del aviso de orden, con el enlace correcto. Captura en `~/Documents/Ruta Tr4iner/capturas/cta-whatsapp-escritorio.png`.
+
 ## 2026-10-13 — Ruta: reproductor de lecciones sin descarga, con el diseño de la rutina y menú de velocidad
 
 - **Regla del usuario para todo video de R2:** no se tiene que poder descargar. Lleva el mismo color y diseño de controles que los videos de la rutina, y **la única opción de menú es la velocidad**.
