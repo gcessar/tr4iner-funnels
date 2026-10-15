@@ -48,6 +48,44 @@
   - Revisar en el preview, con un miembro de prueba, la URL de cada caso y la fila de AGENDAS.
   - Aparte: el testimonio ignora el `fbc` que llega en la URL y arma uno nuevo con fecha de hoy desde `fbclid` (el Pixel también). Meta ve un clic viejo como reciente.
 
+## 2026-10-15 — Chat de la Ruta: califica y deriva a WhatsApp; fuera la llamada de US$50
+
+Rama `work/ruta-hombres-preview` (sólo Preview). Pedido del usuario al revisar el prompt.
+
+### Qué cambió
+- **El agente pasa de cerrar a calificar y derivar.** Hace 1 a 3 preguntas (qué quiere cambiar y para cuándo, qué
+  probó, salud) y pasa a una persona del equipo por WhatsApp, que arma el plan, da el precio exacto y resuelve el
+  pago. Ante la duda entre seguir preguntando o derivar, deriva.
+- **Sin precio antes de calificar.** Si lo piden al principio, responde que depende del plan y pregunta. Si vuelven a
+  pedirlo después de calificar, da el precio de referencia (US$470 o US$420 según país) y aclara que el equipo
+  confirma por WhatsApp.
+- **Fuera del chat:** la llamada de US$50, el precio especial de US$370 y la promo. Las objeciones (precio, tiempo,
+  confianza) se validan en una línea y se derivan. Si el modelo igual ofrece algo de eso o escribe otro monto, el
+  servidor reemplaza el mensaje por el pase al equipo.
+- **Respuestas rápidas del saludo:** «¿Cuánto cuesta?» se cambió por «Quiero cambiar mi físico».
+- **WhatsApp:** la primera línea es la misma frase que la bisagra y el llamado de los videos («Hola, vengo de mi
+  Ruta Tr4iner y quiero asesoría.», la que reconoce ManyChat); debajo va el resumen en primera persona (qué quiere y
+  para cuándo, sin datos de salud) y el correo de la Ruta.
+
+### Verificación
+Batería contra el agente con la memoria armada como en producción: precio al principio (no lo da, califica; lo da
+recién al insistir), «quiero que me guíen», pedido de descuento y de llamada barata (no ofrece ninguno), curioso
+(no lo empuja), Lima con prediabetes (US$470), «cobro el 15» (deriva para coordinar), fuera de tema y crisis (sin
+cambios). Se rotó otra vez el secreto Vercel ↔ n8n, ahora en el Preview de esta rama.
+
+### Pendiente
+- Confirmar con un envío real que ManyChat reconoce la frase aunque lleve líneas debajo, y que ese número lo
+  atiende una persona y no el bot de AN (que cotiza US$250).
+- Con «Quiero que me guíen 1 a 1» a veces deriva sin preguntar nada: lo toma como intención fuerte.
+
+**Mismo día — más corto (pedido del usuario: «settear brevemente y derivar»).** La agenda de llamadas desde el chat
+queda para más adelante. El saludo ya es la única pregunta («Cuéntanos qué te gustaría lograr y te conectamos con el
+equipo», respuestas rápidas «Bajar grasa», «Ganar músculo», «Tengo una duda») y en cuanto la persona dice qué quiere,
+el agente la deriva en esa misma respuesta. Fuera las preguntas de qué probó y de salud. Probado: las dos respuestas
+rápidas y «quiero que me guíen» derivan al primer mensaje; «hola» y «¿cuánto cuesta?» hacen una pregunta y derivan.
+
+---
+
 ## 2026-10-15 — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
 
 - **Pedido del usuario:** llamado debajo de «El mejor entrenamiento en mujeres según la Ciencia y tu Edad»: «Conoce el paso a paso para lograr tu cambio físico. Esto es exactamente lo que hicimos con una de mis alumnas.».
@@ -1955,6 +1993,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 - `2026-10-15` — Ruta: el llamado debajo del video lo define el CRM; mujeres → caso de Flor o Andrea
 - `2026-10-15` — Ruta: debajo de los videos, sólo el llamado; fuera el aviso de orden y el botón de la rutina
 - `2026-10-15` — Ruta: llamado a WhatsApp debajo del primer video de pesas
+- `2026-10-15` — Chat de la Ruta: califica y deriva a WhatsApp; fuera la llamada de US$50
 - `2026-10-13` — Testimonios de `/calendly-an` y `/calendly-va` con el reproductor de R2 de la Ruta (preview)
 - `2026-10-13` — Regla: ningún video de R2 se puede descargar ni hacer clic derecho
 - `2026-10-13` — Los cuatro testimonios (Flor, Dashiel, Andrea, Christian) con la superficie única

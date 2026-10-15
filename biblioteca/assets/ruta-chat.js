@@ -153,8 +153,10 @@
   function apertura() {
     return {
       rol: 'equipo',
-      texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' ¿En qué te ayudamos?',
-      opciones: ['Quiero que me guíen 1 a 1', '¿Cuánto cuesta?', 'Tengo una duda']
+      // El saludo ya es la única pregunta (15-oct): con lo que responda, el
+      // agente la pasa a WhatsApp. Sin «¿Cuánto cuesta?»: el precio lo da el equipo.
+      texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' Cuéntanos qué te gustaría lograr y te conectamos con el equipo.',
+      opciones: ['Bajar grasa', 'Ganar músculo', 'Tengo una duda']
     };
   }
 
