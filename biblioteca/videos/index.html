@@ -4245,6 +4245,10 @@
       // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
       // bisagra (oculta desde el 7-oct) y el módulo «Caso de estudio».
       function urlCaso(ruta) {
+        // `utm_medium` con el que la Ruta marca a quien abre un caso. El CRM lo
+        // tiene que reconocer como cruce (`isGenesisRelay`), igual que el GENESIS
+        // de los anuncios: si no, la campaña vieja se queda con el last touch.
+        var RUTA_UTM_MEDIUM = 'RUTA-TR4INER';
         var base = new URL(ruta, window.location.origin);
         var p = new URLSearchParams();
         if (lead.nombre || nombre) p.set('first_name', lead.nombre || nombre);
@@ -4257,8 +4261,23 @@
         // eso es un clic más nuevo que el del alta.
         var storedAttr = (memberSession && memberSession.attribution) || {};
         var attr = window.TR4Track ? window.TR4Track.getAttribution() : {};
-        Object.keys(storedAttr).forEach(function (k) { if (!attr[k]) attr[k] = storedAttr[k]; });
+        // Las UTMs van en bloque, de una sola fuente: si el navegador trae alguna
+        // fresca se usa ese juego entero. Completarlo campo por campo armaba
+        // combinaciones que nunca existieron (el source del alta con la campaña
+        // de un correo de hoy). fbclid/fbc/fbp/video sí se completan sueltos.
+        var traeUtmsFrescas = Object.keys(attr).some(function (k) { return k.indexOf('utm_') === 0; });
+        Object.keys(storedAttr).forEach(function (k) {
+          if (traeUtmsFrescas && k.indexOf('utm_') === 0) return;
+          if (!attr[k]) attr[k] = storedAttr[k];
+        });
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
+        // Marca del cruce Ruta → caso. Las páginas de testimonio son las mismas
+        // del funnel Caso de Estudio, y Typeform sólo guarda y reenvía las cinco
+        // UTMs (`funnel`/`funnel_variant` se pierden ahí): el medium es el único
+        // lugar donde la marca llega al CRM, a Calendly y a AGENDAS sin pisar la
+        // campaña ni el source que trajeron a la persona. Sin token VA a propósito,
+        // para que la salida del Typeform no la confunda con tráfico de Veronika.
+        p.set('utm_medium', RUTA_UTM_MEDIUM);
         base.search = p.toString().replace(/%40/g, '@');
         return base.toString();
       }
