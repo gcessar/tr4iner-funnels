@@ -23,6 +23,12 @@
 - Los errores de consola que se ven vienen de adentro del iframe de Hotmart (hidratación y su `tracking-api`); la página no da errores propios.
 - **No se probó un pago real.** `onSuccess`/`onAnalysis` salen del código de la librería, no de una compra.
 
+### Deploy
+**Publicado el 16-oct-2026** con el OK del usuario. `work/10platospg-venta` entró a `main` por avance directo (`e178dfe`, sin merge: `main` seguía en `612ded8`).
+
+- **Deployment Vercel:** `dpl_7MZKvMwoRVAgLJwfYoAnR73Hfvve` (`tr4iner-funnels-gqgb8mnli-metodotr4iners-projects.vercel.app`) · Production · **Ready**.
+- Verificado sobre `https://metodo.tr4iner.com/10platospg` a 1280 y 375 px: título nuevo, imágenes y `sitemap.xml` en 200, checkout de Hotmart cargado (S/ 19 desde Perú) con las UTMs, `fbclid`, `video`, un parámetro inventado y el `fbc` derivado. Sin errores propios. `/recetas-100desayunos` da 307 a `/10platospg` y conserva la query.
+
 ### Pendiente
 - Una compra real (o un reembolso de prueba) para confirmar el aviso de pago aprobado y que la venta llegue al CRM con el producto correcto. Ojo: si `sync-sale` la recibe como venta, va a sumar US$5 en los tableros; conviene que el producto la separe de las ventas del programa.
 - Si se cambia el precio de la oferta en Hotmart, hay que actualizar «US$5» en la página y el `price` del JSON-LD.
