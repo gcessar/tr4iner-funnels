@@ -1,5 +1,38 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-16 — `/10platospg` deja de ser lead magnet y vende «100 Recetas: desayunos fáciles» con el checkout de Hotmart incrustado
+
+- **Pedido del usuario:** convertir `/10platospg` en página de venta directa con el checkout dentro de la página (Hotmart Checkout Elements), oferta `bb7gui87`. Que sea simple y con poco scroll. Sin la palabra «PDF».
+- **Qué vende:** la oferta `bb7gui87` es del producto `E100595140F`, «100 Recetas de desayunos Faciles» (BodyMindFitCo LLC): **US$5**, que Hotmart muestra en moneda local (S/ 19 en Perú). No es el ebook gratis de 10 platos. El usuario eligió vender las 100 recetas y dejar el ebook de 10 platos como está.
+- **Contenido sacado del recetario real** (103 páginas verticales de 1080×1920): 100 recetas en 9 categorías (batidos 15, panqueques 15, enchiladas 11, bowls 11, wraps 11, omelettes 10, waffles 9, tostadas 9, sándwiches 9). Todas entre 235 y 330 kcal y entre 18 y 25 g de proteína, con ingredientes en gramos e índice clicable. El mockup es el de Hotmart (`assets/desayunos/`, WebP 640/1080 + `recetario-og.jpg` 1200×630).
+- **Página:** escritorio en dos columnas, producto fijo a la izquierda y pago a la derecha, todo en el primer pantallazo. En el celular, hero corto y el pago debajo. La firma son los tres círculos de macros del propio recetario (rojo proteína, negro calorías, naranja categorías). Sigue con Poppins y el amarillo del producto hermano.
+- **Checkout:** `checkoutElements.init('inlineCheckout', { offer: 'bb7gui87', locale: 'es' })` con `https://checkout.hotmart.com/lib/hotmart-checkout-elements.js`.
+  - La librería suma cada clave de `prefilledInfo` y `visibilityOptions` como parámetro del iframe de `pay.hotmart.com/elements`, así que **viajan todos los parámetros de la URL** más la atribución persistida de TR4Track, igual que en `/fit4`. Se saltean sólo las claves que arman el iframe (`off`, `checkoutMode`, `bid`, `locale`, `countrycode`). `sck` va en `prefilledInfo` y lo demás en `visibilityOptions`, como pide la guía.
+  - `first_name`/`name`/`nombre` y `email` de la URL precargan el formulario de Hotmart.
+  - Hotmart no bloquea el iframe en ningún dominio (sin `frame-ancestors` ni `X-Frame-Options`): funciona en localhost y en cualquier Preview.
+  - **Sin `payment.onError` a propósito:** si se define, Hotmart deja de mostrar sus propios mensajes de tarjeta rechazada.
+  - **Respaldo:** si el script no carga (bloqueador), falla el init o pasan 15 s sin `onLoad`, aparece «Ábrelo directamente en Hotmart» con `pay.hotmart.com/E100595140F?off=bb7gui87&checkoutMode=10` y los mismos parámetros.
+- **Eventos a `dataLayer`** (`product=100-desayunos`, `offer=bb7gui87`): `desayunos_checkout_loaded`, `desayunos_payment_approved`, `desayunos_payment_analysis`, `desayunos_checkout_fallback` (`reason`: `script` | `init_error` | `load_data_error` | `timeout`). **No se emite `Purchase`**: el CRM es el único emisor de compras hacia Meta (entrada del 3-sep del CRM). Al aprobarse el pago, la página avisa que el acceso llegó al correo.
+- **Qué deja de pasar:** `/10platospg` ya no registra leads. El webhook `leadmagnet1` no recibe nada nuevo desde esta página, y `/10platospg-regd`, `-h` y `-m` quedan sin tráfico nuevo pero publicadas (los correos ya enviados siguen funcionando). Los redirects `/recetas-100desayunos` y `/recetas-100airfrier` ahora caen en la venta.
+- **SEO/GEO:** sigue indexable y en el sitemap (`lastmod` 2026-10-16). Título, descripción, `og:*` y JSON-LD nuevos: `Product` con `Offer` en USD 5.00, `WebPage` con `mainEntity`, `Organization` y `BreadcrumbList`.
+
+### Verificación
+- Servidor local y Chrome por Playwright a 1280, 768, 375 y 320 px: sin desborde horizontal y checkout cargado (`desayunos_checkout_loaded`).
+- Con 11 parámetros sintéticos (UTMs, `fbclid`, `video`, `h_ad_id`, `sck`, nombre, email y uno inventado, `nuevo_id`): todos llegaron al iframe de Hotmart y al enlace de respaldo, más `fbc` y `fbp`. El formulario de Hotmart apareció con nombre y email precargados.
+- Con `checkout.hotmart.com` bloqueado: aparece el respaldo con los parámetros y sale `desayunos_checkout_fallback:script`.
+- Los errores de consola que se ven vienen de adentro del iframe de Hotmart (hidratación y su `tracking-api`); la página no da errores propios.
+- **No se probó un pago real.** `onSuccess`/`onAnalysis` salen del código de la librería, no de una compra.
+
+### Pendiente
+- Una compra real (o un reembolso de prueba) para confirmar el aviso de pago aprobado y que la venta llegue al CRM con el producto correcto. Ojo: si `sync-sale` la recibe como venta, va a sumar US$5 en los tableros; conviene que el producto la separe de las ventas del programa.
+- Si se cambia el precio de la oferta en Hotmart, hay que actualizar «US$5» en la página y el `price` del JSON-LD.
+
+### Resultado esperado
+- Ventas directas de US$5 desde el tráfico orgánico y los redirects de recetas, sin salir de la página.
+
+### Resultado medido (completar después)
+- Visitas → `desayunos_checkout_loaded` → ventas en Hotmart, por dispositivo.
+
 ## 2026-10-16 — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
 
 - **Por qué:** el selector tenía 15 países. Del 15-ago al 16-oct, el 9,4 % de los registros con país conocido entró desde un país que no estaba (Alemania, Suiza, Polonia, Reino Unido, Francia, Israel, Japón, Emiratos, Arabia Saudita…), y el ≈5 % se registró con un número de otro país (expatriados). Pedido del usuario: Europa y Asia, sin que buscar el país moleste.
@@ -2028,6 +2061,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-16` — `/10platospg` deja de ser lead magnet y vende «100 Recetas: desayunos fáciles» con el checkout de Hotmart incrustado
 - `2026-10-16` — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
 - `2026-10-16` — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
 - `2026-10-15` — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
