@@ -26,10 +26,14 @@
     p { max-width:430px; margin:16px auto 0; color:var(--ink-soft); }
     .spin { width:28px; height:28px; margin:28px auto 0; border:3px solid var(--rule); border-top-color:var(--ink); border-radius:50%; animation:s .75s linear infinite; }
     @keyframes s { to { transform:rotate(360deg); } }
-    a { min-height:52px; display:inline-flex; align-items:center; justify-content:center; margin-top:26px; padding:13px 18px; border:1px solid var(--ink); border-radius:6px; background:var(--ink); color:var(--paper); font-weight:700; text-decoration:none; }
-    a:focus-visible { outline:3px solid var(--mark); outline-offset:3px; }
+    .actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:26px; }
+    .actions a, .actions button { min-height:52px; display:inline-flex; align-items:center; justify-content:center; padding:13px 18px; border:1px solid var(--ink); border-radius:6px; background:var(--ink); color:var(--paper); font:700 17px/1.2 var(--sans); text-decoration:none; cursor:pointer; }
+    .actions .secondary { background:transparent; color:var(--ink); }
+    .actions a:focus-visible, .actions button:focus-visible { outline:3px solid var(--mark); outline-offset:3px; }
+    /* El display de los botones le ganaba al atributo hidden. */
+    [hidden] { display:none !important; }
     .error .spin { display:none; }
-    @media (max-width:560px) { body { place-items:start center; padding:calc(72px + env(safe-area-inset-top)) 18px 32px; } .card { padding:0; } h1 { font-size:clamp(36px,10.5vw,44px); } a { width:100%; } }
+    @media (max-width:560px) { body { place-items:start center; padding:calc(72px + env(safe-area-inset-top)) 18px 32px; } .card { padding:0; } h1 { font-size:clamp(36px,10.5vw,44px); } .actions a, .actions button { width:100%; } }
     @media (prefers-reduced-motion:reduce) { .spin { animation-duration:1.5s; } }
   </style>
 </head>
@@ -40,7 +44,10 @@
     <h1 id="title">Validando tu acceso…</h1>
     <p id="message">Estamos abriendo tu expediente privado.</p>
     <div class="spin" aria-label="Cargando"></div>
-    <a id="retry" href="/biblioteca/acceso/" hidden>Pedir un enlace nuevo →</a>
+    <div class="actions">
+      <button id="again" type="button" hidden>Reintentar →</button>
+      <a id="retry" href="/biblioteca/acceso/" hidden>Pedir un enlace nuevo →</a>
+    </div>
   </main>
   <script>
     (function () {
@@ -67,43 +74,82 @@
         if (video) next.searchParams.set('video', video);
         window.location.replace(next.toString());
       }
-      function showError(message) {
+      // «Load failed» (iPhone) o «Failed to fetch» (Chrome): la red se cortó a mitad de
+      // camino. No es un enlace vencido, y ese texto en inglés no se le muestra a nadie
+      // (16-oct: así le llegó a Anthoni dos veces seguidas).
+      function corte() {
+        var error = new Error('corte');
+        error.corte = true;
+        return error;
+      }
+      function esCorte(error) {
+        return error instanceof TypeError || Boolean(error && error.corte);
+      }
+      function showError(message, cortado) {
         document.getElementById('card').classList.add('error');
-        document.getElementById('title').textContent = 'Este enlace ya no abre.';
-        document.getElementById('message').textContent = message;
+        document.getElementById('title').textContent = cortado ? 'Se cortó la conexión.' : 'Este enlace ya no abre.';
+        document.getElementById('message').textContent = cortado
+          ? 'Tu enlace todavía sirve unos minutos. Revisa tu señal y toca «Reintentar».'
+          : message;
         var retry = document.getElementById('retry');
         var access = new URL('/biblioteca/acceso/', window.location.origin);
         copyAttribution(access);
         retry.href = access.toString();
+        retry.classList.toggle('secondary', cortado);
         retry.hidden = false;
+        document.getElementById('again').hidden = !cortado;
       }
+      document.getElementById('again').addEventListener('click', function () { window.location.reload(); });
       // El token es de un solo uso y el botón se queda en el chat para siempre:
       // al segundo clic hay que entrar con la sesión de 30 días, no mandar al
       // portón a quien ya está adentro.
-      function fail(message) {
+      function fail(error) {
+        var cortado = esCorte(error);
+        var message = cortado ? '' : (error && error.message) || 'Solicita un enlace nuevo.';
         fetch('/api/genesis/me').then(function (response) {
           if (response.ok) { enterRoute(params.get('video')); return; }
-          showError(message);
-        }).catch(function () { showError(message); });
+          showError(message, cortado);
+        }).catch(function () { showError(message, true); });
+      }
+      function esperar(ms) {
+        return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
+      }
+      // Si la respuesta se pierde, el CRM ya gastó el enlace y abrió la sesión, pero la
+      // cookie nunca llegó. Desde el 16-oct el mismo enlace vuelve a abrir unos minutos
+      // desde este navegador, así que se pide otra vez antes de rendirse.
+      function validar(intento) {
+        return fetch('/api/genesis/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token })
+        }).then(function (response) {
+          // Un 5xx o una página de error de Vercel tampoco dicen que el enlace venció.
+          if (response.status >= 500) throw corte();
+          return response;
+        }).catch(function (error) {
+          if (!esCorte(error) || intento >= 2) throw error;
+          return esperar(intento ? 3000 : 1200).then(function () { return validar(intento + 1); });
+        });
       }
 
-      if (!token) { fail('Falta el código de acceso. Solicita uno nuevo.'); return; }
+      if (!token) { fail(new Error('Falta el código de acceso. Solicita uno nuevo.')); return; }
 
-      fetch('/api/genesis/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: token })
-      }).then(function (response) {
-        if (!response.ok) return response.json().then(function (data) { throw new Error(data.error || 'El enlace venció.'); });
-        return response.json();
+      validar(0).then(function (response) {
+        if (!response.ok) {
+          return response.json().catch(function () { return {}; }).then(function (data) {
+            throw new Error(data.error || 'El enlace venció.');
+          });
+        }
+        return response.json().catch(function () { throw corte(); });
       }).then(function (verified) {
         return fetch('/api/genesis/me').then(function (response) {
-          if (!response.ok) throw new Error('No se pudo abrir la sesión.');
+          // Validó pero la cookie no quedó: reintentar con el mismo enlace la vuelve a dar.
+          if (!response.ok) throw corte();
           return response.json();
         }).then(function () {
           enterRoute(verified.targetVideo || params.get('video'));
         });
-      }).catch(function (error) { fail(error.message || 'Solicita un enlace nuevo.'); });
+      }).catch(fail);
     })();
   </script>
 </body>

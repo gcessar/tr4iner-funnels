@@ -1,5 +1,14 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-16 — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
+
+- **Qué pasó:** Anthoni (cuenta `anthonimontalvan@tr4iner.com`, Chrome del iPhone abierto desde Gmail) abrió el enlace del correo dos veces. El CRM validó las dos y abrió las dos sesiones, pero la sesión no le quedó en el navegador. La primera vez la perdió al pasar a la Ruta y la página le pidió el correo. La segunda, la respuesta nunca llegó: el iPhone lo informa como «Load failed». Como el enlace es de un solo uso, la página terminó en «Este enlace ya no abre. Load failed». Entró a los 3 minutos con el enlace de WhatsApp. Brevo registra un solo envío de «Tu enlace privado»; el otro correo fue el de bienvenida.
+- **No fue sólo él:** de 340 miembros que usaron un enlace desde el lanzamiento, 9 pidieron uno nuevo a menos de 5 minutos (script `~/Documents/Ruta Tr4iner/herramientas/consultas/enlaces-perdidos.mts`).
+- **Cambio en `biblioteca/verificar/`:** si la red se corta o el servidor da 5xx, la validación se reintenta sola dos veces, a los 1,2 s y a los 3 s. Si no alcanza, o si validó pero la sesión no quedó, la página dice «Se cortó la conexión.» con «Reintentar» (recarga con el mismo enlace) y «Pedir un enlace nuevo» como segunda opción. Ese texto del navegador en inglés ya no se muestra nunca. Un enlace vencido de verdad sigue diciendo «Este enlace ya no abre.».
+- **Depende del CRM:** el mismo enlace vuelve a abrir durante 10 minutos, sólo desde el navegador que lo usó primero (`genesis-acceso.ts`, entrada del 16-oct en la bitácora del CRM). Sin eso, el reintento se encontraba con el enlace ya gastado.
+- También: el CSS de los botones le ganaba al atributo `hidden`, así que «Pedir un enlace nuevo» podía verse mientras se validaba. Ahora `[hidden]` manda.
+- **Verificación:** 7 escenarios con cortes simulados en Chrome (`~/Documents/Ruta Tr4iner/herramientas/verificar-cortes.mjs`), entre ellos corte-corte-entra, corte permanente, 502, cookie que no queda, vencido de verdad, ya con sesión y sin token. Las UTMs siguen viajando a «Pedir un enlace nuevo». Captura: `capturas/verificar-corte-2026-10-16.png`.
+
 ## 2026-10-15 — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
 
 - **Por qué:** el CRM pasó a `gru1` porque Neon está en São Paulo (ver la bitácora del CRM). Las funciones de este proyecto son todas de la Ruta (`api/genesis/*`, puentes al CRM, más el chat a n8n) y seguían en Washington (`iad1`). Cada pantalla de la Ruta cruzaba el continente en cada llamada al CRM.
@@ -2006,6 +2015,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-16` — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
 - `2026-10-15` — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
 - `2026-10-15` — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)
 - `2026-10-15` — Ruta: el cruce a un caso de estudio sale marcado con `utm_medium=RUTA-TR4INER`
