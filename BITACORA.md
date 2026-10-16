@@ -1,5 +1,18 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-16 — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
+
+- **Por qué:** el selector tenía 15 países. Del 15-ago al 16-oct, el 9,4 % de los registros con país conocido entró desde un país que no estaba (Alemania, Suiza, Polonia, Reino Unido, Francia, Israel, Japón, Emiratos, Arabia Saudita…), y el ≈5 % se registró con un número de otro país (expatriados). Pedido del usuario: Europa y Asia, sin que buscar el país moleste.
+- **Cómo funciona:** `biblioteca/assets/prefijo-pais.js` reemplaza el `<select>`:
+  - **país inicial:** el de la IP que da Vercel, que `/api/genesis/config` ahora devuelve en `TR4_RUNTIME.country`. Si no hay IP, la zona horaria del teléfono; si tampoco, Perú;
+  - **hoja con buscador:** a pantalla casi completa en el celular y como cuadro centrado en escritorio. Arriba van los sugeridos (país detectado + AR, CO, PE, MX, US, CL, ES) y después los 245 países de la A a la Z. Busca por nombre sin tildes, por código («+49» o «49») y por alias («holanda», «usa», «inglaterra»). En un empate van primero los países de nuestro público;
+  - **número:** «+58…» o «0058…» elige el país solo. Se quitan el 0 nacional (07… en Reino Unido) y el código repetido («51 987…»), sólo si así el largo cuadra;
+  - **aviso de largo:** si el largo no es el de un celular de ese país, el primer envío muestra «¿Tu número es de otro país?» con «Cambiar país»; el segundo toque envía igual. Sale al enviar y no al salir del campo, porque en el blur empujaba el botón y se perdía el clic.
+- La lista sale de libphonenumber-js (código, prefijo nacional, largos de celular) con `~/Documents/Ruta Tr4iner/herramientas/generar-prefijos.mjs`. Pesa 26 KB, 10 KB comprimido.
+- **Medición:** el registro manda `prefijo: {sugerido, origen (ip|zona|defecto), elegido, cambio (manual|numero|null), aviso}`. El CRM lo guarda en el evento `registro` (bitácora del CRM, mismo día).
+- `/biblioteca/` (la landing vieja, sin tráfico) conserva la lista de 15.
+- **Verificación:** `~/Documents/Ruta Tr4iner/herramientas/prefijo-capturas.mjs` recorre el wizard en Chrome con tamaño de iPhone y en escritorio: 23 comprobaciones con IP simulada (DE, PE, GB, MX, sin IP con zona Madrid y sin nada) y el payload que llega al registro. Capturas en `~/Documents/Ruta Tr4iner/capturas/prefijo/`. No se probó en Safari de iOS real: en esta Mac no hay simulador.
+
 ## 2026-10-16 — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
 
 - **Qué pasó:** Anthoni (cuenta `anthonimontalvan@tr4iner.com`, Chrome del iPhone abierto desde Gmail) abrió el enlace del correo dos veces. El CRM validó las dos y abrió las dos sesiones, pero la sesión no le quedó en el navegador. La primera vez la perdió al pasar a la Ruta y la página le pidió el correo. La segunda, la respuesta nunca llegó: el iPhone lo informa como «Load failed». Como el enlace es de un solo uso, la página terminó en «Este enlace ya no abre. Load failed». Entró a los 3 minutos con el enlace de WhatsApp. Brevo registra un solo envío de «Tu enlace privado»; el otro correo fue el de bienvenida.
@@ -2015,6 +2028,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-16` — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
 - `2026-10-16` — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
 - `2026-10-15` — Funciones de la Ruta en São Paulo (`gru1`), junto al CRM y la base
 - `2026-10-15` — Lanzamiento de la Ruta Tr4iner a producción (rama `work/ruta-lanzamiento`)

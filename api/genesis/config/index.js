@@ -5,11 +5,15 @@ module.exports = function genesisConfig(request, response) {
   if (request.method !== 'GET') return response.status(405).json({ error: 'Método no permitido' });
   var preview = isPreview();
   var production = process.env.VERCEL_ENV === 'production';
+  // País de la visita según Vercel: el registro arranca el código del WhatsApp ahí
+  // (prefijo-pais.js). Es una sugerencia; no se guarda ni decide nada del lado del servidor.
+  var country = String(request.headers['x-vercel-ip-country'] || '').toUpperCase();
   var payload = {
     ready: production || (preview && previewConfigured()),
     teamPreview: preview && previewConfigured(),
     analyticsEnabled: production,
-    automationEnabled: production
+    automationEnabled: production,
+    country: /^[A-Z]{2}$/.test(country) ? country : null
   };
   var url = new URL(request.url, 'https://config.invalid');
   if (url.searchParams.get('format') === 'js') {

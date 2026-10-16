@@ -392,7 +392,7 @@
     .control::placeholder { color: #8A8A8A; }
     .phone-row {
       display: grid;
-      grid-template-columns: 112px 1fr;
+      grid-template-columns: minmax(112px, auto) 1fr;
       gap: 8px;
     }
     .err {
@@ -404,6 +404,131 @@
     }
     .field.has-error .control { border-color: #A1261C; }
     .field.has-error .err { display: block; }
+    /* Código de país del WhatsApp: botón + hoja con buscador (prefijo-pais.js). */
+    .prefix-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 10px 12px 12px;
+      cursor: pointer;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .prefix-flag { font-size: 20px; line-height: 1; }
+    .prefix-code { font-weight: 650; font-variant-numeric: tabular-nums; }
+    .prefix-caret {
+      width: 7px;
+      height: 7px;
+      margin: -3px 0 0 auto;
+      border-right: 1.6px solid var(--ink);
+      border-bottom: 1.6px solid var(--ink);
+      transform: rotate(45deg);
+    }
+    .phone-hint {
+      margin: 9px 0 0;
+      padding: 10px 12px;
+      border-left: 3px solid var(--mark-strong);
+      background: #FFF9E0;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .phone-hint-cambiar {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+    .phone-hint-pie { display: block; margin-top: 3px; color: var(--muted); }
+    /* Sus display le ganaban al atributo hidden. */
+    .phone-hint[hidden], .pais-capa[hidden] { display: none; }
+    html.pais-abierta, html.pais-abierta body { overflow: hidden; }
+    .pais-capa {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(17, 17, 17, 0.42);
+    }
+    .pais-hoja {
+      width: min(100%, 440px);
+      height: min(620px, calc(100dvh - 48px));
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 0 18px 50px rgba(17, 17, 17, 0.22);
+    }
+    .pais-cabeza {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 10px 6px 18px;
+    }
+    .pais-titulo {
+      margin: 0;
+      font: 650 10.5px/1 var(--mono);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .pais-cerrar {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: none;
+      color: var(--ink);
+      font: 400 30px/1 var(--body);
+      cursor: pointer;
+    }
+    .pais-buscar { padding: 0 14px 10px; border-bottom: 1px solid var(--rule); }
+    .pais-busqueda { -webkit-appearance: none; appearance: none; }
+    .pais-lista {
+      flex: 1;
+      margin: 0;
+      padding: 4px 0 calc(16px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      list-style: none;
+    }
+    .pais-grupo {
+      padding: 14px 18px 6px;
+      font: 650 10px/1 var(--mono);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .pais-opcion {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 50px;
+      padding: 0 18px;
+      cursor: pointer;
+    }
+    .pais-opcion.activa { background: #F4F4F4; }
+    /* Sólo con mouse: en el celular el hover se queda pegado en la fila que se tocó. */
+    @media (hover: hover) { .pais-opcion:hover { background: #F4F4F4; } }
+    .pais-opcion[aria-selected="true"] { font-weight: 700; }
+    .pais-opcion[aria-selected="true"] .pais-codigo { color: var(--ink); }
+    .pais-bandera { font-size: 21px; line-height: 1; }
+    .pais-codigo { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .pais-vacio { padding: 22px 18px; color: var(--ink-soft); font-size: 14px; }
+    @media (max-width: 640px) {
+      /* En el celular, hoja casi a pantalla completa: con el teclado abierto se ve igual el buscador y los sugeridos. */
+      .pais-capa { place-items: end stretch; padding: 10px 0 0; }
+      .pais-hoja { width: 100%; height: 100%; border-radius: 14px 14px 0 0; }
+    }
     .answer-cta,
     .submit-cta { width: 100%; margin-top: 4px; }
     .submit-cta .spinner {
@@ -562,7 +687,7 @@
         gap: 16px;
         padding: 18px;
       }
-      .phone-row { grid-template-columns: 100px 1fr; }
+      .phone-row { grid-template-columns: minmax(104px, auto) 1fr; }
       .submit-cta { margin-top: 2px; }
       .text-link {
         margin-top: 22px;
@@ -706,12 +831,15 @@
                   <div class="field" id="f-whatsapp">
                     <label for="whatsapp">Tu WhatsApp</label>
                     <div class="phone-row">
-                      <select class="control" id="prefijo" aria-label="Código de país">
-                        <option value="+51" selected>+51 PE</option><option value="+34">+34 ES</option><option value="+52">+52 MX</option><option value="+57">+57 CO</option><option value="+54">+54 AR</option><option value="+56">+56 CL</option><option value="+593">+593 EC</option><option value="+591">+591 BO</option><option value="+58">+58 VE</option><option value="+598">+598 UY</option><option value="+595">+595 PY</option><option value="+507">+507 PA</option><option value="+506">+506 CR</option><option value="+502">+502 GT</option><option value="+1">+1 US</option>
-                      </select>
-                      <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="numeric" placeholder="987 654 321…" autocomplete="tel-national" maxlength="25" />
+                      <input type="hidden" id="prefijo" value="+51" />
+                      <!-- Lo arma /biblioteca/assets/prefijo-pais.js: país por IP y hoja con buscador. -->
+                      <button class="control prefix-btn" type="button" id="prefijo-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Código de país: Perú, +51. Cambiar">
+                        <span class="prefix-flag" aria-hidden="true">🇵🇪</span><span class="prefix-code">+51</span><span class="prefix-caret" aria-hidden="true"></span>
+                      </button>
+                      <input class="control" type="tel" id="whatsapp" name="whatsapp" inputmode="tel" placeholder="987 654 321…" autocomplete="tel-national" maxlength="25" />
                     </div>
                     <p class="err" aria-live="polite">Ingresa un número válido (solo dígitos)</p>
+                    <p class="phone-hint" id="whatsapp-aviso" aria-live="polite" hidden><span class="phone-hint-text"></span> <button class="phone-hint-cambiar" type="button">Cambiar país</button><span class="phone-hint-pie">Si está bien así, vuelve a tocar el botón.</span></p>
                   </div>
                   <button class="primary-cta submit-cta" type="submit" id="submit-btn"><span class="submit-label">Ver mi ruta personalizada</span><span class="spinner" aria-hidden="true"></span><span class="cta-arrow" aria-hidden="true">→</span></button>
                   <p class="privacy-note">Gratis · Sin tarjeta · Tus datos están protegidos</p>
@@ -737,6 +865,7 @@
   </div>
 
   <script src="/attribution.js"></script>
+  <script src="/biblioteca/assets/prefijo-pais.js?v=20261016"></script>
   <script>
     (function () {
       'use strict';
@@ -939,7 +1068,8 @@
         if (document.getElementById('honeypot').value !== '') return;
 
         var nombre = document.getElementById('nombre').value.trim();
-        var telefono = document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
+        // prefijo-pais.js deja el número acomodado al país (sin el 0 ni el código repetido).
+        var telefono = window.TR4Prefijo ? TR4Prefijo.telefono() : document.getElementById('whatsapp').value.replace(/[\s\-().]/g, '');
         var prefijo = document.getElementById('prefijo').value;
         var email = document.getElementById('email').value.trim();
 
@@ -969,6 +1099,12 @@
         setFieldError('f-whatsapp', !telOk);
         if (!telOk) {
           document.getElementById('whatsapp').focus();
+          return;
+        }
+        // Un largo que no es el del país casi siempre es el código equivocado, y ahí el WhatsApp
+        // con la ruta no llega. Se avisa una vez; el segundo toque envía igual.
+        if (window.TR4Prefijo && TR4Prefijo.frenarPorLargo()) {
+          document.getElementById('whatsapp-aviso').scrollIntoView({ block: 'center', behavior: 'smooth' });
           return;
         }
 
@@ -1031,7 +1167,8 @@
           situacion_text: state.situacionText,
           edad_rango: state.edadRango,
           training_days: state.trainingDays,
-          video: videoId
+          video: videoId,
+          prefijo: window.TR4Prefijo ? TR4Prefijo.medicion() : null
         };
         Object.keys(utmData).forEach(function (key) { genesisPayload[key] = utmData[key]; });
 
