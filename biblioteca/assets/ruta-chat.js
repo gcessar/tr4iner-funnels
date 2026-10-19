@@ -16,6 +16,7 @@
   'use strict';
 
   var ENDPOINT = '/api/genesis/chat';
+  var ENDPOINT_EVENTO = '/api/genesis/chat-evento';
   var STORAGE_PREFIX = 'tr4_ruta_chat_v1:';
   var MAX_ITEMS = 80;
 
@@ -82,6 +83,25 @@
     '.rc-card--whatsapp .rc-card-cta:hover{background:var(--paper-deep,#F5F5F5)}',
     '.rc-card--whatsapp .rc-card-cta i{color:var(--ink,#111)}',
     '.rc-card-foot{margin:8px 0 0;color:var(--muted,#6B6B6B);font:500 9.5px/1.3 var(--mono,ui-monospace,monospace);letter-spacing:.08em;text-align:center;text-transform:uppercase}',
+    '.rc-card-alt{display:block;margin:10px 0 0;color:var(--ink-soft,#3F3F3F);font-size:13.5px;text-align:center;text-decoration:underline;text-underline-offset:3px}',
+    '.rc-card-alt:hover{color:var(--ink,#111)}',
+    // Sesión con un asesor: horarios por día, confirmación de Calendly adentro.
+    '.rc-slots{margin:12px 0 0}',
+    '.rc-slot-day{margin:12px 0 6px;color:var(--muted,#6B6B6B);font:500 9.5px/1.2 var(--mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase}',
+    '.rc-slot-day:first-child{margin-top:0}',
+    '.rc-slot-row{display:flex;flex-wrap:wrap;gap:8px}',
+    '.rc-slot{min-width:76px;min-height:44px;padding:0 14px;border:1px solid var(--ink,#111);border-radius:8px;background:var(--card,#fff);color:var(--ink,#111);font:700 15px/1 var(--sans,system-ui,sans-serif);font-variant-numeric:tabular-nums;cursor:pointer;transition:background .16s ease}',
+    '.rc-slot:hover{background:var(--mark-soft,rgba(255,212,59,.36))}',
+    '.rc-slot:focus-visible,.rc-card-ghost:focus-visible,.rc-back:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
+    '.rc-card-ghost{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin-top:14px;padding:0 16px;border:1px solid var(--rule-strong,rgba(17,17,17,.24));border-radius:6px;background:transparent;color:var(--ink,#111);font:650 14.5px/1 var(--sans,system-ui,sans-serif);cursor:pointer}',
+    '.rc-card-ghost:hover{border-color:var(--ink,#111)}',
+    '.rc-back{display:inline-flex;align-items:center;gap:6px;min-height:36px;margin:10px 0 6px;padding:0;border:0;background:none;color:var(--ink-soft,#3F3F3F);font:600 13.5px/1 var(--sans,system-ui,sans-serif);cursor:pointer}',
+    '.rc-cal{margin:0 -16px -14px;border-top:1px solid var(--rule,rgba(17,17,17,.12));overflow:hidden;border-radius:0 0 8px 8px}',
+    '.rc-cal iframe{display:block;width:100%;height:680px;border:0}',
+    '.rc-ok{display:flex;gap:12px;align-items:flex-start;margin-top:4px}',
+    '.rc-ok i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--mark,#FFD43B);color:var(--ink,#111);font-style:normal;font-weight:800}',
+    '.rc-ok b{display:block;font-size:16px;letter-spacing:-.01em}',
+    '.rc-ok span{display:block;margin-top:3px;color:var(--ink-soft,#3F3F3F);font-size:14px;line-height:1.4}',
 
     '.rc-chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 20px 12px}',
     '.rc-chips:empty{display:none}',
@@ -153,9 +173,9 @@
   function apertura() {
     return {
       rol: 'equipo',
-      // El saludo ya es la única pregunta (15-oct): con lo que responda, el
-      // agente la pasa a WhatsApp. Sin «¿Cuánto cuesta?»: el precio lo da el equipo.
-      texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' Cuéntanos qué te gustaría lograr y te conectamos con el equipo.',
+      // El saludo ya es la primera pregunta: con lo que responda, el agente
+      // recomienda el Esencial o la sesión con un asesor (19-oct).
+      texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' ¿Qué te gustaría lograr? Te ayudamos a elegir cómo empezar.',
       opciones: ['Bajar grasa', 'Ganar músculo', 'Tengo una duda']
     };
   }
@@ -179,8 +199,129 @@
     ]);
   }
 
-  function tarjeta(t) {
+  function zonaLocal() {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
+  }
+
+  // Calendly dentro del chat: con embed_domain avisa cada paso por postMessage,
+  // y así sabemos cuándo quedó agendada sin que la persona salga de la Ruta.
+  function urlEmbebida(url) {
+    var u = new URL(url);
+    u.searchParams.set('embed_domain', location.host);
+    u.searchParams.set('embed_type', 'Inline');
+    u.searchParams.set('hide_gdpr_banner', '1');
+    u.searchParams.set('hide_event_type_details', '1');
+    u.searchParams.set('hide_landing_page_details', '1');
+    return u.toString();
+  }
+
+  function confirmada(t) {
+    var cuando = t.agendada && t.agendada.etiqueta;
+    return el('div', { className: 'rc-ok', role: 'status' }, [
+      el('i', { 'aria-hidden': 'true', text: '✓' }),
+      el('div', {}, [
+        el('b', { text: 'Sesión agendada' }),
+        el('span', { text: (cuando ? cuando + '. ' : '') + 'Te llegó la confirmación a tu correo.' })
+      ])
+    ]);
+  }
+
+  function tarjetaSesion(t, item) {
+    var card = el('article', { className: 'rc-card rc-card--sesion' });
+    card.appendChild(el('p', { className: 'rc-card-code', text: t.titulo + ' · ' + t.duracion + ' · Gratis' }));
+    if (t.agendada) { card.appendChild(confirmada(t)); return card; }
+    var cuerpoCard = el('div');
+    card.appendChild(cuerpoCard);
+
+    function verHorarios() {
+      cuerpoCard.textContent = '';
+      if (t.nota) cuerpoCard.appendChild(el('p', { className: 'rc-card-note', text: t.nota }));
+      var horarios = t.horarios || [];
+      if (horarios.length) {
+        var slots = el('div', { className: 'rc-slots' });
+        var dia = null, fila = null;
+        horarios.forEach(function (h) {
+          if (h.dia !== dia) {
+            dia = h.dia;
+            slots.appendChild(el('p', { className: 'rc-slot-day', text: h.dia }));
+            fila = el('div', { className: 'rc-slot-row' });
+            slots.appendChild(fila);
+          }
+          var b = el('button', { type: 'button', className: 'rc-slot', text: h.hora, 'aria-label': h.dia + ', ' + h.hora });
+          b.addEventListener('click', function () {
+            track('chat_horario_elegido', { inicio: h.inicio });
+            abrirCalendly(h.url, h);
+          });
+          fila.appendChild(b);
+        });
+        cuerpoCard.appendChild(slots);
+      } else {
+        cuerpoCard.appendChild(el('p', { className: 'rc-card-note', text: 'Elige el día y la hora en el calendario del equipo.' }));
+      }
+      var todos = el('button', { type: 'button', className: 'rc-card-ghost', text: horarios.length ? 'Ver más días y horarios' : 'Ver horarios disponibles' });
+      todos.addEventListener('click', function () { abrirCalendly(t.calendario, null); });
+      cuerpoCard.appendChild(todos);
+      if (t.zona_nombre && horarios.length) cuerpoCard.appendChild(el('p', { className: 'rc-card-foot', text: 'En tu hora local (' + t.zona_nombre + ')' }));
+    }
+
+    function abrirCalendly(url, horario) {
+      cuerpoCard.textContent = '';
+      var volver = el('button', { type: 'button', className: 'rc-back', text: '← Elegir otro horario' });
+      volver.addEventListener('click', function () { delete calendlys[id]; verHorarios(); });
+      cuerpoCard.appendChild(volver);
+      var marco = el('iframe', { src: urlEmbebida(url), title: 'Confirmar la sesión en Calendly', loading: 'lazy' });
+      var id = 'cal-' + Date.now();
+      calendlys[id] = {
+        marco: marco,
+        alAgendar: function (payload) {
+          t.agendada = { inicio: horario ? horario.inicio : null, etiqueta: horario ? horario.dia + ', ' + horario.hora : '' };
+          guardar();
+          cuerpoCard.textContent = '';
+          cuerpoCard.appendChild(confirmada(t));
+          registrarAgenda(t.agendada.inicio, payload);
+        }
+      };
+      cuerpoCard.appendChild(el('div', { className: 'rc-cal' }, [marco]));
+    }
+
+    verHorarios();
+    return card;
+  }
+
+  // Calendly avisa al chat con postMessage: el alto del formulario y la agenda.
+  var calendlys = {};
+  window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://calendly.com' || !e.data || typeof e.data.event !== 'string') return;
+    Object.keys(calendlys).forEach(function (id) {
+      var c = calendlys[id];
+      if (e.source !== c.marco.contentWindow) return;
+      if (e.data.event === 'calendly.page_height' && e.data.payload && e.data.payload.height) {
+        c.marco.style.height = e.data.payload.height;
+      } else if (e.data.event === 'calendly.event_scheduled') {
+        delete calendlys[id];
+        c.alAgendar(e.data.payload || {});
+      }
+    });
+  });
+
+  function registrarAgenda(inicio, payload) {
+    if (state.mostrados.indexOf('agendo') === -1) state.mostrados.push('agendo');
+    guardar();
+    track('chat_agendo', { con_horario: Boolean(inicio) });
+    var evento = payload && payload.event && payload.event.uri ? payload.event.uri : '';
+    fetch(ENDPOINT_EVENTO, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ tipo: 'agenda', conversacion: state.conversacion, inicio: inicio, zona: zonaLocal(), evento: evento })
+    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (d && d.mensaje) agregar({ rol: 'equipo', texto: d.mensaje });
+    }).catch(function () { /* la cita ya quedó en Calendly; el registro es accesorio */ });
+  }
+
+  function tarjeta(t, item) {
     if (t && t.tipo === 'ayuda') return tarjetaAyuda(t);
+    if (t && t.tipo === 'sesion') return tarjetaSesion(t, item);
     if (!t || !t.url) return null;
     var esWhatsApp = t.tipo === 'whatsapp';
     var hijos = [];
@@ -189,7 +330,7 @@
       var linea = el('p', { className: 'rc-card-price' });
       if (t.precio_antes) linea.appendChild(el('s', { text: precio(t.precio_antes), 'aria-label': 'Antes ' + precio(t.precio_antes) }));
       linea.appendChild(el('b', { text: precio(t.precio) }));
-      linea.appendChild(el('small', { text: 'Pago único' }));
+      linea.appendChild(el('small', { text: t.periodo ? 'al ' + t.periodo : 'Pago único' }));
       hijos.push(linea);
       if (t.bonos && t.bonos.length) {
         hijos.push(el('ul', { className: 'rc-card-bonos' }, t.bonos.map(function (b) { return el('li', { text: b }); })));
@@ -206,7 +347,13 @@
     });
     hijos.push(cta);
     if (!esWhatsApp) {
-      hijos.push(el('p', { className: 'rc-card-foot', text: t.destino === 'hotmart' ? 'Pago seguro con Hotmart' : 'Te confirmamos el pago por WhatsApp' }));
+      var pie = { hotmart: 'Pago seguro con Hotmart', stripe: 'Pago seguro con Stripe' }[t.destino] || 'Te confirmamos el pago por WhatsApp';
+      hijos.push(el('p', { className: 'rc-card-foot', text: pie }));
+    }
+    if (t.alterna && t.alterna.url) {
+      var otra = el('a', { className: 'rc-card-alt', href: t.alterna.url, target: '_blank', rel: 'noopener', text: t.alterna.texto });
+      otra.addEventListener('click', function () { track('chat_pago_click', { escalon: t.escalon, destino: t.alterna.destino, precio: t.precio }); });
+      hijos.push(otra);
     }
     return el('article', { className: 'rc-card' + (esWhatsApp ? ' rc-card--whatsapp' : '') }, hijos);
   }
@@ -216,7 +363,7 @@
     var esEquipo = item.rol === 'equipo';
     var hijos = [];
     hijos.push(el('p', { className: 'rc-text', text: item.texto }));
-    if (esEquipo && item.tarjeta) hijos.push(tarjeta(item.tarjeta));
+    if (esEquipo && item.tarjeta) hijos.push(tarjeta(item.tarjeta, item));
     return el('div', { className: 'rc-turn rc-turn--' + (esEquipo ? 'equipo' : 'yo') + (nuevo ? ' is-new' : '') }, hijos);
   }
 
@@ -280,6 +427,16 @@
     pintarChips();
   }
 
+  // La tarjeta del último mensaje del equipo, si tenía: el servidor no repite
+  // la misma seguida, pero sí la vuelve a mostrar si quedó más arriba.
+  function ultimaTarjeta() {
+    for (var i = state.items.length - 1; i >= 0; i--) {
+      var it = state.items[i];
+      if (it.rol === 'equipo') return it.tarjeta ? (it.tarjeta.escalon || it.tarjeta.tipo || null) : null;
+    }
+    return null;
+  }
+
   // ── Envío ────────────────────────────────────────────────
   function enviar(textoLibre) {
     var texto = String(textoLibre == null ? ui.input.value : textoLibre).trim();
@@ -299,7 +456,9 @@
         conversacion: state.conversacion,
         mostrados: state.mostrados,
         eco: state.eco,
-        ajuste: state.ajuste
+        ajuste: state.ajuste,
+        zona: zonaLocal(),
+        ultima: ultimaTarjeta()
       })
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) { return { status: res.status, data: data }; });
