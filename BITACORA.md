@@ -20,8 +20,12 @@
 - Navegador a 375 y 1280 px: enlace vencido, usado hace 20 minutos y sin sesión → `/acceso?enlace=vencido` con aviso y UTMs + `video`; desde ahí, correo → `/videos/` sin la marca; enlace vigente → entra; corte de red (CRM apagado) → «Se cortó la conexión» con «Reintentar». `/acceso`: dato corto, 404 y entrada por teléfono con y sin código de país. Puerta de `/videos/`: 404 y luego entrada.
 
 ### Deploy
-- **Orden obligatorio: primero el CRM, después el funnel.** Si el funnel sale antes, `/acceso` responde «no pudimos abrir tu ruta» porque el CRM todavía no tiene `/api/genesis/direct-access`.
-- No requiere migración: `purpose` es texto libre y la constancia `DIRECT` entra sin cambiar el esquema.
+**Publicado el 19-oct-2026** con el OK del usuario, primero el CRM y después el funnel. Los dos entraron a `main` por avance directo (ninguno de los dos `main` se había movido).
+
+- **CRM:** `crm-ventas` `main` → `2b5dce4`, deployment `dpl_GjqKgVRMtQXE3yFL8X27sZtPWVv8` · Production · **Ready** (alias `hub.tr4iner.com`). Sin migración: `purpose` es texto libre y la constancia `DIRECT` entra sin cambiar el esquema.
+- **Funnel:** `main` → `768e547`, deployment `dpl_CXiLi1Mc3RcDYZwjJxUVcfxXxyKM` (`tr4iner-funnels-kky81mn3c-metodotr4iners-projects.vercel.app`) · Production · **Ready**.
+- Verificado en producción sin crear datos: `/api/genesis/direct-access` del CRM responde 401 sin secreto (una ruta inventada da 404); por `metodo.tr4iner.com`, un correo inexistente da 404 y un dato vacío 400; `/acceso`, `/verificar`, `/confirma` y `/videos` publicados iguales byte a byte al local; un token inventado en `/verificar` salta a `/acceso?enlace=vencido` con el aviso y las UTMs (`utm_source=PRUEBA-DEPLOY`, puede verse una visita así en GA4).
+- **No se probó en producción una entrada exitosa** con una ficha real: crea una sesión y marca «entró». Queda para que el usuario lo haga con su propio correo.
 
 ### Resultado esperado
 - Menos miembros trabados en la puerta: más retornos a la Ruta y más entradas por registro.
