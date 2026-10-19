@@ -2,15 +2,18 @@ const crypto = require('crypto');
 const { forward } = require('../../../lib/genesis-proxy');
 const ruta = require('../../../lib/ruta-chat');
 const PROMPT = require('../../../lib/ruta-chat-prompt');
+const LECCIONES = require('../../../lib/ruta-chat-lecciones');
 
 // El agente corre en n8n («RUTA-CHAT · Equipo») porque ahí está la credencial de
 // OpenAI. La memoria ya no: vive en el CRM (7-oct), junto al historial que ve el
 // admin, y se le pasa al agente en cada pedido.
-const AGENTE_URL = 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat';
-// Desde el 15-oct el chat sólo muestra el precio de referencia del plan.
-const ESCALONES = ['apertura'];
-// Cada turno guardado dice con qué prompt se respondió: así se comparan versiones contra ventas.
-const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT).digest('hex').slice(0, 10);
+// Los previews apuntan a sus propios workflows (RUTA_CHAT_AGENTE_URL y
+// RUTA_CHAT_HORARIOS_URL) para probar sin tocar el agente de producción.
+const AGENTE_URL = process.env.RUTA_CHAT_AGENTE_URL || 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat';
+const HORARIOS_URL = process.env.RUTA_CHAT_HORARIOS_URL || 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat-horarios';
+// Cada turno guardado dice con qué prompt (y qué lecciones) se respondió: así se
+// comparan versiones contra ventas.
+const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT + '\n' + LECCIONES).digest('hex').slice(0, 10);
 
 // El historial y el registro son accesorios: si el CRM tarda o falla, el chat sigue.
 async function historialDe(request, response, conversacion) {
@@ -19,6 +22,26 @@ async function historialDe(request, response, conversacion) {
     return r && r.status === 200 && Array.isArray(r.payload.historial) ? r.payload.historial : [];
   } catch (error) {
     console.error('[ruta-chat] sin historial del CRM:', error.message);
+    return [];
+  }
+}
+
+// Horarios libres de la sesión, traídos de Calendly por n8n (ahí vive la
+// conexión con Calendly). Si tarda o falla, la tarjeta igual sale con el
+// calendario completo.
+async function horariosLibres(secreto) {
+  try {
+    const r = await fetch(HORARIOS_URL, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-ruta-chat-secret': secreto },
+      body: '{}',
+      signal: AbortSignal.timeout(6000)
+    });
+    if (!r.ok) throw new Error('horarios respondió ' + r.status);
+    const d = await r.json();
+    return Array.isArray(d.horarios) ? d.horarios : [];
+  } catch (error) {
+    console.error('[ruta-chat] sin horarios de Calendly:', error.message);
     return [];
   }
 }
@@ -63,11 +86,12 @@ module.exports = async function chat(request, response) {
   // y la corrección del turno anterior, si el servidor tuvo que hacer una.
   const conversacion = String(body.conversacion || '').replace(/[^a-z0-9-]/gi, '').slice(0, 40) || 'principal';
   const mostrados = (Array.isArray(body.mostrados) ? body.mostrados : []).filter(function (e) {
-    return ESCALONES.indexOf(e) !== -1;
+    return ruta.TARJETAS.indexOf(e) !== -1;
   });
   const geo = ruta.geoDesde(request.headers);
   const mercado = ruta.mercadoPara(geo, body.eco || {});
-  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 600));
+  const zona = ruta.zonaValida(body.zona);
+  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 600), zona, LECCIONES);
 
   const historial = await historialDe(request, response, conversacion);
   const base = {
@@ -101,7 +125,14 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje);
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 30) || null };
+  const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno);
+  if (respuesta.tarjeta && respuesta.tarjeta.tipo === 'sesion') {
+    ruta.completarSesion(respuesta.tarjeta, await horariosLibres(secreto), zona, perfil, conversacion);
+    if (respuesta.tarjeta.sin_lugar_en_su_preferencia) respuesta.mensaje = ruta.mensajeSinLugar(respuesta.tarjeta, zona);
+    const nota = ruta.ajusteDeSesion(respuesta.tarjeta);
+    respuesta.ajuste = [respuesta.ajuste, nota].filter(Boolean).join(' ') || null;
+  }
   // Sin email en los logs: alcanza con ver qué pidió el agente y qué se mostró.
   console.log('[ruta-chat]', JSON.stringify({
     mercado: mercado,
