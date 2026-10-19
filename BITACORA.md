@@ -1,26 +1,27 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-19 — Ruta: el botón de bienvenida no vence y `/biblioteca/acceso/` entra directo con correo o teléfono
+## 2026-10-19 — Ruta: `/biblioteca/acceso/` entra directo con correo o teléfono, y el enlace vencido lleva ahí con aviso
 
-- **Pedido del usuario:** que el enlace del primer correo (el del registro) dure para siempre, y que en `/biblioteca/acceso/` baste con escribir el correo o el teléfono para entrar a la Ruta, sin esperar ningún correo.
-- **Dónde vive la lógica:** en el CRM (`crm-ventas`, rama `claude/ruta-acceso-directo`). Acá sólo cambian las páginas y un puente nuevo.
-- **Enlaces que no vencen:** el botón del correo de bienvenida y el del WhatsApp de bienvenida (`/r/<token>`) abren la Ruta todas las veces que se toquen, desde cualquier dispositivo; cada toque abre una sesión de 30 días. **Rige también para los enlaces ya enviados**, aunque hayan vencido o ya se hayan usado. El WhatsApp se sumó porque es la misma bienvenida por otro canal y con la entrada directa su vencimiento ya no protegía nada.
+- **Pedido del usuario:** que en `/biblioteca/acceso/` baste con escribir el correo o el teléfono para entrar a la Ruta, sin esperar ningún correo. El enlace del correo de bienvenida **sigue venciendo** (15 minutos, un solo uso): si se abre después de tiempo, ya usado o desde un correo reenviado a otra persona, se muestra el aviso de enlace vencido en `/biblioteca/acceso/` para entrar ahí. (Una primera versión del mismo día lo hacía permanente; el usuario lo corrigió antes de publicar.)
+- **Dónde vive la lógica:** en el CRM (`crm-ventas`, rama `claude/ruta-acceso-directo`). Acá cambian las páginas y hay un puente nuevo.
 - **`/biblioteca/acceso/`:** correo o teléfono → `POST /api/genesis/direct-access` (puente nuevo, igual a `verify`: la cookie HttpOnly la pone el servidor) → `/biblioteca/videos/` con todos los parámetros de la URL. Ya no se manda correo.
   - Teléfono con o sin código de país (el CRM compara los últimos 9 dígitos). Un número de 8 cifras sólo aparece con el código de país; el mensaje lo dice.
   - Mensajes: dato inexistente (404), teléfono en dos fichas → «escribe tu correo» (409), demasiados ingresos desde la misma conexión (429), corte de red.
+  - Con `?enlace=vencido` muestra «Tu enlace ya venció» sobre el campo. Esa marca no sigue viaje a `/videos/` ni al registro.
+- **`/biblioteca/verificar/`:** si el enlace no abre (vencido, usado, de otra persona o sin token) y no hay sesión viva, salta en el acto a `/biblioteca/acceso/?enlace=vencido` con la atribución. Si la sesión de 30 días sigue viva en ese navegador, entra directo como antes. Un corte de red sigue mostrando «Reintentar» (no es un enlace vencido). Rige igual para el botón del WhatsApp (`/r/<token>`, 24 horas).
 - **Puerta de `/biblioteca/videos/`** (sin sesión): mismo cambio, entra directo y recarga con la sesión.
-- **Textos:** `/biblioteca/verificar/` ya no habla de pedir un enlace nuevo («Entrar con mi correo →»; en un corte, «tu enlace sigue sirviendo»). `/biblioteca/confirma/`: «Reenviar el correo de acceso» pasa a «¿No te llegó? Entra con tu correo →». El correo de bienvenida dice que el enlace no vence.
-- **Lo que se acepta con esto (decisión del usuario):** quien sepa el correo o el teléfono de un miembro puede abrir su Ruta (nombre, plan, avance, rutina y chat con el equipo), y la página ahora dice si una ficha existe. Freno: una misma conexión no abre más de 30 fichas distintas por hora (volver a la propia nunca se frena). Para volver atrás, `/acceso` vuelve a llamar a `request-access`.
-- **Métrica:** la entrada directa también marca la fecha de entrada (`emailVerifiedAt`, que en el CRM es «usuario → entró» y arranca la apertura día a día de módulos). Desde hoy «entró» incluye a quien entra sin tocar el correo: la tasa de entrada sube por definición, no comparar a secas con antes del 19-oct.
+- **`/biblioteca/confirma/`:** «Reenviar el correo de acceso» pasa a «¿No te llegó? Entra con tu correo →».
+- **Lo que se acepta con esto (decisión del usuario):** quien sepa el correo o el teléfono de un miembro puede abrir su Ruta (nombre, plan, avance, rutina y chat con el equipo), y la página dice si una ficha existe. Freno: una misma conexión no abre más de 30 fichas distintas por hora (volver a la propia nunca se frena). Para volver atrás, `/acceso` vuelve a llamar a `request-access`.
+- **Métrica:** la entrada directa también marca la fecha de entrada (`emailVerifiedAt`, que en el CRM es «usuario → entró» y arranca la apertura día a día de módulos). Desde hoy «entró» incluye a quien entra sin tocar el correo: no comparar la tasa a secas con antes del 19-oct.
 
 ### Verificación
 - Base Postgres local desechable con las migraciones del CRM, CRM local (`next dev`) y las funciones `api/genesis/*` de este repo con un adaptador local. Nada tocó producción.
-- Integración contra Postgres: enlace de bienvenida abre 3 veces desde 3 navegadores; uno «viejo» (vencido y usado) abre; WhatsApp reusable; reenvío sigue de un solo uso y con vencimiento; entrada por correo (con mayúsculas y espacios) y por teléfono en 3 formatos; 404, 409, 400, 401; freno en la ficha 31 desde la misma IP, sin frenar la propia ni otra IP. CRM: tipos limpios y `test:biblioteca` 121/121.
-- Navegador a 1280 y 375 px: `/acceso` con UTMs y `video` → error de dato corto, 404, entrada por teléfono → `/videos/` con los mismos parámetros, cookie HttpOnly y `/me` 200. Enlace viejo de bienvenida → entra sin dejar el token en la URL. Puerta de `/videos/` → 404 y luego entrada.
+- Integración contra Postgres: el enlace de bienvenida vence a los 15 minutos, abre una vez y da 410 a otro navegador y abierto después de tiempo; WhatsApp a las 24 horas y de un solo uso; entrada por correo (con mayúsculas y espacios) y por teléfono en 3 formatos; 404, 409, 400, 401; freno en la ficha 31 desde la misma IP, sin frenar la propia ni otra IP. CRM: tipos limpios y `test:biblioteca` 120/120.
+- Navegador a 375 y 1280 px: enlace vencido, usado hace 20 minutos y sin sesión → `/acceso?enlace=vencido` con aviso y UTMs + `video`; desde ahí, correo → `/videos/` sin la marca; enlace vigente → entra; corte de red (CRM apagado) → «Se cortó la conexión» con «Reintentar». `/acceso`: dato corto, 404 y entrada por teléfono con y sin código de país. Puerta de `/videos/`: 404 y luego entrada.
 
 ### Deploy
 - **Orden obligatorio: primero el CRM, después el funnel.** Si el funnel sale antes, `/acceso` responde «no pudimos abrir tu ruta» porque el CRM todavía no tiene `/api/genesis/direct-access`.
-- No requiere migración: `purpose` es texto libre y `DIRECT` entra sin cambiar el esquema.
+- No requiere migración: `purpose` es texto libre y la constancia `DIRECT` entra sin cambiar el esquema.
 
 ### Resultado esperado
 - Menos miembros trabados en la puerta: más retornos a la Ruta y más entradas por registro.
