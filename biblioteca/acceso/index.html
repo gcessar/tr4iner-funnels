@@ -63,6 +63,9 @@
     .status { margin-top:18px; border-left:4px solid var(--mark); padding:12px 14px; background:var(--surface); color:var(--ink-soft); font-size:14px; }
     .status[hidden] { display:none; }
     .status.error { border-left-color:#A83A22; color:var(--ink); }
+    .expired { margin-top:24px; border-left:4px solid #A83A22; padding:12px 14px; background:var(--surface); color:var(--ink-soft); font-size:15px; }
+    .expired[hidden] { display:none; }
+    .expired strong { display:block; color:var(--ink); font-weight:750; }
     .foot { margin-top:22px; color:var(--muted); font-size:13px; text-align:center; }
     a { color:var(--ink); font-weight:650; text-underline-offset:3px; }
     @media (max-width:560px) {
@@ -79,6 +82,7 @@
       <p class="kicker">Ya soy miembro</p>
       <h1>Vuelve a tu Ruta Tr4iner <em>sin contraseña.</em></h1>
       <p class="dek">Escribe el correo o el teléfono con el que te registraste y entras directo a tu ruta.</p>
+      <p class="expired" id="expired" role="status" hidden><strong>Tu enlace ya venció.</strong>Los enlaces de acceso vencen y sirven una sola vez para cuidar tu ruta. Escribe tu correo o tu teléfono aquí abajo y entras al instante.</p>
       <form id="access-form">
         <label for="identifier">Correo o teléfono</label>
         <input id="identifier" name="identifier" type="text" autocomplete="email" inputmode="email" placeholder="tu@correo.com o +51 999 999 999" required />
@@ -93,6 +97,12 @@
     (function () {
       'use strict';
       var params = new URLSearchParams(window.location.search);
+      // `/biblioteca/verificar/` manda acá con `?enlace=vencido` cuando el enlace del correo ya
+      // no abre (venció, ya se usó o lo abrió otra persona). La marca no sigue viaje.
+      if (params.get('enlace') === 'vencido') {
+        document.getElementById('expired').hidden = false;
+        params.delete('enlace');
+      }
       var register = new URL('/biblioteca/inicio/', window.location.origin);
       params.forEach(function (value, key) { register.searchParams.set(key, value); });
       document.getElementById('register-link').href = register.toString();

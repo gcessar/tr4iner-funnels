@@ -85,38 +85,45 @@
       function esCorte(error) {
         return error instanceof TypeError || Boolean(error && error.corte);
       }
-      function showError(message, cortado) {
-        document.getElementById('card').classList.add('error');
-        document.getElementById('title').textContent = cortado ? 'Se cortó la conexión.' : 'Este enlace ya no abre.';
-        document.getElementById('message').textContent = cortado
-          ? 'Tu enlace sigue sirviendo. Revisa tu señal y toca «Reintentar».'
-          : message;
-        var retry = document.getElementById('retry');
+      function accessUrl() {
         var access = new URL('/biblioteca/acceso/', window.location.origin);
         copyAttribution(access);
-        retry.href = access.toString();
-        retry.classList.toggle('secondary', cortado);
+        return access;
+      }
+      function showCorte() {
+        document.getElementById('card').classList.add('error');
+        document.getElementById('title').textContent = 'Se cortó la conexión.';
+        document.getElementById('message').textContent = 'Tu enlace todavía sirve unos minutos. Revisa tu señal y toca «Reintentar».';
+        var retry = document.getElementById('retry');
+        retry.href = accessUrl().toString();
+        retry.classList.add('secondary');
         retry.hidden = false;
-        document.getElementById('again').hidden = !cortado;
+        document.getElementById('again').hidden = false;
+      }
+      // Vencido, ya usado o abierto desde un correo reenviado (19-oct-2026): el aviso de enlace
+      // vencido se muestra en /biblioteca/acceso/, al lado del campo donde el correo o el
+      // teléfono abren la ruta en el acto. Así no hay una pantalla de error sin salida.
+      function expired() {
+        var access = accessUrl();
+        access.searchParams.set('enlace', 'vencido');
+        window.location.replace(access.toString());
       }
       document.getElementById('again').addEventListener('click', function () { window.location.reload(); });
-      // Los botones de bienvenida (correo y WhatsApp) no vencen desde el 19-oct; los reenvíos
-      // viejos sí. Si uno de esos ya no abre pero la sesión de 30 días sigue viva, se entra
-      // igual: no se manda al portón a quien ya está adentro.
+      // Si el enlace ya no abre pero la sesión de 30 días sigue viva en este navegador, se entra
+      // igual: no se manda al acceso a quien ya está adentro.
       function fail(error) {
         var cortado = esCorte(error);
-        var message = cortado ? '' : (error && error.message) || 'Entra con tu correo o tu teléfono.';
         fetch('/api/genesis/me').then(function (response) {
           if (response.ok) { enterRoute(params.get('video')); return; }
-          showError(message, cortado);
-        }).catch(function () { showError(message, true); });
+          if (cortado) showCorte(); else expired();
+        }).catch(function () { showCorte(); });
       }
       function esperar(ms) {
         return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
       }
-      // Si la respuesta se pierde, el CRM ya abrió la sesión pero la cookie nunca llegó. El
-      // mismo enlace vuelve a abrir (para siempre si es de bienvenida, unos minutos desde este
-      // navegador si es un reenvío viejo), así que se pide otra vez antes de rendirse.
+      // Si la respuesta se pierde, el CRM ya gastó el enlace y abrió la sesión, pero la
+      // cookie nunca llegó. Desde el 16-oct el mismo enlace vuelve a abrir unos minutos
+      // desde este navegador, así que se pide otra vez antes de rendirse.
       function validar(intento) {
         return fetch('/api/genesis/verify', {
           method: 'POST',
@@ -132,7 +139,7 @@
         });
       }
 
-      if (!token) { fail(new Error('Falta el código de acceso. Entra con tu correo o tu teléfono.')); return; }
+      if (!token) { fail(new Error('Falta el código de acceso. Solicita uno nuevo.')); return; }
 
       validar(0).then(function (response) {
         if (!response.ok) {
