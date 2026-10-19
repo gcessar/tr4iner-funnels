@@ -1,5 +1,70 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-19 — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
+
+Rama `work/ruta-hombres-preview` (sólo Preview; producción sigue con el chat del 15-oct). Pedido del usuario: que el
+chat responda, califique, detecte dolores, cierre ventas y agende sesiones con los asesores, con la oferta nueva.
+
+### Oferta (decisión del usuario, 19-oct)
+- **Plan Esencial:** US$77 al mes, suscripción. Se compra en el chat: Hotmart por defecto
+  (`pay.hotmart.com/M84590773F?off=x65af12s`) y Stripe si lo prefiere o se queja de los impuestos de Hotmart
+  (`buy.stripe.com/4gM7sLbD67Cx45x32w9Zm2V`). La tarjeta siempre ofrece el otro medio.
+- **Plan Premium:** todo lo del Esencial + llamadas en vivo con entrenadores y nutricionistas. Sin precio público: se
+  presenta en una sesión gratuita de 30 min con un asesor. El chat aclara que es una inversión mayor que el
+  Esencial, para que agende quien de verdad lo considera.
+- Fuera: el plan de 3 meses (US$470/420) y la derivación a WhatsApp como camino principal. WhatsApp queda para quien
+  pide una persona, clientes actuales, quejas o pagos.
+
+### Qué cambió
+- **Prompt nuevo** (`lib/ruta-chat-prompt.js`): descubrimiento de 1–2 preguntas (qué quiere y qué le cuesta), reglas
+  de qué camino recomendar (la sesión con dos o más señales de potencial: dolor o salud, quiere acompañamiento, ya
+  probó sola, fecha, capacidad de pago, compromiso con la Ruta), objeciones, upsell y downsell.
+- **Lecciones aparte** (`lib/ruta-chat-lecciones.js`): seis, del estudio de 230 llamadas. Es la parte del prompt que
+  aprende. Entran al hash de versión que el CRM guarda en cada turno.
+- **Horarios reales:** el enlace `/d/ck4v-8jc-pv6/asesoria-tr4iner` es un enlace personalizado de Calendly sobre el
+  evento «Asesoría Tr4iner» (`event_types/3dfd4941-eeb0-4b15-82cd-cbb7fe18183a`, 30 min). n8n consulta
+  `event_type_available_times` con la conexión OAuth «Calendly Tr4iner» que ya existía (el token no sale de n8n).
+  El chat muestra hasta 6 horarios en la hora local de la persona, respeta «el jueves en la tarde», y al tocar uno
+  abre la confirmación de Calendly dentro del chat con nombre y correo cargados. Al agendar
+  (`calendly.event_scheduled`) confirma y lo guarda como turno (`/api/genesis/chat-evento`, accion `agendo`). La
+  cita entra sola a AGENDAS, recordatorios y Schedule de Meta, porque es el mismo evento que usa AN.
+- **Reglas del servidor:** el único monto que puede aparecer es US$77; en el primer mensaje no se da el precio; si
+  pide un horario sin lugar, el texto lo dice y muestra los más próximos; una tarjeta no se repite seguida; si ya
+  agendó, no se ofrecen más horarios.
+- **Medición para cruzar ventas con el chat:** Hotmart lleva `src=ruta-chat&sck=rutachat-<conversación>`, Stripe
+  `client_reference_id=rutachat-<conversación>` y `prefilled_email`, Calendly `salesforce_uuid=ruta-chat-<conversación>`
+  más las UTM del registro de la persona.
+
+### n8n (nuevos, sólo Preview; el agente de producción no se tocó)
+- `RUTA-CHAT · Preview (no es producción)` (`fGKFMm4Kp6oSbnPz`), webhook `ruta-chat-preview`.
+- `RUTA-CHAT · Horarios Calendly (preview)` (`pfeBgd38IgBxfIRu`), webhook `ruta-chat-horarios-preview`.
+- Los dos con la credencial `HBZZI9AG1A2QCpRX` («Ruta Chat · secreto Preview»), que producción no usa.
+- Vercel, sólo `Preview (work/ruta-hombres-preview)`: `RUTA_CHAT_SECRET` (el de prueba), `RUTA_CHAT_AGENTE_URL`,
+  `RUTA_CHAT_HORARIOS_URL`.
+
+### Verificación
+- 23 conversaciones contra el agente de Preview con horarios reales: prediabetes que pide acompañamiento → sesión;
+  «algo accesible» → Esencial por Hotmart; queja de impuestos → Stripe; médica en Miami → sesión en hora de Nueva
+  York; «¿cuánto cuesta?» de entrada → pregunta primero; «el Premium me parece caro» → Esencial; «de noche» sin lugar
+  → lo dice; embarazo → sesión, no Esencial; cliente actual → WhatsApp; fuera de tema, «¿eres un bot?» y crisis
+  sin cambios.
+- `tests/ruta-chat-log.test.cjs`: 7 pruebas (contrato nuevo, sesión con horarios, precio en el primer mensaje, monto
+  inventado, agenda guardada). Las otras dos suites de la Ruta, en verde.
+- Servidor local con miembro simulado y agente y horarios reales: capturas en 390 y 1280 px en
+  `~/Documents/Ruta Tr4iner/chat-equipo/v19oct/`. La agenda se probó simulando el aviso de Calendly: **no se envió
+  ningún formulario real**, para no crear citas en la agenda del equipo.
+
+### Pendiente antes de producción
+- Confirmar qué incluye el Esencial (el prompt dice: plan de entrenamiento y de alimentación, app con cada ejercicio
+  y seguimiento del equipo).
+- Producción: crear el webhook `ruta-chat-horarios` con la credencial de producción (`D4t4ho0L1Sd0yz8x`). Sin él, la
+  tarjeta de la sesión sale sólo con el botón del calendario completo.
+- Verificar que Hotmart toma `email` y `name` para precargar el checkout.
+- **Aprendizaje con las ventas:** falta el informe semanal en el CRM que cruce conversaciones con ventas y agendas
+  (por las referencias de arriba) y proponga lecciones nuevas para aprobar.
+
+---
+
 ## 2026-10-19 — Ruta: `/biblioteca/acceso/` entra directo con correo o teléfono, y el enlace vencido lleva ahí con aviso
 
 - **Pedido del usuario:** que en `/biblioteca/acceso/` baste con escribir el correo o el teléfono para entrar a la Ruta, sin esperar ningún correo. El enlace del correo de bienvenida **sigue venciendo** (15 minutos, un solo uso): si se abre después de tiempo, ya usado o desde un correo reenviado a otra persona, se muestra el aviso de enlace vencido en `/biblioteca/acceso/` para entrar ahí. (Una primera versión del mismo día lo hacía permanente; el usuario lo corrigió antes de publicar.)
@@ -2100,6 +2165,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-19` — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
 - `2026-10-16` — `/10platospg` deja de ser lead magnet y vende «100 Recetas: desayunos fáciles» con el checkout de Hotmart incrustado
 - `2026-10-16` — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
 - `2026-10-16` — Ruta: si se corta la red al validar el enlace, reintenta y lo dice claro (fuera «Load failed»)
