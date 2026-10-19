@@ -532,7 +532,7 @@
               <p>El enlace protege tu expediente. No lo compartas ni lo reenvíes.</p>
             </div>
           </section>
-          <a class="text-link" id="resend-link" href="/biblioteca/acceso/">Reenviar el correo de acceso →</a>
+          <a class="text-link" id="resend-link" href="/biblioteca/acceso/">¿No te llegó? Entra con tu correo →</a>
         </section>
       </article>
     </main>
@@ -601,7 +601,7 @@
         }
       }
 
-      // Pedir otro enlace vuelve al acceso sin soltar ninguna atribución.
+      // Entrar con el correo (sin esperar el enlace) pasa por el acceso sin soltar ninguna atribución.
       var resendUrl = new URL('/biblioteca/acceso/', window.location.origin);
       params.forEach(function (value, key) { resendUrl.searchParams.set(key, value); });
       document.getElementById('resend-link').href = resendUrl.toString();

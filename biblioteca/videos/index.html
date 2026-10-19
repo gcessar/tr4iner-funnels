@@ -2904,7 +2904,7 @@
           no.textContent = 'Seguir como ' + storedFirst;
         } else {
           title.textContent = 'Esta página es privada.';
-          text.textContent = 'Escribe el correo o teléfono de tu ficha. Te enviaremos un enlace personal al correo asociado para abrir tu avance en este dispositivo.';
+          text.textContent = 'Escribe el correo o el teléfono con el que te registraste y entras directo a tu ruta.';
         }
         gate.hidden = false;
         gate.classList.add('is-in');
@@ -2967,25 +2967,32 @@
         var v = input.value.trim().toLowerCase();
         var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || v.replace(/\D/g, '').length >= 9;
         document.getElementById('gate-err').hidden = ok;
-        if (!ok) return;
+        if (!ok) { document.getElementById('gate-err').textContent = 'Escribe tu correo o tu teléfono con el código de país.'; return; }
         var button = document.getElementById('gate-go');
+        var err = document.getElementById('gate-err');
         button.disabled = true;
-        button.textContent = 'Enviando…';
-        fetch('/api/genesis/request-access', {
+        button.textContent = 'Abriendo…';
+        // Desde el 19-oct-2026 el dato de la ficha abre la ruta en el acto (como /biblioteca/acceso/).
+        // Con la cookie puesta, recargar trae el catálogo y el avance del CRM.
+        fetch('/api/genesis/direct-access', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identifier: v, video: params.get('video') })
+          body: JSON.stringify({ identifier: v })
         }).then(function (response) {
-          if (!response.ok) throw new Error('No se pudo solicitar el acceso');
-          document.getElementById('gate-title').textContent = 'Revisa tu correo.';
-          document.getElementById('gate-text').textContent = 'Si encontramos tu ficha, ya enviamos un enlace personal. Vence en 15 minutos.';
-          document.getElementById('gate-email').hidden = true;
-          button.textContent = 'Enlace enviado';
+          if (response.ok) { window.location.reload(); return; }
+          button.disabled = false;
+          button.textContent = 'Continuar';
+          err.textContent = {
+            404: 'No encontramos una ficha con ese dato. Si es tu teléfono, escríbelo con el código de país.',
+            409: 'Ese teléfono aparece en más de una ficha. Escribe tu correo.',
+            429: 'Demasiados ingresos desde esta conexión. Entra con el botón del correo de bienvenida.'
+          }[response.status] || 'No pudimos abrir tu ruta. Inténtalo otra vez.';
+          err.hidden = false;
         }).catch(function () {
           button.disabled = false;
           button.textContent = 'Intentar otra vez';
-          document.getElementById('gate-err').textContent = 'No pudimos enviar el enlace. Inténtalo otra vez.';
-          document.getElementById('gate-err').hidden = false;
+          err.textContent = 'Se cortó la conexión. Inténtalo otra vez.';
+          err.hidden = false;
         });
       });
       document.getElementById('gate-input').addEventListener('keydown', function (e) {

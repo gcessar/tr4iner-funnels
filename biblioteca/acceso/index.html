@@ -10,7 +10,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FFFFFF" />
   <title>Acceso de miembros · Ruta Tr4iner</title>
-  <meta name="description" content="Solicita tu enlace privado para volver a tu Ruta Tr4iner." />
+  <meta name="description" content="Entra a tu Ruta Tr4iner con el correo o el teléfono de tu registro." />
   <link rel="canonical" href="https://metodo.tr4iner.com/biblioteca/acceso/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -62,6 +62,7 @@
     button:disabled { opacity:.6; cursor:wait; }
     .status { margin-top:18px; border-left:4px solid var(--mark); padding:12px 14px; background:var(--surface); color:var(--ink-soft); font-size:14px; }
     .status[hidden] { display:none; }
+    .status.error { border-left-color:#A83A22; color:var(--ink); }
     .foot { margin-top:22px; color:var(--muted); font-size:13px; text-align:center; }
     a { color:var(--ink); font-weight:650; text-underline-offset:3px; }
     @media (max-width:560px) {
@@ -77,13 +78,13 @@
     <main>
       <p class="kicker">Ya soy miembro</p>
       <h1>Vuelve a tu Ruta Tr4iner <em>sin contraseña.</em></h1>
-      <p class="dek">Escribe el correo o el teléfono de tu ficha. Te enviaremos un enlace personal al correo asociado y volverás justo al contenido que buscabas.</p>
+      <p class="dek">Escribe el correo o el teléfono con el que te registraste y entras directo a tu ruta.</p>
       <form id="access-form">
         <label for="identifier">Correo o teléfono</label>
-        <input id="identifier" name="identifier" type="text" autocomplete="email" inputmode="email" placeholder="tu@correo.com o 999 999 999" required />
-        <button id="submit" type="submit">Enviarme mi enlace →</button>
+        <input id="identifier" name="identifier" type="text" autocomplete="email" inputmode="email" placeholder="tu@correo.com o +51 999 999 999" required />
+        <button id="submit" type="submit">Entrar a mi Ruta →</button>
       </form>
-      <p class="status" id="status" hidden>Si encontramos tu ficha, el enlace llegará en menos de 2 minutos. Revisa también Promociones y Spam.</p>
+      <p class="status" id="status" role="alert" hidden></p>
       <p class="foot">¿Aún no eres miembro? <a id="register-link" href="/biblioteca/inicio/">Empieza gratis</a></p>
     </main>
   </div>
@@ -96,35 +97,59 @@
       params.forEach(function (value, key) { register.searchParams.set(key, value); });
       document.getElementById('register-link').href = register.toString();
 
-      fetch('/api/genesis/me').then(function (response) {
-        if (!response.ok) return;
+      function enterRoute() {
         var next = new URL('/biblioteca/videos/', window.location.origin);
         params.forEach(function (value, key) { next.searchParams.set(key, value); });
         window.location.replace(next.toString());
+      }
+
+      fetch('/api/genesis/me').then(function (response) {
+        if (response.ok) enterRoute();
       }).catch(function () {});
+
+      // Desde el 19-oct-2026 el correo o el teléfono abren la ruta en el acto: ya no se manda
+      // un enlace al correo. Los teléfonos se buscan por sus últimos 9 dígitos, así que un
+      // número de 8 cifras sólo aparece con el código de país.
+      var MENSAJES = {
+        404: 'No encontramos una ficha con ese dato. Revisa cómo lo escribiste; si es tu teléfono, escríbelo con el código de país.',
+        409: 'Ese teléfono aparece en más de una ficha. Escribe tu correo para entrar.',
+        429: 'Hubo demasiados ingresos desde esta conexión. Entra con el botón del correo de bienvenida: abre tu ruta directo.'
+      };
+      var status = document.getElementById('status');
+      function showError(message) {
+        status.textContent = message;
+        status.classList.add('error');
+        status.hidden = false;
+      }
 
       document.getElementById('access-form').addEventListener('submit', function (event) {
         event.preventDefault();
+        var identifier = document.getElementById('identifier').value.trim();
+        if (identifier.indexOf('@') < 0 && identifier.replace(/\D/g, '').length < 9) {
+          showError('Escribe tu correo o tu teléfono con el código de país.');
+          return;
+        }
         var button = document.getElementById('submit');
         button.disabled = true;
-        button.textContent = 'Buscando tu ficha…';
-        fetch('/api/genesis/request-access', {
+        button.textContent = 'Abriendo tu ruta…';
+        status.hidden = true;
+        fetch('/api/genesis/direct-access', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identifier: document.getElementById('identifier').value.trim(), video: params.get('video') })
+          body: JSON.stringify({ identifier: identifier })
         }).then(function (response) {
-          if (!response.ok) throw new Error('No se pudo solicitar el acceso');
-          return response.json();
-        }).then(function(data) {
-          if (window.TR4_RUNTIME.teamPreview && data.devLink) {
-            var link=document.createElement('a');link.href=data.devLink;link.textContent='Correo de prueba: abrir mi ruta →';document.getElementById('status').replaceChildren(link);
+          if (response.ok) {
+            if (window.TR4Track && TR4Track.track) TR4Track.track('genesis_access_requested', { direct: true });
+            enterRoute();
+            return;
           }
-          document.getElementById('status').hidden = false;
-          button.textContent = 'Enlace solicitado';
-          if (window.TR4Track && TR4Track.track) TR4Track.track('genesis_access_requested');
+          button.disabled = false;
+          button.textContent = 'Entrar a mi Ruta →';
+          showError(MENSAJES[response.status] || 'No pudimos abrir tu ruta. Inténtalo otra vez en unos segundos.');
         }).catch(function () {
           button.disabled = false;
           button.textContent = 'Intentar otra vez →';
+          showError('Se cortó la conexión. Revisa tu señal e inténtalo otra vez.');
         });
       });
     })();
