@@ -7,10 +7,17 @@ const LECCIONES = require('../../../lib/ruta-chat-lecciones');
 // El agente corre en n8n («RUTA-CHAT · Equipo») porque ahí está la credencial de
 // OpenAI. La memoria ya no: vive en el CRM (7-oct), junto al historial que ve el
 // admin, y se le pasa al agente en cada pedido.
-// Los previews apuntan a sus propios workflows (RUTA_CHAT_AGENTE_URL y
-// RUTA_CHAT_HORARIOS_URL) para probar sin tocar el agente de producción.
-const AGENTE_URL = process.env.RUTA_CHAT_AGENTE_URL || 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat';
-const HORARIOS_URL = process.env.RUTA_CHAT_HORARIOS_URL || 'https://primary-production-0efa.up.railway.app/webhook/ruta-chat-horarios';
+// Los previews apuntan a sus propios workflows (RUTA_CHAT_AGENTE_URL,
+// RUTA_CHAT_HORARIOS_URL y RUTA_CHAT_AGENDAR_URL) para probar sin tocar los de
+// producción.
+const N8N = 'https://primary-production-0efa.up.railway.app/webhook/';
+const AGENTE_URL = process.env.RUTA_CHAT_AGENTE_URL || N8N + 'ruta-chat';
+const HORARIOS_URL = process.env.RUTA_CHAT_HORARIOS_URL || N8N + 'ruta-chat-horarios';
+const AGENDAR_URL = process.env.RUTA_CHAT_AGENDAR_URL || N8N + 'ruta-chat-agendar';
+// Una reserva de verdad le llena la agenda a un asesor y dispara correos,
+// WhatsApp de ManyChat y el evento de Meta. Mientras no se active a propósito,
+// n8n arma la reserva completa pero no la envía a Calendly.
+const AGENDA_REAL = process.env.RUTA_CHAT_AGENDA_REAL === '1';
 // Cada turno guardado dice con qué prompt (y qué lecciones) se respondió: así se
 // comparan versiones contra ventas.
 const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT + '\n' + LECCIONES).digest('hex').slice(0, 10);
@@ -26,23 +33,50 @@ async function historialDe(request, response, conversacion) {
   }
 }
 
+async function n8n(url, secreto, cuerpo, timeoutMs) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-ruta-chat-secret': secreto },
+    body: JSON.stringify(cuerpo || {}),
+    signal: AbortSignal.timeout(timeoutMs)
+  });
+  if (!r.ok) throw new Error('respondió ' + r.status);
+  const d = await r.json();
+  return Array.isArray(d) ? d[0] : d;
+}
+
 // Horarios libres de la sesión, traídos de Calendly por n8n (ahí vive la
-// conexión con Calendly). Si tarda o falla, la tarjeta igual sale con el
-// calendario completo.
+// conexión con Calendly). Si tarda o falla, sale el botón del calendario.
 async function horariosLibres(secreto) {
   try {
-    const r = await fetch(HORARIOS_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-ruta-chat-secret': secreto },
-      body: '{}',
-      signal: AbortSignal.timeout(6000)
-    });
-    if (!r.ok) throw new Error('horarios respondió ' + r.status);
-    const d = await r.json();
-    return Array.isArray(d.horarios) ? d.horarios : [];
+    const d = await n8n(HORARIOS_URL, secreto, {}, 6000);
+    return d && Array.isArray(d.horarios) ? d.horarios : [];
   } catch (error) {
     console.error('[ruta-chat] sin horarios de Calendly:', error.message);
     return [];
+  }
+}
+
+async function reservar(secreto, pendiente, perfil, zona, conversacion) {
+  const params = ruta.parametrosCalendly(perfil, conversacion);
+  const tracking = {};
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'salesforce_uuid'].forEach(function (k) {
+    if (params[k]) tracking[k] = String(params[k]).slice(0, 255);
+  });
+  try {
+    return await n8n(AGENDAR_URL, secreto, {
+      prueba: !AGENDA_REAL,
+      start_time: pendiente.horario.inicio,
+      nombre: perfil.nombre_completo || perfil.nombre || 'Miembro de la Ruta',
+      email: perfil.email,
+      zona: zona,
+      whatsapp: pendiente.whatsapp,
+      situacion: pendiente.resumen || 'Viene del chat de su Ruta Tr4iner.',
+      tracking: tracking
+    }, 12000);
+  } catch (error) {
+    console.error('[ruta-chat] no se pudo agendar:', error.message);
+    return { ok: false, motivo: 'sin_respuesta' };
   }
 }
 
@@ -70,8 +104,8 @@ module.exports = async function chat(request, response) {
   const secreto = process.env.RUTA_CHAT_SECRET;
   if (!secreto) return response.status(503).json({ error: 'El chat todavía no está configurado.' });
 
-  // El perfil sale del CRM y no del navegador: de esos datos depende hasta
-  // dónde puede bajar el precio, así que no se aceptan de quien los pide.
+  // El perfil sale del CRM y no del navegador: nombre, correo y atribución van
+  // a la reserva de Calendly, así que no se aceptan de quien los pide.
   const sesion = await forward(request, response, 'session', { method: 'GET', deferResponse: true });
   if (!sesion) return null;
   if (sesion.status !== 200) {
@@ -81,17 +115,17 @@ module.exports = async function chat(request, response) {
   const perfil = ruta.perfilDesde(sesion.payload);
   if (!perfil.email) return response.status(401).json({ error: 'No pudimos reconocer tu Ruta.' });
 
-  // Lo que manda el navegador sólo ordena la conversación: qué escalones ya vio
-  // (para no saltarse ninguno), el país que dijo (que sólo puede subir el precio)
-  // y la corrección del turno anterior, si el servidor tuvo que hacer una.
+  // Lo que manda el navegador sólo ordena la conversación: qué tarjetas ya vio,
+  // lo que fue diciendo (país, horarios ofrecidos, WhatsApp) y la corrección del
+  // turno anterior, si el servidor tuvo que hacer una. Los horarios se vuelven a
+  // comprobar contra Calendly antes de reservar.
   const conversacion = String(body.conversacion || '').replace(/[^a-z0-9-]/gi, '').slice(0, 40) || 'principal';
-  const mostrados = (Array.isArray(body.mostrados) ? body.mostrados : []).filter(function (e) {
-    return ruta.TARJETAS.indexOf(e) !== -1;
-  });
+  const mostrados = (Array.isArray(body.mostrados) ? body.mostrados : []).filter(ruta.tarjetaValida).slice(0, 40);
+  const eco = ruta.ecoValido(body.eco);
   const geo = ruta.geoDesde(request.headers);
-  const mercado = ruta.mercadoPara(geo, body.eco || {});
+  const mercado = ruta.mercadoPara(geo, eco);
   const zona = ruta.zonaValida(body.zona);
-  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 600), zona, LECCIONES);
+  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES, eco);
 
   const historial = await historialDe(request, response, conversacion);
   const base = {
@@ -106,15 +140,7 @@ module.exports = async function chat(request, response) {
   let cruda;
   const inicio = Date.now();
   try {
-    const upstream = await fetch(AGENTE_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-ruta-chat-secret': secreto },
-      body: JSON.stringify({ sesion: 'ruta:' + perfil.email + ':' + conversacion, sistema: sistema, mensaje: mensaje, historial: historial }),
-      signal: AbortSignal.timeout(28000)
-    });
-    if (!upstream.ok) throw new Error('agente respondió ' + upstream.status);
-    cruda = await upstream.json();
-    if (Array.isArray(cruda)) cruda = cruda[0];
+    cruda = await n8n(AGENTE_URL, secreto, { sesion: 'ruta:' + perfil.email + ':' + conversacion, sistema: sistema, mensaje: mensaje, historial: historial }, 28000);
   } catch (error) {
     console.error('[ruta-chat] sin respuesta del agente:', error.message);
     const fallo = ruta.respuestaDeError(perfil);
@@ -125,15 +151,25 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 30) || null };
-  const respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno);
-  if (respuesta.tarjeta && respuesta.tarjeta.tipo === 'sesion') {
-    ruta.completarSesion(respuesta.tarjeta, await horariosLibres(secreto), zona, perfil, conversacion);
-    if (respuesta.tarjeta.sin_lugar_en_su_preferencia) respuesta.mensaje = ruta.mensajeSinLugar(respuesta.tarjeta, zona);
-    const nota = ruta.ajusteDeSesion(respuesta.tarjeta);
-    respuesta.ajuste = [respuesta.ajuste, nota].filter(Boolean).join(' ') || null;
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null };
+  let respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno, body.eco);
+  let reserva = null;
+  if (respuesta.pendiente && respuesta.pendiente.tipo === 'horarios') {
+    respuesta = ruta.completarHorarios(respuesta, await horariosLibres(secreto), zona, perfil, conversacion, false);
+  } else if (respuesta.pendiente && respuesta.pendiente.tipo === 'agendar') {
+    // El horario lo eligió hace un rato: si alguien lo tomó mientras tanto, se
+    // le ofrecen los que siguen libres en vez de intentar una reserva que falla.
+    const libres = await horariosLibres(secreto);
+    const sigue = libres.some(function (h) { return new Date(h.inicio).toISOString() === respuesta.pendiente.horario.inicio; });
+    if (libres.length && !sigue) {
+      respuesta = ruta.completarHorarios(respuesta, libres, zona, perfil, conversacion, true);
+    } else {
+      reserva = await reservar(secreto, respuesta.pendiente, perfil, zona, conversacion);
+      if (reserva && reserva.motivo === 'horario_ocupado') respuesta = ruta.completarHorarios(respuesta, libres, zona, perfil, conversacion, true);
+      else respuesta = ruta.completarAgenda(respuesta, reserva, zona, perfil, conversacion);
+    }
   }
-  // Sin email en los logs: alcanza con ver qué pidió el agente y qué se mostró.
+  // Sin email ni teléfono en los logs: alcanza con ver qué pidió el agente y qué se mostró.
   console.log('[ruta-chat]', JSON.stringify({
     mercado: mercado,
     pais_ip: geo.pais,
@@ -142,7 +178,7 @@ module.exports = async function chat(request, response) {
     escalon_pedido: respuesta.registro.escalon_pedido,
     tarjeta: respuesta.tarjeta ? (respuesta.tarjeta.escalon || respuesta.tarjeta.tipo) : null,
     nivel: respuesta.registro.calificacion.nivel,
-    objeciones_precio: respuesta.registro.calificacion.objeciones_precio,
+    reserva: reserva ? (reserva.ok ? (reserva.prueba ? 'prueba' : 'real') : reserva.motivo) : null,
     montos_invalidos: respuesta.registro.montos_invalidos
   }));
 

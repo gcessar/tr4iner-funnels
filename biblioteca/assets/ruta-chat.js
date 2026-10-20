@@ -10,13 +10,17 @@
  * conversación: los datos del miembro los usa el agente, no se muestran.
  *
  * El navegador no decide precios: manda el mensaje a /api/genesis/chat y
- * dibuja lo que vuelve. La tarjeta de pago la arma el servidor.
+ * dibuja lo que vuelve. Las tarjetas (pago, video, sesión agendada) las arma el
+ * servidor; la sesión la registra el servidor en Calendly (20-oct), así que acá
+ * no hay formulario de agenda: los horarios llegan como respuestas rápidas.
  */
 (function () {
   'use strict';
 
   var ENDPOINT = '/api/genesis/chat';
-  var ENDPOINT_EVENTO = '/api/genesis/chat-evento';
+  // Reproductor compartido de R2 (sin descarga ni clic derecho). Se carga recién
+  // cuando alguien toca play en un video del chat.
+  var REPRODUCTOR = '/assets/tr4-video/tr4-video.js?v=20261013';
   var STORAGE_PREFIX = 'tr4_ruta_chat_v1:';
   var MAX_ITEMS = 80;
 
@@ -85,19 +89,24 @@
     '.rc-card-foot{margin:8px 0 0;color:var(--muted,#6B6B6B);font:500 9.5px/1.3 var(--mono,ui-monospace,monospace);letter-spacing:.08em;text-align:center;text-transform:uppercase}',
     '.rc-card-alt{display:block;margin:10px 0 0;color:var(--ink-soft,#3F3F3F);font-size:13.5px;text-align:center;text-decoration:underline;text-underline-offset:3px}',
     '.rc-card-alt:hover{color:var(--ink,#111)}',
-    // Sesión con un asesor: horarios por día, confirmación de Calendly adentro.
-    '.rc-slots{margin:12px 0 0}',
-    '.rc-slot-day{margin:12px 0 6px;color:var(--muted,#6B6B6B);font:500 9.5px/1.2 var(--mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase}',
-    '.rc-slot-day:first-child{margin-top:0}',
-    '.rc-slot-row{display:flex;flex-wrap:wrap;gap:8px}',
-    '.rc-slot{min-width:76px;min-height:44px;padding:0 14px;border:1px solid var(--ink,#111);border-radius:8px;background:var(--card,#fff);color:var(--ink,#111);font:700 15px/1 var(--sans,system-ui,sans-serif);font-variant-numeric:tabular-nums;cursor:pointer;transition:background .16s ease}',
-    '.rc-slot:hover{background:var(--mark-soft,rgba(255,212,59,.36))}',
-    '.rc-slot:focus-visible,.rc-card-ghost:focus-visible,.rc-back:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
-    '.rc-card-ghost{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;margin-top:14px;padding:0 16px;border:1px solid var(--rule-strong,rgba(17,17,17,.24));border-radius:6px;background:transparent;color:var(--ink,#111);font:650 14.5px/1 var(--sans,system-ui,sans-serif);cursor:pointer}',
-    '.rc-card-ghost:hover{border-color:var(--ink,#111)}',
-    '.rc-back{display:inline-flex;align-items:center;gap:6px;min-height:36px;margin:10px 0 6px;padding:0;border:0;background:none;color:var(--ink-soft,#3F3F3F);font:600 13.5px/1 var(--sans,system-ui,sans-serif);cursor:pointer}',
-    '.rc-cal{margin:0 -16px -14px;border-top:1px solid var(--rule,rgba(17,17,17,.12));overflow:hidden;border-radius:0 0 8px 8px}',
-    '.rc-cal iframe{display:block;width:100%;height:680px;border:0}',
+    // Videos del método y testimonios: portada liviana; el video se monta al tocar play.
+    // Como un video en un chat: sin marco, esquinas redondeadas y, el vertical, angosto.
+    '.rc-vid{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:#000;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}',
+    '.rc-vid--vertical{width:min(220px,62vw);aspect-ratio:9/16}',
+    '.rc-vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}',
+    '.rc-vid-play{position:absolute;left:50%;top:50%;z-index:2;width:56px;height:56px;margin:-28px 0 0 -28px;display:grid;place-items:center;padding:0;border:0;border-radius:50%;background:var(--ink,#111);box-shadow:0 4px 14px rgba(22,19,14,.4);cursor:pointer;transition:transform .18s ease}',
+    '.rc-vid-play svg{width:18px;height:18px;margin-left:3px;fill:var(--mark,#FFD43B)}',
+    '.rc-vid-play:active{transform:scale(.94)}',
+    '.rc-vid-play:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:3px}',
+    '.rc-media{margin:4px 0 0}',
+    '.rc-media-cap{max-width:min(320px,100%);margin:6px 0 0}',
+    '.rc-media-cap b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.01em}',
+    '.rc-media-cap span{display:block;margin-top:1px;color:var(--muted,#6B6B6B);font-size:13px;line-height:1.4}',
+    // Sesión agendada por el agente.
+    '.rc-card-links{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px}',
+    '.rc-card-links a{color:var(--ink-soft,#3F3F3F);font-size:13.5px;text-decoration:underline;text-underline-offset:3px}',
+    '.rc-card-links a:hover{color:var(--ink,#111)}',
+    '.rc-card-links a:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
     '.rc-ok{display:flex;gap:12px;align-items:flex-start;margin-top:4px}',
     '.rc-ok i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--mark,#FFD43B);color:var(--ink,#111);font-style:normal;font-weight:800}',
     '.rc-ok b{display:block;font-size:16px;letter-spacing:-.01em}',
@@ -173,9 +182,9 @@
   function apertura() {
     return {
       rol: 'equipo',
-      // El saludo ya es la primera pregunta: con lo que responda, el agente
-      // recomienda el Esencial o la sesión con un asesor (19-oct).
-      texto: (opts.nombre ? 'Hola, ' + opts.nombre + '.' : 'Hola.') + ' ¿Qué te gustaría lograr? Te ayudamos a elegir cómo empezar.',
+      // El saludo ya es la primera pregunta, con el tono de los asesores de
+      // WhatsApp (20-oct). El prompt cita este texto: cambiarlo en los dos lados.
+      texto: (opts.nombre ? 'Hola, ' + opts.nombre + ' 🙌' : 'Hola 🙌') + ' ¿Qué te gustaría lograr? Cuéntanos y te mostramos cómo te podemos ayudar.',
       opciones: ['Bajar grasa', 'Ganar músculo', 'Tengo una duda']
     };
   }
@@ -203,125 +212,99 @@
     try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; }
   }
 
-  // Calendly dentro del chat: con embed_domain avisa cada paso por postMessage,
-  // y así sabemos cuándo quedó agendada sin que la persona salga de la Ruta.
-  function urlEmbebida(url) {
-    var u = new URL(url);
-    u.searchParams.set('embed_domain', location.host);
-    u.searchParams.set('embed_type', 'Inline');
-    u.searchParams.set('hide_gdpr_banner', '1');
-    u.searchParams.set('hide_event_type_details', '1');
-    u.searchParams.set('hide_landing_page_details', '1');
-    return u.toString();
+  // ── Videos ───────────────────────────────────────────────
+  // Uno solo suena a la vez: al tocar play en otro, el anterior se suelta.
+  var activo = null;
+  function soltarVideo() {
+    if (!activo) return;
+    try { activo.reproductor.destruir(); } catch (e) { /* ya no estaba */ }
+    activo.restaurar();
+    activo = null;
   }
 
-  function confirmada(t) {
-    var cuando = t.agendada && t.agendada.etiqueta;
-    return el('div', { className: 'rc-ok', role: 'status' }, [
-      el('i', { 'aria-hidden': 'true', text: '✓' }),
-      el('div', {}, [
-        el('b', { text: 'Sesión agendada' }),
-        el('span', { text: (cuando ? cuando + '. ' : '') + 'Te llegó la confirmación a tu correo.' })
+  function conReproductor(listo, fallo) {
+    if (window.TR4Video) { listo(); return; }
+    var previo = document.querySelector('script[data-rc-reproductor]');
+    var tag = previo || el('script', { src: REPRODUCTOR, 'data-rc-reproductor': '1' });
+    tag.addEventListener('load', listo, { once: true });
+    tag.addEventListener('error', fallo, { once: true });
+    if (!previo) document.head.appendChild(tag);
+  }
+
+  function portada(cuadro, t, alTocar) {
+    cuadro.textContent = '';
+    if (t.portada) cuadro.appendChild(el('img', { src: t.portada, alt: '', loading: 'lazy', decoding: 'async', draggable: 'false' }));
+    var play = el('button', { type: 'button', className: 'rc-vid-play', 'aria-label': 'Ver el video: ' + t.titulo });
+    play.innerHTML = '<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M0 0l12 7-12 7z"/></svg>';
+    play.addEventListener('click', alTocar);
+    cuadro.appendChild(play);
+  }
+
+  function tarjetaVideo(t) {
+    var cuadro = el('div', { className: 'rc-vid' + (t.orientacion === 'vertical' ? ' rc-vid--vertical' : '') });
+    // Ni sobre la portada se ofrece «Guardar imagen» o «Guardar video».
+    cuadro.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    function restaurar() { portada(cuadro, t, reproducir); }
+    // La regla WAF de R2 exige el origen de la Ruta en los testimonios. Si un
+    // teléfono pide el video sin él, R2 responde 403: el mismo testimonio sigue en
+    // Vimeo (su id es el final de la carpeta) y se abre ahí, desde donde iba.
+    function respaldoVimeo() {
+      var id = (/\/testimonios\/.+-(\d+)\/$/.exec(t.base || '') || [])[1];
+      if (!id || !activo || !cuadro.isConnected) return false;
+      var desde = Math.floor(activo.reproductor.getCurrentTime() || 0);
+      activo.reproductor.destruir();
+      activo.reproductor = { destruir: function () { cuadro.textContent = ''; } };
+      cuadro.appendChild(el('iframe', {
+        src: 'https://player.vimeo.com/video/' + id + '?autoplay=1' + (desde ? '#t=' + desde + 's' : ''),
+        title: t.titulo, allow: 'autoplay; fullscreen', style: 'position:absolute;inset:0;width:100%;height:100%;border:0'
+      }));
+      track('chat_video_respaldo_vimeo', { video: t.id || t.escalon });
+      return true;
+    }
+    function reproducir() {
+      track('chat_video_play', { video: t.id || t.escalon });
+      conReproductor(function () {
+        soltarVideo();
+        activo = { restaurar: restaurar, reproductor: null };
+        activo.reproductor = window.TR4Video.montar(cuadro, { base: t.base, poster: t.portada, titulo: t.titulo, alError: respaldoVimeo });
+      }, function () {
+        cuadro.appendChild(el('p', { className: 'rc-sr', role: 'status', text: 'No se pudo cargar el video.' }));
+      });
+    }
+    restaurar();
+    return el('figure', { className: 'rc-media' }, [
+      cuadro,
+      el('figcaption', { className: 'rc-media-cap' }, [
+        el('b', { text: t.titulo }),
+        t.subtitulo ? el('span', { text: t.subtitulo }) : null
       ])
     ]);
   }
 
-  function tarjetaSesion(t, item) {
-    var card = el('article', { className: 'rc-card rc-card--sesion' });
-    card.appendChild(el('p', { className: 'rc-card-code', text: t.titulo + ' · ' + t.duracion + ' · Gratis' }));
-    if (t.agendada) { card.appendChild(confirmada(t)); return card; }
-    var cuerpoCard = el('div');
-    card.appendChild(cuerpoCard);
-
-    function verHorarios() {
-      cuerpoCard.textContent = '';
-      if (t.nota) cuerpoCard.appendChild(el('p', { className: 'rc-card-note', text: t.nota }));
-      var horarios = t.horarios || [];
-      if (horarios.length) {
-        var slots = el('div', { className: 'rc-slots' });
-        var dia = null, fila = null;
-        horarios.forEach(function (h) {
-          if (h.dia !== dia) {
-            dia = h.dia;
-            slots.appendChild(el('p', { className: 'rc-slot-day', text: h.dia }));
-            fila = el('div', { className: 'rc-slot-row' });
-            slots.appendChild(fila);
-          }
-          var b = el('button', { type: 'button', className: 'rc-slot', text: h.hora, 'aria-label': h.dia + ', ' + h.hora });
-          b.addEventListener('click', function () {
-            track('chat_horario_elegido', { inicio: h.inicio });
-            abrirCalendly(h.url, h);
-          });
-          fila.appendChild(b);
-        });
-        cuerpoCard.appendChild(slots);
-      } else {
-        cuerpoCard.appendChild(el('p', { className: 'rc-card-note', text: 'Elige el día y la hora en el calendario del equipo.' }));
-      }
-      var todos = el('button', { type: 'button', className: 'rc-card-ghost', text: horarios.length ? 'Ver más días y horarios' : 'Ver horarios disponibles' });
-      todos.addEventListener('click', function () { abrirCalendly(t.calendario, null); });
-      cuerpoCard.appendChild(todos);
-      if (t.zona_nombre && horarios.length) cuerpoCard.appendChild(el('p', { className: 'rc-card-foot', text: 'En tu hora local (' + t.zona_nombre + ')' }));
-    }
-
-    function abrirCalendly(url, horario) {
-      cuerpoCard.textContent = '';
-      var volver = el('button', { type: 'button', className: 'rc-back', text: '← Elegir otro horario' });
-      volver.addEventListener('click', function () { delete calendlys[id]; verHorarios(); });
-      cuerpoCard.appendChild(volver);
-      var marco = el('iframe', { src: urlEmbebida(url), title: 'Confirmar la sesión en Calendly', loading: 'lazy' });
-      var id = 'cal-' + Date.now();
-      calendlys[id] = {
-        marco: marco,
-        alAgendar: function (payload) {
-          t.agendada = { inicio: horario ? horario.inicio : null, etiqueta: horario ? horario.dia + ', ' + horario.hora : '' };
-          guardar();
-          cuerpoCard.textContent = '';
-          cuerpoCard.appendChild(confirmada(t));
-          registrarAgenda(t.agendada.inicio, payload);
-        }
-      };
-      cuerpoCard.appendChild(el('div', { className: 'rc-cal' }, [marco]));
-    }
-
-    verHorarios();
-    return card;
+  // La sesión ya quedó registrada en Calendly por el servidor: sólo se confirma.
+  function tarjetaAgenda(t) {
+    var links = [];
+    if (t.reprogramar) links.push(el('a', { href: t.reprogramar, target: '_blank', rel: 'noopener', text: 'Cambiar día u hora' }));
+    if (t.cancelar) links.push(el('a', { href: t.cancelar, target: '_blank', rel: 'noopener', text: 'Cancelar la sesión' }));
+    return el('article', { className: 'rc-card rc-card--agenda' }, [
+      el('p', { className: 'rc-card-code', text: 'Sesión con un asesor · 30 min · Gratis' }),
+      el('div', { className: 'rc-ok', role: 'status' }, [
+        el('i', { 'aria-hidden': 'true', text: '✓' }),
+        el('div', {}, [
+          el('b', { text: 'Sesión agendada' }),
+          el('span', { text: t.etiqueta + (t.zona_nombre ? ' (hora de ' + t.zona_nombre + ')' : '') })
+        ])
+      ]),
+      // En el Preview la reserva no se envía a Calendly: que quien prueba lo sepa.
+      t.prueba ? el('p', { className: 'rc-card-note', text: 'Modo prueba: la cita no se creó en Calendly.' }) : null,
+      links.length ? el('div', { className: 'rc-card-links' }, links) : null
+    ]);
   }
 
-  // Calendly avisa al chat con postMessage: el alto del formulario y la agenda.
-  var calendlys = {};
-  window.addEventListener('message', function (e) {
-    if (e.origin !== 'https://calendly.com' || !e.data || typeof e.data.event !== 'string') return;
-    Object.keys(calendlys).forEach(function (id) {
-      var c = calendlys[id];
-      if (e.source !== c.marco.contentWindow) return;
-      if (e.data.event === 'calendly.page_height' && e.data.payload && e.data.payload.height) {
-        c.marco.style.height = e.data.payload.height;
-      } else if (e.data.event === 'calendly.event_scheduled') {
-        delete calendlys[id];
-        c.alAgendar(e.data.payload || {});
-      }
-    });
-  });
-
-  function registrarAgenda(inicio, payload) {
-    if (state.mostrados.indexOf('agendo') === -1) state.mostrados.push('agendo');
-    guardar();
-    track('chat_agendo', { con_horario: Boolean(inicio) });
-    var evento = payload && payload.event && payload.event.uri ? payload.event.uri : '';
-    fetch(ENDPOINT_EVENTO, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ tipo: 'agenda', conversacion: state.conversacion, inicio: inicio, zona: zonaLocal(), evento: evento })
-    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (d && d.mensaje) agregar({ rol: 'equipo', texto: d.mensaje });
-    }).catch(function () { /* la cita ya quedó en Calendly; el registro es accesorio */ });
-  }
-
-  function tarjeta(t, item) {
+  function tarjeta(t) {
     if (t && t.tipo === 'ayuda') return tarjetaAyuda(t);
-    if (t && t.tipo === 'sesion') return tarjetaSesion(t, item);
+    if (t && t.tipo === 'video' && t.base) return tarjetaVideo(t);
+    if (t && t.tipo === 'agenda') return tarjetaAgenda(t);
     if (!t || !t.url) return null;
     var esWhatsApp = t.tipo === 'whatsapp';
     var hijos = [];
@@ -342,7 +325,8 @@
       el('span', { text: t.boton }), el('i', { 'aria-hidden': 'true', text: '→' })
     ]);
     cta.addEventListener('click', function () {
-      if (esWhatsApp) track('chat_whatsapp_click', {});
+      if (t.destino === 'calendly') track('chat_calendario_click', {});
+      else if (esWhatsApp) track('chat_whatsapp_click', {});
       else track('chat_pago_click', { escalon: t.escalon, destino: t.destino, precio: t.precio });
     });
     hijos.push(cta);
@@ -363,7 +347,7 @@
     var esEquipo = item.rol === 'equipo';
     var hijos = [];
     hijos.push(el('p', { className: 'rc-text', text: item.texto }));
-    if (esEquipo && item.tarjeta) hijos.push(tarjeta(item.tarjeta, item));
+    if (esEquipo && item.tarjeta) hijos.push(tarjeta(item.tarjeta));
     return el('div', { className: 'rc-turn rc-turn--' + (esEquipo ? 'equipo' : 'yo') + (nuevo ? ' is-new' : '') }, hijos);
   }
 
@@ -392,6 +376,7 @@
   }
 
   function pintarTodo() {
+    soltarVideo();
     ui.log.textContent = '';
     ui.ultimoEquipo = null;
     state.items.forEach(function (item) { ui.log.appendChild(turno(item, false)); });
@@ -475,7 +460,10 @@
       if (d.tarjeta && d.tarjeta.escalon && state.mostrados.indexOf(d.tarjeta.escalon) === -1) {
         state.mostrados.push(d.tarjeta.escalon);
       }
-      if (d.tarjeta && d.tarjeta.escalon) track('chat_oferta', { escalon: d.tarjeta.escalon, precio: d.tarjeta.precio });
+      if (d.tarjeta && d.tarjeta.tipo === 'plan') track('chat_oferta', { escalon: d.tarjeta.escalon, precio: d.tarjeta.precio });
+      else if (d.tarjeta && d.tarjeta.tipo === 'video') track('chat_video', { video: d.tarjeta.id });
+      else if (d.tarjeta && d.tarjeta.tipo === 'agenda') track('chat_agendo', { prueba: Boolean(d.tarjeta.prueba) });
+      if (d.opciones && d.opciones.length && d.eco && d.eco.horarios && d.eco.horarios.length) track('chat_horarios', { cantidad: d.eco.horarios.length });
       agregar({ rol: 'equipo', texto: d.mensaje, opciones: d.opciones || [], tarjeta: d.tarjeta || null });
     }).catch(function () {
       escribiendo(false);
@@ -551,6 +539,7 @@
       if (event.target === ui.dialog) ui.dialog.close();
     });
     ui.dialog.addEventListener('close', function () {
+      soltarVideo();
       ui.launch.hidden = false;
       document.documentElement.style.overflow = '';
       ui.launch.focus();
