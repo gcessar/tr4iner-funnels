@@ -1,5 +1,81 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-20 — Chat de la Ruta: conversa como los asesores, muestra videos y testimonios, y agenda él la sesión (Preview)
+
+Rama `work/ruta-hombres-preview` (sólo Preview; producción sigue con el chat del 15-oct). Pedido del usuario: que el
+agente converse como los vendedores de ManyChat, use los videos del método y los testimonios dentro del chat, y que
+**la sesión la registre el agente** (pregunta día y hora y la agenda por la API de Calendly; la persona no llena nada).
+
+### Fuentes
+- Dos grabaciones de Loom de chats de ManyChat/WhatsApp: una venta de Fit4 cerrada por chat y una calificación del
+  bot que queda incompleta (después hubo llamada y se mandó el acceso). Se transcribieron cosiendo los fotogramas; no se
+  copió ningún dato de clientes (correos, claves ni códigos de usuario que aparecen en pantalla).
+- PDF «Método TR4INER» (qué incluye, equipo, horario de atención) y los 4 videos de beneficios que pasó el usuario.
+
+### Qué se tomó de los vendedores
+- Tono cercano y seguro, «Perfecto 🙌», «Cuéntame con confianza»; reconocen lo que contó antes de seguir preguntando.
+- Preguntas de a dos y relacionadas: objetivo y qué cuesta; historia (qué probó, con qué profesionales); día a día
+  (trabajo, horarios, tiempo, gimnasio o casa); cómo se siente y por qué ahora.
+- La pregunta de compromiso: «¿Qué pasaría si en 3 meses sigues exactamente igual que hoy?» / «¿buscas información o
+  tomar acción?».
+- Reflejar el caso en una frase («Por lo que me cuentas, …»), mostrar material y preguntar «¿se alinea con lo que
+  buscas?», precio sin rodeos y cierre «¿Lo dejamos listo ahora?».
+- **No se tomó:** el formato de WhatsApp (asteriscos, varios globos seguidos), «trabajamos con cupos limitados» (no está
+  confirmado) ni los precios en pesos de Fit4.
+
+### Qué cambió
+- **Prompt** (`lib/ruta-chat-prompt.js`): conversación paso a paso (entender → compromiso → reflejar y mostrar un video
+  → Esencial US$77 al mes y, en el mismo mensaje, si quiere videollamadas → botón de pago o sesión). Cada vez que
+  nombra el Premium dice que es una inversión mayor que el Esencial. Emojis: como mucho uno, sólo 🙌 💪 🙏 👇. Lo
+  que puede prometer sale del PDF del Método. Saludo nuevo del chat: «Hola, [nombre] 🙌 ¿Qué te gustaría lograr?
+  Cuéntanos y te mostramos cómo te podemos ayudar.».
+- **Videos en el chat** (accion `mostrar_video`): los 4 del método, subidos a R2 en `beneficios/`
+  (`entrenamiento-personalizado--f430edae`, `alimentacion-personalizada--6ae9d55b`, `acompanamiento--d5bee47f`,
+  `comunidad--3ac41012`), y los 11 testimonios que ya estaban en R2. El agente elige por id; carpeta y portada las pone
+  el servidor. Se ven con el reproductor compartido `assets/tr4-video/tr4-video.js` (sin controles nativos ni clic
+  derecho; la única opción es la velocidad), que se carga recién al tocar play. Uno suena a la vez. Si R2 rechaza un
+  testimonio (WAF sin origen), se abre el mismo en Vimeo. Portada de los testimonios: un fotograma del propio video
+  (`thumbnail.jpg`), en un cuadro angosto como un video de chat; el afiche amarillo de las páginas de agenda se
+  descartó porque al usuario le pareció feo.
+- **Agenda por la API:** el agente usa `proponer_horarios` (con el día o la franja que pidió) y el servidor pone hasta
+  cuatro horarios libres reales como respuestas rápidas, en la hora local. Al elegir uno pide el WhatsApp con código de
+  país (si lo escribe sin «+», se completa con el país); con los dos datos, `agendar`. Antes de reservar vuelve a
+  comprobar que el horario siga libre; si no, ofrece los que quedan. La confirmación la escribe el servidor con el día
+  y la hora reales, y deja «Cambiar día u hora» y «Cancelar» de Calendly. Si pide un día fuera de la ventana de
+  Calendly (hoy abre dos días), lo dice así y no como si no hubiera lugar. Si la reserva falla, sale el calendario.
+- **n8n:** `RUTA-CHAT · Agendar en Calendly (preview)` (`s4Z6zOv5KlVCgGXt`, webhook `ruta-chat-agendar-preview`,
+  credencial de Preview `HBZZI9AG1A2QCpRX`). Lee las preguntas obligatorias del evento en cada pedido (WhatsApp y
+  «situación actual y meta», donde va el resumen del caso que arma el agente) y hace `POST /invitees` con nombre,
+  correo, zona y `tracking` (UTM del registro + `salesforce_uuid=ruta-chat-<conversación>`). **Modo prueba por
+  defecto:** arma la reserva completa pero no la manda a Calendly. Una reserva real exige `RUTA_CHAT_AGENDA_REAL=1` en
+  Vercel, porque le llena la agenda a un asesor y dispara correos, ManyChat, el Schedule de Meta y AGENDAS.
+- Vercel, sólo `Preview (work/ruta-hombres-preview)`: se sumó `RUTA_CHAT_AGENDAR_URL`.
+- Fuera el Calendly incrustado en el chat y `/api/genesis/chat-evento` (nunca estuvo en producción).
+
+### Verificación
+- `tests/ruta-chat-log.test.cjs`: 15 pruebas (horarios como respuestas rápidas, pide WhatsApp antes de reservar,
+  reserva en modo prueba con UTM y referencia, WhatsApp sin código, horario ocupado, falla de Calendly, testimonio sin
+  repetir, video inexistente, precio en el primer mensaje, monto inventado, ya agendada). Las otras dos suites, en verde.
+- Conversaciones de punta a punta con el endpoint real, el agente de Preview y la agenda real (reserva en prueba):
+  ansiedad de noche → video de alimentación → Esencial → videollamadas → «el jueves» fuera de ventana → horario →
+  WhatsApp → agendada; hombre en México que va al gym → testimonio de Daniel → Esencial → Stripe por impuestos;
+  resistencia a la insulina en Houston → testimonio → sesión mañana en la mañana, WhatsApp `713…` completado como
+  `+1`; fuera de tema, «¿eres un bot?», cliente sin su plan → WhatsApp, dieta gratis → no la arma.
+- Navegador (390 px, servidor local con miembro simulado): video del método reproduciéndose a 480p en el chat,
+  respaldo de Vimeo con el 403 de localhost, horarios, WhatsApp y tarjeta «Sesión agendada · Modo prueba».
+
+### Pendiente
+- Permiso del usuario para bajar de Vimeo los 10 testimonios del PDF que no están en R2 (Flor, Alejandro, Edith,
+  Mauricio, Jhonatan, Martha, Kevin, Hellen, Elisa, Leonardo) y subirlos a `testimonios/`.
+- Una reserva real de prueba (y cancelarla) para confirmar que la cita creada por la API dispara el WhatsApp de
+  ManyChat y entra a AGENDAS igual que una hecha en la página.
+- Confirmar: la renovación mensual del Esencial y que se puede cancelar antes (el prompt lo dice, sacado del chat de
+  Fit4); qué recibe la persona después de pagar; si la ventana de dos días de Calendly es a propósito.
+- Producción: webhooks `ruta-chat-horarios` y `ruta-chat-agendar` con la credencial `D4t4ho0L1Sd0yz8x` y
+  `RUTA_CHAT_AGENDA_REAL=1`.
+
+---
+
 ## 2026-10-19 — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
 
 Rama `work/ruta-hombres-preview` (sólo Preview; producción sigue con el chat del 15-oct). Pedido del usuario: que el
