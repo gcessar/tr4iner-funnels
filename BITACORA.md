@@ -38,8 +38,11 @@ Rama `work/ruta-hombres-preview`, commit `dd597ad`. Respuestas del usuario a las
   - **Cancelada** a los pocos minutos por la API (201, estado `canceled`) con un workflow auxiliar que sólo cancela citas
     con `salesforce_uuid` «ruta-chat-prueba…» (`tf3BHPmea2bPpV26`, quedó **desactivado**). ManyChat procesa la
     cancelación y manda su aviso a los 45 minutos.
-  - Quedan de la prueba: la fila «PRUEBA Chat Ruta» en la hoja AGENDAS, el Schedule en Meta (no se puede deshacer) y la
-    copia en `AgendaEvent` del CRM de producción.
+  - El usuario confirmó que le llegaron el WhatsApp de confirmación y el correo de Calendly.
+  - **Fila de la hoja AGENDAS borrada** a pedido del usuario (era la 2996 de «AGENDAS TODAS», única coincidencia por
+    nombre, correo y `utm_source`), con un workflow temporal que quedó desactivado (`FF7SQachK5ZPdH20`). Copia de la
+    fila en `~/Documents/Ruta Tr4iner/chat-equipo/respaldo-fila-agendas-prueba-2026-10-20.json`.
+  - Quedan de la prueba: el Schedule en Meta (no se puede deshacer) y la copia en `AgendaEvent` del CRM de producción.
 - **Pendiente:** ver el Kanban con una reserva hecha desde el chat del Preview (opción A) y, para producción, los
   webhooks con la credencial de producción y `RUTA_CHAT_AGENDA_REAL=1`.
 
