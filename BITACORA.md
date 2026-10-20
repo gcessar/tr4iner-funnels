@@ -1,5 +1,26 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-20 (3) — Chat de la Ruta a producción y pipeline único en el CRM
+
+Pedido del usuario: «aplica todo y publica», con sus respuestas sobre el boceto del Pipeline.
+
+- **Funnel (este repo):** `main` avanza a la rama `work/ruta-hombres-preview` (el chat de las entradas de hoy: estilo de los
+  asesores, videos y testimonios de R2, Plan Esencial US$77 y la sesión que el agente agenda por la API). En Producción
+  se carga `RUTA_CHAT_AGENDA_REAL=1`: las reservas del chat crean la cita de verdad en Calendly. Los webhooks de
+  producción `ruta-chat-horarios` (`pWAqgpRt3WrBvR4D`) y `ruta-chat-agendar` (`v3qwL42ibW1xjNY5`) ya existían, con la
+  credencial de producción `D4t4ho0L1Sd0yz8x`; el agente de producción (`bxFzkGlbxYYVdqCH`) es idéntico al del Preview.
+- **CRM (`main` `92cf4c6`, `dpl_6zMacoxXfpZ7j56FzFV371hscA52`):** pipeline único. Los leads de la Ruta en el Kanban
+  principal (los de ManyChat con su closer de ManyChat), toda cita en «Agendas» del closer que la atiende, etiqueta
+  «Canceló llamada» (Martin) o «Canceló sesión», filtro e insignia por funnel, y la pestaña «Ruta Tr4iner» con el
+  expediente en la ficha del lead. Fuera la pestaña Comercial de la Ruta. Detalle en la bitácora del CRM.
+- **n8n (respaldos en `~/Documents/Ruta Tr4iner/respaldos-n8n/*-2026-10-20-antes-pipeline-unico.json`):**
+  - «TR4INER Schedule → Meta CAPI» (`NzshDBl2sb13DrmQ`): la copia de cada cita al CRM suma `utm_medium`,
+    `utm_content`, `salesforce_uuid` y la respuesta de «situación actual», para que el CRM salte las que ubicó el chat.
+  - «Calendly → WhatsApp (ManyChat)» (`mXMH8xu463rPnuJF`): cada cancelación avisa a `/api/webhook/agenda-cancelada`,
+    en paralelo a la espera de 45 minutos y sin frenar el flujo si el CRM falla.
+  - «AGENDAS TOTALES» (`29dygAp8P9JtpmHO`) y el viejo «Historial Agendas» (desactivado): fuera del mapa de closers el
+    asesor que ya no trabaja con el equipo (pedido del usuario: que no figure en ningún lado).
+
 ## 2026-10-20 (2) — Chat de la Ruta: 8 testimonios más, UTM `RUTA-TR4INER` y la agenda al Kanban del closer (Preview)
 
 Rama `work/ruta-hombres-preview`, commit `dd597ad`. Respuestas del usuario a las preguntas de la entrada anterior.
@@ -4505,7 +4526,7 @@ Con esos datos:
 - Muestra asesor asignado y fecha/hora.
 - Genera mensaje automático para WhatsApp.
 - Mantiene tracking `ClicConfir-Agenda-WS` para GA4/Clarity si existen en la página.
-- Se eliminó **Diego Ramos** del mapa de asesores/números.
+- Se eliminó del mapa de asesores/números a un asesor que ya no trabaja con el equipo.
 
 ### Archivos afectados en esta rama
 - `calendly-an-optimizado.html`
