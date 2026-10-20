@@ -20,6 +20,12 @@ Pedido del usuario: «aplica todo y publica», con sus respuestas sobre el bocet
     en paralelo a la espera de 45 minutos y sin frenar el flujo si el CRM falla.
   - «AGENDAS TOTALES» (`29dygAp8P9JtpmHO`) y el viejo «Historial Agendas» (desactivado): fuera del mapa de closers el
     asesor que ya no trabaja con el equipo (pedido del usuario: que no figure en ningún lado).
+- **Publicado:** funnel `main` `f4cf248` (`dpl_6YxV6U7R6Tg73CcXyMx3dveCXeVm`, Ready). La Ruta de producción sirve
+  `ruta-chat.js?v=20261020-asesores` (con el reproductor y la tarjeta de la sesión) y `/api/genesis/chat` responde 401
+  sin sesión. `RUTA_CHAT_AGENDA_REAL=1` en Production. No se probó una conversación en producción: hace falta una
+  sesión de miembro.
+- **Reparto de la Ruta puesto en marcha** (nunca había corrido): 1.468 personas al Kanban y cron de n8n cada 15 min
+  (`oR0iaI26wvktHS0M`). Las 18 citas vigentes de Calendly, en Agendas de su closer. Detalle en la bitácora del CRM.
 
 ## 2026-10-20 (2) — Chat de la Ruta: 8 testimonios más, UTM `RUTA-TR4INER` y la agenda al Kanban del closer (Preview)
 
