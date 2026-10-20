@@ -1,5 +1,31 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-20 (2) — Chat de la Ruta: 8 testimonios más, UTM `RUTA-TR4INER` y la agenda al Kanban del closer (Preview)
+
+Rama `work/ruta-hombres-preview`, commit `dd597ad`. Respuestas del usuario a las preguntas de la entrada anterior.
+
+- **Testimonios del PDF a R2 (permiso del usuario):** 8 de 10 bajados del HLS público de Vimeo (1080×1920) y
+  codificados como los 11 del 13-oct, en `testimonios/{nombre}-{idVimeo}/`: Flor Zevallos, Alejandro Sorto, Edith
+  Jimenez, Mauricio Custode, Jhonatan Coronado, Martha Munguia, Kevin De la Cruz y Elisa Linares. **Hellen Rodriguez
+  (`856833871`) y Leonardo Figuereo (`856844021`) no se pudieron bajar: Vimeo responde 401** (privacidad). Script de una
+  sola vez fuera de git: `~/Documents/Ruta Tr4iner/herramientas/cloudflare/testimonios-pdf-2026-10-20.mjs`; originales y
+  resultado en `~/Documents/Ruta Tr4iner/testimonios-pdf-2026-10-20/`. El chat los ofrece con lo que dice el PDF
+  (edad y pesos; el PDF no trae el país).
+- **UTM:** la cita lleva `utm_medium=RUTA-TR4INER` (la misma marca que el cruce a los casos) con la fuente, la campaña,
+  el contenido y el término del registro de la persona. También el botón de respaldo del calendario.
+- **Lo que ve el asesor:** «situación actual y meta» lleva el resumen del caso del agente + los datos del registro y del
+  test de macros (objetivo, lo que más le preocupa, edad, peso, estatura, calorías, orientaciones vistas).
+- **Pipeline:** después de agendar, el chat avisa al CRM (`/api/genesis/chat-agenda`, CRM `work/ruta-drip-paises`
+  `03bc746`). El CRM pone a la persona en AGENDA en el Kanban del closer que asignó Calendly (n8n ahora lee la cita
+  creada para saberlo), con la misma información como situación y nota, y la campanita al closer. Detalle en la
+  bitácora del CRM.
+- **Prompt:** después de pagar le llegan un correo y un WhatsApp con los accesos a la app (confirmado por el usuario).
+  La renovación mensual y la cancelación antes de renovar quedaron confirmadas. La agenda abre sólo dos días a
+  propósito («para que el lead no se enfríe»): si pide más adelante, el agente lo invita a tomar uno de los próximos.
+- **Verificación:** `tests/ruta-chat-log.test.cjs` 17/17 (UTM, situación, aviso al CRM con el closer, CRM caído no rompe
+  la confirmación). n8n en modo prueba responde igual que antes.
+- **Pendiente:** la reserva real de prueba (autorizada) espera el correo y el WhatsApp con que hacerla.
+
 ## 2026-10-20 — Chat de la Ruta: conversa como los asesores, muestra videos y testimonios, y agenda él la sesión (Preview)
 
 Rama `work/ruta-hombres-preview` (sólo Preview; producción sigue con el chat del 15-oct). Pedido del usuario: que el
