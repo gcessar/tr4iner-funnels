@@ -24,7 +24,24 @@ Rama `work/ruta-hombres-preview`, commit `dd597ad`. Respuestas del usuario a las
   propósito («para que el lead no se enfríe»): si pide más adelante, el agente lo invita a tomar uno de los próximos.
 - **Verificación:** `tests/ruta-chat-log.test.cjs` 17/17 (UTM, situación, aviso al CRM con el closer, CRM caído no rompe
   la confirmación). n8n en modo prueba responde igual que antes.
-- **Pendiente:** la reserva real de prueba (autorizada) espera el correo y el WhatsApp con que hacerla.
+- **Reserva real de prueba (autorizada por el usuario, con su correo y su WhatsApp):** hecha directo por el workflow de
+  n8n (opción B: sin pasar por el chat, así que **no prueba el aviso al CRM ni el Kanban**). Cita del 21-oct 18:00 de
+  Lima, nombre «PRUEBA Chat Ruta», `salesforce_uuid=ruta-chat-prueba-real-20oct`.
+  - **Primer intento rechazado:** la API de Calendly exige los seis campos de `tracking` aunque vengan vacíos (400 «is
+    missing» por `utm_content` y `utm_term`). Habría fallado con todo miembro registrado sin esas UTM. **Corregido en
+    n8n** (`s4Z6zOv5KlVCgGXt`, nodo «Armar»: completa los seis con `null`).
+  - **Segundo intento creado:** Calendly la asignó a **Martin Michelucci** (mismo nombre que su usuario del CRM), con
+    Google Meet, las dos respuestas obligatorias y `utm_medium=RUTA-TR4INER`.
+  - Se dispararon los tres flujos de siempre, todos `success`: «AGENDAS TOTALES» (fila en la hoja), «Schedule → Meta
+    CAPI» (Meta recibió el Schedule y copió la cita al CRM de producción, `AgendaEvent`) y «Calendly → WhatsApp
+    (ManyChat)» (encontró el contacto, guardó teléfono, fecha y closer y mandó la confirmación).
+  - **Cancelada** a los pocos minutos por la API (201, estado `canceled`) con un workflow auxiliar que sólo cancela citas
+    con `salesforce_uuid` «ruta-chat-prueba…» (`tf3BHPmea2bPpV26`, quedó **desactivado**). ManyChat procesa la
+    cancelación y manda su aviso a los 45 minutos.
+  - Quedan de la prueba: la fila «PRUEBA Chat Ruta» en la hoja AGENDAS, el Schedule en Meta (no se puede deshacer) y la
+    copia en `AgendaEvent` del CRM de producción.
+- **Pendiente:** ver el Kanban con una reserva hecha desde el chat del Preview (opción A) y, para producción, los
+  webhooks con la credencial de producción y `RUTA_CHAT_AGENDA_REAL=1`.
 
 ## 2026-10-20 — Chat de la Ruta: conversa como los asesores, muestra videos y testimonios, y agenda él la sesión (Preview)
 
