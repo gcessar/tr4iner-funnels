@@ -57,12 +57,16 @@ async function horariosLibres(secreto) {
   }
 }
 
-async function reservar(secreto, pendiente, perfil, zona, conversacion) {
+function trackingDe(perfil, conversacion) {
   const params = ruta.parametrosCalendly(perfil, conversacion);
   const tracking = {};
   ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'salesforce_uuid'].forEach(function (k) {
     if (params[k]) tracking[k] = String(params[k]).slice(0, 255);
   });
+  return tracking;
+}
+
+async function reservar(secreto, pendiente, perfil, zona, conversacion, situacion) {
   try {
     return await n8n(AGENDAR_URL, secreto, {
       prueba: !AGENDA_REAL,
@@ -71,12 +75,26 @@ async function reservar(secreto, pendiente, perfil, zona, conversacion) {
       email: perfil.email,
       zona: zona,
       whatsapp: pendiente.whatsapp,
-      situacion: pendiente.resumen || 'Viene del chat de su Ruta Tr4iner.',
-      tracking: tracking
-    }, 12000);
+      situacion: situacion,
+      tracking: trackingDe(perfil, conversacion)
+    }, 15000);
   } catch (error) {
     console.error('[ruta-chat] no se pudo agendar:', error.message);
     return { ok: false, motivo: 'sin_respuesta' };
+  }
+}
+
+// El CRM pone a la persona en el Kanban del closer que le asignó Calendly, en AGENDA, con
+// lo del chat y lo del registro a la vista. Es accesorio para el chat: si falla, la cita ya
+// existe y la hoja AGENDAS la lleva igual al CRM.
+async function avisarAlCrm(request, response, datos) {
+  try {
+    const r = await forward(request, response, 'chat-agenda', { method: 'POST', deferResponse: true, body: datos, timeoutMs: 6000 });
+    if (!r || r.status !== 200) console.error('[ruta-chat] el CRM no registró la agenda:', r && r.status);
+    return r && r.status === 200 ? r.payload : null;
+  } catch (error) {
+    console.error('[ruta-chat] el CRM no registró la agenda:', error.message);
+    return null;
   }
 }
 
@@ -164,9 +182,28 @@ module.exports = async function chat(request, response) {
     if (libres.length && !sigue) {
       respuesta = ruta.completarHorarios(respuesta, libres, zona, perfil, conversacion, true);
     } else {
-      reserva = await reservar(secreto, respuesta.pendiente, perfil, zona, conversacion);
+      const situacion = ruta.situacionParaAsesor(perfil, respuesta.pendiente.resumen);
+      const pendiente = respuesta.pendiente;
+      reserva = await reservar(secreto, pendiente, perfil, zona, conversacion, situacion);
       if (reserva && reserva.motivo === 'horario_ocupado') respuesta = ruta.completarHorarios(respuesta, libres, zona, perfil, conversacion, true);
       else respuesta = ruta.completarAgenda(respuesta, reserva, zona, perfil, conversacion);
+      if (reserva && reserva.ok) {
+        const crm = await avisarAlCrm(request, response, {
+          conversacion: conversacion,
+          prueba: Boolean(reserva.prueba),
+          inviteeUri: reserva.invitee || null,
+          eventoUri: reserva.evento || null,
+          inicio: reserva.inicio || pendiente.horario.inicio,
+          zona: zona,
+          closer: reserva.closer || null,
+          whatsapp: pendiente.whatsapp,
+          situacion: situacion,
+          reprogramar: reserva.reprogramar || null,
+          cancelar: reserva.cancelar || null,
+          tracking: trackingDe(perfil, conversacion)
+        });
+        if (crm && crm.vendedor) respuesta.registro.vendedor = crm.vendedor;
+      }
     }
   }
   // Sin email ni teléfono en los logs: alcanza con ver qué pidió el agente y qué se mostró.
@@ -179,6 +216,7 @@ module.exports = async function chat(request, response) {
     tarjeta: respuesta.tarjeta ? (respuesta.tarjeta.escalon || respuesta.tarjeta.tipo) : null,
     nivel: respuesta.registro.calificacion.nivel,
     reserva: reserva ? (reserva.ok ? (reserva.prueba ? 'prueba' : 'real') : reserva.motivo) : null,
+    vendedor: respuesta.registro.vendedor || null,
     montos_invalidos: respuesta.registro.montos_invalidos
   }));
 

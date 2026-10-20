@@ -14,13 +14,14 @@ const OFRECIDOS=[
  {id:'h2',inicio:'2026-10-21T19:00:00.000Z',etiqueta:'Mié 21 · 14:00',larga:'miércoles, 21 de octubre, 14:00'}
 ];
 
-function simular({agente,historial=[{rol:'persona',texto:'hola'},{rol:'equipo',texto:'Hola, Ana.'}],horarios=LIBRES,reserva={ok:true,prueba:true}}){
- const llamadas={historial:0,agente:null,turnos:[],horarios:0,agendar:[]};
+function simular({agente,historial=[{rol:'persona',texto:'hola'},{rol:'equipo',texto:'Hola, Ana.'}],horarios=LIBRES,reserva={ok:true,prueba:true},crmAgenda=200}){
+ const llamadas={historial:0,agente:null,turnos:[],horarios:0,agendar:[],crmAgenda:[]};
  global.fetch=async(url,init={})=>{
   const responder=(status,body)=>({ok:status<400,status,text:async()=>JSON.stringify(body),json:async()=>body});
   if(url==='https://crm.test/api/genesis/session')return responder(200,{member:{email:'ana@x.com',nombre:'Ana Pérez',sexo:'Mujer'},progress:[],attribution:{utm_source:'YOUTUBE-AN',utm_campaign:'RUTA'}});
   if(url.startsWith('https://crm.test/api/genesis/chat-log?')){llamadas.historial++;return responder(200,{historial});}
   if(url==='https://crm.test/api/genesis/chat-log'){llamadas.turnos.push(JSON.parse(init.body));return responder(200,{ok:true});}
+  if(url==='https://crm.test/api/genesis/chat-agenda'){llamadas.crmAgenda.push(JSON.parse(init.body));return responder(crmAgenda,crmAgenda===200?{ok:true,vendedor:'Martin Michelucci',leadId:'l1'}:{error:'caído'});}
   if(url.endsWith('/webhook/ruta-chat-horarios')){llamadas.horarios++;return responder(200,{horarios});}
   if(url.endsWith('/webhook/ruta-chat-agendar')){llamadas.agendar.push(JSON.parse(init.body));return responder(200,reserva);}
   if(url.endsWith('/webhook/ruta-chat')){llamadas.agente=JSON.parse(init.body);if(agente instanceof Error)throw agente;return responder(200,agente);}
@@ -117,9 +118,19 @@ test('con horario y WhatsApp, el agente agenda la sesión por la API (en modo pr
  assert.equal(r.whatsapp,'+51999888777');
  assert.equal(r.email,'ana@x.com');
  assert.equal(r.nombre,'Ana Pérez');
- assert.equal(r.situacion,'Quiero bajar 8 kg y entreno en casa.');
+ assert.match(r.situacion,/^Quiero bajar 8 kg y entreno en casa\.\nDatos de su Ruta Tr4iner: /);
  assert.equal(r.tracking.salesforce_uuid,'ruta-chat-principal');
  assert.equal(r.tracking.utm_source,'YOUTUBE-AN');
+ assert.equal(r.tracking.utm_medium,'RUTA-TR4INER');
+ assert.equal(r.tracking.utm_campaign,'RUTA');
+ // El CRM recibe la agenda para ponerla en el Kanban del closer.
+ assert.equal(llamadas.crmAgenda.length,1);
+ const c=llamadas.crmAgenda[0];
+ assert.equal(c.prueba,true);
+ assert.equal(c.inicio,'2026-10-20T16:00:00.000Z');
+ assert.equal(c.whatsapp,'+51999888777');
+ assert.equal(c.situacion,r.situacion);
+ assert.equal(c.tracking.utm_medium,'RUTA-TR4INER');
  assert.equal(res.body.tarjeta.tipo,'agenda');
  assert.equal(res.body.tarjeta.escalon,'agendo');
  assert.equal(res.body.tarjeta.prueba,true);
@@ -141,6 +152,27 @@ test('si el horario elegido se ocupó, ofrece los que siguen libres y no reserva
  assert.equal(llamadas.agendar.length,0);
  assert.match(res.body.mensaje,/se acaba de ocupar/);
  assert.deepEqual(res.body.opciones,['Mié 21 · 14:00','Jue 22 · 09:00']);
+});
+
+test('con la reserva real, el CRM recibe el closer que asignó Calendly y la cita',async()=>{
+ const llamadas=simular({agente:{mensaje:'Listo.',accion:'agendar',horario:'h1',whatsapp:'+51999888777'},
+  reserva:{ok:true,prueba:false,invitee:'https://api.calendly.com/scheduled_events/E1/invitees/I1',evento:'https://api.calendly.com/scheduled_events/E1',closer:{nombre:'Martin Michelucci',email:'martin@tr4iner.com'},cancelar:'https://calendly.com/cancellations/I1',reprogramar:'https://calendly.com/reschedulings/I1'}});
+ const {req,res}=pedir('+51999888777',{eco:{horarios:OFRECIDOS,horario_elegido:'h1'}});
+ await chat(req,res);
+ const c=llamadas.crmAgenda[0];
+ assert.equal(c.prueba,false);
+ assert.equal(c.inviteeUri,'https://api.calendly.com/scheduled_events/E1/invitees/I1');
+ assert.deepEqual(c.closer,{nombre:'Martin Michelucci',email:'martin@tr4iner.com'});
+ assert.equal(res.body.tarjeta.prueba,false);
+ assert.equal(res.body.tarjeta.reprogramar,'https://calendly.com/reschedulings/I1');
+});
+
+test('si el CRM no registra la agenda, la persona igual ve su sesión confirmada',async()=>{
+ simular({agente:{mensaje:'Listo.',accion:'agendar',horario:'h1',whatsapp:'+51999888777'},crmAgenda:500});
+ const {req,res}=pedir('+51999888777',{eco:{horarios:OFRECIDOS,horario_elegido:'h1'}});
+ await chat(req,res);
+ assert.equal(res.body.tarjeta.tipo,'agenda');
+ assert.match(res.body.mensaje,/Te agendé/);
 });
 
 test('si Calendly rechaza la reserva, sale el calendario del equipo',async()=>{
@@ -166,7 +198,7 @@ test('el agente muestra un testimonio de R2 y no lo repite',async()=>{
 });
 
 test('un video que no existe no se muestra',async()=>{
- simular({agente:{mensaje:'Mira 👇',accion:'mostrar_video',video:'flor-zevallos'}});
+ simular({agente:{mensaje:'Mira 👇',accion:'mostrar_video',video:'hellen-rodriguez'}});
  const {req,res}=pedir('¿resultados?');
  await chat(req,res);
  assert.equal(res.body.tarjeta,null);
