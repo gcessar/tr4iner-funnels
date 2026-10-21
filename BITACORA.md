@@ -52,8 +52,9 @@ de producción y el alias de la rama no está en la lista; en `metodo.tr4iner.co
 - Capturas de producción en `~/Documents/Ruta Tr4iner/capturas/empezar-2026-10-21/produccion/`.
 
 ### Pendiente
-- **Decisión del usuario:** montar Vidalytics sólo con el primer toque o desliz (sin los 5 s) sube GTmetrix; quien no
-  toca nada ve la portada «Paso 1 · Mira el video» en vez de la vista previa en movimiento. GTM seguiría con sus 5 s.
+- ~~Montar Vidalytics sólo con el primer toque para subir GTmetrix~~ — **decidido el 21-oct: se queda como está**
+  (Vidalytics y GTM al primer toque o a los 5 s). Al usuario le alcanza PageSpeed 100; no se optimiza para GTmetrix a
+  costa de la vista previa en movimiento.
 - Cargar `EMPEZAR_AGENDA_REAL=1` en Production (y redesplegar) si se quiere el formulario propio en vez de Calendly.
 - Ratificación: cohorte desde hoy; ventas del Esencial (`sck=empezar-org`) y agendas (`salesforce_uuid=empezar-org-cal`).
 
