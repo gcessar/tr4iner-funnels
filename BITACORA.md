@@ -1,5 +1,64 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 (2) — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
+
+Misma rama, sin publicar. Pedido del usuario: testimonios de hombres y mujeres antes del pie, en video vertical de R2, y
+la página «súper optimizada» para PageSpeed y GTmetrix sin afectar la experiencia.
+
+### Testimonios
+- Sección «Casos reales · Personas como tú que ya empezaron.» antes del pie: los 19 testimonios de R2 (los 11 de
+  `/calendly-an` y los 8 del PDF), alternados mujer/hombre, con filtro Todos / Mujeres (10) / Hombres (9). Textos del
+  catálogo del chat (`lib/ruta-chat.js`).
+- Portadas: el `thumbnail.jpg` de cada carpeta de R2 pasado a WebP de 240 y 360 px (7–27 KB) en
+  `assets/empezar/testimonios/`, servidas desde acá: no dependen de la regla WAF de R2.
+- Al tocar una tarjeta se abre un visor con `assets/tr4-video/tr4-video.js` (regla de `AGENTS.md`: sin controles del
+  navegador, sin clic derecho, sólo menú de velocidad), 720p salvo ahorro de datos o red lenta. Si R2 responde 403, el
+  mismo testimonio se abre en Vimeo desde donde iba. El reproductor se pide cuando la sección se acerca, para que el
+  play salga dentro del toque (iPhone).
+- Eventos: `empezar_testimonio_play`, `empezar_testimonios_filtro`, `testimonio_respaldo_vimeo`.
+
+### Velocidad
+Línea de base (Lighthouse 13.5 celular, servidor local con brotli como Vercel): **35/100**, LCP 12,0 s, bloqueo
+2.510 ms, 16 MB. Las causas: el reproductor de Vidalytics (~4 s de procesador y una vista previa automática en 1080p de
+~15 MB) y el contenedor de GTM (~1 MB: dos gtag, Meta, Clarity, ManyChat ×2, lanzador de Hotmart, Brevo, Bing).
+- **Portada propia del VSL** (primer cuadro del HLS con ffmpeg, WebP de 17 y 39 KB, `fetchpriority="high"`): es el LCP.
+  Imita el «Paso 1 · Mira el video» de Vidalytics y se va cuando el video ya tiene imagen.
+- **Vidalytics y GTM se cargan con el primer toque, desliz o tecla, o a los 5 s del `load`** si la persona no hace nada.
+  Lo que se empuja antes al dataLayer (la exposición del test) espera en la cola y sale igual.
+  - Costo aceptado: quien se va antes de tocar nada y antes de 5 s no cuenta como visita en GA4 ni en Meta.
+  - Con 2,5 s Lighthouse alcanzaba a medir los dos (68/100); con 5 s, no. Lighthouse no toca la página: el 99 es el
+    caso de quien mira sin tocar durante los primeros segundos.
+- Caché de un año (`immutable`) en `vercel.json` para `/assets/fonts/*` y `/assets/empezar/*`. **Regla: un archivo de
+  esas carpetas no se reemplaza con el mismo nombre**; se sube con otro.
+- Óxido de los rótulos a `#9E5738` (4,88:1; el `#A85E40` daba 4,36 a 10 px), nombre accesible de la portada y favicon
+  propio (sin él, el navegador pedía `/favicon.ico` y daba 404).
+- Se probó `content-visibility: auto` y se descartó: recortaba la fila de tarjetas y el pie no se pintaba en capturas.
+
+| Lighthouse (local) | Antes | Después |
+|---|---|---|
+| Celular: rendimiento | 35 | **99** |
+| Celular: LCP / bloqueo / CLS | 12,0 s / 2.510 ms / 0 | **2,1 s / 0 ms / 0** |
+| Celular: peso al cargar | 16 MB | **321 KB** |
+| Escritorio: rendimiento | — | **100** |
+| Accesibilidad / buenas prácticas | — | **100 / 100** |
+| SEO | — | 69, sólo por el `noindex` (paso del funnel, a propósito) |
+
+### Verificación
+- Chrome 390 y 1280 px: sin tocar, a 1,5 s no se pidió ni Vidalytics ni GTM y la portada estaba; a los 6 s, los dos, y
+  la portada se fue. Con un desliz, los dos en el acto. Filtros 9/10. El visor reprodujo `play_720p.mp4` de R2 (con el
+  origen de producción agregado en la prueba) sin `controls`; Escape lo cierra y lo vacía. Sin el origen (como
+  localhost), cae a Vimeo. Flechas de escritorio. Sin errores de consola.
+- Repetidas las pruebas del test y de la agenda: cada brazo con su precio y su `sck`, reserva con UTMs crudas y
+  `salesforce_uuid=empezar-vis-…`, horario ocupado, caída a Calendly. `tests/*.cjs` 22/22.
+- Informes: `~/Documents/Ruta Tr4iner/capturas/empezar-2026-10-21/lighthouse-*.html` y capturas en `v2/`.
+
+### Pendiente
+- Medir en el Preview y en producción con PageSpeed Insights y GTmetrix (la red y la CDN reales cambian los números).
+- **Regla WAF de R2:** sumar el alias del Preview de esta rama, o los testimonios se verán por Vimeo en el Preview.
+- **GTM (fuera de este repo):** el contenedor carga en todas las páginas el lanzador de Hotmart, dos widgets de ManyChat y
+  Brevo. Limitarlos a las páginas que los usan alivia todo el sitio.
+- La vista previa automática de Vidalytics baja hasta 1080p en el celular: se puede limitar desde su panel.
+
 ## 2026-10-21 — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
 
 Rama `claude/empezar-pricing-table-c849f7`, **sin publicar** (pedido del usuario: trabajar en local antes de producción).
@@ -2390,6 +2449,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-21` — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
 - `2026-10-21` — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
 - `2026-10-19` — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
 - `2026-10-16` — `/10platospg` deja de ser lead magnet y vende «100 Recetas: desayunos fáciles» con el checkout de Hotmart incrustado
