@@ -1387,12 +1387,12 @@
           <p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos por videollamada.</p>
           <ul class="plan-list">
             <li><strong>Todo lo del Plan Esencial.</strong></li>
-            <li>Videollamadas en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>
+            <li>Videollamadas 1 a 1 en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>
             <li>Revisan contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>
           </ul>
           <div class="plan-foot">
             <p class="next-slot" id="proximo" hidden><span class="pulse" aria-hidden="true"></span><span>Próximo horario libre: <strong id="proximo-texto"></strong></span></p>
-            <button class="btn btn-yellow" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión gratuita <b aria-hidden="true">→</b></button>
+            <button class="btn btn-yellow" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión <b aria-hidden="true">→</b></button>
             <p class="plan-alt">Sujeto a disponibilidad y cupos.</p>
           </div>
         </article>
@@ -1764,8 +1764,13 @@
         if (pedido && !otraVez) return pedido;
         pedido = fetch("/api/empezar/horarios", { headers: { accept: "application/json" } })
           .then(function (respuesta) {
-            if (!respuesta.ok) throw new Error("horarios " + respuesta.status);
-            return respuesta.json();
+            // El cuerpo se lee SIEMPRE, también en un error: si no, Chrome deja el pedido
+            // abierto y Lighthouse/PageSpeed esperan hasta su límite de 45 s (medido en el
+            // Preview, donde la API respondía 503 sin RUTA_CHAT_SECRET).
+            return respuesta.json().catch(function () { return {}; }).then(function (datos) {
+              if (!respuesta.ok) throw new Error("horarios " + respuesta.status);
+              return datos;
+            });
           })
           .then(function (datos) {
             aceptarHorarios(datos.horarios);
