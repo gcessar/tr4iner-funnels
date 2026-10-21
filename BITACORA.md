@@ -1,5 +1,40 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 (3) — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
+
+Pedido del usuario: «llévalo a producción», con los videos de testimonios desde R2. El test de precio sigue **apagado**
+(`TEST_EMPEZAR = false`): todos ven el control `OCU`.
+
+### Preview (`work/empezar-planes`) y lo que corrigió
+- Preview protegido por el login de Vercel: se creó un enlace para compartir de 24 h sólo para el alias de la rama
+  (`/aliases/{alias}/protection-bypass`, vence el 22-oct 12:15). PageSpeed web no se pudo correr con él: el navegador
+  integrado no deja pasar el token a otro sitio. Se midió con Lighthouse 13.5 (el motor de PageSpeed) contra el Preview
+  real: **celular 100/100/100, escritorio 100/100/100** (rendimiento, accesibilidad, buenas prácticas); SEO 69 por el
+  `noindex`. LCP 1,4–1,8 s en celular, 0,4 s en escritorio, bloqueo 0 ms, ~330 KB.
+- **Pedido colgado:** sin `RUTA_CHAT_SECRET` en el Preview, `/api/empezar/horarios` respondía 503 y la página tiraba el
+  error sin leer el cuerpo. Chrome dejaba el pedido abierto, Lighthouse esperaba 45 s y a los 5 s entraban Vidalytics y
+  GTM (escritorio 91, 28 MB). Ahora el cuerpo se lee siempre, y los horarios se piden con el primer toque o a los 5 s,
+  como el video: una API fría (3,6 s medidos) ya no estira la medición.
+- Texto (pedido del usuario, los dos brazos): botón «Agendar mi sesión» (sin «gratuita») y «Videollamadas 1 a 1 en
+  vivo…».
+
+### Reserva en producción
+- `EMPEZAR_AGENDA_REAL` **no está cargada en Production**: el permiso para escribir variables de Vercel le fue negado al
+  agente. Para no confirmar citas que no existen, en producción sin esa llave la hoja **abre el Calendly del equipo en el
+  horario elegido** (cita real, mismas automatizaciones; Calendly pide los datos). `/api/empezar/horarios` devuelve
+  `reserva_directa` y `/api/empezar/agendar` responde 503 `agenda_no_activada` como defensa. En local y en los Preview
+  sigue el formulario propio en modo prueba.
+- Para el flujo propio (sin pasar por Calendly): cargar `EMPEZAR_AGENDA_REAL=1` en Production y volver a desplegar.
+- Calendly abre un horario con `…T16:00:00Z`; con milisegundos (`…T16:00:00.000Z`) responde 404. El enlace se arma sin
+  ellos.
+
+### Videos de testimonios
+Están en R2. En el Preview se abrían por Vimeo porque la regla WAF de `video.mediatr4iner.com` sólo admite los orígenes
+de producción y el alias de la rama no está en la lista; en `metodo.tr4iner.com` salen de R2 (verificación abajo).
+
+### Publicación
+(se completa con el deployment)
+
 ## 2026-10-21 (2) — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
 
 Misma rama, sin publicar. Pedido del usuario: testimonios de hombres y mujeres antes del pie, en video vertical de R2, y
@@ -2449,6 +2484,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-21` — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
 - `2026-10-21` — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
 - `2026-10-21` — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
 - `2026-10-19` — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
