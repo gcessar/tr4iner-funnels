@@ -2569,7 +2569,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
-- `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (rama, sin publicar)
+- `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado; n8n espera el hottok)
 - `2026-10-21` — `/empezar`: el retador del test de precio dice «Planes desde US$400»
 - `2026-10-21` — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
 - `2026-10-21` — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
