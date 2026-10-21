@@ -16,17 +16,15 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#FDF6F0" />
   <title>Caso de estudio de Flor de María · Veronika Alvarado</title>
-  <meta name="description" content="Mira el análisis de la transformación de Flor de María y completa tu evaluación para saber qué ruta de TR4INER encaja contigo." />
+  <meta name="description" content="Mira el análisis de la transformación de Flor de María y elige cómo empezar con TR4INER: el Plan Esencial o el Premium, con videollamadas en vivo." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-flor-va" />
 
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link rel="preconnect" href="https://embed.typeform.com" />
-  <!-- El form se revela a los 3s; precargarlo evita que ahi recien empiece
-       la descarga y el usuario se coma el "Cargando aplicacion...". -->
-  <link rel="preload" as="script" href="https://embed.typeform.com/next/embed.js" crossorigin />
 
   <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
   <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- Tabla de planes compartida con las demás páginas que tenían el Typeform (21-oct-2026). -->
+  <link rel="stylesheet" href="/assets/planes/planes.css?v=20261021" />
 
   <style>
     @font-face {
@@ -83,7 +81,7 @@
 
     .wrap { max-width: 1120px; margin: 0 auto; text-align: center; }
     .hero-sec { padding: 44px 24px 40px; }
-    .next-sec { padding: 56px 24px 40px; }
+    .next-sec { padding: 56px 24px 72px; }
 
     .kick {
       display: inline-flex;
@@ -131,7 +129,7 @@
       letter-spacing: .02em;
       color: var(--muted);
     }
-    .video-box, .fbox {
+    .video-box {
       background: var(--panel);
       border: 1px solid var(--line);
       border-top: 3px solid var(--vino);
@@ -152,54 +150,6 @@
       animation: arrow-bob 1.6s ease-in-out infinite;
     }
     @keyframes arrow-bob { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(8px); } }
-
-    /* Marco del formulario. El min-height es PISO, nunca techo: el alto lo manda
-       el iframe, y con menos de 560 px Typeform apila el botón de continuar
-       sobre la última opción en las preguntas cortas (medido en producción;
-       el diseño traía 520). */
-    .fbox { position: relative; max-width: 600px; margin: 34px auto 0; min-height: 560px; padding: 0; text-align: left; }
-    .fbox #tf-embed { min-height: 560px; }
-    .form-loader {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      font-size: .76rem;
-      letter-spacing: .02em;
-      color: var(--muted);
-      text-align: center;
-      pointer-events: none;
-    }
-
-    /* CSS del widget de Typeform. Va inline porque tf.createWidget() no lo
-       autoinyecta (sí lo hacía el embed por data-tf-*), y sin esto el iframe cae
-       al alto por defecto de 150px. Copiado de
-       embed.typeform.com/next/css/widget.css con el radio del marco. */
-    .tf-v1-widget {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      min-height: inherit;
-    }
-    .tf-v1-widget iframe {
-      width: 100%;
-      height: 100%;
-      min-height: inherit;
-      overflow: hidden;
-      border: none;
-    }
-    .tf-v1-widget-close { display: none; }
-    .tf-v1-widget-iframe-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border: none;
-    }
 
     /* Aparición del segundo bloque, como en el diseño. */
     @keyframes rv-up { from { opacity: 0; transform: translateY(90px); } to { opacity: 1; transform: none; } }
@@ -232,14 +182,6 @@
       .solo-movil { display: inline; }
       .copy { padding: 0; max-width: none; }
       .kick { white-space: nowrap; }
-      .fbox {
-        max-width: 720px;
-        border: 0;
-        border-top: 1px solid var(--line);
-        border-radius: 0;
-        box-shadow: none;
-        background: transparent;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -251,33 +193,6 @@
       .h1 .t1 { display: block; white-space: nowrap; }
     }
 
-    /* Flor muestra el formulario a los 3 s (REVEAL_SECONDS del script): hasta
-       entonces el bloque queda plegado y el pie oculto, para que no salte
-       debajo del video cuando se despliega. Mecánica heredada de la página
-       anterior, sólo cambió la piel. */
-    #typeform-cta {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: max-height 900ms cubic-bezier(0.4, 0, 0.2, 1), opacity 600ms ease, transform 600ms ease;
-    }
-    #typeform-cta.visible { max-height: 3600px; opacity: 1; transform: none; overflow: visible; }
-    body:not(.application-ready) .site-footer { display: none; }
-
-    /* Flor usa el embed por atributos (data-tf-live), que sí inyecta el CSS de
-       Typeform; lo que falta es que el piso de alto baje por el div propio que
-       Typeform mete entre el contenedor y su widget. */
-    /* Con el id en el selector: la regla común `.fbox #tf-embed` (560 px) pesa
-       más que una de sólo clases y le ganaba a este piso. */
-    .fbox #tf-embed[data-tf-live] { min-height: 590px; background: transparent; }
-    .fbox #tf-embed[data-tf-live] > div,
-    .fbox #tf-embed[data-tf-live] .tf-v1-widget,
-    .fbox #tf-embed[data-tf-live] iframe { min-height: inherit; }
-    .fbox.flor-frame { min-height: 590px; }
-    @media (max-width: 640px) {
-      .fbox #tf-embed[data-tf-live], .fbox.flor-frame { min-height: 640px; }
-    }
   </style>
 </head>
 <body>
@@ -298,24 +213,17 @@
       </div>
     </section>
 
-    <section id="typeform-cta" aria-live="polite" aria-labelledby="application-title">
-      <div class="wrap next-sec">
+    <section class="wrap next-sec" id="aplicacion" aria-labelledby="application-title">
       <div class="kick kick-next" data-reveal="kicker">
         <span class="arrow-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#7C2D3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="arrow-bob"><path d="M12 4v16M6 14l6 6 6-6"></path></svg></span>
         <span>Siguiente paso</span>
       </div>
-      <h2 class="h2" id="application-title" data-reveal>Cuéntanos tu situación <span class="frase bloque m-line">en tus propias palabras</span></h2>
-      <p class="copy copy-next" data-copy data-reveal>Cuéntanos qué has intentado y qué<br class="solo-movil" /> quieres cambiar. El equipo revisará tus respuestas para entender qué podría estar frenando tus resultados y ver cómo podemos ayudarte.</p>
-      <div class="fbox flor-frame" data-reveal="card">
-        <div class="form-loader" id="form-loader">Cargando aplicación…</div>
-        <div
-          id="tf-embed"
-          data-tf-live="01KHA5RZHGV02HW971F4227939"
-          data-tf-inline-on-mobile
-          data-tf-auto-resize
-        ></div>
-      </div>
-      </div>
+      <h2 class="h2" id="application-title" data-reveal>Elige cómo quieres <span class="frase">empezar</span></h2>
+      <p class="copy copy-next" data-copy data-reveal>Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con nuestros entrenadores y nutricionistas.</p>
+      <!-- Esencial (Hotmart/Stripe) y Premium (agenda), con testimonios de mujeres de R2: los
+           arma /assets/planes/planes.js. Antes acá estaba el Typeform (hasta el 21-oct-2026).
+           Las UTMs de respaldo son las que antes iban al Typeform: dejan la visita del lado VA. -->
+      <div class="tr4p" id="planes" data-reveal="card" data-slug="florva" data-ruta="/testimonio-flor-va" data-tema="vino" data-testimonios="solo-mujer" data-cabecera="no" data-utm-source="LANDING-VA-DIRECTO" data-utm-campaign="CASOS-VA"></div>
     </section>
   </main>
 
@@ -380,171 +288,7 @@
     })(window, document, "Vidalytics", "vidalytics_embed_gIbYz9eSdIofNh2D", "https://fast.vidalytics.com/embeds/IoH8SL8U/gIbYz9eSdIofNh2D/");
   </script>
   <script src="/attribution.js"></script>
-  <script>
-    (function () {
-      /*
-        CONFIGURACION RAPIDA
-        - Tiempo normal antes de mostrar el Paso 2: cambia el 3 de REVEAL_SECONDS.
-        - Prueba rapida: agrega ?tf_debug=1 a la URL y el contador baja a 2s.
-        - Prueba personalizada: agrega ?trigger_seconds=5 para probar con 5s.
-      */
-      var params = new URLSearchParams(window.location.search);
-      // La ruta VA debe conservar su identidad aun cuando se abra sin UTMs.
-      if (!params.has("utm_source")) params.set("utm_source", "LANDING-VA-DIRECTO");
-      if (!params.has("utm_campaign")) params.set("utm_campaign", "CASOS-VA");
-      if (!params.has("sexo")) params.set("sexo", "Mujer");
-      params.set("funnel", "VA");
-      params.set("funnel_variant", "testimonio-flor-va");
-      var debugTrigger = params.get("tf_debug") === "1";
-      // Solo usa trigger_seconds si viene en la URL; si no, usa 3 por defecto.
-      // (Ojo: Number(null) es 0, por eso se valida params.has antes.)
-      var configuredSeconds = params.has("trigger_seconds") ? Number(params.get("trigger_seconds")) : NaN;
-      var REVEAL_SECONDS = debugTrigger ? 2 : (Number.isFinite(configuredSeconds) && configuredSeconds >= 0 ? configuredSeconds : 3);
-
-      // Evita que el Paso 2 se muestre o cargue Typeform mas de una vez.
-      var triggered = false;
-      var typeformLoaded = false;
-
-      // Elementos principales que controla este script.
-      var tf = document.getElementById("tf-embed");
-      var loader = document.getElementById("form-loader");
-      var timer = document.getElementById("gate-timer");
-      var count = document.getElementById("gate-count");
-      var sticky = document.getElementById("sticky-apply");
-
-      function setHiddenFields() {
-        /*
-          Hidden fields enviados a Typeform.
-          Si agregas o quitas campos ocultos en Typeform, edita esta lista.
-          El script toma cada valor desde la URL, por ejemplo:
-          ?first_name=Juan&email=juan@email.com&utm_source=facebook
-        */
-        // Helpers compartidos de attribution.js. Si el archivo no cargó
-        // (bloqueador), el valor viaja crudo igual — que es lo que Typeform
-        // espera; solo se pierde el escape de comas.
-        var tr4 = window.TR4Track || {};
-        var crudo = function (v) { return v == null ? "" : String(v); };
-        var limpiar = tr4.decodeUtmValue || crudo;
-        var paraTypeform = tr4.hiddenFieldValue || crudo;
-
-        var identityFields = ["first_name", "name", "email", "sexo", "video", "funnel", "funnel_variant"];
-        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
-        var hiddenFields = [];
-        params.forEach(function (value, key) {
-          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
-          if (!allowed || !value) return;
-          // El valor viaja CRUDO. Typeform NO decodifica lo que lee de
-          // data-tf-hidden: lo guarda tal cual y recién lo encodea al armar la
-          // URL de su iframe. Encodear acá era el bug: la campaña quedaba
-          // guardada como el literal "%5BTR4INER%5D%20%5BCE%5D…" y ese texto se
-          // arrastraba al redirect del Typeform, a Calendly, al sheet AGENDAS y
-          // al CAPI de Meta. El decode previo limpia lo que ya haya llegado
-          // doble-encodeado desde afuera.
-          hiddenFields.push(key + "=" + paraTypeform(limpiar(value)));
-        });
-
-        // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
-        // se construye desde el fbclid del primer aterrizaje. Sin ellos Meta no
-        // puede emparejar el Lead del servidor con el clic del anuncio.
-        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
-          ? window.TR4Track.getMetaIds()
-          : {};
-        Object.keys(metaIds).forEach(function (key) {
-          hiddenFields.push(key + "=" + paraTypeform(metaIds[key]));
-        });
-
-        var hidden = hiddenFields.join(",");
-
-        // Typeform lee data-tf-hidden cuando carga su embed.js.
-        if (tf && hidden) {
-          tf.setAttribute("data-tf-hidden", hidden);
-        }
-      }
-
-      function loadTypeform() {
-        /*
-          Carga Typeform solo cuando el Paso 2 aparece.
-          Esto mejora la velocidad inicial porque embed.js no carga al abrir la pagina.
-        */
-        if (typeformLoaded) return;
-        typeformLoaded = true;
-        setHiddenFields();
-
-        var script = document.createElement("script");
-        script.src = "https://embed.typeform.com/next/embed.js";
-        script.async = true;
-
-        // Oculta el texto "Cargando aplicacion..." cuando Typeform termina de cargar.
-        script.onload = function () {
-          if (loader) loader.style.display = "none";
-        };
-        document.head.appendChild(script);
-      }
-
-      function showTypeform() {
-        /*
-          Revela el Paso 2.
-          Aqui ocurre todo lo visual:
-          - Se activa .application-ready para mostrar kit/footer.
-          - Se desvanece el contador.
-          - Se muestra #typeform-cta.
-          - Se carga Typeform.
-        */
-        if (triggered) return;
-        triggered = true;
-
-        var el = document.getElementById("typeform-cta");
-        document.body.classList.add("application-ready");
-        if (timer) timer.classList.add("done");
-
-        if (el) {
-          el.classList.add("visible");
-          loadTypeform();
-        }
-
-        // Muestra el boton flotante en desktop/tablet. En mobile el CSS lo oculta.
-        if (sticky) {
-          window.setTimeout(function () {
-            sticky.classList.add("visible");
-          }, 900);
-        }
-      }
-
-      /*
-        EL CONTADOR ARRANCA AL CARGAR LA PAGINA Y ES VISIBLE DESDE EL INICIO.
-        Se hace asi (y no atado al "play") porque el video suele reproducirse
-        en autoplay: el evento play puede dispararse antes de que lo escuchemos,
-        dejando el temporizador sin aparecer. Arrancar al cargar es predecible
-        con o sin autoplay.
-      */
-      var countdownStarted = false;
-
-      function startCountdown() {
-        if (countdownStarted || triggered) return;
-        countdownStarted = true;
-
-        var remaining = Math.max(0, Math.round(REVEAL_SECONDS));
-        if (count) count.textContent = remaining;
-
-        var countdown = window.setInterval(function () {
-          remaining -= 1;
-          if (count) count.textContent = Math.max(0, remaining);
-
-          // Cuando llega a cero, detiene el contador y revela el Paso 2.
-          if (remaining <= 0) {
-            window.clearInterval(countdown);
-            showTypeform();
-          }
-        }, 1000);
-      }
-
-      // Arranca en cuanto carga la pagina.
-      startCountdown();
-
-      // Funcion manual para pruebas desde consola: window.TR4INER_SHOW_TYPEFORM()
-      window.TR4INER_SHOW_TYPEFORM = showTypeform;
-    })();
-  </script>
+  <script src="/assets/planes/planes.js?v=20261021" defer></script>
   <script>
     /*
       Aparición suave del segundo bloque, portada del diseño de Claude Design.

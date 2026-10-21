@@ -7,7 +7,7 @@
   <script>
     /*
       Instagram puede agregar sus propios UTMs a un enlace que ya los trae.
-      Normalizamos antes de GTM para que analítica y los hidden de Typeform
+      Normalizamos antes de GTM para que analítica, los pagos y la agenda
       lean una sola fuente: gana el primer valor no vacío de cada dato.
     */
     (function () {
@@ -51,21 +51,22 @@
   <meta name="theme-color" content="#000000" />
   <meta name="color-scheme" content="dark" />
   <title>Empieza aquí · Veronika Alvarado | TR4INER</title>
-  <meta name="description" content="Mira el video y cuéntanos tu situación. El equipo de TR4INER lee cada respuesta antes de contactarte." />
+  <meta name="description" content="Mira el video y elige cómo empezar: el Plan Esencial o el Premium, con videollamadas en vivo con el equipo de TR4INER." />
   <link rel="canonical" href="https://metodo.tr4iner.com/empezar-va" />
 
   <meta property="og:locale" content="es_PE" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="TR4INER" />
   <meta property="og:title" content="Empieza aquí · TR4INER" />
-  <meta property="og:description" content="Mira el video y cuéntanos tu situación. El equipo de TR4INER lee cada respuesta antes de contactarte." />
+  <meta property="og:description" content="Mira el video y elige cómo empezar: el Plan Esencial o el Premium, con videollamadas en vivo con el equipo de TR4INER." />
   <meta property="og:url" content="https://metodo.tr4iner.com/empezar-va" />
 
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link rel="preconnect" href="https://embed.typeform.com" />
 
   <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
   <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- Tabla de planes compartida con las demás páginas que tenían el Typeform (21-oct-2026). -->
+  <link rel="stylesheet" href="/assets/planes/planes.css?v=20261021" />
 
   <style>
     @font-face {
@@ -123,7 +124,7 @@
 
     .wrap { max-width: 1120px; margin: 0 auto; }
     .video-sec { padding: 20px 24px 40px; text-align: center; }
-    .next-sec { padding: 20px 24px 40px; text-align: left; }
+    .next-sec { padding: 20px 24px 72px; text-align: left; }
     .col { max-width: 720px; margin: 0 auto; }
 
     .sound {
@@ -167,62 +168,6 @@
       text-wrap: pretty;
     }
 
-    /* Marco del formulario. El min-height es PISO, nunca techo: el alto lo manda
-       el iframe, y con menos de 560 px Typeform apila el botón de continuar
-       sobre la última opción en las preguntas cortas (medido en producción;
-       el diseño traía 520). */
-    .fbox {
-      position: relative;
-      max-width: 600px;
-      margin: 34px 0 0;
-      min-height: 560px;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .fbox #tf-embed { min-height: 560px; }
-    .form-loader {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      font-family: var(--sys);
-      font-size: .76rem;
-      letter-spacing: .02em;
-      color: var(--muted);
-      text-align: center;
-      pointer-events: none;
-    }
-
-    /* CSS del widget de Typeform. Va inline porque tf.createWidget() no lo
-       autoinyecta (sí lo hacía el embed por data-tf-*), y sin esto el iframe cae
-       al alto por defecto de 150px. Copiado de
-       embed.typeform.com/next/css/widget.css con el radio del marco. */
-    .tf-v1-widget {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      min-height: inherit;
-    }
-    .tf-v1-widget iframe {
-      width: 100%;
-      height: 100%;
-      min-height: inherit;
-      overflow: hidden;
-      border: none;
-    }
-    .tf-v1-widget-close { display: none; }
-    .tf-v1-widget-iframe-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      border: none;
-    }
-
     /* Aparición del segundo bloque, como en el diseño. */
     @keyframes rv-up { from { opacity: 0; transform: translateY(90px); } to { opacity: 1; transform: none; } }
     @keyframes rv-card { from { opacity: 0; transform: translateY(110px); } to { opacity: 1; transform: none; } }
@@ -251,11 +196,6 @@
       .video-sec, .next-sec, .site-footer > div { padding-left: 20px; padding-right: 20px; }
       .h1 { font-size: 1.3rem; }
       .kick { white-space: nowrap; }
-      .fbox {
-        max-width: 720px;
-        border-top: 1px solid var(--line);
-        border-radius: 0;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -266,7 +206,7 @@
 <body>
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T88G63P" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1" /></noscript>
-  <a class="skip-link" href="#aplicacion">Saltar al formulario</a>
+  <a class="skip-link" href="#aplicacion">Saltar a los planes</a>
 
   <main>
     <section class="wrap video-sec" aria-label="Video">
@@ -282,16 +222,13 @@
     <section class="wrap next-sec" id="aplicacion" aria-labelledby="application-title">
       <div class="col">
         <p class="kick" data-reveal="kicker">Siguiente paso</p>
-        <h1 class="h1" id="application-title" data-reveal>Cuéntame <span class="frase">qué quieres lograr</span><span class="l2">y qué te está costando</span></h1>
-        <p class="copy" data-reveal>Tus respuestas nos ayudarán a entender qué puede estar frenando tus resultados y cómo ayudarte.</p>
-        <div class="fbox typeform-frame" data-reveal="card">
-          <div class="form-loader" id="form-loader" role="status">Cargando evaluación…</div>
-          <div id="tf-embed"></div>
-          <noscript>
-            <p class="form-loader">Activa JavaScript para completar la evaluación.</p>
-          </noscript>
-        </div>
+        <h1 class="h1" id="application-title" data-reveal>Elige cómo <span class="frase">quieres empezar</span></h1>
+        <p class="copy" data-reveal>Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con nuestros entrenadores y nutricionistas.</p>
       </div>
+      <!-- Esencial (Hotmart/Stripe) y Premium (agenda), con testimonios de mujeres de R2: los
+           arma /assets/planes/planes.js. Antes acá estaba el FORM VA de Typeform, que mandaba al
+           WhatsApp de Veronika (hasta el 21-oct-2026). Las UTMs de respaldo son las suyas. -->
+      <div class="tr4p" id="planes" data-reveal="card" data-slug="empezarva" data-ruta="/empezar-va" data-tema="champan" data-testimonios="solo-mujer" data-cabecera="no" data-utm-source="EMPEZAR-VA-DIRECTO" data-utm-campaign="EMPEZAR-VA"></div>
     </section>
   </main>
 
@@ -323,134 +260,10 @@
   </script>
   <script src="/attribution.js"></script>
   <script>
-    (function () {
-      "use strict";
-
-      /*
-        Formulario «FORM VA» (niqtWgJp): se usa SÓLO en esta página, así que
-        cada respuesta suya es de /empezar-va y el CRM la cuenta sin marcador.
-        No hay registro previo: la única llave hacia la venta es el teléfono
-        que la persona escribe al final. Typeform redirige después al WhatsApp
-        de ManyChat de Veronika (lo configura el propio formulario, no esta
-        página).
-      */
-      var FORM_ID = "niqtWgJp";
-      var VARIANT = "empezar-va";
-
-      var params = new URLSearchParams(window.location.search);
-      var tracked = window.TR4Track && window.TR4Track.getAttribution
-        ? window.TR4Track.getAttribution()
-        : {};
-      var typeformLoaded = false;
-      var tf = document.getElementById("tf-embed");
-      var loader = document.getElementById("form-loader");
-      var frame = document.querySelector(".typeform-frame");
-
-      Object.keys(tracked).forEach(function (key) {
-        if (!params.has(key) && tracked[key]) params.set(key, tracked[key]);
-      });
-
-      // Typeform sólo reenvía las UTMs: el `-VA` tiene que viajar en alguna de
-      // ellas para que el CRM y los puentes reconozcan a Veronika.
-      if (!params.get("utm_source")) params.set("utm_source", "EMPEZAR-VA-DIRECTO");
-      if (!params.get("utm_campaign")) params.set("utm_campaign", "EMPEZAR-VA");
-
-      function buildHiddenFields() {
-        // Los mismos nombres que el formulario declara como ocultos. Typeform
-        // descarta en silencio cualquier otro, así que agregar uno acá sin
-        // declararlo allá no sirve de nada.
-        var declared = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "video", "variant"];
-        var limpiar = window.TR4Track && window.TR4Track.decodeUtmValue
-          ? window.TR4Track.decodeUtmValue
-          : function (v) { return v; };
-        var hidden = {};
-
-        declared.forEach(function (key) {
-          var value = params.get(key);
-          // El SDK codifica cada valor por su cuenta: acá van en crudo para que
-          // espacios, tildes y emojis lleguen enteros.
-          if (value) hidden[key] = limpiar(value);
-        });
-
-        // fbc/fbp se toman del dominio actual; no se inventan ni se sustituyen por IDs externos.
-        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
-          ? window.TR4Track.getMetaIds()
-          : {};
-        Object.keys(metaIds).forEach(function (key) {
-          if (metaIds[key]) hidden[key] = metaIds[key];
-        });
-
-        return hidden;
-      }
-
-      function mountTypeform() {
-        if (!window.tf || !window.tf.createWidget || !tf) return;
-        window.tf.createWidget(FORM_ID, {
-          container: tf,
-          hideHeaders: true,
-          // Evita que un swipe al scrollear la página salte de pregunta.
-          disableScroll: true,
-          inlineOnMobile: true,
-          // Booleano, sin "min,max": el alto sigue a la pregunta y las que tienen
-          // muchas opciones dejan de cortar el botón de continuar.
-          autoResize: true,
-          // GA4 va centralizado en GTM, no compartido con el embed.
-          shareGaInstance: false,
-          // El final del formulario abre WhatsApp: tiene que navegar esta
-          // página, no el iframe, donde WhatsApp no carga.
-          redirectTarget: "_parent",
-          hidden: buildHiddenFields(),
-          onReady: function () {
-            var iframe = tf.querySelector("iframe");
-            if (iframe) iframe.title = "Evaluación TR4INER · Veronika Alvarado";
-            if (loader) loader.style.display = "none";
-          },
-          onSubmit: function () {
-            window.dataLayer.push({ event: "empezar_va_submit", funnel_variant: VARIANT });
-          }
-        });
-      }
-
-      function loadTypeform() {
-        if (typeformLoaded) return;
-        typeformLoaded = true;
-
-        if (window.tf && window.tf.createWidget) {
-          mountTypeform();
-          return;
-        }
-
-        var script = document.createElement("script");
-        script.src = "https://embed.typeform.com/next/embed.js";
-        script.async = true;
-        script.onload = mountTypeform;
-        script.onerror = function () {
-          if (loader) loader.textContent = "No pudimos cargar la evaluación. Recarga la página para intentarlo otra vez.";
-        };
-        document.head.appendChild(script);
-      }
-
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: "empezar_va_view", funnel_variant: VARIANT });
-
-      if (params.get("tf_debug") === "1" || !("IntersectionObserver" in window)) {
-        loadTypeform();
-      } else {
-        // Se precarga un scroll antes de llegar, para no dejar a nadie mirando
-        // el «Cargando evaluación…».
-        var observer = new IntersectionObserver(function (entries) {
-          if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
-          observer.disconnect();
-          loadTypeform();
-        }, { rootMargin: "1200px 0px" });
-        observer.observe(frame);
-
-        // Red de seguridad: si alguien se queda viendo el VSL sin scrollear, el form
-        // igual queda listo para cuando baje.
-        setTimeout(loadTypeform, 6000);
-      }
-    })();
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "empezar_va_view", funnel_variant: "empezar-va" });
   </script>
+  <script src="/assets/planes/planes.js?v=20261021" defer></script>
   <script>
     /*
       Aparición suave del segundo bloque, portada del diseño de Claude Design.
