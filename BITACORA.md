@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado; n8n espera el hottok)
+## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado y activo)
 
 Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegue al CRM con las UTMs de quien compró.
 
@@ -18,7 +18,7 @@ Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegu
   `fbc`, `fbp`, `video`, la URL y el brazo. `empezar_esencial_click` lleva `codigo_clic`.
 - **CRM (`crm-ventas`, rama `work/checkout-clic`):** tabla `CheckoutClick`, `/api/checkout/click` y `/api/checkout/compra`,
   y `decidirSync` deduplica por código de transacción aunque no haya membresía. Detalle en la bitácora del CRM.
-- **n8n:** «Checkout directo /empezar → CRM» (`UJLMdE3mRmPVhq42`), **apagado**. Hotmart (`hotmart-compra-tr4iner`, sólo
+- **n8n:** «Checkout directo /empezar → CRM» (`UJLMdE3mRmPVhq42`), **activo desde el 21-oct**. Hotmart (`hotmart-compra-tr4iner`, sólo
   `PURCHASE_APPROVED`, primer cobro, `sck` que empieza con `empezar-`) y Stripe (`checkout.session.completed` pagada,
   `client_reference_id` `empezar-…`; en una suscripción busca el `pi_` en la factura). Llama a `/api/checkout/compra` y
   después a `sync-sale` (vendedor «Venta directa»). El webhook de Hotmart exige el header `X-HOTMART-HOTTOK` y **no
@@ -32,21 +32,27 @@ Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegu
   código del nodo de n8n → `lead_creado` con UTMs de Meta, `ad_id` y `fbc` → `sync-sale` `moved_to_win`, «Venta
   directa». Reenvío: `already_synced`. Normalizadores: descartan renovación, `PURCHASE_COMPLETE`, otros `sck` y Stripe
   sin pagar.
-- No se probó con una compra real ni con avisos reales: n8n no guarda ejecuciones de Hotmart para ver su forma exacta.
-  El `sck` se lee de `purchase.origin.sck` según la documentación de Hotmart; el CRM guarda el aviso crudo en
-  `CheckoutClick.compra` para confirmarlo con la primera venta.
+- No se probó con una compra real. El `sck` se leía de `purchase.origin.sck` según la documentación de Hotmart; la
+  prueba real de Hotmart mostró que viene en `purchase.sckPaymentLink` (corregido, ver Publicación, punto 4).
 
 ### Publicación (21-oct, con OK del usuario)
 1. **CRM:** migración aplicada en Neon de producción y `main` → `f65ab0d`, `dpl_EZSHJR3XugDYNnYe9HYcMnCxPQ68` **Ready**.
 2. **Página:** `main` → `b68384d`, `dpl_2AKbXZ7hR6MJoorvDKru9XPzCi4d` **Ready** (después del CRM, para no perder clics).
    Clic real en `metodo.tr4iner.com/empezar` con Chrome: guardado en `CheckoutClick` de producción con la campaña cruda,
    `fbclid` y `fbc`. **Registro de prueba:** `empezar-org-71qrkrg8xs` (`utm_source=verificacion-claude`); excluirlo.
-3. **Falta (usuario):** credencial `X-HOTMART-HOTTOK` en el nodo «Compra Hotmart» de `UJLMdE3mRmPVhq42` y activar el
-   flujo (Stripe registra solo su webhook).
-4. **Falta (usuario):** Hotmart → Herramientas → Webhook: `https://primary-production-0efa.up.railway.app/webhook/hotmart-compra-tr4iner`,
-   evento `PURCHASE_APPROVED`, producto `M84590773F`.
-5. La primera venta (o una de prueba) confirma que vuelve el `sck`. Hasta el paso 4, los clics se guardan pero ninguna
-   compra se une.
+3. **n8n activo.** El usuario cargó el hottok (credencial «X-HOTMART-HOTTOK», `SrDWsWBh9VY3tYPW`) y configuró el webhook de
+   Hotmart (`…/webhook/hotmart-compra-tr4iner`, `PURCHASE_APPROVED`, producto `M84590773F`). Sin hottok o con uno
+   falso responde 403. Stripe registró solo su webhook: `we_1UT6YDI0sLGPSPbwaZZNXvKq` (`checkout.session.completed`).
+4. **La prueba de Hotmart cambió el normalizador.** Dos avisos de prueba (`PURCHASE_APPROVED` y `PURCHASE_COMPLETE`,
+   ejecuciones `722917` y `722918`) entraron con el hottok y se descartaron sin tocar el CRM, como corresponde. Pero
+   **el aviso real no trae `purchase.origin`: el `sck` viene en `purchase.sckPaymentLink`**. Con lo publicado antes,
+   ninguna compra se habría unido. El nodo «Normalizar Hotmart» ahora lee `sckPaymentLink` (y `origin.sck` de
+   respaldo), arma el teléfono con `checkout_phone_code` + `checkout_phone` y, si la fecha de aprobación está a más de 7
+   días del aviso (la prueba trae 2017), usa la del aviso. Probado contra el aviso real con un código de `/empezar`:
+   arma la compra; la prueba tal cual, una renovación y `PURCHASE_COMPLETE` se descartan. Respaldo previo:
+   `~/Documents/Ruta Tr4iner/respaldos-n8n/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-sckPaymentLink.json`.
+5. **Falta:** la primera venta real confirma la cadena completa (el aviso crudo queda en `CheckoutClick.compra`). Las
+   pruebas de Hotmart no sirven para eso: traen un `sckPaymentLink` fijo (`sckPaymentLinkTest`).
 
 ### Pendiente aparte
 - Las compras de Stripe por suscripción: si la API de la cuenta ya no da `payment_intent` en la factura, la venta queda
@@ -2569,7 +2575,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
-- `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado; n8n espera el hottok)
+- `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado y activo)
 - `2026-10-21` — `/empezar`: el retador del test de precio dice «Planes desde US$400»
 - `2026-10-21` — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
 - `2026-10-21` — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
