@@ -1729,13 +1729,57 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(EMAIL)) EMAIL = "";
 
       // ── Plan Esencial ──────────────────────────────────────────
-      // Hotmart guarda src y sck con la venta, y Stripe el client_reference_id: es lo que
-      // une cada compra con esta página y con el brazo del test.
+      // Código del clic («empezar-ocu-k3h2j1x9p0»): viaja como `sck` (Hotmart) y como
+      // `client_reference_id` (Stripe), y al tocar el botón el CRM lo guarda con las UTMs.
+      // Cuando la pasarela avisa la compra, n8n trae el código y el CRM la atribuye. Es
+      // la única forma: el checkout no pide nada antes, y en el SQL una compra directa
+      // queda sin vendedor (ver `src/lib/checkout.ts` del CRM). Sólo minúsculas, números
+      // y guiones: es lo que aceptan los dos.
+      function azar(largo) {
+        var abc = "abcdefghijklmnopqrstuvwxyz0123456789";
+        var salida = "";
+        try {
+          var bytes = new Uint8Array(largo);
+          window.crypto.getRandomValues(bytes);
+          for (var i = 0; i < largo; i++) salida += abc[bytes[i] % 36];
+          return salida;
+        } catch (error) { /* sin crypto: alcanza Math.random para no chocar */ }
+        while (salida.length < largo) salida += Math.random().toString(36).slice(2);
+        return salida.slice(0, largo);
+      }
+      var CODIGO = REF + "-" + azar(10);
+      var CRM_CLIC = "https://crm-ventas-eosin.vercel.app/api/checkout/click";
+
+      function avisarClic(pasarela) {
+        var utm = {};
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (clave) {
+          if (ATRIB[clave]) utm[clave] = ATRIB[clave];
+        });
+        var cuerpo = JSON.stringify({
+          codigo: CODIGO,
+          pasarela: pasarela,
+          producto: "esencial",
+          pagina: "/empezar",
+          variant: BRAZO || null,
+          page_url: window.location.href,
+          timestamp: new Date().toISOString(),
+          utm: utm,
+          fbclid: ATRIB.fbclid || null,
+          fbc: ATRIB.fbc || null,
+          fbp: ATRIB.fbp || null,
+          video: ATRIB.video || null
+        });
+        // sendBeacon sobrevive a la salida hacia el checkout y va como text/plain, sin
+        // preflight. Si no está o lo rechaza, fetch con keepalive hace lo mismo.
+        try { if (navigator.sendBeacon && navigator.sendBeacon(CRM_CLIC, cuerpo)) return; } catch (error) { /* sigue */ }
+        try { fetch(CRM_CLIC, { method: "POST", body: cuerpo, keepalive: true, mode: "no-cors" }); } catch (error) { /* nunca frena el pago */ }
+      }
+
       function enlaceHotmart() {
         var url = new URL(HOTMART);
         Object.keys(ATRIB).forEach(function (clave) { url.searchParams.set(clave, ATRIB[clave]); });
         url.searchParams.set("src", "empezar");
-        url.searchParams.set("sck", REF);
+        url.searchParams.set("sck", CODIGO);
         if (NOMBRE) url.searchParams.set("name", NOMBRE);
         if (EMAIL) url.searchParams.set("email", EMAIL);
         return url.toString();
@@ -1743,8 +1787,7 @@
 
       function enlaceStripe() {
         var url = new URL(STRIPE);
-        // Stripe sólo acepta letras, números, - y _ en client_reference_id.
-        url.searchParams.set("client_reference_id", REF + "-" + Math.random().toString(36).slice(2, 10));
+        url.searchParams.set("client_reference_id", CODIGO);
         ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (clave) {
           if (ATRIB[clave]) url.searchParams.set(clave, ATRIB[clave]);
         });
@@ -1758,7 +1801,8 @@
       stripe.href = enlaceStripe();
       document.querySelectorAll(".pagar").forEach(function (enlace) {
         enlace.addEventListener("click", function () {
-          medir("empezar_esencial_click", { metodo_pago: enlace.getAttribute("data-metodo") });
+          avisarClic(enlace.getAttribute("data-metodo"));
+          medir("empezar_esencial_click", { metodo_pago: enlace.getAttribute("data-metodo"), codigo_clic: CODIGO });
         });
       });
 
