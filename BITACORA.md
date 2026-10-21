@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-21 (6) — Los casos de estudio y /empezar-va cambian el Typeform por la tabla de planes (sin publicar)
+## 2026-10-21 (6) — Los casos de estudio y /empezar-va cambian el Typeform por la tabla de planes (publicado)
 
 - **Pedido del usuario:** en todas las páginas con Typeform incrustado, en vez del Typeform las dos tarjetas de `/empezar` (Esencial US$77/mes por Hotmart o Stripe y Premium con agenda), con testimonios, y que todo se mida. Se descartó un test A/B: cambio directo. Sin salida a WhatsApp.
 - **Páginas (8):** `/testimonio-flor`, `/testimonio-dashiel`, `/testimonio-andrea`, `/testimonio-christian` (tema `neu`, testimonios filtrados por caso), `/testimonio-flor-va`, `/testimonio-rosita-va/video`, `/testimonio-andrea-va/video` (tema `vino`, sólo testimonios de mujeres) y `/empezar-va` (tema `champan`, sólo mujeres). Mismos enlaces que `/empezar` (Hotmart `x65af12s`, Stripe `plink_1USNe1…`, Calendly «Asesoría TR4INER»), Premium «A tu medida» (el test de precio sigue apagado y sólo existe en `/empezar`).
@@ -9,7 +9,9 @@
 - **Copy:** donde el texto pedía «contarnos» o «completar tu evaluación», ahora «elige cómo empezar». Las de Veronika conservan su «Siguiente paso» con la flecha; su encabezado dice «Elige cómo quieres empezar».
 - **Verificación local** (servidor con los rewrites de `vercel.json` y n8n simulado): en las 8 páginas el Typeform no carga, no hay errores de consola ni scroll horizontal, cada una lleva su código, las de VA rellenan sus UTMs; la reserva directa de Flor llegó con `flor-org-…`, UTMs y la ruta en la nota del asesor; el calendario completo abre con `salesforce_uuid=flor-org-cal`. Capturas en `~/Documents/Ruta Tr4iner/capturas/planes-casos-2026-10-21/`.
 - **Aviso:** las campañas de Meta activas optimizan por agendas («Agenda | Calendly» y «Agenda | All»). La compra directa del Esencial no cuenta como agenda y ya no hay ruta al setter: mirar el costo por agenda los primeros días.
-- **Para publicar** (falta el OK del usuario): CRM (`work/planes-casos` en `crm-ventas`) → n8n «Checkout directo» (aceptar los códigos nuevos; hoy sólo `empezar-`) → esta rama en `main`.
+- **Copy de la sesión (pedido del usuario):** «…en una sesión gratuita de 30 minutos.» sin «por videollamada», y en la hoja de agenda «Sesión con un asesor» con el ícono de video. También en `/empezar`.
+- **Publicado con el OK del usuario, en este orden:** CRM `main` → `6c03e49` (`dpl_4eteFBtwnLhuh7pArTSYxH2D4CpJ` · Ready, sin migración); n8n `UJLMdE3mRmPVhq42`, ahora «Checkout directo (páginas de planes) → CRM», acepta los códigos de las 9 páginas (respaldo previo en `~/Documents/Ruta Tr4iner/respaldos-n8n/`), sigue activo y con la oferta `x65af12s` y el enlace de Stripe intactos; funnel `main` → `204a8d6` (`dpl_8LJDKvfWn9kToxhva3EtRJ2NpcNt` · Ready en `metodo.tr4iner.com`).
+- **Verificado en producción** (navegador sin cabeza, sin GTM y sin tocar los pagos): en las 8 páginas el Typeform no carga, no hay errores, cada una lleva su código en Hotmart y Stripe, los testimonios salen como se pidió y las de VA rellenan sus UTMs. Pendiente: ver la primera compra y la primera agenda reales de un caso en el panel «Planes».
 
 ## 2026-10-21 — Ruta: portadas de «Cómo conseguir tu cambio físico en la MITAD de tiempo» (hombres y mujeres)
 
