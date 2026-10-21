@@ -54,8 +54,14 @@ Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegu
 5. **Sólo la oferta `x65af12s`** (pedido del usuario, 21-oct: el producto `M84590773F` tiene varios precios y sólo se
    rastrea el Plan Esencial de US$77 al mes). «Normalizar Hotmart» exige `purchase.offer.code = x65af12s`, además del
    código `empezar-…`, `PURCHASE_APPROVED` y primer cobro. Probado con el aviso real: otra oferta, oferta vacía o un
-   código ajeno se descartan. Stripe no lo necesita: el Payment Link `4gM7sLbD67Cx45x32w9Zm2V` sólo vende ese plan.
-   Respaldo previo: `~/Documents/Ruta Tr4iner/respaldos-n8n/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-filtro-oferta.json`.
+   código ajeno se descartan. Respaldo previo:
+   `~/Documents/Ruta Tr4iner/respaldos-n8n/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-filtro-oferta.json`.
+   **Stripe, igual (pedido del usuario):** sólo la suscripción del Payment Link de `/empezar`
+   (`buy.stripe.com/4gM7sLbD67Cx45x32w9Zm2V` = `plink_1USNe1I0sLGPSPbwggOvOjJr`, precio `price_1USNaFI0sLGPSPbw1tHpL7eF`,
+   77 USD mensual; leído de la API de Stripe con un flujo temporal de n8n, ya borrado). «Normalizar Stripe» exige ese
+   `payment_link` y `mode = subscription`. **No se filtra por monto:** hay otro enlace activo de US$77 al mes, de otro
+   producto (`plink_1TC0nXI0sLGPSPbwZWqLn6IN`). Probado: el otro enlace, un pago único, una sesión sin enlace, un código
+   ajeno y una sesión sin pagar se descartan. Respaldo previo: `…/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-filtro-stripe.json`.
 6. **Falta:** la primera venta real confirma la cadena completa (el aviso crudo queda en `CheckoutClick.compra`). Las
    pruebas de Hotmart no sirven para eso: traen un `sckPaymentLink` fijo (`sckPaymentLinkTest`) y la oferta `test`.
 
