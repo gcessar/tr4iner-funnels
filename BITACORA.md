@@ -51,8 +51,13 @@ Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegu
    días del aviso (la prueba trae 2017), usa la del aviso. Probado contra el aviso real con un código de `/empezar`:
    arma la compra; la prueba tal cual, una renovación y `PURCHASE_COMPLETE` se descartan. Respaldo previo:
    `~/Documents/Ruta Tr4iner/respaldos-n8n/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-sckPaymentLink.json`.
-5. **Falta:** la primera venta real confirma la cadena completa (el aviso crudo queda en `CheckoutClick.compra`). Las
-   pruebas de Hotmart no sirven para eso: traen un `sckPaymentLink` fijo (`sckPaymentLinkTest`).
+5. **Sólo la oferta `x65af12s`** (pedido del usuario, 21-oct: el producto `M84590773F` tiene varios precios y sólo se
+   rastrea el Plan Esencial de US$77 al mes). «Normalizar Hotmart» exige `purchase.offer.code = x65af12s`, además del
+   código `empezar-…`, `PURCHASE_APPROVED` y primer cobro. Probado con el aviso real: otra oferta, oferta vacía o un
+   código ajeno se descartan. Stripe no lo necesita: el Payment Link `4gM7sLbD67Cx45x32w9Zm2V` sólo vende ese plan.
+   Respaldo previo: `~/Documents/Ruta Tr4iner/respaldos-n8n/checkout-empezar-UJLMdE3mRmPVhq42-2026-10-21-antes-filtro-oferta.json`.
+6. **Falta:** la primera venta real confirma la cadena completa (el aviso crudo queda en `CheckoutClick.compra`). Las
+   pruebas de Hotmart no sirven para eso: traen un `sckPaymentLink` fijo (`sckPaymentLinkTest`) y la oferta `test`.
 
 ### Pendiente aparte
 - Las compras de Stripe por suscripción: si la API de la cuenta ya no da `payment_intent` en la factura, la venta queda
