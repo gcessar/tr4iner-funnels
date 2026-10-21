@@ -36,6 +36,7 @@ Rutas objetivo del proyecto:
 - `/calendly-*` → agendamiento y confirmación del funnel Caso de Estudio.
 - `/fit4` → VSL privada de FIT4CHALLENGE AN y compatibilidad temporal con la selección VA por UTMs.
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
+- `/empezar` → VSL + tabla de planes (desde el 21-oct-2026, en rama): **Plan Esencial** US$77/mes (Hotmart, Stripe de respaldo) y **Plan Premium**, cuya sesión gratuita se agenda en una hoja propia por la API de Calendly (`api/empezar/*` → webhooks de n8n del chat). Reservas reales sólo con `EMPEZAR_AGENDA_REAL=1`. Sin Typeform.
 - `/empezar-va` → página directa de Veronika: VSL (Vidalytics `B7JmheiJ3cd63CsY`) + formulario PROPIO «FORM VA» (`niqtWgJp`), sin registro previo. Typeform redirige al WhatsApp de ManyChat de Veronika. La única llave hacia la venta es el teléfono del formulario; se decidió no pedir código en WhatsApp (6-oct). Diseño «Negro champán», no «Vino crema». La mide el panel `/empezar-va` de «Funnel VA» en el CRM.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero. **Desde el 15-oct-2026 `/biblioteca/videos/` es la Ruta Tr4iner** (módulos por días y por calendario, rutina, videos de R2, chat del equipo); su catálogo lo sirve el CRM (`genesis-preview-catalog.json`).
 - `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
@@ -188,6 +189,12 @@ uno lee sólo su cookie. **Mientras corre: tocar SIEMPRE las dos páginas de mé
 idénticas salvo el bloque «Brazo INL» del CSS y `setupInlineRegistration` del JS). Los
 retadores de hook de la campaña MEDICOS sí se pueden apagar a las 72 h: el reparto es por
 visitante y los dos brazos ven la misma mezcla. Criterio en `BITACORA.md`, entrada del 24-sep.
+
+**Test de PRECIO del Premium en `/empezar`** (`emp_precio_202610`): **armado y APAGADO**
+(`TEST_EMPEZAR = false` en `middleware.ts`). `OCU` (control, «A tu medida») contra `VIS`
+(«Planes desde US$300»), cookie `ab_emp`. Los dos brazos son el mismo archivo: el `<head>`
+lee la cookie y muestra uno de los dos precios. KPI y fuente de tráfico sin declarar todavía
+(ver entrada del 21-oct de `BITACORA.md`): `/empezar` casi no recibe tráfico pago.
 
 `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin ruta**:
 revertir es cambiar una línea, no restaurar archivos.

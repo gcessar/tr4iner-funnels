@@ -1,5 +1,81 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
+
+Rama `claude/empezar-pricing-table-c849f7`, **sin publicar** (pedido del usuario: trabajar en local antes de producción).
+
+### Qué cambió
+- **`empezar/index.html`:** se va el Typeform. Queda el VSL (`o1Hu8Smxc1TpaN4k`) sobre placa neumórfica y, debajo, «Elige
+  cómo quieres empezar.» con dos tarjetas, con la superficie única de `/calendly-an` (fondo `#F2F3F5`, luz y sombra, mismas
+  fuentes locales):
+  - **Plan Esencial — US$77 / mes.** Beneficios del PDF «Método TR4INER» (los mismos que cuenta el chat de la Ruta).
+    Botón a Hotmart (`M84590773F?off=x65af12s`) y enlace secundario a Stripe (`4gM7sLbD67Cx45x32w9Zm2V`).
+  - **Plan Premium**, la única placa en tinta: todo lo del Esencial + videollamadas en vivo con entrenadores y
+    nutricionistas. «Sujeto a disponibilidad y cupos.» Botón «Agendar mi sesión gratuita».
+  - **Firma de la página:** «Próximo horario libre: hoy, 4:30 p. m.» en la tarjeta del Premium, leído de Calendly al
+    acercarse la tarjeta.
+- **Hoja de agenda propia (horario → datos → listo):** días y horarios libres en la hora local de la persona, agrupados por
+  mañana/tarde/noche; después nombre, correo, WhatsApp con código de país (`prefijo-pais.js` de la Ruta, cargado recién en
+  ese paso) y «¿Qué te gustaría lograr?» (va a la pregunta obligatoria «situación actual y meta» de la cita). La reserva
+  sale por la API de Calendly sin que la persona vea Calendly. Si el horario se ocupó, vuelve a la lista con aviso; si los
+  horarios o la reserva fallan, abre el calendario de Calendly (en ese horario y con los datos cargados).
+- **`api/empezar/horarios.js` y `api/empezar/agendar.js`** (+ `lib/empezar-agenda.js`): reusan los webhooks de n8n del chat
+  (`ruta-chat-horarios` `pWAqgpRt3WrBvR4D` y `ruta-chat-agendar` `v3qwL42ibW1xjNY5`, mismo evento «Asesoría Tr4iner» de AN,
+  así que la cita entra sola a AGENDAS, ManyChat y el Schedule de Meta). Necesitan `RUTA_CHAT_SECRET`. **Modo prueba por
+  defecto:** una reserva real exige `EMPEZAR_AGENDA_REAL=1` en Vercel (llave propia, no la del chat). Horarios con 30 s de
+  CDN; la reserva vuelve a comprobar el horario antes de mandarla. Campo trampa contra robots.
+- **Atribución:** Hotmart recibe todos los parámetros + `src=empezar` y `sck=empezar-ocu|vis|org`; Stripe
+  `client_reference_id=empezar-<brazo>-<azar>`, UTMs y `prefilled_email`; la cita, las cinco UTM crudas y
+  `salesforce_uuid=empezar-<brazo>-<azar>` (n8n lo copia al CRM). El asesor no ve el brazo.
+- **Eventos al dataLayer:** `empezar_esencial_click` (`metodo_pago`), `empezar_premium_open`, `empezar_horario_elegido`,
+  `empezar_agenda_enviada`, `empezar_agendo` (`via: api|calendly`), `empezar_calendly_abierto`, `empezar_agenda_respaldo`
+  y `empezar_precio_visto`. Falta decidir en GTM cuál va a Meta como `InitiateCheckout`.
+
+### Test `emp_precio_202610` — ARMADO Y APAGADO
+| Brazo | La tarjeta del Premium dice |
+|---|---|
+| `OCU` (control) | «Precio · A tu medida» |
+| `VIS` (retador) | «Planes desde US$300» |
+
+- `middleware.ts` reparte 50/50 con la cookie `ab_emp` (180 días) y etiquetas nuevas; **`TEST_EMPEZAR = false`**: hasta
+  encenderlo nadie recibe cookie y todos ven `OCU`. A diferencia de `/medicos`, los dos brazos son el mismo archivo: un
+  script del `<head>` lee la cookie antes de pintar y muestra uno de los dos precios. Así los brazos no pueden separarse en
+  otra cosa al editar la página (una sola variable), sin rewrite ni parpadeo.
+- Exposición: `emp_precio_exposure_ocu|vis` al cargar (GA4, `experiment_id: emp_precio_202610`) y `empezar_precio_visto`
+  cuando el precio entra en pantalla (las tarjetas están debajo del video: es el denominador más fino).
+- **Al cerrar el test:** borrar la lectura de `ab_emp` del `<head>`, o la cookie vieja seguirá mostrando su precio.
+
+### Antes de encender (decisiones del usuario)
+- **Tráfico:** GA4, últimos 30 días, ~190 usuarios en `/empezar`, ~140 desde enlaces de ManyChat/WhatsApp (`l.wl.co`,
+  `FACE-AN-Many`, `Instagram-AN-Many`) y **2 de `MetaAds`**. Con la regla de «sólo tráfico pago» el test quedaría vacío.
+  O se lleva una campaña de Meta a `/empezar`, o se incluye el tráfico tibio de ManyChat (cambiar el filtro de
+  `testEmpezar`) sabiendo que a ~6 personas por día no hay decisión en 7 días.
+- **KPI, antes de ver datos:** mostrar el precio probablemente baje las agendas y suba su calidad, así que «agendas por
+  exposición» sola premiaría al control. Propuesta: decide **agendas que se presentan a la llamada por exposición**;
+  guardarraíl, compras del Esencial por exposición (`VIS` no cae más de 20%); ratifica la venta a 90 días.
+- Confirmar si «desde US$300» es por mes o por programa.
+
+### Verificación (local)
+- Servidor local con las dos funciones reales y n8n simulado (sin tocar Calendly). Chrome 390 y 1280 px, los dos brazos:
+  sin errores de consola ni scroll horizontal; cada brazo muestra sólo su precio y emite su exposición.
+- Reserva de punta a punta: n8n recibió `prueba: true`, `+51987654321`, el objetivo como situación y `tracking` con
+  `utm_campaign=PRUEBA-[X]` crudo y `salesforce_uuid=empezar-vis-…`. Correo vacío → marca el campo. Horario ocupado entre
+  la elección y el envío → 409 sin llamar a Calendly y vuelve a la lista con aviso. Horarios caídos → Calendly con aviso.
+- `middleware.ts` real sobre 2.000 visitas pagas: 1.021 `OCU` / 979 `VIS`; orgánico sin cookie; cookie previa respetada;
+  la URL no cambia; `/medicos` sigue con su test. Apagado: 0 cookies. `tests/*.cjs`: 22/22.
+- Capturas: `~/Documents/Ruta Tr4iner/capturas/empezar-2026-10-21/`.
+
+### Pendiente antes de producción
+- Preview: cargar `RUTA_CHAT_SECRET` para la rama (sin él, la hoja abre directo Calendly) y probar con horarios reales.
+- Producción: `EMPEZAR_AGENDA_REAL=1` cuando el usuario apruebe que las reservas sean reales.
+- Ya no entran aplicaciones de Typeform desde `/empezar`: el teléfono sólo llega con la cita o con la compra.
+
+### Resultado esperado
+Hoy `/empezar` sólo pedía una aplicación; ahora vende el Esencial directo y agenda el Premium en la misma página.
+
+### Resultado medido (completar después)
+...
+
 ## 2026-10-20 (3) — Chat de la Ruta a producción y pipeline único en el CRM
 
 Pedido del usuario: «aplica todo y publica», con sus respuestas sobre el boceto del Pipeline.
@@ -2314,6 +2390,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-21` — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
 - `2026-10-19` — Chat de la Ruta: vende el Plan Esencial y agenda la sesión del Premium con Calendly (Preview)
 - `2026-10-16` — `/10platospg` deja de ser lead magnet y vende «100 Recetas: desayunos fáciles» con el checkout de Hotmart incrustado
 - `2026-10-16` — Registro de la Ruta: código de WhatsApp de todos los países, arrancando en el país de la visita
