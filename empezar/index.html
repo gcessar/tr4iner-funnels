@@ -7,8 +7,8 @@
   <script>
     /*
       Instagram puede agregar sus propios UTMs a un enlace que ya los trae.
-      Normalizamos antes de GTM para que analítica y los hidden de Typeform
-      lean una sola fuente: gana el primer valor no vacío de cada dato.
+      Normalizamos antes de GTM para que analítica, los enlaces de pago y la
+      cita de Calendly lean una sola fuente: gana el primer valor no vacío.
     */
     (function () {
       var raw = new URLSearchParams(window.location.search);
@@ -46,24 +46,42 @@
     })(window,document,'script','dataLayer','GTM-T88G63P');
   </script>
 
+  <script>
+    /*
+      Test de precio del Premium `emp_precio_202610` (ver middleware.ts).
+      El brazo lo decide el middleware y lo deja en la cookie `ab_emp` de esta
+      misma respuesta; acá sólo se lee, antes de pintar, así que nadie ve un
+      precio y después el otro. Sin cookie (orgánico) se ve el control.
+      La exposición es el denominador de cada brazo.
+    */
+    (function () {
+      var match = /(?:^|;\s*)ab_emp=(OCU|VIS)/.exec(document.cookie);
+      if (!match) return;
+      var variant = match[1];
+      document.documentElement.setAttribute("data-precio", variant);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag("event", "emp_precio_exposure_" + variant.toLowerCase(), {
+        send_to: "G-CGWMFER9V4",
+        experiment_id: "emp_precio_202610",
+        experiment_variant: variant,
+        non_interaction: true
+      });
+    })();
+  </script>
+
   <!-- Paso operativo del funnel: no se indexa (regla SEO/GEO de AGENTS.md). -->
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="theme-color" content="#F2F3F5" />
   <title>Empieza aquí · TR4INER</title>
-  <meta name="description" content="Mira el video y cuéntanos tu situación. El equipo de TR4INER lee cada respuesta antes de contactarte." />
+  <meta name="description" content="Mira el video y elige tu plan: el Esencial, a US$77 al mes, o el Premium, con videollamadas en vivo con entrenadores y nutricionistas." />
   <link rel="canonical" href="https://metodo.tr4iner.com/empezar" />
 
-  <!-- El video es el contenido principal: la conexión con Vidalytics se abre
-       de entrada. A Typeform solo le adelantamos el handshake, porque su
-       embed.js recién se pide cuando el formulario se acerca a la pantalla. -->
   <link rel="preconnect" href="https://fast.vidalytics.com" crossorigin />
   <link rel="dns-prefetch" href="https://fast.vidalytics.com" />
-  <link rel="preconnect" href="https://embed.typeform.com" crossorigin />
-  <link rel="dns-prefetch" href="https://embed.typeform.com" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 peticiones
-       a Google y el mismo lenguaje visual. Se precargan las dos que dibujan la
-       primera pantalla (título y cuerpo); la mono entra con swap. -->
+       a Google. Se precargan las dos que dibujan la primera pantalla. -->
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
   <style>
@@ -76,38 +94,45 @@
 
   <style>
     :root {
-      --bg: #FFFFFF;
-      --bg-deeper: #FAFBFC;
       --ink: #16181A;
       --ink-soft: #575F67;
-      --muted: #6E757D;
-      --muted-2: #6B7278;
+      /* Grises recalculados contra la superficie #F2F3F5: #636A71 da 4,94:1. */
+      --muted: #636A71;
       --rule: #DDE1E5;
-      --rule-strong: #C6CDD4;
       --rust: #A85E40;
-      --max: 620px;
+      --yellow: #F5C518;
+      --cream: #F5F1E5;
+      --paper: #FFFFFF;
+      --error: #A1261C;
+      /* Superficie única, como /calendly-an y los testimonios: los bloques se separan
+         por aire y las placas se despegan del fondo sólo con luz y sombra. */
+      --surface: #F2F3F5;
+      --neu-dark: rgba(32, 41, 52, 0.15);
+      --neu-dark-soft: rgba(32, 41, 52, 0.10);
+      --neu-light: #FFFFFF;
+      --radius-plate: 26px;
+      --radius-soft: 16px;
+      --gutter: clamp(14px, 4vw, 28px);
       --serif: "Stack Sans Headline", -apple-system, "Helvetica Neue", sans-serif;
       --sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
-      --display-weight: 700;
-      --meta-size: 10.5px;
-      --meta-weight: 500;
-      --meta-tracking: 0.14em;
+      /* Nombres que usa la hoja de países de prefijo-pais.js. */
+      --body: var(--sans);
+      --mark-strong: var(--yellow);
     }
 
-    /* Ni Stack Sans Headline ni Lexend traen itálica: sin esto el navegador
-       inclina las letras a la fuerza y se ve mecánico. El énfasis lo llevan
-       el color y el peso. */
+    /* Ni Stack Sans Headline ni Lexend traen itálica: el énfasis lo llevan el color y el peso. */
     em, i { font-style: normal; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { -webkit-text-size-adjust: 100%; }
+    html.agenda-abierta, html.agenda-abierta body { overflow: hidden; }
 
     body {
       min-height: 100dvh;
       overflow-x: hidden;
-      background: var(--bg);
+      background: var(--surface);
       color: var(--ink);
       font-family: var(--sans);
       font-size: 17px;
@@ -117,84 +142,55 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    a:focus-visible { outline: 2px solid var(--rust); outline-offset: 4px; }
+    a, button { touch-action: manipulation; }
+    button, input, textarea { font: inherit; color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible,
+    .control:focus-visible {
+      outline: 2px solid var(--rust);
+      outline-offset: 3px;
+    }
 
     .page {
-      position: relative;
-      width: 100%;
-      max-width: var(--max);
+      width: min(100%, 980px);
       margin: 0 auto;
-      padding: 20px 14px 48px;
+      padding: calc(20px + env(safe-area-inset-top)) var(--gutter) calc(40px + env(safe-area-inset-bottom));
     }
 
-    .video-shell { position: relative; margin-bottom: 14px; }
-
-    .video-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 12px;
-      color: var(--ink);
-      font-family: var(--mono);
-      font-size: var(--meta-size);
-      font-weight: 500;
-      line-height: 1.35;
-      letter-spacing: var(--meta-tracking);
-      text-transform: uppercase;
+    /* ── Video ─────────────────────────────────────────── */
+    .video-card {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 10px;
+      border-radius: var(--radius-plate);
+      background: var(--surface);
+      box-shadow: 14px 14px 32px var(--neu-dark), -14px -14px 32px var(--neu-light);
     }
 
-    .video-label .left::before {
-      content: "";
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      margin: 0 9px 1px 0;
-      border-radius: 50%;
-      background: rgba(184, 115, 85, 0.65);
-    }
-
-    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada:
-       el bloque de abajo no salta cuando el reproductor entra (CLS 0). */
+    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada (CLS 0). */
     .video-container {
       position: relative;
-      min-height: 0;
       overflow: hidden;
       aspect-ratio: 16 / 9;
-      border: 1px solid var(--rule-strong);
-      border-radius: 2px;
+      border-radius: calc(var(--radius-plate) - 10px);
       background: #111;
-      box-shadow: 0 12px 40px -10px rgba(10, 10, 10, 0.22);
+      isolation: isolate;
     }
 
-    .video-container > div { width: 100%; height: 100%; min-height: 0; }
-
-    .application-card {
-      overflow: hidden;
-      border: 1px solid var(--rule-strong);
-      border-radius: 2px;
-      background: var(--bg-deeper);
+    .video-container > div {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      padding-top: 0 !important;
     }
 
-    .application-header {
-      position: relative;
-      margin: 8px 10px 0;
-      padding: 28px 18px 20px;
-      border-top: 2px solid rgba(184, 115, 85, 0.72);
-    }
+    /* ── Encabezado de los planes ──────────────────────── */
+    .planes { margin-top: clamp(44px, 9vw, 84px); }
 
-    .application-header::after {
-      content: "";
-      position: absolute;
-      top: 11px;
-      right: 11px;
-      width: 8px;
-      height: 8px;
-      border-top: 1px solid rgba(184, 115, 85, 0.72);
-      border-right: 1px solid rgba(184, 115, 85, 0.72);
-    }
+    .planes-head { max-width: 640px; margin-bottom: clamp(26px, 5vw, 40px); }
 
-    .cta-kicker {
+    .kicker {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -208,7 +204,7 @@
       text-transform: uppercase;
     }
 
-    .cta-kicker::before {
+    .kicker::before {
       content: "";
       width: 25px;
       height: 1px;
@@ -216,71 +212,295 @@
       background: rgba(184, 115, 85, 0.58);
     }
 
-    .cta-title {
-      max-width: 480px;
+    h1 {
       margin-bottom: 12px;
-      color: var(--ink);
       font-family: var(--serif);
+      font-size: clamp(30px, 6.4vw, 46px);
+      font-weight: 700;
       font-variation-settings: "opsz" 100;
-      font-size: clamp(29px, 6vw, 36px);
-      font-weight: var(--display-weight);
       line-height: 1.06;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.022em;
       text-wrap: balance;
     }
 
-    .cta-title em { color: var(--rust); font-weight: 500; }
+    h1 em { color: var(--rust); font-weight: 500; }
 
-    .cta-subtitle {
-      max-width: 49ch;
+    .dek {
+      max-width: 56ch;
       color: var(--ink-soft);
-      font-size: 15px;
-      line-height: 1.5;
+      font-size: 15.5px;
+      line-height: 1.55;
+      text-wrap: pretty;
     }
 
-    .cta-typeform-frame { padding: 8px 20px 12px; background: transparent; }
-
-    .cta-typeform-frame [data-tf-live] {
-      min-height: 350px;
-      height: auto;
-      background: transparent;
-    }
-
-    /* Typeform mete un div propio entre el contenedor y su widget, y ese div corta
-       la cadena de `min-height: inherit` con la que el widget baja el piso hasta el
-       iframe. Sin esto el iframe se queda en el alto que calcula Typeform (288px en
-       la pregunta de SI/NO) y su layout apila el boton sobre la ultima opcion. */
-    .cta-typeform-frame [data-tf-live] > div,
-    .cta-typeform-frame [data-tf-live] .tf-v1-widget,
-    .cta-typeform-frame [data-tf-live] iframe {
-      min-height: inherit;
-    }
-
-    /* Ocupa el mismo alto que va a ocupar el embed, así el hueco reservado no
-       cambia cuando Typeform reemplaza el placeholder. */
-    .loading-form {
+    /* ── Tarjetas ──────────────────────────────────────── */
+    .plan-grid {
       display: grid;
-      min-height: 350px;
-      place-items: center;
-      padding: 42px 20px;
-      color: var(--muted);
-      font-family: var(--sans);
+      gap: 26px;
+    }
+
+    .plan {
+      display: flex;
+      flex-direction: column;
+      padding: 26px 22px 24px;
+      border-radius: var(--radius-plate);
+      background: var(--surface);
+      box-shadow: 12px 12px 28px var(--neu-dark), -12px -12px 28px var(--neu-light);
+    }
+
+    /* El Premium es la única placa en tinta: es el plan que pasa por una persona del
+       equipo, y el botón amarillo tiene ahí su máximo contraste. */
+    .plan-premium {
+      background: var(--ink);
+      color: var(--cream);
+      box-shadow: 0 28px 52px -26px rgba(10, 10, 10, 0.6), -12px -12px 28px var(--neu-light);
+    }
+
+    .plan-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .plan-name {
+      font-family: var(--mono);
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.12em;
-      text-align: center;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
+    .plan-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--yellow);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Mismo esqueleto en los dos planes y en los dos brazos: una línea chica arriba y la
+       cifra (o la frase) abajo. Así el precio es lo único que cambia entre brazos. */
+    .plan-price {
+      display: flex;
+      flex-direction: column;
+      min-height: 92px;
+      justify-content: flex-end;
+    }
+
+    .price-pre {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .plan-premium .price-pre { color: #A9B0B7; }
+
+    .price-main {
+      display: flex;
+      align-items: baseline;
+      font-family: var(--serif);
+      font-size: 62px;
+      font-weight: 700;
+      font-variation-settings: "opsz" 100;
+      line-height: 0.95;
+      letter-spacing: -0.035em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .price-main .cur {
+      align-self: flex-start;
+      margin: 6px 4px 0 0;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .price-main .per {
+      margin-left: 6px;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--muted);
+    }
+
+    .price-word {
+      font-size: 44px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    /* Los dos precios del Premium viven en el HTML; el brazo decide cuál se ve. */
+    html:not([data-precio="VIS"]) .solo-vis,
+    html[data-precio="VIS"] .solo-ocu { display: none; }
+
+    .plan-terms {
+      margin-top: 12px;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.5;
+      text-wrap: pretty;
+    }
+
+    .plan-premium .plan-terms { color: #C9CDD1; }
+
+    .plan-list {
+      display: grid;
+      gap: 11px;
+      margin: 22px 0 26px;
+      list-style: none;
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    .plan-list li {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .plan-list li::before {
+      content: "";
+      position: absolute;
+      top: 1px;
+      left: 0;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4l2.6 2.5L12 5.4' fill='none' stroke='%23F5C518' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat;
+    }
+
+    .plan-premium .plan-list li::before {
+      background-color: var(--yellow);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4l2.6 2.5L12 5.4' fill='none' stroke='%2316181A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    .plan-list strong { font-weight: 500; color: var(--yellow); }
+
+    .plan-foot { margin-top: auto; }
+
+    /* La firma de la página: el horario libre más próximo, leído de Calendly al momento. */
+    .next-slot {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: #C9CDD1;
+      font-size: 13.5px;
+      line-height: 1.35;
+    }
+
+    .next-slot[hidden] { display: none; }
+    .next-slot strong { color: var(--cream); font-weight: 500; }
+
+    .pulse {
+      position: relative;
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+
+    .pulse::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--yellow);
+      animation: pulso 2.2s ease-out infinite;
+    }
+
+    @keyframes pulso {
+      from { transform: scale(1); opacity: 0.55; }
+      to { transform: scale(3); opacity: 0; }
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+      min-height: 58px;
+      padding: 10px 12px 10px 20px;
+      border: 0;
+      border-radius: var(--radius-soft);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+      text-align: left;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform 200ms ease, box-shadow 200ms ease, color 200ms ease;
+    }
+
+    .btn b {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 50%;
+      font-size: 17px;
+      line-height: 1;
+      transition: transform 200ms ease;
+    }
+
+    .btn:active { transform: translateY(1px); }
+
+    .btn-ink {
+      background: var(--ink);
+      color: var(--cream);
+      box-shadow: 0 18px 32px -16px rgba(10, 10, 10, 0.55);
+    }
+
+    .btn-ink b { background: var(--yellow); color: var(--ink); }
+
+    .btn-yellow {
+      background: var(--yellow);
+      color: var(--ink);
+      box-shadow: 0 18px 34px -18px rgba(245, 197, 24, 0.55);
+    }
+
+    .btn-yellow b { background: var(--ink); color: var(--yellow); }
+
+    @media (hover: hover) {
+      .btn-ink:hover { color: var(--yellow); transform: translateY(-1px); }
+      .btn-yellow:hover { transform: translateY(-1px); }
+      .btn:hover b { transform: translateX(2px); }
+    }
+
+    .btn[disabled] { cursor: progress; opacity: 0.7; }
+
+    .plan-alt {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .plan-alt a { color: var(--ink); font-weight: 500; text-underline-offset: 3px; white-space: nowrap; }
+    .plan-premium .plan-alt { color: #A9B0B7; }
+
+    /* ── Pie ───────────────────────────────────────────── */
     .trust {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
-      width: 100%;
-      margin-top: 54px;
-      padding-top: 22px;
-      border-top: 1px solid var(--rule);
+      margin-top: clamp(56px, 10vw, 88px);
     }
 
     .trust-avatar {
@@ -288,9 +508,8 @@
       height: 46px;
       flex: 0 0 auto;
       overflow: hidden;
-      border: 1px solid var(--rule);
       border-radius: 50%;
-      background: var(--bg-deeper);
+      box-shadow: 5px 5px 12px var(--neu-dark-soft), -5px -5px 12px var(--neu-light);
     }
 
     .trust-avatar img { display: block; width: 46px; height: 46px; object-fit: cover; }
@@ -305,15 +524,12 @@
       text-transform: uppercase;
     }
 
-    .trust-name { color: var(--ink); font-size: 13.5px; font-weight: 500; line-height: 1.35; }
+    .trust-name { font-size: 13.5px; font-weight: 500; line-height: 1.35; }
     .trust-name .sub { color: var(--muted); font-weight: 400; }
 
     .fine-print {
-      width: 100%;
       margin-top: 30px;
-      padding-top: 15px;
-      border-top: 1px solid var(--rule);
-      color: var(--muted-2);
+      color: var(--muted);
       font-family: var(--mono);
       font-size: 9.5px;
       line-height: 1.8;
@@ -324,26 +540,518 @@
 
     .fine-print a { color: var(--muted); text-decoration: none; }
     .fine-print a:hover { color: var(--ink); }
-    .fine-print .divider { margin: 0 8px; color: var(--rule-strong); }
+    .fine-print .divider { margin: 0 8px; }
 
-    @media (max-width: 720px) {
-      .page { padding: 20px 10px 36px; }
-      .cta-typeform-frame { padding: 0 0 12px; }
+    /* ── Hoja de agenda ────────────────────────────────── */
+    .agenda-capa {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: end stretch;
+      padding-top: 24px;
+      background: rgba(17, 17, 17, 0.42);
+      animation: aparecer 180ms ease-out;
     }
 
-    /* En pantalla angosta el titular desperdiciaba casi la mitad del ancho:
-       el <br> partia "Cuentanos tu situacion," y text-wrap:balance igualaba
-       las lineas a lo mas corto. Aca el salto se anula, el texto fluye y baja
-       un punto de cuerpo para que cada linea llegue al borde derecho. */
-    @media (max-width: 600px) {
-      .cta-title {
-        font-size: 24px;
-        letter-spacing: -0.018em;
-        line-height: 1.12;
-        text-wrap: pretty;
-      }
+    .agenda-capa[hidden] { display: none; }
 
-      .cta-title br { display: none; }
+    @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes subir { from { transform: translateY(24px); } to { transform: none; } }
+
+    .agenda-hoja {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-height: calc(100dvh - 24px);
+      overflow: hidden;
+      border-radius: 22px 22px 0 0;
+      background: var(--surface);
+      box-shadow: 0 -18px 50px rgba(17, 17, 17, 0.22);
+      animation: subir 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .agenda-cabeza {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px 14px 12px 22px;
+    }
+
+    .agenda-kicker {
+      margin-bottom: 6px;
+      color: var(--rust);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .agenda-titulo {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+
+    .agenda-titulo:focus { outline: none; }
+
+    .agenda-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      margin-top: 8px;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .agenda-meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .agenda-meta svg { width: 15px; height: 15px; flex: 0 0 auto; }
+
+    .agenda-cerrar {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: var(--surface);
+      box-shadow: 5px 5px 12px var(--neu-dark-soft), -5px -5px 12px var(--neu-light);
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .agenda-cerrar:active {
+      box-shadow: inset 4px 4px 9px var(--neu-dark-soft), inset -4px -4px 9px var(--neu-light);
+    }
+
+    /* Tres tramos: dónde está la persona y cuánto le falta. */
+    .agenda-progreso {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 0 22px 4px;
+      list-style: none;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .agenda-progreso li::before {
+      content: "";
+      display: block;
+      height: 3px;
+      margin-bottom: 7px;
+      border-radius: 3px;
+      background: var(--rule);
+      transition: background 200ms ease;
+    }
+
+    .agenda-progreso li.hecho::before,
+    .agenda-progreso li.actual::before { background: var(--ink); }
+    .agenda-progreso li.actual { color: var(--ink); }
+
+    .agenda-cuerpo {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 16px 22px calc(24px + env(safe-area-inset-bottom));
+    }
+
+    .agenda-paso[hidden] { display: none; }
+
+    .aviso {
+      margin-bottom: 14px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: #FFF6D1;
+      color: var(--ink);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .aviso[hidden] { display: none; }
+
+    /* Días: placas en relieve; el elegido se hunde. */
+    .dias {
+      display: flex;
+      gap: 10px;
+      margin: 0 -22px 18px;
+      padding: 8px 22px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .dias::-webkit-scrollbar { display: none; }
+
+    .dia {
+      display: flex;
+      flex: 0 0 auto;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 104px;
+      padding: 11px 14px 10px;
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: 5px 5px 12px var(--neu-dark-soft), -5px -5px 12px var(--neu-light);
+      cursor: pointer;
+      text-align: left;
+      transition: box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .dia[aria-selected="true"] {
+      border-color: var(--ink);
+      box-shadow: inset 4px 4px 9px var(--neu-dark-soft), inset -4px -4px 9px var(--neu-light);
+    }
+
+    .dia-rel { font-size: 15px; font-weight: 500; line-height: 1.2; }
+    .dia-fecha { color: var(--ink-soft); font-size: 12.5px; line-height: 1.3; }
+    .dia-cant { margin-top: 6px; color: var(--muted); font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .franja-titulo {
+      margin: 4px 0 10px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .horas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .hora {
+      min-height: 46px;
+      padding: 8px 6px;
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: 4px 4px 10px var(--neu-dark-soft), -4px -4px 10px var(--neu-light);
+      cursor: pointer;
+      font-size: 14.5px;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      transition: box-shadow 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    @media (hover: hover) {
+      .hora:hover { border-color: var(--ink); }
+      .dia:hover { border-color: rgba(22, 24, 26, 0.35); }
+    }
+
+    .hora.elegida,
+    .hora:active {
+      background: var(--ink);
+      color: var(--cream);
+      box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .zona {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+
+    .esqueleto {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .esqueleto span {
+      height: 46px;
+      border-radius: 12px;
+      background: #E6E8EB;
+      animation: latido 1.2s ease-in-out infinite alternate;
+    }
+
+    .esqueleto[hidden] { display: none; }
+
+    @keyframes latido { from { opacity: 1; } to { opacity: 0.45; } }
+
+    .link-calendario {
+      display: block;
+      margin-top: 18px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Paso 2: el horario elegido arriba, siempre a la vista. */
+    .elegido {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding: 12px 12px 12px 14px;
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: inset 4px 4px 9px var(--neu-dark-soft), inset -4px -4px 9px var(--neu-light);
+    }
+
+    .elegido svg { width: 22px; height: 22px; flex: 0 0 auto; }
+    .elegido-texto { flex: 1; font-size: 14.5px; font-weight: 500; line-height: 1.3; }
+    .elegido-texto small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+
+    .boton-texto {
+      padding: 8px 6px;
+      border: 0;
+      background: none;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+
+    .control {
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 14px;
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: inset 3px 3px 7px var(--neu-dark-soft), inset -3px -3px 7px var(--neu-light);
+      font-size: 16px;
+      line-height: 1.3;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    textarea.control { min-height: 84px; resize: vertical; }
+    .control::placeholder { color: #8A9097; }
+    .control:focus { border-color: var(--ink); outline: none; }
+
+    .err {
+      display: none;
+      margin-top: 7px;
+      color: var(--error);
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .field.has-error .control { border-color: var(--error); }
+    .field.has-error .err { display: block; }
+
+    .trampa {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .phone-row {
+      display: grid;
+      grid-template-columns: minmax(104px, auto) 1fr;
+      gap: 8px;
+    }
+
+    .prefix-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 10px 12px 12px;
+      cursor: pointer;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .prefix-flag { font-size: 20px; line-height: 1; }
+    .prefix-code { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+    .prefix-caret {
+      width: 7px;
+      height: 7px;
+      margin: -3px 0 0 auto;
+      border-right: 1.6px solid var(--ink);
+      border-bottom: 1.6px solid var(--ink);
+      transform: rotate(45deg);
+    }
+
+    .phone-hint {
+      margin: 9px 0 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #FFF6D1;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .phone-hint-cambiar {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--ink);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .phone-hint-pie { display: block; margin-top: 3px; color: var(--muted); }
+
+    .nota {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .nota a { color: var(--muted); }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(245, 241, 229, 0.35);
+      border-top-color: var(--cream);
+      border-radius: 50%;
+      animation: girar 700ms linear infinite;
+    }
+
+    .enviando .spinner { display: block; }
+    .enviando b { display: none; }
+
+    @keyframes girar { to { transform: rotate(360deg); } }
+
+    /* Paso 3 */
+    .listo { padding: 6px 0 4px; text-align: center; }
+
+    .listo-icono {
+      display: grid;
+      width: 64px;
+      height: 64px;
+      margin: 4px auto 18px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--yellow);
+      box-shadow: 8px 8px 18px var(--neu-dark-soft), -8px -8px 18px var(--neu-light);
+    }
+
+    .listo-icono svg { width: 30px; height: 30px; }
+
+    .listo .listo-fecha {
+      margin-top: 10px;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+    }
+
+    .listo .listo-hora { margin-bottom: 12px; color: var(--ink); font-size: 15px; font-weight: 500; }
+
+    .listo p { color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; }
+    .listo-enlaces { margin-top: 18px; font-size: 13.5px; }
+    .listo-enlaces a { color: var(--ink); font-weight: 500; text-underline-offset: 3px; }
+    .listo-enlaces[hidden] { display: none; }
+
+    .etiqueta-prueba {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #E6E8EB;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 9.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .etiqueta-prueba[hidden] { display: none; }
+
+    .calendly-marco {
+      width: 100%;
+      height: min(680px, calc(100dvh - 210px));
+      min-height: 460px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--paper);
+    }
+
+    /* La hoja de países de prefijo-pais.js va encima de la de agenda (z-index 60). */
+    .phone-hint[hidden], .pais-capa[hidden] { display: none; }
+    html.pais-abierta, html.pais-abierta body { overflow: hidden; }
+    .pais-capa { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px; background: rgba(17, 17, 17, 0.42); }
+    .pais-hoja { width: min(100%, 440px); height: min(620px, calc(100dvh - 48px)); display: flex; flex-direction: column; overflow: hidden; border-radius: 18px; background: var(--paper); box-shadow: 0 18px 50px rgba(17, 17, 17, 0.22); }
+    .pais-cabeza { display: flex; align-items: center; justify-content: space-between; padding: 14px 10px 6px 18px; }
+    .pais-titulo { margin: 0; font: 600 10.5px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .pais-cerrar { width: 44px; height: 44px; border: 0; border-radius: 50%; background: none; color: var(--ink); font: 400 30px/1 var(--body); cursor: pointer; }
+    .pais-buscar { padding: 0 14px 10px; border-bottom: 1px solid var(--rule); }
+    .pais-lista { flex: 1; margin: 0; padding: 4px 0 calc(16px + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain; list-style: none; }
+    .pais-grupo { padding: 14px 18px 6px; font: 600 10px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .pais-opcion { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; min-height: 50px; padding: 0 18px; cursor: pointer; font-size: 15px; }
+    .pais-opcion.activa { background: #F4F4F4; }
+    @media (hover: hover) { .pais-opcion:hover { background: #F4F4F4; } }
+    .pais-opcion[aria-selected="true"] { font-weight: 600; }
+    .pais-bandera { font-size: 21px; line-height: 1; }
+    .pais-codigo { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .pais-vacio { padding: 22px 18px; color: var(--ink-soft); font-size: 14px; }
+
+    @media (max-width: 640px) {
+      .pais-capa { place-items: end stretch; padding: 10px 0 0; }
+      .pais-hoja { width: 100%; height: 100%; border-radius: 14px 14px 0 0; }
+    }
+
+    /* ── Escritorio ────────────────────────────────────── */
+    @media (min-width: 760px) {
+      .page { padding-top: calc(clamp(28px, 5vw, 56px) + env(safe-area-inset-top)); }
+      .video-card { padding: 12px; box-shadow: 20px 20px 44px var(--neu-dark), -20px -20px 44px var(--neu-light); }
+      .video-container { border-radius: calc(var(--radius-plate) - 12px); }
+      .planes-head { margin-right: auto; margin-left: auto; text-align: center; }
+      .kicker { justify-content: center; }
+      .kicker::after { content: ""; width: 25px; height: 1px; flex: 0 0 auto; background: rgba(184, 115, 85, 0.58); }
+      .dek { margin: 0 auto; }
+      .plan-grid { grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; }
+      .plan { padding: 32px 30px 28px; box-shadow: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light); }
+      .plan-premium { box-shadow: 0 34px 60px -28px rgba(10, 10, 10, 0.6), -18px -18px 40px var(--neu-light); }
+
+      .agenda-capa { place-items: center; padding: 24px; }
+      .agenda-hoja {
+        width: min(100%, 560px);
+        max-height: min(780px, calc(100dvh - 48px));
+        border-radius: var(--radius-plate);
+        box-shadow: 0 30px 80px rgba(17, 17, 17, 0.3);
+      }
+      .agenda-cabeza { padding: 26px 18px 14px 30px; }
+      .agenda-progreso { padding: 0 30px 4px; }
+      .agenda-cuerpo { padding: 18px 30px 30px; }
+      .dias { margin: 0 -30px 18px; padding: 8px 30px 12px; }
+      .horas { grid-template-columns: repeat(4, 1fr); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -361,50 +1069,75 @@
   <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=841122323338135&amp;ev=PageView&amp;noscript=1"></noscript>
 
   <main class="page" id="inicio">
-    <section class="video-shell" aria-labelledby="video-title">
-      <div class="video-label">
-        <span class="left" id="video-title">Video</span>
-        <span>Activa el sonido</span>
-      </div>
-
+    <section class="video-card" aria-label="Video de Anthoni Montalván">
       <div class="video-container">
         <div id="vidalytics_embed_o1Hu8Smxc1TpaN4k"></div>
       </div>
     </section>
 
-    <section id="typeform-cta" aria-labelledby="application-title">
-      <div class="application-card">
-        <div class="application-header">
-          <div class="cta-kicker">Siguiente paso</div>
-          <h1 class="cta-title" id="application-title">Cuéntanos tu situación, <br>en tus <em>propias palabras.</em></h1>
-          <p class="cta-subtitle">
-            El equipo lee cada respuesta antes de contactarte. Esto evita que recibas un pitch genérico, lo que te llegue va a ser específico para tu situación.
-          </p>
-        </div>
+    <section class="planes" id="planes" aria-labelledby="planes-title">
+      <header class="planes-head">
+        <p class="kicker">Siguiente paso</p>
+        <h1 id="planes-title">Elige cómo quieres <em>empezar.</em></h1>
+        <p class="dek">Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con tus entrenadores y nutricionistas.</p>
+      </header>
 
-        <div class="cta-typeform-frame">
-          <div class="loading-form" id="form-loader">Cargando aplicación…</div>
-          <div
-            id="tf-embed"
-            data-tf-live="01KHA5RZHGV02HW971F4227939"
-            data-tf-inline-on-mobile
-            data-tf-auto-resize
-          ></div>
-        </div>
+      <div class="plan-grid">
+        <article class="plan plan-esencial" aria-labelledby="esencial-nombre">
+          <div class="plan-top">
+            <h2 class="plan-name" id="esencial-nombre">Plan Esencial</h2>
+          </div>
+          <p class="plan-price">
+            <span class="price-pre">Suscripción mensual</span>
+            <span class="price-main"><span class="cur">US$</span>77<span class="per">/ mes</span></span>
+          </p>
+          <p class="plan-terms">Se renueva cada mes y la cancelas cuando quieras, antes de la renovación.</p>
+          <ul class="plan-list">
+            <li>Plan de entrenamiento hecho para tu caso: tu tiempo, tus días libres, en gimnasio o en casa. Cada ejercicio explicado en video en la app TR4INER.</li>
+            <li>Plan de alimentación con las comidas que te gustan, según tus calorías. Sin dietas extremas ni platos aparte.</li>
+            <li>Evaluación inicial y chequeo mensual de tu progreso.</li>
+            <li>Seguimiento 1 a 1 por WhatsApp con entrenadores certificados por la IFBB y nutricionistas colegiadas.</li>
+            <li>Una comunidad de personas con tu mismo objetivo.</li>
+          </ul>
+          <div class="plan-foot">
+            <a class="btn btn-ink pagar" id="pagar-hotmart" data-metodo="hotmart" href="https://pay.hotmart.com/M84590773F?off=x65af12s">Empezar con el Esencial <b aria-hidden="true">→</b></a>
+            <p class="plan-alt">Pago seguro con Hotmart · <a class="pagar" id="pagar-stripe" data-metodo="stripe" href="https://buy.stripe.com/4gM7sLbD67Cx45x32w9Zm2V">Prefiero pagar con Stripe</a></p>
+          </div>
+        </article>
+
+        <article class="plan plan-premium" aria-labelledby="premium-nombre">
+          <div class="plan-top">
+            <h2 class="plan-name" id="premium-nombre">Plan Premium</h2>
+            <span class="plan-badge">Videollamadas en vivo</span>
+          </div>
+          <!-- Lo ÚNICO que cambia entre los brazos del test `emp_precio_202610`. -->
+          <p class="plan-price solo-ocu" id="precio-premium-ocu">
+            <span class="price-pre">Precio</span>
+            <span class="price-main price-word">A tu medida</span>
+          </p>
+          <p class="plan-price solo-vis" id="precio-premium-vis">
+            <span class="price-pre">Planes desde</span>
+            <span class="price-main"><span class="cur">US$</span>300</span>
+          </p>
+          <p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos por videollamada.</p>
+          <ul class="plan-list">
+            <li><strong>Todo lo del Plan Esencial.</strong></li>
+            <li>Videollamadas en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>
+            <li>Revisan contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>
+          </ul>
+          <div class="plan-foot">
+            <p class="next-slot" id="proximo" hidden><span class="pulse" aria-hidden="true"></span><span>Próximo horario libre: <strong id="proximo-texto"></strong></span></p>
+            <button class="btn btn-yellow" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión gratuita <b aria-hidden="true">→</b></button>
+            <p class="plan-alt">Sujeto a disponibilidad y cupos.</p>
+          </div>
+        </article>
       </div>
     </section>
 
     <footer>
       <div class="trust">
         <div class="trust-avatar">
-          <img
-            src="/assets/team/anthoni-montalvan-92.webp"
-            width="46"
-            height="46"
-            loading="lazy"
-            decoding="async"
-            alt="Anthoni Montalván"
-          />
+          <img src="/assets/team/anthoni-montalvan-92.webp" width="46" height="46" loading="lazy" decoding="async" alt="Anthoni Montalván" />
         </div>
         <div class="trust-text">
           <div class="trust-label">Producción · TR4INER</div>
@@ -415,10 +1148,107 @@
       <div class="fine-print">
         © 2026 TR4INER · BodyMindFitCo LLC
         <br />
-        <a href="#">Privacidad</a><span class="divider">|</span><a href="#">Términos</a>
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a><span class="divider">|</span><a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
       </div>
     </footer>
   </main>
+
+  <!-- Hoja de agenda de la sesión del Premium: horario → datos → listo. -->
+  <div class="agenda-capa" id="agenda" hidden>
+    <div class="agenda-hoja" role="dialog" aria-modal="true" aria-labelledby="agenda-titulo">
+      <header class="agenda-cabeza">
+        <div>
+          <p class="agenda-kicker">Plan Premium · Sesión gratuita</p>
+          <h2 class="agenda-titulo" id="agenda-titulo" tabindex="-1">Elige día y hora</h2>
+          <p class="agenda-meta">
+            <span><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>30 min</span>
+            <span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.6" y="4.2" width="9" height="7.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 7.2l3.6-2v5.6l-3.6-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Videollamada con un asesor</span>
+          </p>
+        </div>
+        <button class="agenda-cerrar" type="button" id="cerrar-agenda" aria-label="Cerrar">×</button>
+      </header>
+
+      <ol class="agenda-progreso" aria-hidden="true">
+        <li data-tramo="horario">Horario</li>
+        <li data-tramo="datos">Tus datos</li>
+        <li data-tramo="listo">Listo</li>
+      </ol>
+
+      <div class="agenda-cuerpo">
+        <section class="agenda-paso" data-paso="horario">
+          <p class="aviso" id="aviso-horario" role="status" hidden></p>
+          <div class="esqueleto" id="esqueleto" aria-label="Buscando horarios libres"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="dias" id="dias" role="tablist" aria-label="Día"></div>
+          <div id="horas"></div>
+          <p class="zona" id="zona"></p>
+          <button class="link-calendario" type="button" id="ver-calendario">¿Ningún horario te queda? Ver el calendario completo</button>
+        </section>
+
+        <form class="agenda-paso" data-paso="datos" id="agenda-form" novalidate hidden>
+          <div class="elegido">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span class="elegido-texto" id="elegido-texto"></span>
+            <button class="boton-texto" type="button" id="cambiar-horario">Cambiar</button>
+          </div>
+
+          <div class="field" id="f-nombre">
+            <label for="nombre">Tu nombre</label>
+            <input class="control" id="nombre" name="nombre" type="text" autocomplete="name" maxlength="100" placeholder="Nombre y apellido" />
+            <p class="err">Escribe tu nombre para que el asesor sepa cómo llamarte.</p>
+          </div>
+
+          <div class="field" id="f-email">
+            <label for="email">Tu correo</label>
+            <input class="control" id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160" placeholder="tu@correo.com" />
+            <p class="err">Revisa tu correo: ahí te llega la invitación a la videollamada.</p>
+          </div>
+
+          <div class="field" id="f-whatsapp">
+            <label for="whatsapp">Tu WhatsApp</label>
+            <div class="phone-row">
+              <input type="hidden" id="prefijo" value="+51" />
+              <!-- Lo arma /biblioteca/assets/prefijo-pais.js: país de la visita y hoja con buscador. -->
+              <button class="control prefix-btn" type="button" id="prefijo-btn" aria-haspopup="dialog" aria-expanded="false" aria-label="Código de país: Perú, +51. Cambiar">
+                <span class="prefix-flag" aria-hidden="true">🇵🇪</span><span class="prefix-code">+51</span><span class="prefix-caret" aria-hidden="true"></span>
+              </button>
+              <input class="control" id="whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="25" placeholder="987 654 321…" />
+            </div>
+            <p class="err">Escribe tu número de WhatsApp, sólo dígitos.</p>
+            <p class="phone-hint" id="whatsapp-aviso" aria-live="polite" hidden><span class="phone-hint-text"></span> <button class="phone-hint-cambiar" type="button">Cambiar país</button><span class="phone-hint-pie">Si está bien así, vuelve a tocar el botón.</span></p>
+          </div>
+
+          <div class="field" id="f-objetivo">
+            <label for="objetivo">¿Qué te gustaría lograr?</label>
+            <textarea class="control" id="objetivo" name="objetivo" rows="2" maxlength="600" placeholder="Ej.: bajar 8 kilos y dejar de picar de noche"></textarea>
+            <p class="err">Cuéntale al asesor en una línea qué quieres lograr.</p>
+          </div>
+
+          <div class="trampa" aria-hidden="true">
+            <label for="sitio">Sitio web</label>
+            <input id="sitio" name="sitio" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <p class="aviso" id="aviso-datos" role="alert" hidden></p>
+          <button class="btn btn-ink" type="submit" id="confirmar">Confirmar mi sesión <b aria-hidden="true">→</b><span class="spinner" aria-hidden="true"></span></button>
+          <p class="nota">Te llega la invitación a tu correo y te escribimos por WhatsApp para confirmarla. Al continuar aceptas la <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Política de Privacidad</a>.</p>
+        </form>
+
+        <section class="agenda-paso listo" data-paso="listo" hidden>
+          <div class="listo-icono"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.6l4.2 4.1L18.5 7.8" fill="none" stroke="#16181A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <p class="listo-fecha" id="listo-fecha"></p>
+          <p class="listo-hora" id="listo-hora"></p>
+          <p id="listo-texto">Te llegó la invitación a tu correo y te escribimos por WhatsApp para confirmarla. Ten a mano lo que quieres lograr: el asesor parte de ahí.</p>
+          <p class="listo-enlaces" id="listo-enlaces" hidden><a id="reprogramar" href="#" target="_blank" rel="noopener">Cambiar día u hora</a> · <a id="cancelar" href="#" target="_blank" rel="noopener">Cancelar</a></p>
+          <span class="etiqueta-prueba" id="etiqueta-prueba" hidden>Modo prueba · la cita no se creó en Calendly</span>
+        </section>
+
+        <section class="agenda-paso" data-paso="calendly" hidden>
+          <p class="aviso" id="aviso-calendly" role="status" hidden></p>
+          <iframe class="calendly-marco" id="calendly-marco" title="Calendario del equipo TR4INER"></iframe>
+        </section>
+      </div>
+    </div>
+  </div>
 
   <script>
     (function (v, i, d, a, l, y, t, c, s) {
@@ -469,110 +1299,536 @@
   <script src="/attribution.js"></script>
   <script>
     (function () {
-      var params = new URLSearchParams(window.location.search);
-      var tf = document.getElementById("tf-embed");
-      var loader = document.getElementById("form-loader");
-      var section = document.getElementById("typeform-cta");
-      var typeformLoaded = false;
+      var CALENDARIO = "https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner";
+      var HOTMART = "https://pay.hotmart.com/M84590773F?off=x65af12s";
+      var STRIPE = "https://buy.stripe.com/4gM7sLbD67Cx45x32w9Zm2V";
 
-      function setHiddenFields() {
-        /*
-          Hidden fields enviados a Typeform. Misma lista que las páginas de
-          caso de estudio: si agregas o quitas campos ocultos en Typeform,
-          hay que editarla en las cuatro páginas.
-        */
-        // Helpers compartidos de attribution.js. Si el archivo no cargó
-        // (bloqueador), el valor viaja crudo igual — que es lo que Typeform
-        // espera; solo se pierde el escape de comas.
-        var tr4 = window.TR4Track || {};
-        var crudo = function (v) { return v == null ? "" : String(v); };
-        var limpiar = tr4.decodeUtmValue || crudo;
-        var paraTypeform = tr4.hiddenFieldValue || crudo;
+      // Brazo del test (OCU o VIS), o nada si la visita no entró al experimento.
+      var BRAZO = document.documentElement.getAttribute("data-precio") || "";
+      var REF = "empezar-" + (BRAZO ? BRAZO.toLowerCase() : "org");
 
-        var identityFields = ["first_name", "name", "email", "sexo", "video", "variant"];
-        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
-        var hiddenFields = [];
-        params.forEach(function (value, key) {
-          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
-          if (!allowed || !value) return;
-          // El valor viaja CRUDO. Typeform NO decodifica lo que lee de
-          // data-tf-hidden: lo guarda tal cual y recién lo encodea al armar la
-          // URL de su iframe. Encodear acá era el bug: la campaña quedaba
-          // guardada como el literal "%5BTR4INER%5D%20%5BCE%5D…" y ese texto se
-          // arrastraba al redirect del Typeform, a Calendly, al sheet AGENDAS y
-          // al CAPI de Meta. El decode previo limpia lo que ya haya llegado
-          // doble-encodeado desde afuera.
-          hiddenFields.push(key + "=" + paraTypeform(limpiar(value)));
+      var tr4 = window.TR4Track || {};
+      var params = tr4.getCanonicalParams ? tr4.getCanonicalParams() : new URLSearchParams(window.location.search);
+      var limpiar = tr4.decodeUtmValue || function (valor) { return valor == null ? "" : String(valor); };
+      var ZONA = "America/Lima";
+      try { ZONA = Intl.DateTimeFormat().resolvedOptions().timeZone || ZONA; } catch (error) { /* navegador viejo */ }
+
+      window.dataLayer = window.dataLayer || [];
+      function medir(evento, extra) {
+        var datos = { event: evento, experiment_id: "emp_precio_202610", experiment_variant: BRAZO };
+        Object.keys(extra || {}).forEach(function (clave) { datos[clave] = extra[clave]; });
+        window.dataLayer.push(datos);
+      }
+
+      // Todo lo que trae la URL más la atribución guardada (first-touch, fbc/fbp): cada
+      // salto reenvía todos los parámetros presentes, no una lista que quede vieja.
+      var RESERVADOS = ["off", "offer", "checkoutMode", "src", "sck", "client_reference_id", "prefilled_email", "name", "email", "first_name"];
+      function atribucion() {
+        var salida = {};
+        params.forEach(function (valor, clave) {
+          if (valor && RESERVADOS.indexOf(clave) === -1) salida[clave] = limpiar(valor);
         });
+        if (tr4.getAttribution) {
+          var guardada = tr4.getAttribution();
+          Object.keys(guardada).forEach(function (clave) {
+            if (!(clave in salida) && guardada[clave] && RESERVADOS.indexOf(clave) === -1) salida[clave] = guardada[clave];
+          });
+        }
+        return salida;
+      }
+      var ATRIB = atribucion();
+      var NOMBRE = (params.get("first_name") || params.get("name") || "").trim();
+      var EMAIL = (params.get("email") || "").trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(EMAIL)) EMAIL = "";
 
-        // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
-        // se construye desde el fbclid del primer aterrizaje. Sin ellos Meta no
-        // puede emparejar el Lead del servidor con el clic del anuncio.
-        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
-          ? window.TR4Track.getMetaIds()
-          : {};
-        Object.keys(metaIds).forEach(function (key) {
-          hiddenFields.push(key + "=" + paraTypeform(metaIds[key]));
+      // ── Plan Esencial ──────────────────────────────────────────
+      // Hotmart guarda src y sck con la venta, y Stripe el client_reference_id: es lo que
+      // une cada compra con esta página y con el brazo del test.
+      function enlaceHotmart() {
+        var url = new URL(HOTMART);
+        Object.keys(ATRIB).forEach(function (clave) { url.searchParams.set(clave, ATRIB[clave]); });
+        url.searchParams.set("src", "empezar");
+        url.searchParams.set("sck", REF);
+        if (NOMBRE) url.searchParams.set("name", NOMBRE);
+        if (EMAIL) url.searchParams.set("email", EMAIL);
+        return url.toString();
+      }
+
+      function enlaceStripe() {
+        var url = new URL(STRIPE);
+        // Stripe sólo acepta letras, números, - y _ en client_reference_id.
+        url.searchParams.set("client_reference_id", REF + "-" + Math.random().toString(36).slice(2, 10));
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (clave) {
+          if (ATRIB[clave]) url.searchParams.set(clave, ATRIB[clave]);
         });
-
-        var hidden = hiddenFields.join(",");
-
-        // Typeform lee data-tf-hidden cuando carga su embed.js.
-        if (tf && hidden) {
-          tf.setAttribute("data-tf-hidden", hidden);
-        }
+        if (EMAIL) url.searchParams.set("prefilled_email", EMAIL);
+        return url.toString();
       }
 
-      function loadTypeform() {
-        if (typeformLoaded) return;
-        typeformLoaded = true;
-        setHiddenFields();
+      var hotmart = document.getElementById("pagar-hotmart");
+      var stripe = document.getElementById("pagar-stripe");
+      hotmart.href = enlaceHotmart();
+      stripe.href = enlaceStripe();
+      document.querySelectorAll(".pagar").forEach(function (enlace) {
+        enlace.addEventListener("click", function () {
+          medir("empezar_esencial_click", { metodo_pago: enlace.getAttribute("data-metodo") });
+        });
+      });
 
-        var script = document.createElement("script");
-        script.src = "https://embed.typeform.com/next/embed.js";
-        script.async = true;
-        script.onload = function () {
-          if (loader) loader.style.display = "none";
-        };
-        document.head.appendChild(script);
+      // ── Horarios libres ────────────────────────────────────────
+      var pedido = null;
+      var horarios = [];
+      var horariosFallaron = false;
+
+      function pedirHorarios(otraVez) {
+        if (pedido && !otraVez) return pedido;
+        pedido = fetch("/api/empezar/horarios", { headers: { accept: "application/json" } })
+          .then(function (respuesta) {
+            if (!respuesta.ok) throw new Error("horarios " + respuesta.status);
+            return respuesta.json();
+          })
+          .then(function (datos) {
+            aceptarHorarios(datos.horarios);
+            horariosFallaron = false;
+            return horarios;
+          })
+          .catch(function () {
+            horarios = [];
+            horariosFallaron = true;
+            return horarios;
+          });
+        return pedido;
       }
 
-      /*
-        embed.js pesa más que todo el resto de la página junta, así que se pide
-        recién cuando el formulario entra en pantalla: mientras tanto no le
-        compite ancho de banda al video, que es lo que la persona vino a ver.
-
-        OJO con el rootMargin: tiene que ser 0. El auto-resize de Typeform mide
-        el alto del formulario al arrancar, y si arranca con el contenedor fuera
-        de la pantalla no mide nada — el iframe se queda clavado en el
-        min-height del CSS (350px) y su layout apila el botón "Aceptar" sobre la
-        última opción. Medido: cargando fuera de pantalla da 350px; cargando en
-        pantalla da 557px en móvil, igual que las páginas de caso de estudio.
-        Precargarlo antes de tiempo rompe el formulario, no lo acelera.
-      */
-      function armLazyLoad() {
-        if (!section || !("IntersectionObserver" in window)) {
-          loadTypeform();
-          return;
-        }
-
-        var io = new IntersectionObserver(function (entries) {
-          if (!entries[0].isIntersecting) return;
-          io.disconnect();
-          loadTypeform();
-        }, { rootMargin: "0px" });
-
-        io.observe(section);
+      function aceptarHorarios(lista) {
+        // Cinco minutos de margen: un horario que empieza ya no se puede tomar.
+        var desde = Date.now() + 5 * 60 * 1000;
+        horarios = (Array.isArray(lista) ? lista : []).filter(function (h) {
+          return h && h.inicio && new Date(h.inicio).getTime() > desde;
+        });
       }
 
-      if (document.readyState === "complete") {
-        armLazyLoad();
+      function claveDia(fecha) {
+        return fecha.toLocaleDateString("en-CA", { timeZone: ZONA });
+      }
+
+      function horaDe(fecha) {
+        return fecha.toLocaleTimeString("es", { timeZone: ZONA, hour: "numeric", minute: "2-digit", hour12: true });
+      }
+
+      function horaLocal(fecha) {
+        return Number(fecha.toLocaleTimeString("en-GB", { timeZone: ZONA, hour: "2-digit", hour12: false }));
+      }
+
+      function mayuscula(texto) { return texto.charAt(0).toUpperCase() + texto.slice(1); }
+
+      function diaRelativo(fecha) {
+        var hoy = claveDia(new Date());
+        var manana = claveDia(new Date(Date.now() + 24 * 60 * 60 * 1000));
+        var clave = claveDia(fecha);
+        if (clave === hoy) return "Hoy";
+        if (clave === manana) return "Mañana";
+        return mayuscula(fecha.toLocaleDateString("es", { timeZone: ZONA, weekday: "long" }));
+      }
+
+      // «mié 21 oct» debajo de Hoy y Mañana; debajo de «Viernes», sólo «23 oct».
+      function fechaCorta(fecha, conDia) {
+        var partes = {};
+        new Intl.DateTimeFormat("es", { timeZone: ZONA, weekday: "short", day: "numeric", month: "short" })
+          .formatToParts(fecha)
+          .forEach(function (parte) { partes[parte.type] = parte.value.replace(/\./g, ""); });
+        return (conDia ? partes.weekday + " " : "") + partes.day + " " + partes.month;
+      }
+
+      // «Jueves 22 de octubre»
+      function diaLargo(fecha) {
+        return mayuscula(fecha.toLocaleDateString("es", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long" }).replace(",", ""));
+      }
+
+      function fechaLarga(fecha) {
+        return diaLargo(fecha) + ", " + horaDe(fecha);
+      }
+
+      function nombreZona() {
+        return ZONA.split("/").pop().replace(/_/g, " ");
+      }
+
+      // La firma de la tarjeta: el horario libre más próximo, de Calendly al momento.
+      function pintarProximo() {
+        var proximo = document.getElementById("proximo");
+        if (!horarios.length) { proximo.hidden = true; return; }
+        var fecha = new Date(horarios[0].inicio);
+        var dia = diaRelativo(fecha);
+        document.getElementById("proximo-texto").textContent =
+          (dia === "Hoy" || dia === "Mañana" ? dia.toLowerCase() : dia) + ", " + horaDe(fecha);
+        proximo.hidden = false;
+      }
+
+      var premium = document.querySelector(".plan-premium");
+      if ("IntersectionObserver" in window) {
+        var cerca = new IntersectionObserver(function (entradas) {
+          if (!entradas[0].isIntersecting) return;
+          cerca.disconnect();
+          pedirHorarios().then(pintarProximo);
+        }, { rootMargin: "400px 0px" });
+        cerca.observe(premium);
+
+        // Cuántos llegaron a ver el precio del Premium: la exposición se cuenta al cargar y
+        // las tarjetas están debajo del video, así que este es el denominador más fino.
+        var precio = document.getElementById(BRAZO === "VIS" ? "precio-premium-vis" : "precio-premium-ocu");
+        var visto = new IntersectionObserver(function (entradas) {
+          if (!entradas[0].isIntersecting) return;
+          visto.disconnect();
+          medir("empezar_precio_visto", { non_interaction: true });
+        }, { threshold: 0.6 });
+        visto.observe(precio);
       } else {
-        window.addEventListener("load", armLazyLoad, { once: true });
+        pedirHorarios().then(pintarProximo);
       }
 
-      // Función manual para pruebas desde consola: window.TR4INER_SHOW_TYPEFORM()
-      window.TR4INER_SHOW_TYPEFORM = loadTypeform;
+      // ── Hoja de agenda ─────────────────────────────────────────
+      var capa = document.getElementById("agenda");
+      var titulo = document.getElementById("agenda-titulo");
+      var abrir = document.getElementById("abrir-agenda");
+      var pasos = capa.querySelectorAll(".agenda-paso");
+      var tramos = capa.querySelectorAll(".agenda-progreso li");
+      var diasBox = document.getElementById("dias");
+      var horasBox = document.getElementById("horas");
+      var esqueleto = document.getElementById("esqueleto");
+      var avisoHorario = document.getElementById("aviso-horario");
+      var form = document.getElementById("agenda-form");
+      var elegido = null;
+      var diaActivo = null;
+      var pasoActual = "horario";
+      var prefijoCargado = false;
+
+      var TITULOS = { horario: "Elige día y hora", datos: "Tus datos para la sesión", listo: "Tu sesión quedó agendada", calendly: "Elige en el calendario" };
+      var ORDEN = ["horario", "datos", "listo"];
+
+      function irA(paso) {
+        pasoActual = paso;
+        pasos.forEach(function (seccion) { seccion.hidden = seccion.getAttribute("data-paso") !== paso; });
+        titulo.textContent = TITULOS[paso];
+        var indice = ORDEN.indexOf(paso === "calendly" ? "horario" : paso);
+        tramos.forEach(function (tramo, i) {
+          tramo.classList.toggle("hecho", i < indice);
+          tramo.classList.toggle("actual", i === indice);
+        });
+        capa.querySelector(".agenda-cuerpo").scrollTop = 0;
+        titulo.focus({ preventScroll: true });
+        if (paso === "datos") cargarPrefijo();
+      }
+
+      function abrirAgenda() {
+        capa.hidden = false;
+        document.documentElement.classList.add("agenda-abierta");
+        medir("empezar_premium_open");
+        if (pasoActual === "listo") { titulo.focus(); return; }
+        irA("horario");
+        mostrarHorarios();
+      }
+
+      function cerrarAgenda() {
+        capa.hidden = true;
+        document.documentElement.classList.remove("agenda-abierta");
+        abrir.focus({ preventScroll: true });
+      }
+
+      abrir.addEventListener("click", abrirAgenda);
+      // Los horarios empiezan a pedirse en cuanto el dedo toca el botón.
+      abrir.addEventListener("pointerdown", function () { pedirHorarios(); }, { passive: true });
+      document.getElementById("cerrar-agenda").addEventListener("click", cerrarAgenda);
+      capa.addEventListener("click", function (evento) { if (evento.target === capa) cerrarAgenda(); });
+      document.addEventListener("keydown", function (evento) {
+        // La hoja de países frena su propio Escape: ese no cierra la agenda.
+        if (evento.key === "Escape" && !capa.hidden && !evento.defaultPrevented) cerrarAgenda();
+      });
+
+      function mostrarHorarios(aviso) {
+        avisoHorario.hidden = !aviso;
+        avisoHorario.textContent = aviso || "";
+        esqueleto.hidden = false;
+        diasBox.innerHTML = "";
+        horasBox.innerHTML = "";
+        pedirHorarios().then(function () {
+          esqueleto.hidden = true;
+          if (!horarios.length) {
+            abrirCalendly(null, horariosFallaron
+              ? "No pudimos traer los horarios desde aquí. Elige tu sesión en el calendario del equipo:"
+              : "En los próximos días no quedan horarios libres. Mira otras fechas en el calendario del equipo:");
+            return;
+          }
+          pintarDias();
+        });
+      }
+
+      function porDia() {
+        var grupos = {};
+        var orden = [];
+        horarios.forEach(function (h) {
+          var clave = claveDia(new Date(h.inicio));
+          if (!grupos[clave]) { grupos[clave] = []; orden.push(clave); }
+          grupos[clave].push(h);
+        });
+        return { grupos: grupos, orden: orden };
+      }
+
+      function pintarDias() {
+        var dias = porDia();
+        if (!diaActivo || !dias.grupos[diaActivo]) diaActivo = dias.orden[0];
+        diasBox.innerHTML = "";
+        dias.orden.forEach(function (clave) {
+          var fecha = new Date(dias.grupos[clave][0].inicio);
+          var boton = document.createElement("button");
+          boton.type = "button";
+          boton.className = "dia";
+          boton.setAttribute("role", "tab");
+          boton.setAttribute("aria-selected", String(clave === diaActivo));
+          var cantidad = dias.grupos[clave].length;
+          boton.innerHTML = '<span class="dia-rel"></span><span class="dia-fecha"></span><span class="dia-cant"></span>';
+          var relativo = diaRelativo(fecha);
+          boton.querySelector(".dia-rel").textContent = relativo;
+          boton.querySelector(".dia-fecha").textContent = fechaCorta(fecha, relativo === "Hoy" || relativo === "Mañana");
+          boton.querySelector(".dia-cant").textContent = cantidad + (cantidad === 1 ? " horario" : " horarios");
+          boton.addEventListener("click", function () {
+            diaActivo = clave;
+            pintarDias();
+          });
+          diasBox.appendChild(boton);
+        });
+        pintarHoras(dias.grupos[diaActivo]);
+        document.getElementById("zona").textContent = "Horarios en tu hora local (" + nombreZona() + ").";
+      }
+
+      function pintarHoras(lista) {
+        // «Por la mañana» y no «Mañana»: arriba, en los días, «Mañana» ya es el día siguiente.
+        var franjas = [
+          { nombre: "Por la mañana", desde: 0, hasta: 12 },
+          { nombre: "Por la tarde", desde: 12, hasta: 18 },
+          { nombre: "Por la noche", desde: 18, hasta: 24 }
+        ];
+        horasBox.innerHTML = "";
+        franjas.forEach(function (franja) {
+          var deLaFranja = lista.filter(function (h) {
+            var hora = horaLocal(new Date(h.inicio));
+            return hora >= franja.desde && hora < franja.hasta;
+          });
+          if (!deLaFranja.length) return;
+          var rotulo = document.createElement("p");
+          rotulo.className = "franja-titulo";
+          rotulo.textContent = franja.nombre;
+          var grilla = document.createElement("div");
+          grilla.className = "horas";
+          grilla.setAttribute("role", "group");
+          grilla.setAttribute("aria-label", franja.nombre);
+          deLaFranja.forEach(function (h) {
+            var fecha = new Date(h.inicio);
+            var boton = document.createElement("button");
+            boton.type = "button";
+            boton.className = "hora";
+            boton.textContent = horaDe(fecha);
+            boton.setAttribute("aria-label", fechaLarga(fecha));
+            boton.addEventListener("click", function () { elegirHorario(h, boton); });
+            grilla.appendChild(boton);
+          });
+          horasBox.appendChild(rotulo);
+          horasBox.appendChild(grilla);
+        });
+      }
+
+      function elegirHorario(horario, boton) {
+        elegido = horario;
+        boton.classList.add("elegida");
+        var fecha = new Date(horario.inicio);
+        var texto = document.getElementById("elegido-texto");
+        texto.textContent = diaLargo(fecha);
+        var zona = document.createElement("small");
+        zona.textContent = horaDe(fecha) + " · hora de " + nombreZona();
+        texto.appendChild(zona);
+        medir("empezar_horario_elegido", { dias_hasta: Math.floor((fecha - Date.now()) / 86400000) });
+        // Un instante para que se vea el botón hundido antes de pasar de paso.
+        setTimeout(function () { irA("datos"); }, 140);
+      }
+
+      document.getElementById("cambiar-horario").addEventListener("click", function () {
+        irA("horario");
+        mostrarHorarios();
+      });
+
+      document.getElementById("ver-calendario").addEventListener("click", function () {
+        abrirCalendly(null, null);
+      });
+
+      // ── Datos y reserva ────────────────────────────────────────
+      var campoNombre = document.getElementById("nombre");
+      var campoEmail = document.getElementById("email");
+      var campoWhatsapp = document.getElementById("whatsapp");
+      var campoObjetivo = document.getElementById("objetivo");
+      var avisoDatos = document.getElementById("aviso-datos");
+      var confirmar = document.getElementById("confirmar");
+      if (NOMBRE) campoNombre.value = NOMBRE;
+      if (EMAIL) campoEmail.value = EMAIL;
+
+      function cargarPrefijo() {
+        if (prefijoCargado) return;
+        prefijoCargado = true;
+        var script = document.createElement("script");
+        script.src = "/biblioteca/assets/prefijo-pais.js?v=20261016";
+        document.body.appendChild(script);
+      }
+
+      function marcar(id, conError) {
+        document.getElementById(id).classList.toggle("has-error", conError);
+      }
+
+      function numeroWhatsapp() {
+        var prefijo = document.getElementById("prefijo").value || "";
+        var numero = window.TR4Prefijo ? window.TR4Prefijo.telefono() : campoWhatsapp.value.replace(/\D/g, "");
+        return numero ? prefijo + numero : "";
+      }
+
+      function validar() {
+        var ok = true;
+        var nombre = campoNombre.value.trim();
+        var email = campoEmail.value.trim();
+        var digitos = campoWhatsapp.value.replace(/\D/g, "");
+        var objetivo = campoObjetivo.value.trim();
+        marcar("f-nombre", nombre.length < 2); ok = ok && nombre.length >= 2;
+        var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+        marcar("f-email", !emailOk); ok = ok && emailOk;
+        var whatsappOk = digitos.length >= 6 && digitos.length <= 15;
+        marcar("f-whatsapp", !whatsappOk); ok = ok && whatsappOk;
+        marcar("f-objetivo", objetivo.length < 3); ok = ok && objetivo.length >= 3;
+        if (!ok) {
+          var primero = form.querySelector(".has-error .control");
+          if (primero) primero.focus();
+        }
+        return ok;
+      }
+
+      ["f-nombre", "f-email", "f-whatsapp", "f-objetivo"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", function () { marcar(id, false); });
+      });
+
+      function enviando(activo) {
+        confirmar.disabled = activo;
+        confirmar.classList.toggle("enviando", activo);
+      }
+
+      form.addEventListener("submit", function (evento) {
+        evento.preventDefault();
+        avisoDatos.hidden = true;
+        if (!elegido) { irA("horario"); mostrarHorarios(); return; }
+        if (!validar()) return;
+        if (window.TR4Prefijo && window.TR4Prefijo.frenarPorLargo()) return;
+
+        var tracking = {};
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"].forEach(function (clave) {
+          if (ATRIB[clave]) tracking[clave] = ATRIB[clave];
+        });
+
+        enviando(true);
+        medir("empezar_agenda_enviada");
+        fetch("/api/empezar/agendar", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            inicio: elegido.inicio,
+            nombre: campoNombre.value.trim(),
+            email: campoEmail.value.trim(),
+            whatsapp: numeroWhatsapp(),
+            objetivo: campoObjetivo.value.trim(),
+            zona: ZONA,
+            tracking: tracking,
+            sitio: document.getElementById("sitio").value
+          })
+        })
+          .then(function (respuesta) {
+            return respuesta.json().catch(function () { return {}; }).then(function (datos) {
+              return { status: respuesta.status, datos: datos };
+            });
+          })
+          .then(function (r) {
+            enviando(false);
+            if (r.datos.ok) return confirmada(r.datos);
+            if (r.datos.motivo === "horario_ocupado") {
+              aceptarHorarios(r.datos.horarios);
+              pedido = Promise.resolve(horarios);
+              elegido = null;
+              irA("horario");
+              mostrarHorarios("Ese horario se acaba de ocupar. Estos siguen libres:");
+              return;
+            }
+            if (r.datos.motivo === "datos" && r.datos.campo && r.datos.campo !== "inicio") {
+              marcar("f-" + r.datos.campo, true);
+              return;
+            }
+            respaldo();
+          })
+          .catch(function () {
+            enviando(false);
+            respaldo();
+          });
+      });
+
+      // Si la reserva no sale desde acá, se termina en Calendly en el mismo horario y con
+      // los datos cargados: la persona no vuelve a empezar.
+      function respaldo() {
+        medir("empezar_agenda_respaldo");
+        abrirCalendly(elegido, "No pudimos registrar la sesión desde aquí. Termínala en el calendario del equipo, ya con tus datos:");
+      }
+
+      function confirmada(datos) {
+        var fecha = new Date(datos.inicio || elegido.inicio);
+        document.getElementById("listo-fecha").textContent = diaLargo(fecha);
+        document.getElementById("listo-hora").textContent = horaDe(fecha) + " · hora de " + nombreZona();
+        var enlaces = document.getElementById("listo-enlaces");
+        if (datos.reprogramar && datos.cancelar) {
+          document.getElementById("reprogramar").href = datos.reprogramar;
+          document.getElementById("cancelar").href = datos.cancelar;
+          enlaces.hidden = false;
+        }
+        document.getElementById("etiqueta-prueba").hidden = !datos.prueba;
+        medir("empezar_agendo", { via: "api", prueba: Boolean(datos.prueba) });
+        irA("listo");
+      }
+
+      // ── Calendario de Calendly (respaldo y «ver el calendario completo») ──
+      function urlCalendly(horario) {
+        var url = new URL(horario && horario.url ? horario.url : CALENDARIO);
+        url.searchParams.set("embed_domain", window.location.host);
+        url.searchParams.set("embed_type", "Inline");
+        url.searchParams.set("hide_gdpr_banner", "1");
+        url.searchParams.set("hide_event_type_details", "1");
+        url.searchParams.set("background_color", "ffffff");
+        url.searchParams.set("text_color", "16181a");
+        url.searchParams.set("primary_color", "16181a");
+        Object.keys(ATRIB).forEach(function (clave) {
+          if (clave.indexOf("utm_") === 0) url.searchParams.set(clave, ATRIB[clave]);
+        });
+        url.searchParams.set("salesforce_uuid", REF + "-cal");
+        var nombre = campoNombre.value.trim() || NOMBRE;
+        var email = campoEmail.value.trim() || EMAIL;
+        if (nombre) url.searchParams.set("name", nombre);
+        if (email) url.searchParams.set("email", email);
+        return url.toString();
+      }
+
+      function abrirCalendly(horario, aviso) {
+        var marco = document.getElementById("calendly-marco");
+        var avisoCal = document.getElementById("aviso-calendly");
+        avisoCal.hidden = !aviso;
+        avisoCal.textContent = aviso || "";
+        marco.src = urlCalendly(horario);
+        medir("empezar_calendly_abierto", { con_horario: Boolean(horario) });
+        irA("calendly");
+      }
+
+      window.addEventListener("message", function (evento) {
+        if (evento.origin !== "https://calendly.com" || !evento.data) return;
+        if (evento.data.event === "calendly.event_scheduled") medir("empezar_agendo", { via: "calendly", prueba: false });
+      });
     })();
   </script>
 </body>
