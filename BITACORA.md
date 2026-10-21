@@ -33,7 +33,29 @@ Están en R2. En el Preview se abrían por Vimeo porque la regla WAF de `video.m
 de producción y el alias de la rama no está en la lista; en `metodo.tr4iner.com` salen de R2 (verificación abajo).
 
 ### Publicación
-(se completa con el deployment)
+- `main` avanzó de `170abb3` a `e0537eb` (sin integración: `main` no se había movido). Deployment de Production
+  `dpl_9HQpxDPm4yjFm3oqPnurzoRGaUw4`, **Ready** (21-oct 12:35 Lima).
+- Verificado en `metodo.tr4iner.com/empezar` (Chrome con GA4, Meta, Clarity y Vidalytics bloqueados; sin enviar
+  reservas): 200, `noindex, nofollow`, sin cookie `ab_emp` aunque llegue con `utm_source=MetaAds` (test apagado), todos
+  ven «Precio · A tu medida», botón «Agendar mi sesión» y «Videollamadas 1 a 1». `/api/empezar/horarios` devuelve 11
+  horarios reales (próximo: jueves 22, 10:00 Lima) y `reserva_directa: false`; elegir uno abre Calendly en ese horario.
+  `/api/empezar/agendar` con datos inválidos responde 400.
+- **Testimonios desde R2:** el visor reprodujo `testimonios/same-leon-925219212/play_720p.mp4` (206 de R2), sin Vimeo.
+- Imágenes y fuentes con `Cache-Control: public, max-age=31536000, immutable`.
+- **PageSpeed Insights (producción):** celular 100 / 100 / 100 / SEO 69 (FCP 1,2 s, LCP 1,7 s, TBT 0, CLS 0,001);
+  escritorio 100 / 100 / 100 / SEO 69 (FCP 0,3 s, LCP 0,4 s). Informe:
+  `https://pagespeed.web.dev/analysis/https-metodo-tr4iner-com-empezar/rlsewvnjts`.
+- **GTmetrix (producción, Seattle, sin cuenta):** rendimiento 61 %, estructura 87 %, LCP 817 ms, CLS 0, **TBT 3,8 s**.
+  GTmetrix espera más que PageSpeed y alcanza a medir lo que entra a los 5 s. Desglose con Lighthouse esperando 7 s en
+  el Preview (escritorio): todo 88 (13,8 MB); **sin Vidalytics 99** (TBT 0, 1,1 MB); sin GTM 96. El costo es casi
+  todo el reproductor de Vidalytics y su vista previa en 1080p. Informe: `https://gtmetrix.com/reports/metodo.tr4iner.com/Ktc5bsom/`.
+- Capturas de producción en `~/Documents/Ruta Tr4iner/capturas/empezar-2026-10-21/produccion/`.
+
+### Pendiente
+- **Decisión del usuario:** montar Vidalytics sólo con el primer toque o desliz (sin los 5 s) sube GTmetrix; quien no
+  toca nada ve la portada «Paso 1 · Mira el video» en vez de la vista previa en movimiento. GTM seguiría con sus 5 s.
+- Cargar `EMPEZAR_AGENDA_REAL=1` en Production (y redesplegar) si se quiere el formulario propio en vez de Calendly.
+- Ratificación: cohorte desde hoy; ventas del Esencial (`sck=empezar-org`) y agendas (`salesforce_uuid=empezar-org-cal`).
 
 ## 2026-10-21 (2) — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
 
