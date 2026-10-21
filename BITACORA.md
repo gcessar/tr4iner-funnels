@@ -1,5 +1,54 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (rama, sin publicar)
+
+Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegue al CRM con las UTMs de quien compró.
+
+### Por qué hacía falta
+- **El SQL de TR4INER guarda las compras directas SIN vendedor** (`ContactoID` vacío; lectura del 21-oct con un flujo
+  temporal de n8n, ya borrado). El Esencial aparece como «77$ Mensual» (Hotmart) y «Precio de Renovación Mensual
+  Asesoría Tr4iner» (Stripe). El sync de ventas sólo trae las de Martin, Franco, David y Juan: **hoy ninguna compra
+  directa entra al CRM**.
+- La página no pide correo antes del pago, así que tampoco había un registro previo con el que `sync-sale` la uniera.
+
+### Qué cambió
+- **Página (`empezar/index.html`):** cada visita arma un código `empezar-<brazo>-<10 al azar>` (`org` sin test). Viaja
+  como `sck` en Hotmart (sigue `src=empezar`) y como `client_reference_id` en Stripe. Al tocar un botón de pago,
+  `sendBeacon` manda a `crm-ventas-eosin.vercel.app/api/checkout/click` el código con las cinco UTM crudas, `fbclid`,
+  `fbc`, `fbp`, `video`, la URL y el brazo. `empezar_esencial_click` lleva `codigo_clic`.
+- **CRM (`crm-ventas`, rama `work/checkout-clic`):** tabla `CheckoutClick`, `/api/checkout/click` y `/api/checkout/compra`,
+  y `decidirSync` deduplica por código de transacción aunque no haya membresía. Detalle en la bitácora del CRM.
+- **n8n:** «Checkout directo /empezar → CRM» (`UJLMdE3mRmPVhq42`), **apagado**. Hotmart (`hotmart-compra-tr4iner`, sólo
+  `PURCHASE_APPROVED`, primer cobro, `sck` que empieza con `empezar-`) y Stripe (`checkout.session.completed` pagada,
+  `client_reference_id` `empezar-…`; en una suscripción busca el `pi_` en la factura). Llama a `/api/checkout/compra` y
+  después a `sync-sale` (vendedor «Venta directa»). El webhook de Hotmart exige el header `X-HOTMART-HOTTOK` y **no
+  tiene la credencial cargada a propósito**: sin ella n8n no deja activarlo.
+
+### Verificación (local)
+- Página real en Chrome con `ab_emp=VIS` y UTMs de Meta: el mismo código en `sck` y `client_reference_id`, el aviso sale
+  como `text/plain` con `utm_campaign=PRUEBA-[X]` crudo y el `fbc` armado desde el `fbclid`, y la salida a Hotmart no
+  se frena. El aviso se desvió al CRM local.
+- CRM local (Postgres 18 con todas las migraciones): con ese código, el aviso de Hotmart de ejemplo pasó por el mismo
+  código del nodo de n8n → `lead_creado` con UTMs de Meta, `ad_id` y `fbc` → `sync-sale` `moved_to_win`, «Venta
+  directa». Reenvío: `already_synced`. Normalizadores: descartan renovación, `PURCHASE_COMPLETE`, otros `sck` y Stripe
+  sin pagar.
+- No se probó con una compra real ni con avisos reales: n8n no guarda ejecuciones de Hotmart para ver su forma exacta.
+  El `sck` se lee de `purchase.origin.sck` según la documentación de Hotmart; el CRM guarda el aviso crudo en
+  `CheckoutClick.compra` para confirmarlo con la primera venta.
+
+### Para publicar (en este orden; cada paso pide OK)
+1. Migración del CRM en Neon y merge de `work/checkout-clic` a `main`.
+2. Página: merge de esta rama a `main` (antes del CRM, los clics se perderían con 404).
+3. n8n: credencial `X-HOTMART-HOTTOK` (la carga el usuario) y activar el flujo (Stripe registra solo su webhook).
+4. Hotmart → Herramientas → Webhook: URL de producción de «Compra Hotmart», evento `PURCHASE_APPROVED`, producto
+   `M84590773F`.
+5. Una compra real de prueba (o la primera venta) para confirmar que vuelve el `sck`.
+
+### Pendiente aparte
+- Las compras de Stripe por suscripción: si la API de la cuenta ya no da `payment_intent` en la factura, la venta queda
+  con el `in_` y un reembolso de Stripe no la encontraría solo.
+- El panel `/empezar` del CRM todavía mide el Typeform que la página ya no tiene.
+
 ## 2026-10-21 (4) — `/empezar`: el retador del test de precio dice «Planes desde US$400»
 
 Pedido del usuario: US$400 en vez de US$300 en la versión B (`VIS`) de `emp_precio_202610`. Es antes de encender el test,
@@ -2516,6 +2565,8 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (rama, sin publicar)
+- `2026-10-21` — `/empezar`: el retador del test de precio dice «Planes desde US$400»
 - `2026-10-21` — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
 - `2026-10-21` — `/empezar`: testimonios en video de R2 y carga optimizada (Lighthouse 35 → 99 en celular, local)
 - `2026-10-21` — `/empezar` sin Typeform: tabla de planes (Esencial y Premium) y test de precio del Premium armado, apagado (local)
