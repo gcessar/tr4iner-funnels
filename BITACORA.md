@@ -6,6 +6,9 @@ Pedido del usuario: US$400 en vez de US$300 en la versión B (`VIS`) de `emp_pre
 así que no hay datos que separar: el test arranca directamente con US$400. El control (`OCU`, «A tu medida») no cambia.
 Mientras `TEST_EMPEZAR = false`, nadie ve la versión B en producción.
 
+Integrado en `main` con OK del usuario (`3ac22eb`), deployment `dpl_13CCdKraptCgEF6dQJbXMg83hxxo` **Ready**: el HTML de
+producción trae US$400 en el bloque `VIS`, `/empezar` responde 200 y no asigna `ab_emp` ni con `utm_source=MetaAds`.
+
 ## 2026-10-21 (3) — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
 
 Pedido del usuario: «llévalo a producción», con los videos de testimonios desde R2. El test de precio sigue **apagado**
