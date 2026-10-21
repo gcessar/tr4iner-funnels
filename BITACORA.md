@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (rama, sin publicar)
+## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado; n8n espera el hottok)
 
 Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegue al CRM con las UTMs de quien compró.
 
@@ -36,13 +36,17 @@ Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegu
   El `sck` se lee de `purchase.origin.sck` según la documentación de Hotmart; el CRM guarda el aviso crudo en
   `CheckoutClick.compra` para confirmarlo con la primera venta.
 
-### Para publicar (en este orden; cada paso pide OK)
-1. Migración del CRM en Neon y merge de `work/checkout-clic` a `main`.
-2. Página: merge de esta rama a `main` (antes del CRM, los clics se perderían con 404).
-3. n8n: credencial `X-HOTMART-HOTTOK` (la carga el usuario) y activar el flujo (Stripe registra solo su webhook).
-4. Hotmart → Herramientas → Webhook: URL de producción de «Compra Hotmart», evento `PURCHASE_APPROVED`, producto
-   `M84590773F`.
-5. Una compra real de prueba (o la primera venta) para confirmar que vuelve el `sck`.
+### Publicación (21-oct, con OK del usuario)
+1. **CRM:** migración aplicada en Neon de producción y `main` → `f65ab0d`, `dpl_EZSHJR3XugDYNnYe9HYcMnCxPQ68` **Ready**.
+2. **Página:** `main` → `b68384d`, `dpl_2AKbXZ7hR6MJoorvDKru9XPzCi4d` **Ready** (después del CRM, para no perder clics).
+   Clic real en `metodo.tr4iner.com/empezar` con Chrome: guardado en `CheckoutClick` de producción con la campaña cruda,
+   `fbclid` y `fbc`. **Registro de prueba:** `empezar-org-71qrkrg8xs` (`utm_source=verificacion-claude`); excluirlo.
+3. **Falta (usuario):** credencial `X-HOTMART-HOTTOK` en el nodo «Compra Hotmart» de `UJLMdE3mRmPVhq42` y activar el
+   flujo (Stripe registra solo su webhook).
+4. **Falta (usuario):** Hotmart → Herramientas → Webhook: `https://primary-production-0efa.up.railway.app/webhook/hotmart-compra-tr4iner`,
+   evento `PURCHASE_APPROVED`, producto `M84590773F`.
+5. La primera venta (o una de prueba) confirma que vuelve el `sck`. Hasta el paso 4, los clics se guardan pero ninguna
+   compra se une.
 
 ### Pendiente aparte
 - Las compras de Stripe por suscripción: si la API de la cuenta ya no da `payment_intent` en la factura, la venta queda
