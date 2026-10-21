@@ -1,5 +1,10 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 — Ruta: portadas de «Cómo conseguir tu cambio físico en la MITAD de tiempo» (hombres y mujeres)
+
+- La lección `ruta-acelera` nació en R2 sin portada del equipo: mostraba un fotograma del video. El usuario mandó dos diseños («RESULTADOS MÁS RÁPIDO»): Anthoni solo → hombres, Anthoni con la modelo → mujeres.
+- `biblioteca/assets/ruta/portadas/{hombres,mujeres}/acelera-{960,480}.webp`, igual que las demás (960×540 y 480×270, `cwebp -q 80`, 10–28 KB). Las asigna el CRM en `genesis-preview-segments.json` (bitácora del CRM, mismo día).
+
 ## 2026-10-21 (5) — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado y activo)
 
 Pedido del usuario: que la compra del Plan Esencial hecha desde `/empezar` llegue al CRM con las UTMs de quien compró.
@@ -2586,6 +2591,7 @@ TYPEFORM_TOKEN=… npx tsx scripts/ab-copy-variant-embudo.ts \
 
 **Octubre 2026**
 
+- `2026-10-21` — Ruta: portadas de «Cómo conseguir tu cambio físico en la MITAD de tiempo» (hombres y mujeres)
 - `2026-10-21` — `/empezar`: código de clic en Hotmart y Stripe para atribuir la compra en el CRM (publicado y activo)
 - `2026-10-21` — `/empezar`: el retador del test de precio dice «Planes desde US$400»
 - `2026-10-21` — `/empezar` a producción: tabla de planes, testimonios de R2 y carga diferida
