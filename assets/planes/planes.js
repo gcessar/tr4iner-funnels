@@ -114,7 +114,7 @@
       '<article class="plan plan-premium" aria-labelledby="premium-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="premium-nombre">Plan Premium</h3><span class="plan-badge">Videollamadas en vivo</span></div>' +
         '<p class="plan-price"><span class="price-pre">Precio</span><span class="price-main price-word">A tu medida</span></p>' +
-        '<p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos por videollamada.</p>' +
+        '<p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>' +
         '<ul class="plan-list">' +
           '<li><strong>Todo lo del Plan Esencial.</strong></li>' +
           '<li>Videollamadas 1 a 1 en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>' +
@@ -159,7 +159,7 @@
           '<h2 class="agenda-titulo" id="agenda-titulo" tabindex="-1">Elige día y hora</h2>' +
           '<p class="agenda-meta">' +
             '<span><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 4.6V8l2.3 1.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>30 min</span>' +
-            '<span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.6" y="4.2" width="9" height="7.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 7.2l3.6-2v5.6l-3.6-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Videollamada con un asesor</span>' +
+            '<span><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.6" y="4.2" width="9" height="7.6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10.6 7.2l3.6-2v5.6l-3.6-2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Sesión con un asesor</span>' +
           '</p>' +
         '</div><button class="agenda-cerrar" type="button" id="cerrar-agenda" aria-label="Cerrar">×</button></header>' +
         '<ol class="agenda-progreso" aria-hidden="true"><li data-tramo="horario">Horario</li><li data-tramo="datos">Tus datos</li><li data-tramo="listo">Listo</li></ol>' +
