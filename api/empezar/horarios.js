@@ -9,7 +9,8 @@ module.exports = async function horarios(request, response) {
     // Medio minuto en el CDN: con tráfico pago no se le pega a Calendly en cada visita, y
     // un horario que se ocupó mientras tanto se vuelve a comprobar al reservar.
     response.setHeader('Cache-Control', 'public, max-age=0, s-maxage=30, stale-while-revalidate=30');
-    return response.status(200).json({ horarios: libres });
+    // reserva_directa: si la página registra la cita ella misma o la termina en Calendly.
+    return response.status(200).json({ horarios: libres, reserva_directa: agenda.reservaDirecta() });
   } catch (error) {
     console.error('[empezar] sin horarios de Calendly:', error.message);
     response.setHeader('Cache-Control', 'no-store');

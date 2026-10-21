@@ -21,6 +21,8 @@ module.exports = async function agendar(request, response) {
   const d = v.datos;
 
   if (!process.env.RUTA_CHAT_SECRET) return response.status(503).json({ ok: false, motivo: 'sin_configurar' });
+  // Defensa: en producción sin EMPEZAR_AGENDA_REAL la página ni llega acá (va a Calendly).
+  if (!agenda.reservaDirecta()) return response.status(503).json({ ok: false, motivo: 'agenda_no_activada' });
 
   // El horario lo eligió hace un rato: si alguien lo tomó, se le ofrecen los que siguen
   // libres en vez de intentar una reserva que falla.

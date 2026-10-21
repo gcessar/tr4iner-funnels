@@ -1766,6 +1766,9 @@
       var pedido = null;
       var horarios = [];
       var horariosFallaron = false;
+      // Lo decide el servidor (EMPEZAR_AGENDA_REAL): si es falso, el horario elegido se
+      // confirma en Calendly en vez del formulario propio, para no simular una cita.
+      var reservaDirecta = true;
 
       function pedirHorarios(otraVez) {
         if (pedido && !otraVez) return pedido;
@@ -1781,6 +1784,7 @@
           })
           .then(function (datos) {
             aceptarHorarios(datos.horarios);
+            reservaDirecta = datos.reserva_directa !== false;
             horariosFallaron = false;
             return horarios;
           })
@@ -2042,7 +2046,10 @@
         texto.appendChild(zona);
         medir("empezar_horario_elegido", { dias_hasta: Math.floor((fecha - Date.now()) / 86400000) });
         // Un instante para que se vea el botón hundido antes de pasar de paso.
-        setTimeout(function () { irA("datos"); }, 140);
+        setTimeout(function () {
+          if (reservaDirecta) irA("datos");
+          else abrirCalendly(horario, "Completa tus datos para confirmar tu sesión del " + fechaLarga(fecha).replace(/^./, function (l) { return l.toLowerCase(); }));
+        }, 140);
       }
 
       document.getElementById("cambiar-horario").addEventListener("click", function () {
@@ -2191,7 +2198,9 @@
 
       // ── Calendario de Calendly (respaldo y «ver el calendario completo») ──
       function urlCalendly(horario) {
-        var url = new URL(horario && horario.url ? horario.url : CALENDARIO);
+        // Calendly abre un horario con «…T16:00:00Z», no con «…T16:00:00.000Z» (404).
+        var deHorario = horario && (horario.url || CALENDARIO + "/" + String(horario.inicio).replace(/\.\d{3}Z$/, "Z"));
+        var url = new URL(deHorario || CALENDARIO);
         url.searchParams.set("embed_domain", window.location.host);
         url.searchParams.set("embed_type", "Inline");
         url.searchParams.set("hide_gdpr_banner", "1");
@@ -2218,6 +2227,7 @@
         marco.src = urlCalendly(horario);
         medir("empezar_calendly_abierto", { con_horario: Boolean(horario) });
         irA("calendly");
+        if (horario) titulo.textContent = "Confirma tu sesión";
       }
 
       // ── Testimonios ────────────────────────────────────────────
