@@ -42,7 +42,7 @@ module.exports = async function agendar(request, response) {
       email: d.email,
       zona: d.zona,
       whatsapp: d.whatsapp,
-      situacion: agenda.situacionParaAsesor(d.objetivo),
+      situacion: agenda.situacionParaAsesor(d.objetivo, agenda.paginaDe(b)),
       tracking: agenda.trackingDe(b, brazo)
     }, 15000);
   } catch (error) {
