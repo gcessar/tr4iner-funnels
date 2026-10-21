@@ -16,14 +16,12 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#F2F3F5" />
   <title>Caso de estudio de Dashiel · TR4INER</title>
-  <meta name="description" content="Mira el análisis de la transformación de Dashiel y completa tu evaluación para saber qué ruta de TR4INER encaja contigo." />
+  <meta name="description" content="Mira el análisis de la transformación de Dashiel y elige cómo empezar con TR4INER: el Plan Esencial o el Premium, con videollamadas en vivo." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-dashiel" />
 
   <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <link rel="preconnect" href="https://embed.typeform.com" />
-  <!-- El form se revela a los 3s; precargarlo evita que ahi recien empiece
-       la descarga y el usuario se coma el "Cargando aplicacion...". -->
-  <link rel="preload" as="script" href="https://embed.typeform.com/next/embed.js" crossorigin />
+  <!-- Tabla de planes compartida con las demás páginas que tenían el Typeform (21-oct-2026). -->
+  <link rel="stylesheet" href="/assets/planes/planes.css?v=20261021" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas.
        Antes había que resolver DNS y TLS contra fonts.googleapis y
@@ -54,8 +52,7 @@
       --max: 620px;
       /* Superficie única, como /casos-de-estudio y las páginas de agenda: los bloques se
          separan por aire, no por líneas. El video va sobre una placa del color del fondo que se
-         despega con luz y sombra; la tarjeta del formulario es apenas más clara (#FAFBFC)
-         porque ese es el fondo que pinta el Typeform adentro, y no se toca. */
+         despega con luz y sombra, igual que las tarjetas de los planes. */
       --surface: #F2F3F5;
       --neu-dark: rgba(32, 41, 52, 0.15);
       --neu-light: #FFFFFF;
@@ -196,8 +193,7 @@
       font-weight: 300;
     }
 
-    .dek,
-    .cta-subtitle {
+    .dek {
       font-family: var(--sans);
       font-weight: 400;
       font-size: clamp(16px, 2.1vw, 18.5px);
@@ -221,7 +217,7 @@
 
     .video-shell {
       position: relative;
-      margin-bottom: 46px;
+      margin-bottom: 0;
       padding: 12px;
       border-radius: 26px;
       background: var(--surface);
@@ -269,151 +265,13 @@
       min-height: 0;
     }
 
-    #typeform-cta {
-      max-height: 0;
-      margin-top: 0;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(12px);
-      transition:
-        max-height 900ms cubic-bezier(0.4, 0, 0.2, 1),
-        margin-top 600ms ease,
-        opacity 600ms ease,
-        transform 600ms ease;
-    }
-
-    #typeform-cta.visible {
-      max-height: 3600px;
-      margin-top: 14px;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    body.application-ready .video-shell {
-      margin-bottom: 0;
-    }
-
-    /* #typeform-cta recorta con overflow para su entrada; el relleno (compensado con margen
-       negativo) deja lugar a la sombra de la tarjeta sin mover nada. Sólo al estar visible:
-       con max-height 0 el relleno igual ocuparía alto. */
-    #typeform-cta.visible {
-      /* La sombra llega a ~58 px (18 de corrimiento + 40 de desenfoque). */
-      margin: -26px -60px 0;
-      padding: 60px 60px 64px;
-    }
-
-    body:not(.application-ready) .page > footer {
-      display: none;
-    }
-
-    .application-card {
-      overflow: hidden;
-      border-radius: 26px;
-      background: var(--bg-deeper);
-      box-shadow: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light);
-    }
-
-    .application-header {
-      position: relative;
-      margin: 8px 10px 0;
-      padding: 28px 18px 20px;
-    }
-
-    .application-header::after {
-      content: none;
-      position: absolute;
-      top: 11px;
-      right: 11px;
-      width: 8px;
-      height: 8px;
-      border-top: 1px solid rgba(184, 115, 85, 0.72);
-      border-right: 1px solid rgba(184, 115, 85, 0.72);
-    }
-
-    .cta-kicker {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 13px;
-      color: var(--rust);
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      line-height: 1.2;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-
-    .cta-title {
-      max-width: 480px;
-      margin-bottom: 12px;
-      color: var(--ink);
-      font-family: var(--serif);
-      font-variation-settings: "opsz" 100;
-      font-size: clamp(29px, 6vw, 36px);
-      font-weight: var(--display-weight);
-      line-height: 1.06;
-      letter-spacing: -0.02em;
-      text-wrap: balance;
-    }
-
-    .cta-title em {
-      color: var(--rust);
-      font-weight: 500;
-    }
-
-    .cta-subtitle {
-      max-width: 49ch;
-      color: var(--ink-soft);
-    }
-
-    .cta-divider {
-      display: none;
-    }
-
-    .cta-typeform-frame {
-      padding: 8px 20px 12px;
-      background: transparent;
-    }
-
-    .cta-typeform-frame [data-tf-live] {
-      min-height: 350px;
-      height: auto;
-      background: transparent;
-    }
-
-    /* Typeform mete un div propio entre el contenedor y su widget, y ese div corta
-       la cadena de `min-height: inherit` con la que el widget baja el piso hasta el
-       iframe. Sin esto el iframe se queda en el alto que calcula Typeform (288px en
-       la pregunta de SI/NO) y su layout apila el boton sobre la ultima opcion. */
-    .cta-typeform-frame [data-tf-live] > div,
-    .cta-typeform-frame [data-tf-live] .tf-v1-widget,
-    .cta-typeform-frame [data-tf-live] iframe {
-      min-height: inherit;
-    }
-
-    .loading-form {
-      display: grid;
-      min-height: 350px;
-      place-items: center;
-      padding: 42px 20px;
-      color: var(--muted);
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
     .trust {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 14px;
       width: 100%;
-      /* Suma con el relleno inferior de #typeform-cta. */
-      margin-top: 22px;
+      margin-top: clamp(56px, 10vw, 88px);
     }
 
     .trust-avatar {
@@ -480,58 +338,6 @@
       color: var(--rule-strong);
     }
 
-    .sticky-apply {
-      position: fixed;
-      z-index: 30;
-      right: max(16px, env(safe-area-inset-right));
-      bottom: max(16px, env(safe-area-inset-bottom));
-      display: none;
-      align-items: center;
-      gap: 12px;
-      max-width: calc(100vw - 32px);
-      padding: 9px 10px 9px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 999px;
-      background: var(--ink);
-      color: #F5F1E5;
-      box-shadow: 0 18px 50px rgba(10, 10, 10, 0.22);
-      text-decoration: none;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 220ms ease, transform 220ms ease;
-    }
-
-    .sticky-apply.visible {
-      display: inline-flex;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .sticky-apply span {
-      min-width: 0;
-      overflow: hidden;
-      color: var(--accent);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1.2;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .sticky-apply b {
-      display: grid;
-      width: 34px;
-      height: 34px;
-      flex: 0 0 auto;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--accent);
-      color: var(--ink);
-      font-size: 17px;
-      line-height: 1;
-    }
-
     @media (min-width: 701px) {
       .case-title-line {
         display: block;
@@ -557,28 +363,6 @@
         border-radius: 13px;
       }
 
-      .application-card {
-        border-radius: 20px;
-        box-shadow: 12px 12px 26px var(--neu-dark), -12px -12px 26px var(--neu-light);
-      }
-
-      /* A los costados el recorte coincide con el borde de la pantalla y no se ve. */
-      #typeform-cta.visible {
-        margin: -14px -14px 0;
-        padding: 40px 14px 44px;
-      }
-
-      .sticky-apply.visible {
-        display: none;
-      }
-
-      .cta-typeform-frame {
-        padding: 0 0 12px;
-      }
-
-      .cta-typeform-frame [data-tf-live] {
-        min-height: 350px;
-      }
     }
 
     @media (max-width: 600px) {
@@ -595,8 +379,7 @@
         font-size: 38px;
       }
 
-      .dek,
-      .cta-subtitle {
+      .dek {
         font-size: 15.5px;
       }
     }
@@ -643,29 +426,9 @@
 
     </section>
 
-    <section id="typeform-cta" aria-live="polite" aria-labelledby="application-title">
-      <div class="application-card">
-        <div class="application-header">
-          <div class="cta-kicker">Siguiente paso</div>
-          <h2 class="cta-title" id="application-title">Cuéntanos tu situación,<br>en tus <em>propias palabras.</em></h2>
-          <p class="cta-subtitle">
-            El equipo lee cada respuesta antes de contactarte. Esto evita que recibas un pitch genérico. Lo que te llegue va a ser específico para tu situación.
-          </p>
-        </div>
-
-        <div class="cta-divider"></div>
-
-        <div class="cta-typeform-frame">
-          <div class="loading-form" id="form-loader">Cargando aplicación…</div>
-          <div
-            id="tf-embed"
-            data-tf-live="01KHA5RZHGV02HW971F4227939"
-            data-tf-inline-on-mobile
-            data-tf-auto-resize
-          ></div>
-        </div>
-      </div>
-    </section>
+    <!-- Esencial (Hotmart/Stripe) y Premium (agenda), con los testimonios de R2: los
+         arma /assets/planes/planes.js. Antes acá estaba el Typeform (hasta el 21-oct-2026). -->
+    <section class="tr4p" id="planes" data-slug="dashiel" data-ruta="/testimonio-dashiel" data-tema="neu" data-testimonios="hombre"></section>
 
     <footer>
       <div class="trust">
@@ -691,11 +454,6 @@
       </div>
     </footer>
   </main>
-
-  <a class="sticky-apply" id="sticky-apply" href="#typeform-cta">
-    <span>Completar aplicación</span>
-    <b aria-hidden="true">→</b>
-  </a>
 
   <script>
     (function (v, i, d, a, l, y, t, c, s) {
@@ -744,133 +502,6 @@
   </script>
 
   <script src="/attribution.js"></script>
-  <script>
-    (function () {
-      /*
-        CONFIGURACION RAPIDA
-        - Tiempo normal antes de mostrar el Paso 2: cambia el 3 de REVEAL_SECONDS.
-        - Prueba rapida: agrega ?tf_debug=1 a la URL y el Paso 2 aparece en 2s.
-        - Prueba personalizada: agrega ?trigger_seconds=5 para probar con 5s.
-      */
-      var params = new URLSearchParams(window.location.search);
-      var debugTrigger = params.get("tf_debug") === "1";
-      // Solo usa trigger_seconds si viene en la URL; si no, usa 3 por defecto.
-      // (Ojo: Number(null) es 0, por eso se valida params.has antes.)
-      var configuredSeconds = params.has("trigger_seconds") ? Number(params.get("trigger_seconds")) : NaN;
-      var REVEAL_SECONDS = debugTrigger ? 2 : (Number.isFinite(configuredSeconds) && configuredSeconds >= 0 ? configuredSeconds : 3);
-
-      // Evita que el Paso 2 se muestre o cargue Typeform mas de una vez.
-      var triggered = false;
-      var typeformLoaded = false;
-
-      // Elementos principales que controla este script.
-      var tf = document.getElementById("tf-embed");
-      var loader = document.getElementById("form-loader");
-      var sticky = document.getElementById("sticky-apply");
-
-      function setHiddenFields() {
-        /*
-          Hidden fields enviados a Typeform.
-          Si agregas o quitas campos ocultos en Typeform, edita esta lista.
-          El script toma cada valor desde la URL, por ejemplo:
-          ?first_name=Juan&email=juan@email.com&utm_source=facebook
-        */
-        // Helpers compartidos de attribution.js. Si el archivo no cargó
-        // (bloqueador), el valor viaja crudo igual — que es lo que Typeform
-        // espera; solo se pierde el escape de comas.
-        var tr4 = window.TR4Track || {};
-        var crudo = function (v) { return v == null ? "" : String(v); };
-        var limpiar = tr4.decodeUtmValue || crudo;
-        var paraTypeform = tr4.hiddenFieldValue || crudo;
-
-        // `variant` identifica el brazo del A/B de /casos-de-estudio. Typeform
-        // también debe tener ese URL parameter declarado y publicado.
-        var identityFields = ["first_name", "name", "email", "sexo", "rango_edad", "video", "variant"];
-        var adIds = ["fbclid", "gclid", "fbc_id", "h_ad_id"];
-        var hiddenFields = [];
-        params.forEach(function (value, key) {
-          var allowed = key.indexOf("utm_") === 0 || identityFields.indexOf(key) !== -1 || adIds.indexOf(key) !== -1;
-          if (!allowed || !value) return;
-          // El valor viaja CRUDO. Typeform NO decodifica lo que lee de
-          // data-tf-hidden: lo guarda tal cual y recién lo encodea al armar la
-          // URL de su iframe. Encodear acá era el bug: la campaña quedaba
-          // guardada como el literal "%5BTR4INER%5D%20%5BCE%5D…" y ese texto se
-          // arrastraba al redirect del Typeform, a Calendly, al sheet AGENDAS y
-          // al CAPI de Meta. El decode previo limpia lo que ya haya llegado
-          // doble-encodeado desde afuera.
-          hiddenFields.push(key + "=" + paraTypeform(limpiar(value)));
-        });
-
-        // fbc/fbp no viajan en la URL: fbp es una cookie de este dominio y fbc
-        // se construye desde el fbclid del primer aterrizaje. Sin ellos Meta no
-        // puede emparejar el Lead del servidor con el clic del anuncio.
-        var metaIds = window.TR4Track && window.TR4Track.getMetaIds
-          ? window.TR4Track.getMetaIds()
-          : {};
-        Object.keys(metaIds).forEach(function (key) {
-          hiddenFields.push(key + "=" + paraTypeform(metaIds[key]));
-        });
-
-        var hidden = hiddenFields.join(",");
-
-        // Typeform lee data-tf-hidden cuando carga su embed.js.
-        if (tf && hidden) {
-          tf.setAttribute("data-tf-hidden", hidden);
-        }
-      }
-
-      function loadTypeform() {
-        /*
-          Carga Typeform solo cuando el Paso 2 aparece.
-          Esto mejora la velocidad inicial porque embed.js no carga al abrir la pagina.
-        */
-        if (typeformLoaded) return;
-        typeformLoaded = true;
-        setHiddenFields();
-
-        var script = document.createElement("script");
-        script.src = "https://embed.typeform.com/next/embed.js";
-        script.async = true;
-
-        // Oculta el texto "Cargando aplicacion..." cuando Typeform termina de cargar.
-        script.onload = function () {
-          if (loader) loader.style.display = "none";
-        };
-        document.head.appendChild(script);
-      }
-
-      function showTypeform() {
-        /*
-          Revela el Paso 2.
-          Aqui ocurre todo lo visual:
-          - Se activa .application-ready para mostrar kit/footer.
-          - Se muestra #typeform-cta.
-          - Se carga Typeform.
-        */
-        if (triggered) return;
-        triggered = true;
-
-        var el = document.getElementById("typeform-cta");
-        document.body.classList.add("application-ready");
-        if (el) {
-          el.classList.add("visible");
-          loadTypeform();
-        }
-
-        // Muestra el boton flotante en desktop/tablet. En mobile el CSS lo oculta.
-        if (sticky) {
-          window.setTimeout(function () {
-            sticky.classList.add("visible");
-          }, 900);
-        }
-      }
-
-      // Revela el Paso 2 al cumplir el tiempo configurado, sin contador visible.
-      window.setTimeout(showTypeform, Math.max(0, REVEAL_SECONDS) * 1000);
-
-      // Funcion manual para pruebas desde consola: window.TR4INER_SHOW_TYPEFORM()
-      window.TR4INER_SHOW_TYPEFORM = showTypeform;
-    })();
-  </script>
+  <script src="/assets/planes/planes.js?v=20261021" defer></script>
 </body>
 </html>

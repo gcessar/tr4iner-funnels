@@ -27,6 +27,8 @@
   --p-mono: "JetBrains Mono", ui-monospace, monospace;
   --p-title-weight: 700;
   --p-em-weight: 500;
+  --p-cifras: tabular-nums;
+  --p-precio-tracking: -0.035em;
   --p-radius: 26px;
   --p-radius-soft: 16px;
   --p-gutter: 14px;
@@ -96,8 +98,12 @@
   --p-font: "Lora", Georgia, "Times New Roman", serif;
   --p-mono: "Lora", Georgia, "Times New Roman", serif;
   --p-em-weight: 700;
+  /* En Lora las cifras tabulares (y el espacio) son tan anchas como un dígito: «7 7». */
+  --p-cifras: lining-nums proportional-nums;
+  --p-precio-tracking: -0.01em;
   --p-radius: 14px;
   --p-radius-soft: 12px;
+  --p-gutter: 20px;
 
   /* Plano, como el resto del diseño: borde fino y una sombra apenas tibia. */
   --p-raise: 0 14px 34px -22px rgba(60, 20, 30, 0.35);
@@ -166,8 +172,11 @@
   --p-font: "Lora", Georgia, "Times New Roman", serif;
   --p-mono: "Lora", Georgia, "Times New Roman", serif;
   --p-em-weight: 700;
+  --p-cifras: lining-nums proportional-nums;
+  --p-precio-tracking: -0.01em;
   --p-radius: 14px;
   --p-radius-soft: 12px;
+  --p-gutter: 20px;
 
   --p-raise: none;
   --p-raise-lg: none;
@@ -226,6 +235,8 @@
   font-family: var(--p-font);
   font-size: 17px;
   line-height: 1.55;
+  /* Las páginas de Veronika centran todo su contenido. */
+  text-align: left;
 }
 
 .tr4p p, .tr4p h2, .tr4p h3, .tr4p ul, .tr4p ol { margin: 0; padding: 0; }
@@ -366,8 +377,8 @@ html.tr4p-bloqueo body { overflow: hidden; }
   font-weight: 700;
   font-variation-settings: "opsz" 100;
   line-height: 0.95;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--p-precio-tracking);
+  font-variant-numeric: var(--p-cifras);
 }
 
 .tr4p .price-main .cur { align-self: flex-start; margin: 6px 4px 0 0; font-size: 20px; letter-spacing: 0; }
@@ -381,7 +392,7 @@ html.tr4p-bloqueo body { overflow: hidden; }
   letter-spacing: 0;
 }
 
-.tr4p .price-word { font-size: 44px; line-height: 1; letter-spacing: -0.03em; }
+.tr4p .price-word { font-size: 44px; line-height: 1; letter-spacing: calc(var(--p-precio-tracking) + 0.005em); }
 
 .tr4p .plan-terms { margin-top: 12px; color: var(--p-ink-soft); font-size: 14px; line-height: 1.5; text-wrap: pretty; }
 .tr4p .plan-premium .plan-terms { color: var(--p-prem-soft); }

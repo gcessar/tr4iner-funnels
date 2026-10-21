@@ -9,6 +9,9 @@
       data-ruta="/testimonio-flor"      ruta canónica, la que el CRM muestra
       data-tema="neu"                   neu (Caso de Estudio) | vino (VA) | champan (/empezar-va)
       data-testimonios="mujer"          filtro inicial: mujer | hombre | todos | solo-mujer
+      data-cabecera="no"                opcional: la página ya trae su «Siguiente paso»
+      data-utm-source="…" data-utm-campaign="…"
+                                        opcional: respaldo si el enlace llega sin UTMs
     ></section>
 
   Mide igual que /empezar: el pago lleva un código de clic («flor-org-k3h2j1x9p0») que
@@ -28,6 +31,7 @@
   var RUTA = raiz.getAttribute("data-ruta") || window.location.pathname;
   var TEMA = raiz.getAttribute("data-tema") || "neu";
   var FILTRO_INICIAL = raiz.getAttribute("data-testimonios") || "todos";
+  var CON_CABECERA = raiz.getAttribute("data-cabecera") !== "no";
   if (!/^[a-z0-9]{2,20}$/.test(SLUG)) return;
 
   var CALENDARIO = "https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner";
@@ -81,12 +85,15 @@
   }
 
   raiz.setAttribute("aria-labelledby", "planes-title");
+  if (!CON_CABECERA) raiz.removeAttribute("aria-labelledby");
   raiz.innerHTML =
-    '<header class="planes-head">' +
-      '<p class="kicker">Siguiente paso</p>' +
-      '<h2 class="planes-titulo" id="planes-title">Elige cómo quieres <em>empezar.</em></h2>' +
-      '<p class="dek">Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con tus entrenadores y nutricionistas.</p>' +
-    '</header>' +
+    (CON_CABECERA
+      ? '<header class="planes-head">' +
+          '<p class="kicker">Siguiente paso</p>' +
+          '<h2 class="planes-titulo" id="planes-title">Elige cómo quieres <em>empezar.</em></h2>' +
+          '<p class="dek">Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con tus entrenadores y nutricionistas.</p>' +
+        '</header>'
+      : "") +
     '<div class="plan-grid">' +
       '<article class="plan plan-esencial" aria-labelledby="esencial-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="esencial-nombre">Plan Esencial</h3></div>' +
@@ -247,6 +254,12 @@
     return salida;
   }
   var ATRIB = atribucion();
+  // Las páginas de Veronika rellenan source y campaña cuando el enlace llega sin UTMs, igual
+  // que hacía su Typeform: así el pago y la agenda se cuentan del lado VA.
+  ["utm_source", "utm_campaign"].forEach(function (clave) {
+    var respaldo = raiz.getAttribute("data-" + clave.replace("_", "-"));
+    if (respaldo && !ATRIB[clave]) ATRIB[clave] = respaldo;
+  });
   // El registro de Caso de Estudio trae nombre y correo en la URL: se precargan en los
   // dos checkouts, en la hoja de agenda y en Calendly.
   var NOMBRE = limpiar(params.get("first_name") || params.get("name") || "").trim();
