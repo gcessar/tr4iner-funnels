@@ -113,7 +113,7 @@ function testMedicos(url: URL, cookie: string) {
   Qué se compara: **si la tarjeta del Plan Premium dice su precio**. Nada más.
 
     OCU (control)  «Precio · A tu medida»: el asesor lo presenta en la sesión.
-    VIS (retador)  «Planes desde US$300».
+    VIS (retador)  «Planes desde US$400» (era US$300 hasta el 21-oct, antes de encender).
 
   A diferencia de /medicos, los dos brazos son el MISMO archivo
   (empezar/index.html): el middleware sólo reparte y deja la cookie, y un script

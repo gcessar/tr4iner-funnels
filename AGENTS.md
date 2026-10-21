@@ -193,7 +193,7 @@ visitante y los dos brazos ven la misma mezcla. Criterio en `BITACORA.md`, entra
 
 **Test de PRECIO del Premium en `/empezar`** (`emp_precio_202610`): **armado y APAGADO**
 (`TEST_EMPEZAR = false` en `middleware.ts`). `OCU` (control, «A tu medida») contra `VIS`
-(«Planes desde US$300»), cookie `ab_emp`. Los dos brazos son el mismo archivo: el `<head>`
+(«Planes desde US$400»), cookie `ab_emp`. Los dos brazos son el mismo archivo: el `<head>`
 lee la cookie y muestra uno de los dos precios. KPI y fuente de tráfico sin declarar todavía
 (ver entrada del 21-oct de `BITACORA.md`): `/empezar` casi no recibe tráfico pago.
 
