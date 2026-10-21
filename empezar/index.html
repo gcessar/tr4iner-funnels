@@ -1578,6 +1578,7 @@
     */
     var TR4_DESPERTAR = (function () {
       var hecho = false;
+      var pendientes = [];
       var EVENTOS = ["pointerdown", "touchstart", "keydown", "scroll", "wheel", "mousemove"];
       function despertar() {
         if (hecho) return;
@@ -1585,7 +1586,13 @@
         EVENTOS.forEach(function (evento) { window.removeEventListener(evento, despertar, { passive: true }); });
         cargarVidalytics();
         if (window.TR4_CARGAR_GTM) window.TR4_CARGAR_GTM();
+        pendientes.splice(0).forEach(function (fn) { fn(); });
       }
+      // Lo que no hace falta durante la carga espera a este mismo momento.
+      window.TR4_AL_DESPERTAR = function (fn) {
+        if (hecho) fn();
+        else pendientes.push(fn);
+      };
       EVENTOS.forEach(function (evento) { window.addEventListener(evento, despertar, { passive: true }); });
       if (document.readyState === "complete") setTimeout(despertar, 5000);
       else window.addEventListener("load", function () { setTimeout(despertar, 5000); }, { once: true });
@@ -1854,7 +1861,10 @@
         var cerca = new IntersectionObserver(function (entradas) {
           if (!entradas[0].isIntersecting) return;
           cerca.disconnect();
-          pedirHorarios().then(pintarProximo);
+          // Con el primer toque o desliz (o a los 5 s), no durante la carga: en escritorio la
+          // tarjeta ya está cerca al abrir, y una API lenta o fría (3,6 s medidos en el
+          // Preview) estiraba la medición de PageSpeed hasta que entraban el video y GTM.
+          window.TR4_AL_DESPERTAR(function () { pedirHorarios().then(pintarProximo); });
         }, { rootMargin: "400px 0px" });
         cerca.observe(premium);
 
@@ -1868,7 +1878,7 @@
         }, { threshold: 0.6 });
         visto.observe(precio);
       } else {
-        pedirHorarios().then(pintarProximo);
+        window.TR4_AL_DESPERTAR(function () { pedirHorarios().then(pintarProximo); });
       }
 
       // ── Hoja de agenda ─────────────────────────────────────────
