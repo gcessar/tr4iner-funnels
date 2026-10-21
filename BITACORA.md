@@ -1,5 +1,16 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-21 (6) — Los casos de estudio y /empezar-va cambian el Typeform por la tabla de planes (sin publicar)
+
+- **Pedido del usuario:** en todas las páginas con Typeform incrustado, en vez del Typeform las dos tarjetas de `/empezar` (Esencial US$77/mes por Hotmart o Stripe y Premium con agenda), con testimonios, y que todo se mida. Se descartó un test A/B: cambio directo. Sin salida a WhatsApp.
+- **Páginas (8):** `/testimonio-flor`, `/testimonio-dashiel`, `/testimonio-andrea`, `/testimonio-christian` (tema `neu`, testimonios filtrados por caso), `/testimonio-flor-va`, `/testimonio-rosita-va/video`, `/testimonio-andrea-va/video` (tema `vino`, sólo testimonios de mujeres) y `/empezar-va` (tema `champan`, sólo mujeres). Mismos enlaces que `/empezar` (Hotmart `x65af12s`, Stripe `plink_1USNe1…`, Calendly «Asesoría TR4INER»), Premium «A tu medida» (el test de precio sigue apagado y sólo existe en `/empezar`).
+- **Pieza compartida `assets/planes/`:** `planes.js` arma tarjetas, hoja de agenda y testimonios con la lógica de `/empezar`; `planes.css` los tres temas. `/empezar` conserva su copia inline (PageSpeed medido): un cambio de lógica va en los dos lados.
+- **Medición:** cada página tiene un código corto (`flor`, `rositava`, …). Encabeza el código de clic (`sck` / `client_reference_id`: `flor-org-k3h2j1x9p0`) y la marca de Calendly (`salesforce_uuid`: `flor-org-cal` o `flor-org-<azar>` en la reserva directa). `lib/empezar-agenda.js` acepta `pagina` y le pasa al asesor la ruta de origen. Las páginas de Veronika conservan sus UTMs de respaldo (`LANDING-ROSITA-VA-DIRECTO`/`ROSITA-VA`, `LANDING-ANDREA-VA-DIRECTO`/`CASOS-VA`, `LANDING-VA-DIRECTO`/`CASOS-VA`, `EMPEZAR-VA-DIRECTO`/`EMPEZAR-VA`): el pago y la agenda quedan del lado VA.
+- **Copy:** donde el texto pedía «contarnos» o «completar tu evaluación», ahora «elige cómo empezar». Las de Veronika conservan su «Siguiente paso» con la flecha; su encabezado dice «Elige cómo quieres empezar».
+- **Verificación local** (servidor con los rewrites de `vercel.json` y n8n simulado): en las 8 páginas el Typeform no carga, no hay errores de consola ni scroll horizontal, cada una lleva su código, las de VA rellenan sus UTMs; la reserva directa de Flor llegó con `flor-org-…`, UTMs y la ruta en la nota del asesor; el calendario completo abre con `salesforce_uuid=flor-org-cal`. Capturas en `~/Documents/Ruta Tr4iner/capturas/planes-casos-2026-10-21/`.
+- **Aviso:** las campañas de Meta activas optimizan por agendas («Agenda | Calendly» y «Agenda | All»). La compra directa del Esencial no cuenta como agenda y ya no hay ruta al setter: mirar el costo por agenda los primeros días.
+- **Para publicar** (falta el OK del usuario): CRM (`work/planes-casos` en `crm-ventas`) → n8n «Checkout directo» (aceptar los códigos nuevos; hoy sólo `empezar-`) → esta rama en `main`.
+
 ## 2026-10-21 — Ruta: portadas de «Cómo conseguir tu cambio físico en la MITAD de tiempo» (hombres y mujeres)
 
 - La lección `ruta-acelera` nació en R2 sin portada del equipo: mostraba un fotograma del video. El usuario mandó dos diseños («RESULTADOS MÁS RÁPIDO»): Anthoni solo → hombres, Anthoni con la modelo → mujeres.
