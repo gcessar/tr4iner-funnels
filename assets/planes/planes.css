@@ -58,6 +58,9 @@
   --p-badge-bg: #F5C518;
   --p-badge-ink: #16181A;
   --p-pulse: #F5C518;
+  --p-nota-ink: rgba(245, 197, 24, 0.9);
+  --p-nota-borde: rgba(245, 197, 24, 0.7);
+  --p-nota-fondo: rgba(245, 197, 24, 0.08);
 
   --p-check-bg: #16181A;
   --p-check-mark: #F5C518;
@@ -130,6 +133,9 @@
   --p-badge-bg: #FDF6F0;
   --p-badge-ink: #7C2D3C;
   --p-pulse: #FFFFFF;
+  --p-nota-ink: #F7E3C0;
+  --p-nota-borde: rgba(247, 227, 192, 0.75);
+  --p-nota-fondo: rgba(255, 255, 255, 0.07);
 
   --p-check-bg: #7C2D3C;
   --p-check-mark: #FFFFFF;
@@ -201,6 +207,9 @@
   --p-badge-bg: #000000;
   --p-badge-ink: #E7CE98;
   --p-pulse: #000000;
+  --p-nota-ink: #3A3326;
+  --p-nota-borde: rgba(0, 0, 0, 0.55);
+  --p-nota-fondo: rgba(0, 0, 0, 0.06);
 
   --p-check-bg: #E7CE98;
   --p-check-mark: #000000;
@@ -431,6 +440,20 @@ html.tr4p-bloqueo body { overflow: hidden; }
 .tr4p .plan-premium .plan-list li::before { background: var(--p-prem-check-bg); }
 .tr4p .plan-premium .plan-list li::after { background: var(--p-prem-check-mark); }
 .tr4p .plan-list strong { color: var(--p-prem-strong); font-weight: 600; }
+
+/* Aviso del Premium debajo de la lista: no es un beneficio, así que no lleva tilde. Un
+   filete y un fondo apenas tibio lo separan sin competir con el botón. */
+.tr4p .plan-nota {
+  margin: -10px 0 26px;
+  padding: 9px 12px;
+  border-left: 2px solid var(--p-nota-borde);
+  border-radius: 0 8px 8px 0;
+  background: var(--p-nota-fondo);
+  color: var(--p-nota-ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
 
 .tr4p .plan-foot { margin-top: auto; }
 

@@ -8,6 +8,7 @@
 - **WhatsApp:** `assets/whatsapp/flotante.js`, una pieza propia con su CSS en el verde de WhatsApp para verse igual en los tres temas. Entra a los 2,5 s, el ícono late con dos ondas, se aparta cuando está abierta la hoja de agenda o el visor y respeta «reducir movimiento». Abre `wa.me/<número>` con «Hola, tengo una duda sobre los planes de TR4INER.» (sin códigos, como se decidió para VA el 6-oct) y mide el clic en el dataLayer (`planes_whatsapp_click` con la página). AN: `/empezar`, Flor, Dashiel, Andrea, Christian; VA: Flor VA, Rosita, Andrea VA, `/empezar-va`.
 - **Verificación local:** en las 9 páginas el Premium dice «Planes desde US$ 400», el botón aparece con su número y el aviso, sin errores. Capturas en `~/Documents/Ruta Tr4iner/capturas/planes-400-whatsapp-2026-10-22/`.
 - **Medición:** el clic a WhatsApp no llega al CRM (sólo GA4/GTM). La conversación que siga se atribuye como cualquier WhatsApp directo.
+- **Textos del Premium (mismo pedido):** «Un coach del equipo revisa tu caso…», «Revisamos contigo cada ajuste…», y «Sujeto a disponibilidad y cupos» sale de debajo del botón: ahora es un aviso debajo de la lista (`.plan-nota`, sin tilde, con filete y fondo tibio en el color del tema) que dice «Sujeto a disponibilidad y cupos. Para aplicar primero necesitamos revisar tu caso en una sesión gratuita.». `planes.css` sube a `?v=20261022`.
 
 ## 2026-10-22 — Premium: la etiqueta dice «Sesión personalizada» (publicado)
 

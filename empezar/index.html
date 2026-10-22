@@ -415,6 +415,20 @@
 
     .plan-list strong { font-weight: 500; color: var(--yellow); }
 
+    /* Aviso del Premium debajo de la lista: no es un beneficio, así que no lleva tilde. Un
+       filete y un fondo amarillo apenas tibio lo separan sin competir con el botón. */
+    .plan-nota {
+      margin: -10px 0 26px;
+      padding: 9px 12px;
+      border-left: 2px solid rgba(245, 197, 24, 0.7);
+      border-radius: 0 8px 8px 0;
+      background: rgba(245, 197, 24, 0.08);
+      color: rgba(245, 197, 24, 0.9);
+      font-size: 12.5px;
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+
     .plan-foot { margin-top: auto; }
 
     /* La firma de la página: el horario libre más próximo, leído de Calendly al momento. */
@@ -1353,16 +1367,16 @@
             <span class="price-pre">Planes desde</span>
             <span class="price-main"><span class="cur">US$</span>400</span>
           </p>
-          <p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>
+          <p class="plan-terms">Un coach del equipo revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>
           <ul class="plan-list">
             <li><strong>Todo lo del Plan Esencial.</strong></li>
             <li>Videollamadas 1 a 1 en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>
-            <li>Revisan contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>
+            <li>Revisamos contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>
           </ul>
+          <p class="plan-nota">Sujeto a disponibilidad y cupos. Para aplicar primero necesitamos revisar tu caso en una sesión gratuita.</p>
           <div class="plan-foot">
             <p class="next-slot" id="proximo" hidden><span class="pulse" aria-hidden="true"></span><span>Próximo horario libre: <strong id="proximo-texto"></strong></span></p>
             <button class="btn btn-yellow" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión <b aria-hidden="true">→</b></button>
-            <p class="plan-alt">Sujeto a disponibilidad y cupos.</p>
           </div>
         </article>
       </div>

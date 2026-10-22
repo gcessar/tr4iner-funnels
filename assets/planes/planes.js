@@ -114,16 +114,17 @@
       '<article class="plan plan-premium" aria-labelledby="premium-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="premium-nombre">Plan Premium</h3><span class="plan-badge">Sesión personalizada</span></div>' +
         '<p class="plan-price"><span class="price-pre">Planes desde</span><span class="price-main"><span class="cur">US$</span>400</span></p>' +
-        '<p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>' +
+        '<p class="plan-terms">Un coach del equipo revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>' +
         '<ul class="plan-list">' +
           '<li><strong>Todo lo del Plan Esencial.</strong></li>' +
           '<li>Videollamadas 1 a 1 en vivo exclusivas con nuestros entrenadores profesionales y nutricionistas.</li>' +
-          '<li>Revisan contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>' +
+          '<li>Revisamos contigo cada ajuste para asegurar que cada paso que des sea el correcto.</li>' +
         '</ul>' +
+        // Aviso, no beneficio: va pegado a la lista pero con otro aspecto que un tilde.
+        '<p class="plan-nota">Sujeto a disponibilidad y cupos. Para aplicar primero necesitamos revisar tu caso en una sesión gratuita.</p>' +
         '<div class="plan-foot">' +
           '<p class="next-slot" id="proximo" hidden><span class="pulse" aria-hidden="true"></span><span>Próximo horario libre: <strong id="proximo-texto"></strong></span></p>' +
           '<button class="btn btn-premium" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión ' + FLECHA + '</button>' +
-          '<p class="plan-alt">Sujeto a disponibilidad y cupos.</p>' +
         '</div>' +
       '</article>' +
     '</div>' +
