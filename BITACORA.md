@@ -1,5 +1,12 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-22 — Premium: la etiqueta dice «Sesión personalizada» (publicado)
+
+- **Pedido del usuario:** sacar «videollamada» de la etiqueta del Plan Premium. «Videollamadas en vivo» → «Sesión personalizada» en `assets/planes/planes.js` (los casos y `/empezar-va`) y en `/empezar`.
+- **Publicado:** `main` → `14d415f`. El push a `main` no generó deployment de producción porque ese mismo commit ya se había construido como Preview de la rama; se promovió ese Preview (mismo commit que `main`): `dpl_BktMZt8gfZTSnn18V3dTkSnwHtvt` · Ready en `metodo.tr4iner.com`. Verificado: `planes.js` y `/empezar` dicen «Sesión personalizada» y no queda la etiqueta vieja.
+- **Ojo para la próxima:** si una rama se sube antes que `main` con el mismo commit, Vercel no reconstruye al integrar: hay que promover el Preview de ese commit o empujar un commit nuevo.
+- **Quedan con «videollamada»** (no pedidos): el texto de introducción de los planes, el ítem «Videollamadas 1 a 1…» del Premium, el error del correo en la hoja de agenda y la descripción de `/empezar` para buscadores.
+
 ## 2026-10-21 (6) — Los casos de estudio y /empezar-va cambian el Typeform por la tabla de planes (publicado)
 
 - **Pedido del usuario:** en todas las páginas con Typeform incrustado, en vez del Typeform las dos tarjetas de `/empezar` (Esencial US$77/mes por Hotmart o Stripe y Premium con agenda), con testimonios, y que todo se mida. Se descartó un test A/B: cambio directo. Sin salida a WhatsApp.
