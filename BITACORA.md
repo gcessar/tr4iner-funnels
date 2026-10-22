@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-22 (2) — Premium «Planes desde US$400» en todas las páginas, test de precio cerrado y botón de WhatsApp (sin publicar)
+## 2026-10-22 (2) — Premium «Planes desde US$400» en todas las páginas, test de precio cerrado y botón de WhatsApp (publicado)
 
 - **Pedido del usuario:** quedarse en todas las páginas con la versión del Premium que dice «desde US$400», terminar el test, y agregar un botón flotante de WhatsApp abajo a la derecha, con el ícono que late y el aviso «¿Tienes alguna duda? Escríbenos». Número AN 17439014239 y de Veronika 15677024560.
 - **Test `emp_precio_202610` cerrado** sin haberse encendido nunca (no hubo reparto ni datos): `middleware.ts` ya no toca `/empezar` (salió del matcher), y `/empezar` perdió el script del `<head>` que leía `ab_emp`, la versión «A tu medida» y los campos `experiment_*` del dataLayer. El código de clic y la marca de Calendly quedan en `empezar-org-…`. `lib/empezar-agenda.js` todavía lee la cookie para el brazo, pero ya nadie la recibe.
@@ -9,6 +9,8 @@
 - **Verificación local:** en las 9 páginas el Premium dice «Planes desde US$ 400», el botón aparece con su número y el aviso, sin errores. Capturas en `~/Documents/Ruta Tr4iner/capturas/planes-400-whatsapp-2026-10-22/`.
 - **Medición:** el clic a WhatsApp no llega al CRM (sólo GA4/GTM). La conversación que siga se atribuye como cualquier WhatsApp directo.
 - **Textos del Premium (mismo pedido):** «Un coach del equipo revisa tu caso…», «Revisamos contigo cada ajuste…», y «Sujeto a disponibilidad y cupos» sale de debajo del botón: ahora es un aviso debajo de la lista (`.plan-nota`, sin tilde, con filete y fondo tibio en el color del tema) que dice «Sujeto a disponibilidad y cupos. Para aplicar primero necesitamos revisar tu caso en una sesión gratuita.». `planes.css` sube a `?v=20261022`.
+- **Publicado con el OK del usuario:** `main` → `a96c043`. Vercel no recibió el aviso de GitHub de ese commit (ni Preview ni producción), así que el deployment se pidió por la API desde `main` en ese mismo commit: `dpl_HCwsfptRDRihVLrynxiXzSiN9vrp` · Ready en `metodo.tr4iner.com`. Verificado en producción (navegador sin cabeza, sin GTM): en las 9 páginas «Planes desde US$ 400», «Un coach del equipo…», el aviso de cupos debajo de la lista, el botón de WhatsApp visible con el número que corresponde (AN 17439014239, VA 15677024560) y sin errores; `/empezar` ya no deja la cookie `ab_emp`.
+- **Para la próxima:** si después de integrar en `main` no aparece un deployment de producción en un minuto, revisar el estado del commit en GitHub; si Vercel no lo tomó, pedirlo por la API con `gitSource` (`ref: main` y el `sha`).
 
 ## 2026-10-22 — Premium: la etiqueta dice «Sesión personalizada» (publicado)
 
