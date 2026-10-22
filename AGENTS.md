@@ -38,7 +38,7 @@ Rutas objetivo del proyecto:
 - `/fit4-va` → VSL FIT4 fija de Veronika, con canonical y marca de variante propios para el mapeo posterior.
 - `/empezar` → VSL + tabla de planes (en producción desde el 21-oct-2026): **Plan Esencial** US$77/mes (Hotmart, Stripe de respaldo) y **Plan Premium**, cuya sesión se agenda en una hoja propia con los horarios de la API de Calendly (`api/empezar/*` → webhooks de n8n del chat). La reserva la hace la página sólo con `EMPEZAR_AGENDA_REAL=1`; sin esa llave, en producción el horario elegido se confirma en Calendly (nunca se simula una cita). Sin Typeform. **El pago lleva un código de clic** (`sck` en Hotmart, `client_reference_id` en Stripe) que la página guarda con las UTMs en el CRM (`/api/checkout/click`); la compra se une a ese código por n8n («Checkout directo /empezar → CRM»). Debajo, 19 testimonios de R2 (filtro mujeres/hombres). **GTM y Vidalytics se cargan con el primer toque o a los 5 s del `load`** (portada propia como LCP): no volver a ponerlos en el `<head>` sin medir.
 - `/empezar-va` → página directa de Veronika: VSL (Vidalytics `B7JmheiJ3cd63CsY`) + la tabla de planes, sin registro previo. Hasta el 21-oct tenía su formulario PROPIO «FORM VA» (`niqtWgJp`), que redirigía al WhatsApp de ManyChat de Veronika. Diseño «Negro champán», no «Vino crema». La mide el panel «Planes» de «Funnel VA» en el CRM.
-- **Páginas con planes (desde el 21-oct-2026):** `/empezar`, los cuatro casos de Anthoni, los tres de Veronika y `/empezar-va`. Todas montan `assets/planes/` salvo `/empezar` (copia inline). Cada una tiene un código corto (`data-slug`: `flor`, `dashiel`, `andrea`, `christian`, `florva`, `rositava`, `andreava`, `empezarva`) que encabeza el código de clic y la marca de Calendly (`flor-org-…`). El mismo listado vive en `lib/empezar-agenda.js`, en `PAGINAS_PLANES` del CRM y en el filtro del flujo n8n «Checkout directo»: **una página nueva se agrega en los cuatro**. Sin salida a WhatsApp.
+- **Páginas con planes (desde el 21-oct-2026):** `/empezar`, los cuatro casos de Anthoni, los tres de Veronika y `/empezar-va`. Todas montan `assets/planes/` salvo `/empezar` (copia inline). Cada una tiene un código corto (`data-slug`: `flor`, `dashiel`, `andrea`, `christian`, `florva`, `rositava`, `andreava`, `empezarva`) que encabeza el código de clic y la marca de Calendly (`flor-org-…`). El mismo listado vive en `lib/empezar-agenda.js`, en `PAGINAS_PLANES` del CRM y en el filtro del flujo n8n «Checkout directo»: **una página nueva se agrega en los cuatro**. El Premium dice «Planes desde US$400». Desde el 22-oct tienen el botón flotante de WhatsApp (`assets/whatsapp/flotante.js`, «¿Tienes alguna duda? Escríbenos»): AN al 17439014239 y Veronika al 15677024560.
 - `/biblioteca/`, `/biblioteca/confirma/`, `/biblioteca/videos/` → funnel Programa Cero. **Desde el 15-oct-2026 `/biblioteca/videos/` es la Ruta Tr4iner** (módulos por días y por calendario, rutina, videos de R2, chat del equipo); su catálogo lo sirve el CRM (`genesis-preview-catalog.json`).
 - `/medicos/` → landing de Guardias para médicos; CTA principal abre la asesoría de Calendly.
 - `/10platospg` → **desde el 16-oct-2026, venta directa** del recetario «100 Recetas: desayunos fáciles» (US$5) con el checkout de Hotmart incrustado (Checkout Elements, oferta `bb7gui87`, producto `E100595140F`). Ya no registra leads; `/10platospg-regd`, `-h` y `-m` son del lead magnet viejo de 10 platos. No emite `Purchase`: lo manda el CRM.
@@ -193,11 +193,10 @@ idénticas salvo el bloque «Brazo INL» del CSS y `setupInlineRegistration` del
 retadores de hook de la campaña MEDICOS sí se pueden apagar a las 72 h: el reparto es por
 visitante y los dos brazos ven la misma mezcla. Criterio en `BITACORA.md`, entrada del 24-sep.
 
-**Test de PRECIO del Premium en `/empezar`** (`emp_precio_202610`): **armado y APAGADO**
-(`TEST_EMPEZAR = false` en `middleware.ts`). `OCU` (control, «A tu medida») contra `VIS`
-(«Planes desde US$400»), cookie `ab_emp`. Los dos brazos son el mismo archivo: el `<head>`
-lee la cookie y muestra uno de los dos precios. KPI y fuente de tráfico sin declarar todavía
-(ver entrada del 21-oct de `BITACORA.md`): `/empezar` casi no recibe tráfico pago.
+**Test de PRECIO del Premium en `/empezar`** (`emp_precio_202610`): **CERRADO el 22-oct-2026
+sin haberse encendido.** El usuario eligió `VIS`: el Premium dice «Planes desde US$400» en las
+nueve páginas con planes. Se quitaron el reparto de `middleware.ts` y el código del brazo de
+`/empezar`; la cookie `ab_emp` y las etiquetas `OCU`/`VIS` no se reusan.
 
 `index-salud.html` (B) e `index.html` (control original) quedan desplegados **sin ruta**:
 revertir es cambiar una línea, no restaurar archivos.

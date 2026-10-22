@@ -59,30 +59,6 @@
     };
   </script>
 
-  <script>
-    /*
-      Test de precio del Premium `emp_precio_202610` (ver middleware.ts).
-      El brazo lo decide el middleware y lo deja en la cookie `ab_emp` de esta
-      misma respuesta; acá sólo se lee, antes de pintar, así que nadie ve un
-      precio y después el otro. Sin cookie (orgánico) se ve el control.
-      La exposición es el denominador de cada brazo.
-    */
-    (function () {
-      var match = /(?:^|;\s*)ab_emp=(OCU|VIS)/.exec(document.cookie);
-      if (!match) return;
-      var variant = match[1];
-      document.documentElement.setAttribute("data-precio", variant);
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-      window.gtag("event", "emp_precio_exposure_" + variant.toLowerCase(), {
-        send_to: "G-CGWMFER9V4",
-        experiment_id: "emp_precio_202610",
-        experiment_variant: variant,
-        non_interaction: true
-      });
-    })();
-  </script>
-
   <!-- Paso operativo del funnel: no se indexa (regla SEO/GEO de AGENTS.md). -->
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#F2F3F5" />
@@ -396,10 +372,6 @@
       line-height: 1;
       letter-spacing: -0.03em;
     }
-
-    /* Los dos precios del Premium viven en el HTML; el brazo decide cuál se ve. */
-    html:not([data-precio="VIS"]) .solo-vis,
-    html[data-precio="VIS"] .solo-ocu { display: none; }
 
     .plan-terms {
       margin-top: 12px;
@@ -1375,12 +1347,9 @@
             <h2 class="plan-name" id="premium-nombre">Plan Premium</h2>
             <span class="plan-badge">Sesión personalizada</span>
           </div>
-          <!-- Lo ÚNICO que cambia entre los brazos del test `emp_precio_202610`. -->
-          <p class="plan-price solo-ocu" id="precio-premium-ocu">
-            <span class="price-pre">Precio</span>
-            <span class="price-main price-word">A tu medida</span>
-          </p>
-          <p class="plan-price solo-vis" id="precio-premium-vis">
+          <!-- «Planes desde US$400» quedó para todas las páginas al cerrar el test de precio
+               `emp_precio_202610` (22-oct-2026). -->
+          <p class="plan-price" id="precio-premium">
             <span class="price-pre">Planes desde</span>
             <span class="price-main"><span class="cur">US$</span>400</span>
           </p>
@@ -1690,9 +1659,9 @@
       var HOTMART = "https://pay.hotmart.com/M84590773F?off=x65af12s";
       var STRIPE = "https://buy.stripe.com/4gM7sLbD67Cx45x32w9Zm2V";
 
-      // Brazo del test (OCU o VIS), o nada si la visita no entró al experimento.
-      var BRAZO = document.documentElement.getAttribute("data-precio") || "";
-      var REF = "empezar-" + (BRAZO ? BRAZO.toLowerCase() : "org");
+      // Sin test: el lugar del brazo en los códigos queda en «org», como en las demás páginas.
+      var BRAZO = "";
+      var REF = "empezar-org";
 
       var tr4 = window.TR4Track || {};
       var params = tr4.getCanonicalParams ? tr4.getCanonicalParams() : new URLSearchParams(window.location.search);
@@ -1702,7 +1671,7 @@
 
       window.dataLayer = window.dataLayer || [];
       function medir(evento, extra) {
-        var datos = { event: evento, experiment_id: "emp_precio_202610", experiment_variant: BRAZO };
+        var datos = { event: evento };
         Object.keys(extra || {}).forEach(function (clave) { datos[clave] = extra[clave]; });
         window.dataLayer.push(datos);
       }
@@ -1918,7 +1887,7 @@
 
         // Cuántos llegaron a ver el precio del Premium: la exposición se cuenta al cargar y
         // las tarjetas están debajo del video, así que este es el denominador más fino.
-        var precio = document.getElementById(BRAZO === "VIS" ? "precio-premium-vis" : "precio-premium-ocu");
+        var precio = document.getElementById("precio-premium");
         var visto = new IntersectionObserver(function (entradas) {
           if (!entradas[0].isIntersecting) return;
           visto.disconnect();
@@ -2400,5 +2369,6 @@
       });
     })();
   </script>
+  <script src="/assets/whatsapp/flotante.js?v=20261022" data-numero="17439014239" data-pagina="empezar" defer></script>
 </body>
 </html>

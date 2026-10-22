@@ -113,7 +113,7 @@
       '</article>' +
       '<article class="plan plan-premium" aria-labelledby="premium-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="premium-nombre">Plan Premium</h3><span class="plan-badge">Sesión personalizada</span></div>' +
-        '<p class="plan-price"><span class="price-pre">Precio</span><span class="price-main price-word">A tu medida</span></p>' +
+        '<p class="plan-price"><span class="price-pre">Planes desde</span><span class="price-main"><span class="cur">US$</span>400</span></p>' +
         '<p class="plan-terms">Un asesor revisa tu caso y te presenta tu plan en una sesión gratuita de 30 minutos.</p>' +
         '<ul class="plan-list">' +
           '<li><strong>Todo lo del Plan Esencial.</strong></li>' +

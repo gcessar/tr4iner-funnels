@@ -10,7 +10,7 @@ import { isPreview, teamPreviewEnabled, previewConfigured, verifyTeamCookie } fr
 // La Ruta suma /biblioteca, /api/genesis y /r: en los Preview los cierra con la
 // clave del equipo (`bibliotecaPreview`); en producción `isPreview()` es falso y
 // siguen de largo sin tocar nada.
-export const config = { matcher: ["/medicos", "/medicos/", "/empezar", "/empezar/", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
+export const config = { matcher: ["/medicos", "/medicos/", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
 
 function privatePreview(response: Response) {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
@@ -106,42 +106,10 @@ function testMedicos(url: URL, cookie: string) {
   return res;
 }
 
-/*
-  Test de PRECIO del Premium en /empezar — armado el 21-oct-2026, SIN ENCENDER
-  hasta que el usuario declare el KPI y apruebe. `emp_precio_202610`.
-
-  Qué se compara: **si la tarjeta del Plan Premium dice su precio**. Nada más.
-
-    OCU (control)  «Precio · A tu medida»: el asesor lo presenta en la sesión.
-    VIS (retador)  «Planes desde US$400» (era US$300 hasta el 21-oct, antes de encender).
-
-  A diferencia de /medicos, los dos brazos son el MISMO archivo
-  (empezar/index.html): el middleware sólo reparte y deja la cookie, y un script
-  del <head> la lee antes de pintar y muestra uno de los dos precios. Así es
-  imposible que los brazos se separen en otra cosa al editar la página, que es
-  justo la regla «una sola variable». La URL no cambia y no hay parpadeo.
-
-  Encenderlo es cambiar TEST_EMPEZAR a true. Apagado, nadie recibe cookie y todo
-  el tráfico ve el control.
-*/
-const TEST_EMPEZAR = false;
-
-function testEmpezar(url: URL, cookie: string) {
-  if (!TEST_EMPEZAR) return next();
-  // Etiquetas estrenadas: `OCU` y `VIS` no aparecen nunca en `OptIn.variant`
-  // (hay VA, RES, MET, A, B, C, MOD e INL).
-  const previa = /(?:^|;\s*)ab_emp=(OCU|VIS)/.exec(cookie)?.[1];
-  if (previa) return next();
-  if (!esTraficoDeAds(url)) return next();
-
-  const variante = Math.random() < 0.5 ? "OCU" : "VIS";
-  const res = next();
-  res.headers.append(
-    "set-cookie",
-    `ab_emp=${variante}; Path=/; Max-Age=15552000; SameSite=Lax`,
-  );
-  return res;
-}
+// El test de PRECIO del Premium en /empezar (`emp_precio_202610`, OCU «A tu medida»
+// contra VIS «Planes desde US$400») se cerró el 22-oct-2026 sin haberse encendido: el
+// usuario eligió VIS para todas las páginas con planes. La cookie `ab_emp` no se repartió
+// nunca y no se reusa. Detalle en la entrada del 22-oct de BITACORA.md.
 
 // Sólo tráfico pago, como en todos los tests de este repo: el orgánico rebota muy
 // por debajo del pago y mezclarlos diluye el segmento que se quiere leer. El
@@ -161,10 +129,6 @@ export default async function middleware(req: Request) {
 
   if (url.pathname === "/medicos" || url.pathname === "/medicos/") {
     return testMedicos(url, cookie);
-  }
-
-  if (url.pathname === "/empezar" || url.pathname === "/empezar/") {
-    return testEmpezar(url, cookie);
   }
 
   // Todo lo demás que deja pasar el matcher es de la Ruta.

@@ -1,5 +1,14 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-22 (2) — Premium «Planes desde US$400» en todas las páginas, test de precio cerrado y botón de WhatsApp (sin publicar)
+
+- **Pedido del usuario:** quedarse en todas las páginas con la versión del Premium que dice «desde US$400», terminar el test, y agregar un botón flotante de WhatsApp abajo a la derecha, con el ícono que late y el aviso «¿Tienes alguna duda? Escríbenos». Número AN 17439014239 y de Veronika 15677024560.
+- **Test `emp_precio_202610` cerrado** sin haberse encendido nunca (no hubo reparto ni datos): `middleware.ts` ya no toca `/empezar` (salió del matcher), y `/empezar` perdió el script del `<head>` que leía `ab_emp`, la versión «A tu medida» y los campos `experiment_*` del dataLayer. El código de clic y la marca de Calendly quedan en `empezar-org-…`. `lib/empezar-agenda.js` todavía lee la cookie para el brazo, pero ya nadie la recibe.
+- **Precio:** `assets/planes/planes.js` (los ocho casos y `/empezar-va`) y `/empezar` muestran «Planes desde · US$400». `planes.js` sube a `?v=20261022`.
+- **WhatsApp:** `assets/whatsapp/flotante.js`, una pieza propia con su CSS en el verde de WhatsApp para verse igual en los tres temas. Entra a los 2,5 s, el ícono late con dos ondas, se aparta cuando está abierta la hoja de agenda o el visor y respeta «reducir movimiento». Abre `wa.me/<número>` con «Hola, tengo una duda sobre los planes de TR4INER.» (sin códigos, como se decidió para VA el 6-oct) y mide el clic en el dataLayer (`planes_whatsapp_click` con la página). AN: `/empezar`, Flor, Dashiel, Andrea, Christian; VA: Flor VA, Rosita, Andrea VA, `/empezar-va`.
+- **Verificación local:** en las 9 páginas el Premium dice «Planes desde US$ 400», el botón aparece con su número y el aviso, sin errores. Capturas en `~/Documents/Ruta Tr4iner/capturas/planes-400-whatsapp-2026-10-22/`.
+- **Medición:** el clic a WhatsApp no llega al CRM (sólo GA4/GTM). La conversación que siga se atribuye como cualquier WhatsApp directo.
+
 ## 2026-10-22 — Premium: la etiqueta dice «Sesión personalizada» (publicado)
 
 - **Pedido del usuario:** sacar «videollamada» de la etiqueta del Plan Premium. «Videollamadas en vivo» → «Sesión personalizada» en `assets/planes/planes.js` (los casos y `/empezar-va`) y en `/empezar`.
