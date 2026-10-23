@@ -1,5 +1,18 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-23 — Ruta: el llamado debajo del video lleva a `/empezar` con las UTMs, ya no a WhatsApp
+
+- **Pedido del usuario:** el llamado «Si quieres que te ayude con tu cambio físico, más información aquí.» (debajo de «Tu Rutina de N días por semana» y de la otra lección que lo tiene) abría el WhatsApp de ManyChat. Ahora lleva a `https://metodo.tr4iner.com/empezar` y transfiere las UTMs.
+- **Cómo (`biblioteca/videos/index.html`):** el CRM sigue mandando `destino: 'whatsapp'` en esas dos lecciones; la página lo traduce a `/empezar` y arma el enlace con `urlCaso()`, la misma función de los casos de estudio:
+  - Ruta relativa al origen (en producción, `metodo.tr4iner.com/empezar`), en la misma pestaña.
+  - `first_name` y `email` (con `@` literal): `/empezar` los precarga en Hotmart (`name`/`email`) y Stripe (`prefilled_email`).
+  - Toda la atribución: si la URL de la Ruta trae UTMs nuevas, ese juego entero; si no, el que guardó el CRM al registrarse. `fbclid`, `fbc`, `fbp` y `video` se completan sueltos.
+  - `utm_medium=RUTA-TR4INER`, como en los casos: sin esa marca, la compra en `/empezar` quedaría con el last touch de la campaña vieja. El código de clic de `/empezar` guarda esas UTMs en el CRM.
+  - La lista de destinos válidos acepta también `/empezar`, para cuando el CRM lo renombre.
+- **Medición:** el clic sigue mandando `ruta_cta_whatsapp` (el CRM descarta los eventos que no están en `BIBLIOTECA_EVENTOS`), ahora con `destino: '/empezar'` para separarlo de los clics viejos. **Pendiente en el CRM:** el panel todavía lo muestra como «WhatsApp · Debajo de «lección»».
+- **No cambia:** la segunda salida de la bisagra («Aplica a mi asesoría aquí», que abre el chat del equipo) ni el WhatsApp de respaldo dentro del chat.
+- **Verificación local:** réplica con sesión y catálogo simulados. Sin UTMs en la URL, el enlace lleva las del alta (`YOUTUBE-AN-alta`…, `utm_term` incluido); con UTMs nuevas, sólo ese juego. El clic abre `/empezar` con todo y los botones de Hotmart y Stripe salen con las UTMs, el nombre y el correo. La lección con caso sigue yendo a `/testimonio-flor`.
+
 ## 2026-10-22 (2) — Premium «Planes desde US$400» en todas las páginas, test de precio cerrado y botón de WhatsApp (publicado)
 
 - **Pedido del usuario:** quedarse en todas las páginas con la versión del Premium que dice «desde US$400», terminar el test, y agregar un botón flotante de WhatsApp abajo a la derecha, con el ícono que late y el aviso «¿Tienes alguna duda? Escríbenos». Número AN 17439014239 y de Veronika 15677024560.
