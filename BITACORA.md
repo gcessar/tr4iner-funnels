@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-10-23 — Ruta: el llamado debajo del video lleva a `/empezar` con las UTMs, ya no a WhatsApp
+## 2026-10-23 — Ruta: el llamado debajo del video lleva a `/empezar` con las UTMs, ya no a WhatsApp (publicado)
 
 - **Pedido del usuario:** el llamado «Si quieres que te ayude con tu cambio físico, más información aquí.» (debajo de «Tu Rutina de N días por semana» y de la otra lección que lo tiene) abría el WhatsApp de ManyChat. Ahora lleva a `https://metodo.tr4iner.com/empezar` y transfiere las UTMs.
 - **Cómo (`biblioteca/videos/index.html`):** el CRM sigue mandando `destino: 'whatsapp'` en esas dos lecciones; la página lo traduce a `/empezar` y arma el enlace con `urlCaso()`, la misma función de los casos de estudio:
@@ -12,6 +12,8 @@
 - **Medición:** el clic sigue mandando `ruta_cta_whatsapp` (el CRM descarta los eventos que no están en `BIBLIOTECA_EVENTOS`), ahora con `destino: '/empezar'` para separarlo de los clics viejos. **Pendiente en el CRM:** el panel todavía lo muestra como «WhatsApp · Debajo de «lección»».
 - **No cambia:** la segunda salida de la bisagra («Aplica a mi asesoría aquí», que abre el chat del equipo) ni el WhatsApp de respaldo dentro del chat.
 - **Verificación local:** réplica con sesión y catálogo simulados. Sin UTMs en la URL, el enlace lleva las del alta (`YOUTUBE-AN-alta`…, `utm_term` incluido); con UTMs nuevas, sólo ese juego. El clic abre `/empezar` con todo y los botones de Hotmart y Stripe salen con las UTMs, el nombre y el correo. La lección con caso sigue yendo a `/testimonio-flor`.
+- **Publicado con el OK del usuario:** `main` → `f68dd05`, `dpl_43FcHeiyKq4cxNZCzLKyDSGuBPBP` · Ready en `metodo.tr4iner.com`. La página publicada ya trae la traducción `whatsapp` → `/empezar` y no queda el enlace viejo a WhatsApp. El recorrido con sesión de miembro no se pudo probar en producción.
+- **Mismo día, en el CRM:** «Si dices siempre ‘El lunes empiezo’» tiene llamado al caso según sexo y edad (`cta.porSexo` en el catálogo, `crm-ventas` `252380f`). La página no cambió: ya aceptaba los cuatro `/testimonio-*`.
 
 ## 2026-10-22 (2) — Premium «Planes desde US$400» en todas las páginas, test de precio cerrado y botón de WhatsApp (publicado)
 
