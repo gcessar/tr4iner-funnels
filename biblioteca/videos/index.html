@@ -2761,9 +2761,10 @@
                     // se acepta el dominio de videos; cualquier otra cosa sigue por YouTube.
                     video: content.video && /^https:\/\/video\.mediatr4iner\.com\/[a-z0-9][a-z0-9\/-]*\/$/.test(content.video.base || '') ? content.video : null,
                     // Llamado debajo del video, según la lección y la edad (lo decide el CRM). Sólo
-                    // el WhatsApp de ManyChat o una página de caso de este mismo sitio.
+                    // páginas de este mismo sitio: los planes (`/empezar`, o `whatsapp`, que el CRM
+                    // todavía manda con ese nombre) o un caso de estudio.
                     cta: content.cta && typeof content.cta.texto === 'string' && content.cta.texto.trim() &&
-                      /^(whatsapp|\/testimonio-[a-z]+(-[a-z]+)*)$/.test(content.cta.destino || '') ? content.cta : null
+                      /^(whatsapp|\/empezar|\/testimonio-[a-z]+(-[a-z]+)*)$/.test(content.cta.destino || '') ? content.cta : null
                   });
                 });
               });
@@ -3775,16 +3776,14 @@
           cta.querySelector('span').textContent = llamado.texto;
           cta.setAttribute('data-destino', llamado.destino);
           cta.setAttribute('data-sesion', v.id);
-          if (llamado.destino === 'whatsapp') {
-            cta.href = WHATSAPP_RUTA;
-            cta.target = '_blank';
-            cta.rel = 'noopener';
-          } else {
-            // Un caso de estudio: con los datos del miembro y toda su atribución, como el módulo de casos.
-            cta.href = urlCaso(llamado.destino);
-            cta.removeAttribute('target');
-            cta.removeAttribute('rel');
-          }
+          // Desde el 23-oct el llamado de WhatsApp lleva a los planes de /empezar (pedido del
+          // usuario). El CRM lo sigue llamando `whatsapp` hasta que se renombre allá.
+          var ruta = llamado.destino === 'whatsapp' ? '/empezar' : llamado.destino;
+          // Con los datos del miembro y toda su atribución, como el módulo de casos: /empezar
+          // precarga nombre y correo en el pago y guarda las UTMs con el código del clic.
+          cta.href = urlCaso(ruta);
+          cta.removeAttribute('target');
+          cta.removeAttribute('rel');
         }
         sheet.hidden = !texto && recursos.length === 0 && !llamado;
       }
@@ -4291,7 +4290,8 @@
       }
 
       // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
-      // bisagra (oculta desde el 7-oct) y el módulo «Caso de estudio».
+      // bisagra (oculta desde el 7-oct), el módulo «Caso de estudio» y el llamado
+      // debajo del video, que también lleva a /empezar con la misma marca.
       function urlCaso(ruta) {
         // `utm_medium` con el que la Ruta marca a quien abre un caso. El CRM lo
         // tiene que reconocer como cruce (`isGenesisRelay`), igual que el GENESIS
@@ -4333,13 +4333,12 @@
       document.getElementById('bridge-cta').addEventListener('click', function () {
         track('bisagra_click', { estado: this.getAttribute('data-estado') || 'A' });
       });
-      // El WhatsApp de ManyChat de Anthoni, con el mismo texto que la asesoría de la bisagra:
-      // ManyChat lo reconoce. Va para todos, como pidió el usuario.
-      var WHATSAPP_RUTA = 'https://api.whatsapp.com/send?phone=17439014239&text=Hola%2C%20vengo%20de%20mi%20Ruta%20Tr4iner%20y%20quiero%20asesor%C3%ADa.';
       document.getElementById('player-cta').addEventListener('click', function () {
         var destino = this.getAttribute('data-destino') || '';
         var sesion = this.getAttribute('data-sesion') || '';
-        if (destino === 'whatsapp') { track('ruta_cta_whatsapp', { sesion: sesion }); return; }
+        // El clic a los planes conserva el nombre `ruta_cta_whatsapp`: el CRM descarta los eventos
+        // que no tiene en su lista. `destino` separa los clics a /empezar de los viejos a WhatsApp.
+        if (destino === 'whatsapp' || destino === '/empezar') { track('ruta_cta_whatsapp', { sesion: sesion, destino: '/empezar' }); return; }
         // Mismo evento que los casos del módulo: el lead scoring ya lo lee como intención.
         track('bisagra_click', { estado: estadoBisagra(), caso: destino.replace('/testimonio-', ''), origen: 'video_cta', sesion: sesion });
       });
