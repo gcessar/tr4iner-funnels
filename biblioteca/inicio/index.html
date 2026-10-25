@@ -825,8 +825,10 @@
 
               <section class="wizard-step" id="step-whatsapp" aria-labelledby="whatsapp-title" hidden>
                 <div class="wizard-meta"><span>Tu ruta está lista</span><strong>Paso 7 de 7</strong></div>
-                <h2 class="question-title" id="whatsapp-title" tabindex="-1">Por último, <span data-first-name></span>, ¿a qué WhatsApp te la enviamos?</h2>
-                <p class="question-dek">Te llega ahí apenas termines, sin buscarla en el correo.</p>
+                <!-- 25-oct-2026: el acceso ya no se manda por WhatsApp (sólo por correo), así
+                     que este paso pide el número sin prometer que la ruta llega ahí. -->
+                <h2 class="question-title" id="whatsapp-title" tabindex="-1">Por último, <span data-first-name></span>, ¿cuál es tu WhatsApp?</h2>
+                <p class="question-dek">Tu acceso te llega al correo. Por WhatsApp te escribe el equipo si necesitas ayuda.</p>
                 <div class="single-answer">
                   <div class="field" id="f-whatsapp">
                     <label for="whatsapp">Tu WhatsApp</label>
