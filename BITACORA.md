@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-25 — Ruta: el acceso ya no se manda por WhatsApp; la confirmación sólo habla del correo (publicado)
+
+- **Pedido del usuario:** desactivar el envío del acceso a la Ruta Tr4iner por WhatsApp (ManyChat) a los nuevos registros.
+- **n8n:** en «Biblioteca → Brevo» (`abwkDFUOBL0qTTug`) se desactivó el nodo que llama a «Ruta Tr4iner · Bienvenida (WhatsApp)» (`zIs9F846ykP5kIjt`), y ese sub-workflow quedó despublicado. El alta en Brevo y el correo de acceso del CRM no cambian. Versiones anteriores para volver atrás: `eacb3dbf-be12-472f-a044-ce0800060a99` (Brevo) y `43c4559b-e66b-4bf0-9035-af1ad79e6f87` (bienvenida).
+- **Funnel (`biblioteca/confirma/index.html`):** `CANAL_WHATSAPP_ACTIVO = false`, el interruptor que dejó el encendido del 19-ago para este caso. Quien dejó su WhatsApp ya no ve «Acabamos de enviarte los accesos al WhatsApp…»; ve «Te enviamos un enlace personal a <correo>». Verificado en producción con un `tr4_lead` de prueba con WhatsApp (se borró después).
+- **Sin tocar, decisión pendiente del usuario:** el paso 7 del registro (`biblioteca/inicio/index.html`) sigue preguntando «¿a qué WhatsApp te la enviamos?» con «Te llega ahí apenas termines, sin buscarla en el correo».
+- **Resultado esperado:** baja la tasa «Entraron» de la Ruta. Al 17-oct, 957 de 1.345 entradas de AN fueron por el enlace del WhatsApp; desde hoy la única puerta es el correo (y `/biblioteca/acceso/`).
+
 ## 2026-10-23 — Ruta: el llamado debajo del video lleva a `/empezar` con las UTMs, ya no a WhatsApp (publicado)
 
 - **Pedido del usuario:** el llamado «Si quieres que te ayude con tu cambio físico, más información aquí.» (debajo de «Tu Rutina de N días por semana» y de la otra lección que lo tiene) abría el WhatsApp de ManyChat. Ahora lleva a `https://metodo.tr4iner.com/empezar` y transfiere las UTMs.
