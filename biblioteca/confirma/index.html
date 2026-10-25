@@ -561,7 +561,11 @@
       // flow «ENVIO de RUTA» de ManyChat quedó activo y el sub-workflow de n8n
       // verificado de punta a punta. Si alguna vez se cae ese canal, apagarlo
       // acá antes que dejar la pantalla prometiendo un mensaje que no llega.
-      var CANAL_WHATSAPP_ACTIVO = !window.TR4_RUNTIME.teamPreview;
+      // APAGADO el 25-oct-2026 (pedido del usuario): se desactivó el envío del
+      // acceso por WhatsApp (n8n «Ruta Tr4iner · Bienvenida (WhatsApp)»,
+      // zIs9F846ykP5kIjt) y el acceso llega sólo por correo. Para volver a
+      // encenderlo: `!window.TR4_RUNTIME.teamPreview`, con el flujo ya activo.
+      var CANAL_WHATSAPP_ACTIVO = false;
 
       var nombre = params.get('nombre') || params.get('first_name') || lead.nombre || '';
       var sexo = params.get('sexo') || lead.sexo || '';
