@@ -3,7 +3,7 @@
   con el ícono que late y el aviso «¿Tienes alguna duda? Escríbenos». Es la única salida a
   WhatsApp de esas páginas; se agregó después de lanzar los planes sin ella.
 
-    <script src="/assets/whatsapp/flotante.js?v=20261022"
+    <script src="/assets/whatsapp/flotante.js?v=20261026"
       data-numero="17439014239"   número en formato internacional, sólo dígitos
       data-pagina="flor"          código corto de la página (el mismo de los planes)
       defer></script>
@@ -11,6 +11,10 @@
   AN usa el WhatsApp 17439014239 y Veronika el 15677024560. Trae su propio CSS, en el
   verde de WhatsApp, para verse igual en los tres temas. El clic se mide en el dataLayer
   (`planes_whatsapp_click`); el mensaje no lleva códigos (decisión del 6-oct para VA).
+
+  Con la página en modo WhatsApp (`#planes[data-modo="whatsapp"]`, 26-oct-2026) el botón no
+  se muestra (pedido del usuario): el número es obligatorio antes de abrir el chat, y este
+  botón sería la puerta que se salta la medición.
 */
 (function () {
   var script = document.currentScript;
@@ -18,6 +22,7 @@
   var NUMERO = (script.getAttribute("data-numero") || "").replace(/\D/g, "");
   var PAGINA = script.getAttribute("data-pagina") || "";
   if (!NUMERO || document.getElementById("wa-flotante")) return;
+  if (document.querySelector('#planes[data-modo="whatsapp"]')) return;
 
   var MENSAJE = "Hola, tengo una duda sobre los planes de TR4INER.";
   var ICONO =

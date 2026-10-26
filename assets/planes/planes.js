@@ -21,6 +21,18 @@
 
   /empezar conserva su propia copia inline (es la que se midió en PageSpeed): si cambia
   algo de la lógica de pago o de agenda, cambiarlo en los dos lados.
+
+  Modo WhatsApp (26-oct-2026): con `data-modo="whatsapp"` las dos tarjetas se cambian por
+  una sesión de diagnóstico por WhatsApp, con el número OBLIGATORIO antes de abrir
+  el chat (pedido del usuario: sin el número no hay forma de saber de qué página y con qué
+  UTMs llegó cada conversación). `data-funnel="AN|VA"` elige el WhatsApp de ManyChat de
+  Tr4iner o de Veronika; una página de AN con tráfico VA (el marcador de AGENTS.md) va al
+  de Veronika. Los testimonios siguen igual. Quitar el atributo vuelve a los planes.
+
+  El número va al CRM por `/api/genesis/diagnostico` (mismo dominio, el puente de la Ruta).
+  Quien llega desde la Ruta Tr4iner (`utm_medium=RUTA-TR4INER`) con su sesión en este
+  navegador no escribe nada: ve los tres últimos dígitos del número que dejó al registrarse
+  y lo confirma con el botón, o lo cambia. El número completo nunca llega al navegador.
 */
 (function () {
   var raiz = document.getElementById("planes");
@@ -32,6 +44,8 @@
   var TEMA = raiz.getAttribute("data-tema") || "neu";
   var FILTRO_INICIAL = raiz.getAttribute("data-testimonios") || "todos";
   var CON_CABECERA = raiz.getAttribute("data-cabecera") !== "no";
+  var MODO_WA = raiz.getAttribute("data-modo") === "whatsapp";
+  var FUNNEL = (raiz.getAttribute("data-funnel") || (TEMA === "neu" ? "AN" : "VA")).toUpperCase() === "VA" ? "VA" : "AN";
   if (!/^[a-z0-9]{2,20}$/.test(SLUG)) return;
 
   var CALENDARIO = "https://calendly.com/d/ck4v-8jc-pv6/asesoria-tr4iner";
@@ -40,6 +54,13 @@
   var CRM_CLIC = "https://crm-ventas-eosin.vercel.app/api/checkout/click";
   var R2 = "https://video.mediatr4iner.com/";
   var REF = SLUG + "-org";
+  // Los mismos WhatsApp de ManyChat que el botón flotante (assets/whatsapp/flotante.js).
+  var WHATSAPP = {
+    AN: { numero: "17439014239", visible: "+1 743 901 4239", equipo: "el equipo de Anthoni" },
+    VA: { numero: "15677024560", visible: "+1 567 702 4560", equipo: "el equipo de Veronika" }
+  };
+  var CRM_DIAGNOSTICO = "/api/genesis/diagnostico";
+  var CASO_DE_PAGINA = { flor: "Flor", dashiel: "Dashiel", andrea: "Andrea", christian: "Christian", florva: "Flor", rositava: "Rosita", andreava: "Andrea" };
 
   // ── Marcado ───────────────────────────────────────────────────
   var FLECHA = '<b aria-hidden="true">→</b>';
@@ -84,17 +105,61 @@
     return '<button class="filtro" type="button" role="tab" aria-selected="' + (clave === filtro) + '" data-filtro="' + clave + '">' + texto + '</button>';
   }
 
+  var ICONO_WA = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.5h-.01a9.47 9.47 0 0 1-4.83-1.32l-.35-.21-3.59.94.96-3.5-.23-.36A9.45 9.45 0 0 1 2.55 12C2.55 6.77 6.81 2.5 12.06 2.5a9.43 9.43 0 0 1 6.71 2.79A9.43 9.43 0 0 1 21.55 12c0 5.24-4.26 9.5-9.5 9.5m8.09-17.59A11.36 11.36 0 0 0 12.05.55C5.75.55.61 5.68.61 12c0 2.02.53 3.99 1.53 5.72L.5 23.65l6.07-1.59a11.4 11.4 0 0 0 5.47 1.39h.01c6.3 0 11.44-5.13 11.44-11.45 0-3.06-1.19-5.93-3.35-8.09"/></svg>';
+
+  // La sesión de diagnóstico: los tres pasos a la izquierda y el número a la derecha (en el
+  // celular, uno debajo del otro). Nada más: el usuario pidió sacar sellos, etiquetas y
+  // títulos repetidos. El equipo y el número se completan abajo, cuando ya se sabe si la
+  // visita es de AN o de VA.
+  var HTML_DIAGNOSTICO =
+    '<article class="plan diag" aria-label="Sesión de diagnóstico por WhatsApp">' +
+      '<ol class="diag-pasos">' +
+        '<li><span class="diag-n" aria-hidden="true">1</span><span><strong>Dejas tu WhatsApp</strong> y se abre el chat con <span class="diag-equipo">' + WHATSAPP[FUNNEL].equipo + '</span>.</span></li>' +
+        '<li><span class="diag-n" aria-hidden="true">2</span><span><strong>Un coach revisa tu caso</strong> contigo: tu objetivo, tus horarios y lo que ya intentaste.</span></li>' +
+        '<li><span class="diag-n" aria-hidden="true">3</span><span><strong>Te dice cómo podemos ayudarte</strong> y si nuestro acompañamiento es para ti.</span></li>' +
+      '</ol>' +
+      '<form class="diag-form" id="diag-form" novalidate>' +
+        // Miembro de la Ruta con su número guardado: lo confirma con el botón.
+        '<div class="diag-guardado" id="diag-guardado" hidden>' +
+          '<p class="diag-label">Tu número de WhatsApp</p>' +
+          '<p class="diag-guardado-num">El que termina en <strong id="diag-termina"></strong></p>' +
+          '<button class="diag-cambiar" type="button" id="diag-cambiar">¿No es tu número? Cámbialo</button>' +
+        '</div>' +
+        '<div id="diag-campo">' +
+          '<label class="diag-label" for="diag-numero">Tu número de WhatsApp</label>' +
+          '<div class="diag-fila">' +
+            // Cerrado muestra «PE +51»; al tocarlo, la lista nativa con los nombres.
+            '<div class="control diag-pais"><span class="diag-pais-txt" id="diag-pais-txt" aria-hidden="true">PE +51</span><select id="diag-pais" aria-label="País del número"></select></div>' +
+            '<input class="control" id="diag-numero" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="987 654 321" aria-describedby="diag-error diag-privacidad" />' +
+          '</div>' +
+        '</div>' +
+        '<p class="diag-error" id="diag-error" role="alert"></p>' +
+        // Un enlace de verdad a wa.me y no un location.href: en el iPhone abre la app directo.
+        '<a class="btn btn-principal btn-wa" id="diag-continuar" href="https://wa.me/' + WHATSAPP[FUNNEL].numero + '" target="_blank" rel="noopener">Ir a mi diagnóstico <b>' + ICONO_WA + '</b></a>' +
+        '<p class="diag-privacidad" id="diag-privacidad">Tu número sólo lo usa el equipo de TR4INER para tu diagnóstico.</p>' +
+        '<p class="diag-respaldo" id="diag-respaldo" hidden>¿No se abrió WhatsApp? Escríbenos al <a id="diag-respaldo-link" href="https://wa.me/' + WHATSAPP[FUNNEL].numero + '" target="_blank" rel="noopener">' + WHATSAPP[FUNNEL].visible + '</a>.</p>' +
+      '</form>' +
+    '</article>';
+
   raiz.setAttribute("aria-labelledby", "planes-title");
   if (!CON_CABECERA) raiz.removeAttribute("aria-labelledby");
+  if (MODO_WA) raiz.classList.add("tr4p-wa");
   raiz.innerHTML =
-    (CON_CABECERA
+    (CON_CABECERA && MODO_WA
+      ? '<header class="planes-head">' +
+          '<p class="kicker">Siguiente paso</p>' +
+          '<h2 class="planes-titulo" id="planes-title">Tu sesión de diagnóstico <em>por WhatsApp.</em></h2>' +
+          '<p class="dek">Un coach del equipo revisa tu caso contigo por WhatsApp: qué te está frenando y qué cambiarías primero. Así sabemos cómo podemos ayudarte, y si TR4INER es para ti.</p>' +
+        '</header>'
+      : "") +
+    (CON_CABECERA && !MODO_WA
       ? '<header class="planes-head">' +
           '<p class="kicker">Siguiente paso</p>' +
           '<h2 class="planes-titulo" id="planes-title">Elige cómo quieres <em>empezar.</em></h2>' +
           '<p class="dek">Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con tus entrenadores y nutricionistas.</p>' +
         '</header>'
       : "") +
-    '<div class="plan-grid">' +
+    (MODO_WA ? HTML_DIAGNOSTICO : '<div class="plan-grid">' +
       '<article class="plan plan-esencial" aria-labelledby="esencial-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="esencial-nombre">Plan Esencial</h3></div>' +
         '<p class="plan-price"><span class="price-pre">Suscripción mensual</span><span class="price-main"><span class="cur">US$</span>77<span class="per">/ mes</span></span></p>' +
@@ -127,7 +192,7 @@
           '<button class="btn btn-premium" type="button" id="abrir-agenda" aria-haspopup="dialog">Agendar mi sesión ' + FLECHA + '</button>' +
         '</div>' +
       '</article>' +
-    '</div>' +
+    '</div>') +
     // Testimonios de clientes, en video vertical desde R2 (video.mediatr4iner.com).
     '<div class="casos" id="casos" aria-labelledby="casos-title">' +
       '<div class="casos-head"><div>' +
@@ -148,7 +213,8 @@
     '</div>';
 
   // La hoja de agenda y el visor van al final del <body>, fuera del flujo de la página,
-  // pero con el mismo tema: comparten sus variables con la sección.
+  // pero con el mismo tema: comparten sus variables con la sección. En el modo WhatsApp la
+  // hoja queda montada y nunca se abre: el código de la agenda la lee al cargar.
   var capas = document.createElement("div");
   capas.className = "tr4p tr4p-capas";
   capas.setAttribute("data-tema", TEMA);
@@ -267,6 +333,231 @@
   var EMAIL = limpiar(params.get("email") || "").trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(EMAIL)) EMAIL = "";
 
+  // ── Diagnóstico por WhatsApp (modo `data-modo="whatsapp"`) ────
+  // La definición única de «tráfico VA» de AGENTS.md: una página de AN con un enlace de
+  // Veronika tiene que terminar en el WhatsApp de Veronika.
+  function esTraficoVA(atrib) {
+    var marcador = /(^|[-_])VA($|[-_])/i;
+    var campana = String(atrib.utm_campaign || "").toUpperCase();
+    if (campana === "TR4INER-VA" || campana === "CASOS-VA") return true;
+    if (String(atrib.funnel || "").toUpperCase() === "VA") return true;
+    if (marcador.test(String(atrib.funnel_variant || ""))) return true;
+    return Object.keys(atrib).some(function (clave) { return clave.indexOf("utm_") === 0 && marcador.test(String(atrib[clave])); });
+  }
+
+  // [código, nombre, prefijo, largos del número nacional] — la misma lista que el pase.
+  var PAISES = [
+    ["PE", "Perú", "51", [9]], ["US", "Estados Unidos", "1", [10]], ["CA", "Canadá", "1", [10]],
+    ["MX", "México", "52", [10]], ["AR", "Argentina", "54", [10]], ["CL", "Chile", "56", [9]],
+    ["CO", "Colombia", "57", [10]], ["EC", "Ecuador", "593", [9]], ["BO", "Bolivia", "591", [8]],
+    ["VE", "Venezuela", "58", [10]], ["UY", "Uruguay", "598", [8]], ["PY", "Paraguay", "595", [9]],
+    ["CR", "Costa Rica", "506", [8]], ["PA", "Panamá", "507", [8]], ["GT", "Guatemala", "502", [8]],
+    ["SV", "El Salvador", "503", [8]], ["HN", "Honduras", "504", [8]], ["DO", "República Dominicana", "1", [10]],
+    ["ES", "España", "34", [9]], ["XX", "Otro país", "", []]
+  ];
+  var EJEMPLO = { PE: "987 654 321", US: "305 555 0142", CA: "416 555 0142", MX: "55 1234 5678", AR: "351 522 8488", CO: "301 234 5678", CL: "9 1234 5678", ES: "612 34 56 78", XX: "+ código y número" };
+
+  // País por la zona horaria: acierta casi siempre sin pedir permisos ni ir al servidor.
+  function paisPorZona() {
+    var z = ZONA;
+    if (/^America\/Lima$/.test(z)) return "PE";
+    if (/^America\/(Argentina|Buenos_Aires|Cordoba|Mendoza)/.test(z)) return "AR";
+    if (/^America\/(Mexico_City|Monterrey|Merida|Cancun|Tijuana|Chihuahua|Hermosillo|Mazatlan|Matamoros|Bahia_Banderas|Ojinaga|Ciudad_Juarez)$/.test(z)) return "MX";
+    if (/^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns|Moncton)$/.test(z)) return "CA";
+    if (/^(America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Indiana|Kentucky|North_Dakota|Juneau|Sitka|Nome|Adak|Puerto_Rico)|Pacific\/Honolulu)/.test(z)) return "US";
+    var resto = { "America/Santiago": "CL", "America/Bogota": "CO", "America/Guayaquil": "EC", "America/La_Paz": "BO",
+      "America/Caracas": "VE", "America/Montevideo": "UY", "America/Asuncion": "PY", "America/Costa_Rica": "CR",
+      "America/Panama": "PA", "America/Guatemala": "GT", "America/El_Salvador": "SV", "America/Tegucigalpa": "HN",
+      "America/Santo_Domingo": "DO", "Europe/Madrid": "ES", "Atlantic/Canary": "ES" };
+    return resto[z] || "PE";
+  }
+
+  function montarDiagnostico() {
+    var destino = FUNNEL === "VA" || esTraficoVA(ATRIB) ? "VA" : "AN";
+    var wa = WHATSAPP[destino];
+    var caso = CASO_DE_PAGINA[SLUG];
+    var mensaje = caso
+      ? "Hola, vi el caso de " + caso + " y quiero mi sesión de diagnóstico."
+      : "Hola, quiero mi sesión de diagnóstico.";
+    var enlaceWa = "https://wa.me/" + wa.numero + "?text=" + encodeURIComponent(mensaje);
+
+    var continuar = document.getElementById("diag-continuar");
+    var respaldo = document.getElementById("diag-respaldo");
+    var respaldoLink = document.getElementById("diag-respaldo-link");
+    var selPais = document.getElementById("diag-pais");
+    var txtPais = document.getElementById("diag-pais-txt");
+    var inputNumero = document.getElementById("diag-numero");
+    var error = document.getElementById("diag-error");
+    raiz.querySelectorAll(".diag-equipo").forEach(function (nodo) { nodo.textContent = wa.equipo; });
+    continuar.href = enlaceWa;
+    respaldoLink.href = enlaceWa;
+    respaldoLink.textContent = wa.visible;
+
+    PAISES.forEach(function (pais) {
+      var opcion = document.createElement("option");
+      opcion.value = pais[0];
+      opcion.textContent = pais[2] ? pais[1] + " +" + pais[2] : pais[1];
+      selPais.appendChild(opcion);
+    });
+    function paisElegido() {
+      for (var i = 0; i < PAISES.length; i++) if (PAISES[i][0] === selPais.value) return PAISES[i];
+      return PAISES[0];
+    }
+    function alCambiarPais() {
+      var pais = paisElegido();
+      txtPais.textContent = pais[2] ? pais[0] + " +" + pais[2] : "+ …";
+      inputNumero.placeholder = EJEMPLO[pais[0]] || "";
+    }
+    selPais.value = paisPorZona();
+    alCambiarPais();
+
+    // ── Miembro de la Ruta: confirma el número que ya dejó ──
+    // Sólo se pregunta cuando el enlace viene de la Ruta: el resto de las visitas no tiene
+    // sesión y no tiene sentido una llamada más por visita. Si algo falla, queda el campo.
+    var guardado = document.getElementById("diag-guardado");
+    var campo = document.getElementById("diag-campo");
+    var modoGuardado = false;
+    var seOfrecio = false;
+    function usarCampo(enfocar) {
+      modoGuardado = false;
+      guardado.hidden = true;
+      campo.hidden = false;
+      if (enfocar) inputNumero.focus();
+    }
+    document.getElementById("diag-cambiar").addEventListener("click", function () {
+      usarCampo(true);
+      medir("diagnostico_numero_cambiado");
+    });
+    if (String(ATRIB.utm_medium || "").toUpperCase() === "RUTA-TR4INER" && window.fetch) {
+      fetch("/api/genesis/me", { headers: { accept: "application/json" }, credentials: "same-origin" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (datos) {
+          var termina = datos && datos.member && datos.member.whatsappTerminaEn;
+          if (!termina || enviado) return;
+          document.getElementById("diag-termina").textContent = "··" + termina;
+          guardado.hidden = false;
+          campo.hidden = true;
+          modoGuardado = true;
+          seOfrecio = true;
+          medir("diagnostico_numero_guardado", { non_interaction: true });
+        })
+        .catch(function () { /* queda el campo */ });
+    }
+
+    function mostrarError(texto) {
+      error.textContent = texto;
+      inputNumero.setAttribute("aria-invalid", "true");
+      inputNumero.focus();
+    }
+    function limpiarError() {
+      error.textContent = "";
+      inputNumero.removeAttribute("aria-invalid");
+    }
+    selPais.addEventListener("change", function () { alCambiarPais(); limpiarError(); });
+    inputNumero.addEventListener("input", limpiarError);
+
+    // { ok, telefono: "+51987654321" } o { ok: false, error }. El CRM lo vuelve a validar.
+    function leerTelefono() {
+      var crudo = (inputNumero.value || "").trim();
+      var digitos = crudo.replace(/\D/g, "");
+      if (!digitos) return { ok: false, error: "Escribe tu número de WhatsApp para abrir el chat." };
+      var pais = paisElegido();
+      if (crudo.charAt(0) === "+" || !pais[2]) {
+        if (digitos.length < 8 || digitos.length > 15) {
+          return { ok: false, error: "Escribe el número completo con el código de país, por ejemplo +51 987 654 321." };
+        }
+        return { ok: true, telefono: "+" + digitos };
+      }
+      var largos = pais[3];
+      var nacional = digitos.replace(/^0+/, "");
+      // Escribió el código del país sin el «+»: se lo saca.
+      if (nacional.indexOf(pais[2]) === 0 && largos.indexOf(nacional.length - pais[2].length) !== -1) {
+        nacional = nacional.slice(pais[2].length);
+      }
+      if (pais[0] === "AR") {
+        // WhatsApp escribe los celulares de Argentina como +54 9 + 10 dígitos.
+        if (nacional.length === 11 && nacional.charAt(0) === "9") nacional = nacional.slice(1);
+        if (nacional.length === 10) return { ok: true, telefono: "+549" + nacional };
+      }
+      if (largos.indexOf(nacional.length) === -1) {
+        return { ok: false, error: "Revisa tu número: en " + pais[1] + " tiene " + largos[0] + " dígitos." };
+      }
+      if (pais[0] === "PE" && nacional.charAt(0) !== "9") {
+        return { ok: false, error: "Revisa tu número: en Perú el celular empieza con 9." };
+      }
+      return { ok: true, telefono: "+" + pais[2] + nacional };
+    }
+
+    // Va por sendBeacon: sobrevive a que la página se vaya a WhatsApp. En local no se
+    // manda nada, para que las pruebas no lleguen al CRM.
+    var enviado = null;
+    function avisarContacto(telefono) {
+      var clave = telefono || "guardado";
+      if (enviado === clave) return;
+      enviado = clave;
+      var cuerpo = JSON.stringify({
+        telefono: telefono,
+        usarNumeroGuardado: !telefono,
+        corrigio: Boolean(telefono) && seOfrecio,
+        // El correo que trae la página desde el registro del caso: une el teléfono con su opt-in.
+        correo: EMAIL || null,
+        pagina: RUTA,
+        slug: SLUG,
+        funnel: destino,
+        whatsapp: wa.numero,
+        page_url: window.location.href,
+        referrer: document.referrer || null,
+        timestamp: new Date().toISOString(),
+        utm: utms(),
+        fbclid: ATRIB.fbclid || null,
+        fbc: ATRIB.fbc || null,
+        fbp: ATRIB.fbp || null,
+        video: ATRIB.video || null
+      });
+      if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname)) {
+        if (window.console) console.info("[diagnóstico] no se manda en local:", cuerpo);
+        return;
+      }
+      try { if (navigator.sendBeacon && navigator.sendBeacon(CRM_DIAGNOSTICO, new Blob([cuerpo], { type: "text/plain;charset=UTF-8" }))) return; } catch (e) { /* sigue */ }
+      try { fetch(CRM_DIAGNOSTICO, { method: "POST", body: cuerpo, keepalive: true, mode: "no-cors" }); } catch (e) { /* nunca frena el chat */ }
+    }
+
+    continuar.addEventListener("click", function (evento) {
+      if (modoGuardado) {
+        avisarContacto(null);
+        medir("diagnostico_whatsapp_click", { diagnostico_funnel: destino, diagnostico_numero: "guardado" });
+        respaldo.hidden = false;
+        return;
+      }
+      var r = leerTelefono();
+      if (!r.ok) {
+        evento.preventDefault();
+        mostrarError(r.error);
+        medir("diagnostico_numero_invalido");
+        return;
+      }
+      avisarContacto(r.telefono);
+      medir("diagnostico_whatsapp_click", { diagnostico_funnel: destino });
+      respaldo.hidden = false;
+    });
+    // Enter (o «Ir» en el teclado del celular) hace lo mismo que el botón.
+    document.getElementById("diag-form").addEventListener("submit", function (evento) {
+      evento.preventDefault();
+      continuar.click();
+    });
+
+    // Cuántos llegaron a ver la tarjeta: el denominador de los que dejan el número.
+    if ("IntersectionObserver" in window) {
+      var visto = new IntersectionObserver(function (entradas) {
+        if (!entradas[0].isIntersecting) return;
+        visto.disconnect();
+        medir("diagnostico_visto", { non_interaction: true });
+      }, { threshold: 0.4 });
+      visto.observe(raiz.querySelector(".diag"));
+    }
+  }
+  if (MODO_WA) montarDiagnostico();
+
   // ── Plan Esencial ─────────────────────────────────────────────
   function azar(largo) {
     var abc = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -330,8 +621,10 @@
     return url.toString();
   }
 
-  document.getElementById("pagar-hotmart").href = enlaceHotmart();
-  document.getElementById("pagar-stripe").href = enlaceStripe();
+  if (!MODO_WA) {
+    document.getElementById("pagar-hotmart").href = enlaceHotmart();
+    document.getElementById("pagar-stripe").href = enlaceStripe();
+  }
   raiz.querySelectorAll(".pagar").forEach(function (enlace) {
     enlace.addEventListener("click", function () {
       avisarClic(enlace.getAttribute("data-metodo"));
@@ -422,7 +715,9 @@
   }
 
   var premium = raiz.querySelector(".plan-premium");
-  if ("IntersectionObserver" in window) {
+  if (MODO_WA) {
+    // Sin Premium no hay horarios que pedir.
+  } else if ("IntersectionObserver" in window) {
     var cerca = new IntersectionObserver(function (entradas) {
       if (!entradas[0].isIntersecting) return;
       cerca.disconnect();
@@ -489,9 +784,11 @@
     abrir.focus({ preventScroll: true });
   }
 
-  abrir.addEventListener("click", abrirAgenda);
-  // Los horarios empiezan a pedirse en cuanto el dedo toca el botón.
-  abrir.addEventListener("pointerdown", function () { pedirHorarios(); }, { passive: true });
+  if (abrir) {
+    abrir.addEventListener("click", abrirAgenda);
+    // Los horarios empiezan a pedirse en cuanto el dedo toca el botón.
+    abrir.addEventListener("pointerdown", function () { pedirHorarios(); }, { passive: true });
+  }
   document.getElementById("cerrar-agenda").addEventListener("click", cerrarAgenda);
   capa.addEventListener("click", function (evento) { if (evento.target === capa) cerrarAgenda(); });
 

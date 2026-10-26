@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-26 (2) — Páginas de planes: sesión de diagnóstico por WhatsApp con el número obligatorio
+
+- **Pedido del usuario:** mandar todo el tráfico de los casos de estudio (AN y VA), `/empezar` y `/empezar-va` al WhatsApp de ManyChat de Tr4iner o de Veronika, con un copy de sesión de diagnóstico, y el número obligatorio antes del botón para saber de qué página viene cada lead. Después: sin «gratis» en ningún lado, sin lo innecesario y sin el botón flotante. Y que quien viene de la Ruta no tenga que escribir su número, sin perder trazabilidad.
+- **Qué cambió:** `assets/planes/planes.js`/`.css` con `data-modo="whatsapp"` (título «Tu sesión de diagnóstico por WhatsApp», tres pasos, número con país y validación, botón «Ir a mi diagnóstico» que es un `<a href=wa.me>` real). Las 9 páginas lo usan, con su título, texto, `meta description` y `og:description` nuevos; las de Veronika con `data-funnel="VA"`. `/empezar` dejó su copia inline (planes, testimonios, hoja de agenda y su CSS: 2.386 → 453 líneas) y monta la pieza compartida con los mismos 19 testimonios. `assets/whatsapp/flotante.js` no se muestra en modo WhatsApp. Puente nuevo `api/genesis/diagnostico` (como los demás de la Ruta). Versión de los archivos compartidos `?v=20261026`.
+- **Ruta:** con `utm_medium=RUTA-TR4INER` la página pide `/api/genesis/me`; si el miembro tiene número, ve «El que termina en ··142», lo confirma con el botón o lo cambia. El CRM pone el número completo; el navegador nunca lo tiene. Sin sesión (otro dispositivo) o sin número guardado, se pide como a cualquiera.
+- **Verificación:** local con `python3 -m http.server` y Chrome sin ventana: capturas de los tres temas en escritorio y celular, el aviso sin número, la variante de la Ruta (respuesta del CRM simulada) y el envío en los tres casos (formulario, guardado, corregido; en local sólo sale en la consola). Un enlace con `utm_source=Instagram-VA` en Flor va al WhatsApp de Veronika. `/empezar` sin errores de consola ni IDs repetidos. El CRM se probó contra un Postgres local desechable (ver su bitácora).
+- **Pendiente del usuario:** confirmar si algún flujo de ManyChat se dispara con una palabra clave del mensaje anterior.
+
 ## 2026-10-26 — Pase de referidos: pide el WhatsApp del invitado y abre el chat con Martin (publicado)
 
 - **Pedido:** Gonzalo pidió reemplazar el Calendly de `/pase/{código}` por un WhatsApp a Martin (+54 9 3515 22-8488) con «Hola Martin, vengo de parte de {nombre y apellido de quien invita}» / «Quiero conocer el programa y saber cómo inscribirme». El usuario agregó que el número del invitado sea obligatorio antes de abrir el chat, para que la venta se cruce sola.
