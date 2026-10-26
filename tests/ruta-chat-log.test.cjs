@@ -36,7 +36,7 @@ function pedir(mensaje='¿cuánto cuesta?',extra={}){
 }
 
 test('el agente recibe la memoria del CRM y el turno se guarda con lo que vio la persona',async()=>{
- const llamadas=simular({agente:{mensaje:'Te muestro el plan.',opciones:['¿Qué incluye?'],accion:'ofrecer_esencial',metodo_pago:'hotmart',calificacion:{nivel:'tibio'}}});
+ const llamadas=simular({agente:{mensaje:'Te cuento cómo es la sesión.',opciones:['¿Qué incluye?'],accion:'ninguna',calificacion:{nivel:'tibio'}}});
  const {req,res}=pedir();
  await chat(req,res);
  assert.equal(res.code,200);
@@ -47,14 +47,69 @@ test('el agente recibe la memoria del CRM y el turno se guarda con lo que vio la
  const turno=llamadas.turnos[0];
  assert.equal(turno.mensajeUsuario,'¿cuánto cuesta?');
  assert.equal(turno.mensajeEquipo,res.body.mensaje);
- assert.equal(turno.tarjeta&&turno.tarjeta.escalon,'esencial-hotmart');
- assert.equal(turno.tarjeta.precio,77);
- assert.match(turno.tarjeta.url,/^https:\/\/pay\.hotmart\.com\/M84590773F\?off=x65af12s&src=ruta-chat&sck=rutachat-principal/);
- assert.match(turno.tarjeta.alterna.url,/^https:\/\/buy\.stripe\.com\/.+client_reference_id=rutachat-principal/);
- assert.equal(turno.escalonPedido,'esencial-hotmart');
- assert.equal(turno.agente.mensaje,'Te muestro el plan.');
+ assert.equal(turno.agente.mensaje,'Te cuento cómo es la sesión.');
  assert.match(turno.promptVersion,/^[0-9a-f]{10}$/);
  assert.equal(turno.error,undefined);
+});
+
+// 26-oct: el chat ya no vende el Plan Esencial ni da precios; lleva a la sesión.
+test('al agente no le llega ningún precio ni el Plan Esencial como oferta',async()=>{
+ const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
+ const {req,res}=pedir('hola');
+ await chat(req,res);
+ assert.doesNotMatch(llamadas.agente.sistema,/US\$\s*\d/);
+ assert.doesNotMatch(llamadas.agente.sistema,/accion ofrecer_esencial|"ofrecer_esencial"/);
+ assert.match(llamadas.agente.sistema,/LO ÚNICO QUE OFRECES[^\n]*\n- Sesión de diagnóstico/);
+});
+
+test('si el agente pide el Plan Esencial, no sale el botón de pago: salen los horarios de la sesión',async()=>{
+ const llamadas=simular({agente:{mensaje:'Te dejo el botón de pago del Esencial de US$77.',accion:'ofrecer_esencial',metodo_pago:'hotmart'}});
+ const {req,res}=pedir('Quiero empezar');
+ await chat(req,res);
+ assert.equal(res.body.tarjeta,null);
+ assert.equal(llamadas.horarios,1);
+ assert.deepEqual(res.body.opciones,['Mar 20 · 11:00','Mié 21 · 14:00']);
+ assert.match(res.body.mensaje,/sesión de diagnóstico/);
+ assert.doesNotMatch(res.body.mensaje,/77|Esencial|pago/);
+ assert.match(res.body.ajuste,/ya no se ofrece/);
+ assert.equal(llamadas.turnos[0].escalonPedido,null);
+});
+
+test('ya agendada, el Plan Esencial tampoco sale y no se ofrecen horarios',async()=>{
+ const llamadas=simular({agente:{mensaje:'Te dejo el Esencial.',accion:'ofrecer_esencial'}});
+ const {req,res}=pedir('¿y el plan?',{mostrados:['agendo','esencial-hotmart']});
+ await chat(req,res);
+ assert.equal(res.body.tarjeta,null);
+ assert.equal(llamadas.horarios,0);
+ assert.match(res.body.mensaje,/Ya tienes tu sesión agendada/);
+});
+
+test('un precio escrito a mitad de la charla se cambia por la sesión de diagnóstico',async()=>{
+ simular({agente:{mensaje:'Nuestros planes van desde US$400.',accion:'ninguna'}});
+ const {req,res}=pedir('¿Cuánto cuesta?');
+ await chat(req,res);
+ assert.doesNotMatch(res.body.mensaje,/400/);
+ assert.match(res.body.mensaje,/sesión de diagnóstico/);
+ assert.deepEqual(res.body.opciones,['Sí, ver horarios','Tengo una duda']);
+ assert.match(res.body.ajuste,/nombraba un monto \(400\)/);
+});
+
+test('un precio junto a los horarios no llega: el texto lo pone el servidor',async()=>{
+ const llamadas=simular({agente:{mensaje:'Son 300 soles, ¿qué horario te queda?',accion:'proponer_horarios'}});
+ const {req,res}=pedir('Quiero la sesión');
+ await chat(req,res);
+ assert.equal(llamadas.horarios,1);
+ assert.doesNotMatch(res.body.mensaje,/300|soles/);
+ assert.equal(res.body.opciones.length,2);
+});
+
+test('si pregunta por el Esencial que vio antes, pasa a WhatsApp sin repetir el precio',async()=>{
+ simular({agente:{mensaje:'El Esencial de US$77 lo ve el equipo contigo.',accion:'pasar_a_whatsapp',resumen_whatsapp:'Quiero el Plan Esencial que vi en el chat.'}});
+ const {req,res}=pedir('Quiero el Esencial que me ofrecieron',{mostrados:['esencial-hotmart']});
+ await chat(req,res);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
+ assert.doesNotMatch(res.body.mensaje,/77/);
+ assert.match(res.body.tarjeta.url,/Plan%20Esencial/);
 });
 
 test('si el agente falla, el turno queda marcado como error y la persona igual recibe respuesta',async()=>{
@@ -206,7 +261,7 @@ test('un video que no existe no se muestra',async()=>{
 });
 
 test('en el primer mensaje no se da el precio: primero se pregunta qué quiere lograr',async()=>{
- simular({agente:{mensaje:'El Esencial cuesta US$77 al mes.',accion:'ninguna'},historial:[]});
+ simular({agente:{mensaje:'Los planes cuestan US$77 al mes.',accion:'ninguna'},historial:[]});
  const {req,res}=pedir('¿Cuánto cuesta?');
  await chat(req,res);
  assert.doesNotMatch(res.body.mensaje,/77/);
