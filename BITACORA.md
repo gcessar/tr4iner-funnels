@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-26 — Pase de referidos: pide el WhatsApp del invitado y abre el chat con Martin (publicado)
+
+- **Pedido:** Gonzalo pidió reemplazar el Calendly de `/pase/{código}` por un WhatsApp a Martin (+54 9 3515 22-8488) con «Hola Martin, vengo de parte de {nombre y apellido de quien invita}» / «Quiero conocer el programa y saber cómo inscribirme». El usuario agregó que el número del invitado sea obligatorio antes de abrir el chat, para que la venta se cruce sola.
+- **Página (`pase/index.html`, `5d906c3`):** «Escribir por WhatsApp» → campo «Tu WhatsApp» (país por zona horaria, largo por país) → «Continuar a WhatsApp», un `<a href=wa.me>` real. El número va por `sendBeacon` a `hub.tr4iner.com/api/pase/contacto`, que crea el lead en el Kanban de Martin. Número, mensaje y nombre y apellido llegan desde el CRM (`GET /api/pase/{código}`), con respaldo en la página. Sin Calendly, sin GTM ni píxel.
+- **Producción (OK del usuario):** `main` → `5d906c3` por avance directo, después del CRM (`crm-ventas` `1b02269`). Verificado en `metodo.tr4iner.com` con un código inexistente y `?equipo=1`. Detalle y verificación de punta a punta en la BITACORA del CRM (26-oct).
+
 ## 2026-10-25 — Ruta: el acceso ya no se manda por WhatsApp; la confirmación sólo habla del correo (publicado)
 
 - **Pedido del usuario:** desactivar el envío del acceso a la Ruta Tr4iner por WhatsApp (ManyChat) a los nuevos registros.
