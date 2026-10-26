@@ -16,13 +16,11 @@
   <!--
     Velocidad: esta página es UN solo HTML estático para todos los códigos, así
     que la CDN la sirve igual para cada enlace. Lo primero que pide el
-    navegador son las conexiones a Calendly y al CRM, en paralelo con las dos
-    fuentes; no hay GTM, píxel ni scripts de terceros (las visitas se miden con
-    un beacon propio al CRM, y el píxel de Meta no tiene nada que hacer acá: la
-    agenda de un invitado no la trajo un anuncio).
+    navegador es la conexión al CRM, en paralelo con las dos fuentes; no hay
+    GTM, píxel ni scripts de terceros (las visitas y el clic en WhatsApp se
+    miden con un beacon propio al CRM, y el píxel de Meta no tiene nada que
+    hacer acá: al invitado no lo trajo un anuncio).
   -->
-  <link rel="preconnect" href="https://calendly.com" />
-  <link rel="preconnect" href="https://assets.calendly.com" />
   <link rel="preconnect" href="https://hub.tr4iner.com" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin>
@@ -62,17 +60,6 @@
 
   .wrap { max-width: 760px; margin: 0 auto; padding: 0 var(--gutter); }
   header { padding: 34px 0 6px; text-align: center; }
-  .lbl {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink);
-    background: linear-gradient(transparent 58%, var(--accent) 58% 92%, transparent 92%);
-    padding: 0 2px;
-  }
   h1 {
     margin-top: 0;
     font-family: var(--serif);
@@ -91,54 +78,81 @@
   .lede strong { color: var(--ink); font-weight: 500; }
   .lede p + p { margin-top: 10px; }
 
-  .agenda { margin: 22px auto 0; }
-  .agenda-titulo {
+  .contacto {
+    margin: 30px auto 0;
+    padding: 30px 0 6px;
+    border-top: 1px solid var(--rule);
     text-align: center;
+  }
+  .contacto-titulo {
     font-family: var(--mono);
     font-size: 10.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 8px;
   }
-  /* Alto reservado ANTES de que cargue Calendly: sin esto la página salta
-     cuando aparece el calendario. Después lo ajusta el mensaje page_height. */
-  .marco {
-    position: relative;
-    border-top: 1px solid var(--rule);
-    min-height: 700px;
+  /* Verde de WhatsApp para que se reconozca de un vistazo; el texto va oscuro
+     porque el blanco sobre este verde no llega al contraste mínimo. */
+  .boton-wa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 420px;
+    min-height: 56px;
+    margin-top: 14px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    background: #25D366;
+    color: #0B2414;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
   }
-  .marco iframe { display: block; width: 100%; height: 700px; border: 0; }
-  .cargando {
-    position: absolute;
-    inset: 40px 0 auto;
-    text-align: center;
-    color: var(--muted);
-    font-size: 14px;
-  }
-  .cargando::before {
-    content: "";
-    display: block;
-    width: 26px;
-    height: 26px;
-    margin: 0 auto 10px;
-    border: 2px solid var(--rule);
-    border-top-color: var(--ink);
-    border-radius: 50%;
-    animation: gira 0.8s linear infinite;
-  }
-  @keyframes gira { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) { .cargando::before { animation: none; } }
+  .boton-wa:hover { background: #1EBE5A; }
+  .boton-wa:active { transform: scale(0.98); }
+  .boton-wa:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .boton-wa svg { width: 22px; height: 22px; flex: none; }
+  @media (prefers-reduced-motion: reduce) { .boton-wa { transition: none; } }
+  button.boton-wa { border: 0; cursor: pointer; }
 
-  .listo { display: none; text-align: center; padding: 56px 0 40px; border-top: 1px solid var(--rule); }
-  .listo h2 { font-family: var(--serif); font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; }
-  .listo p { margin-top: 10px; color: var(--ink-soft); font-size: 16px; font-weight: 300; }
-  body.agendado .marco, body.agendado .agenda-titulo { display: none; }
-  body.agendado .listo { display: block; }
+  /* El campo aparece recién al tocar el botón: así el primer paso sigue siendo
+     un solo toque y se mide cuántos dejan el número una vez que se les pide. */
+  .pedir-wa { display: none; max-width: 420px; margin: 18px auto 0; text-align: left; }
+  body.pidiendo #boton-wa { display: none; }
+  body.pidiendo .pedir-wa { display: block; }
+  .pedir-label { display: block; font-size: 15px; font-weight: 500; color: var(--ink); }
+  .pedir-fila { display: flex; gap: 8px; margin-top: 8px; }
+  .pais,
+  .pedir-fila input {
+    min-height: 52px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px; /* 16px o más: iOS no hace zoom al enfocar */
+  }
+  .pais { position: relative; flex: none; display: flex; align-items: center; justify-content: center; gap: 6px; width: 104px; }
+  .pais-txt::after { content: "▾"; margin-left: 6px; color: var(--muted); font-size: 13px; }
+  .pais select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 17px; cursor: pointer; }
+  .pais:focus-within { outline: 2px solid var(--ink); outline-offset: 1px; border-color: var(--ink); }
+  .pedir-fila input { flex: 1; min-width: 0; padding: 0 14px; letter-spacing: 0.02em; }
+  .pedir-fila input:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; border-color: var(--ink); }
+  .pedir-fila input[aria-invalid="true"] { border-color: #C0362C; }
+  .pedir-error { min-height: 0; margin-top: 6px; color: #B3261E; font-size: 14px; }
+  .pedir-error:empty { display: none; }
+  .pedir-ayuda { margin-top: 10px; color: var(--ink-soft); font-size: 14px; font-weight: 300; line-height: 1.5; }
+  .pedir-ayuda span { color: var(--ink); font-weight: 500; }
+  .pedir-wa .boton-wa { max-width: none; margin-top: 16px; }
+  .pedir-privacidad { margin-top: 10px; text-align: center; color: var(--muted); font-size: 12.5px; font-weight: 300; }
 
-  .sin-calendario { display: none; text-align: center; padding: 40px 0; color: var(--ink-soft); }
-  body.sin-cal .marco { display: none; }
-  body.sin-cal .sin-calendario { display: block; }
+  .contacto-numero { display: none; margin-top: 14px; color: var(--muted); font-size: 13px; font-weight: 300; }
+  body.enviado .contacto-numero { display: block; }
+  .contacto-numero a { color: var(--ink); text-underline-offset: 3px; white-space: nowrap; }
 
   footer {
     margin: 30px auto 0;
@@ -171,19 +185,53 @@
       </div>
     </header>
 
-    <section class="agenda" aria-labelledby="agenda-titulo">
-      <p class="agenda-titulo" id="agenda-titulo">Elige el día y la hora de tu llamada</p>
-      <div class="marco" id="marco">
-        <p class="cargando" id="cargando">Cargando el calendario…</p>
-      </div>
-      <div class="listo" role="status" aria-live="polite">
-        <span class="lbl">Listo</span>
-        <h2>Tu llamada quedó agendada</h2>
-        <p>Te llegó la confirmación por correo. En la llamada te contamos el precio de tu pase.</p>
-      </div>
-      <div class="sin-calendario">
-        <p>No pudimos cargar el calendario. Vuelve a intentar en unos minutos.</p>
-      </div>
+    <!--
+      Dos pasos (pedido del usuario, 26-oct-2026): el botón abre el campo del
+      WhatsApp y recién «Continuar» abre el chat con Martin. Con el número el
+      CRM pone al invitado en el Kanban de Martin y cruza su compra sola.
+    -->
+    <section class="contacto" aria-labelledby="contacto-titulo">
+      <p class="contacto-titulo" id="contacto-titulo">Escríbele a Martin, del equipo de TR4INER</p>
+      <button type="button" class="boton-wa" id="boton-wa" aria-controls="pedir-wa" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.5h-.01a9.47 9.47 0 0 1-4.83-1.32l-.35-.21-3.59.94.96-3.5-.23-.36A9.45 9.45 0 0 1 2.55 12C2.55 6.77 6.81 2.5 12.06 2.5a9.43 9.43 0 0 1 6.71 2.79A9.43 9.43 0 0 1 21.55 12c0 5.24-4.26 9.5-9.5 9.5m8.09-17.59A11.36 11.36 0 0 0 12.05.55C5.75.55.61 5.68.61 12c0 2.02.53 3.99 1.53 5.72L.5 23.65l6.07-1.59a11.4 11.4 0 0 0 5.47 1.39h.01c6.3 0 11.44-5.13 11.44-11.45 0-3.06-1.19-5.93-3.35-8.09"/>
+        </svg>
+        Escribir por WhatsApp
+      </button>
+
+      <form class="pedir-wa" id="pedir-wa" novalidate>
+        <label class="pedir-label" for="wa-numero">Tu WhatsApp</label>
+        <div class="pedir-fila">
+          <!-- Cerrado muestra «PE +51»; al tocarlo, la lista con los nombres. -->
+          <div class="pais">
+            <span class="pais-txt" id="wa-pais-txt" aria-hidden="true">PE +51</span>
+            <select id="wa-pais" aria-label="País del número"></select>
+          </div>
+          <input id="wa-numero" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="987 654 321"
+                 aria-describedby="wa-ayuda wa-error" maxlength="20" />
+        </div>
+        <p class="pedir-error" id="wa-error" role="alert"></p>
+        <p class="pedir-ayuda" id="wa-ayuda">
+          Así Martin, de nuestro equipo, sabe que vienes de parte de <span id="wa-referidor">quien te invitó</span>
+          y te guarda el descuento de tu pase.
+        </p>
+        <a class="boton-wa" id="wa-continuar" href="https://wa.me/5493515228488">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.5h-.01a9.47 9.47 0 0 1-4.83-1.32l-.35-.21-3.59.94.96-3.5-.23-.36A9.45 9.45 0 0 1 2.55 12C2.55 6.77 6.81 2.5 12.06 2.5a9.43 9.43 0 0 1 6.71 2.79A9.43 9.43 0 0 1 21.55 12c0 5.24-4.26 9.5-9.5 9.5m8.09-17.59A11.36 11.36 0 0 0 12.05.55C5.75.55.61 5.68.61 12c0 2.02.53 3.99 1.53 5.72L.5 23.65l6.07-1.59a11.4 11.4 0 0 0 5.47 1.39h.01c6.3 0 11.44-5.13 11.44-11.45 0-3.06-1.19-5.93-3.35-8.09"/>
+        </svg>
+          Continuar a WhatsApp
+        </a>
+        <p class="pedir-privacidad">Solo lo usa el equipo de TR4INER para atender tu pase.</p>
+      </form>
+
+      <p class="contacto-numero" id="wa-respaldo">
+        ¿No se abrió WhatsApp? Escribe al <a class="js-wa" href="https://wa.me/5493515228488">+54 9 3515 22-8488</a>
+      </p>
+      <noscript>
+        <p class="contacto-numero" style="display:block">
+          Escribe al <a href="https://wa.me/5493515228488">+54 9 3515 22-8488</a>
+        </p>
+      </noscript>
     </section>
 
     <footer>
@@ -198,11 +246,16 @@
 
     // El CRM vive en hub.tr4iner.com. Si el día de mañana cambia, es esta línea.
     var CRM = "https://hub.tr4iner.com/api/pase/";
-    // Evento de Calendly exclusivo de pases (Martin). El CRM puede mandar otro
-    // en /api/pase/{codigo} (se edita en el panel sin publicar acá); este es el
-    // respaldo si el CRM tarda o no responde.
-    var CALENDLY_RESPALDO = "https://calendly.com/martinmichelucci-tr4iner/pase-tr4iner";
-    var ESPERA_MAX_MS = 2500;
+    // Desde el 26-oct-2026 (pedido de Gonzalo) el invitado ya no agenda por
+    // Calendly: le escribe por WhatsApp a Martin con el nombre de quien lo
+    // invitó. El número y el mensaje los manda el CRM en /api/pase/{codigo}
+    // (se editan en el panel sin publicar acá); estos son el respaldo si el CRM
+    // tarda o no responde. Antes de abrir el chat se le pide su WhatsApp: con
+    // él el CRM lo pone en el Kanban de Martin y cruza su compra sola. Lo que
+    // pasa dentro del chat ya no se ve.
+    var WHATSAPP_RESPALDO = "5493515228488";
+    var MENSAJE_RESPALDO = "Hola Martin, vengo de parte de {referidor}\nQuiero conocer el programa y saber cómo inscribirme";
+    var REFERIDOR_GENERICO = "un cliente de TR4INER";
 
     var params = new URLSearchParams(location.search);
     var match = location.pathname.match(/^\/pase\/([A-Za-z0-9-]+)\/?$/);
@@ -214,8 +267,8 @@
     // ── Identidad anónima de la visita ──
     // visitorId: el navegador (localStorage) → "personas únicas".
     // visitId: esta visita (30 min en sessionStorage) → no cuenta dos veces un
-    // refresco, y viaja a Calendly en salesforce_uuid para unir la agenda con
-    // la visita.
+    // refresco ni dos toques al botón de WhatsApp en la misma visita, y
+    // junta la visita con el número que deje la persona.
     function id(prefijo) {
       var a = new Uint8Array(12);
       (window.crypto || window.msCrypto).getRandomValues(a);
@@ -241,15 +294,18 @@
     // ── Beacon al CRM ── texto plano: no dispara preflight de CORS y sobrevive
     // a que la persona cierre la pestaña.
     var enviados = {};
+    function enviar(ruta, datos) {
+      var cuerpo = JSON.stringify(datos);
+      try {
+        if (navigator.sendBeacon && navigator.sendBeacon(CRM + ruta, new Blob([cuerpo], { type: "text/plain;charset=UTF-8" }))) return;
+      } catch (e) {}
+      try { fetch(CRM + ruta, { method: "POST", body: cuerpo, keepalive: true, mode: "cors", headers: { "Content-Type": "text/plain" } }); } catch (e) {}
+    }
     function beacon(tipo, extra) {
       if (!codigoValido) return;
       var datos = { codigo: codigo, tipo: tipo, visitorId: visitorId, visitId: visitId, referrer: document.referrer || null, equipo: equipo, utm: utm };
       for (var k in extra) datos[k] = extra[k];
-      var cuerpo = JSON.stringify(datos);
-      try {
-        if (navigator.sendBeacon && navigator.sendBeacon(CRM + "evento", new Blob([cuerpo], { type: "text/plain;charset=UTF-8" }))) return;
-      } catch (e) {}
-      try { fetch(CRM + "evento", { method: "POST", body: cuerpo, keepalive: true, mode: "cors", headers: { "Content-Type": "text/plain" } }); } catch (e) {}
+      enviar("evento", datos);
     }
     function beaconUnaVez(tipo, extra) {
       if (enviados[tipo]) return;
@@ -294,86 +350,203 @@
       lede.appendChild(p1);
       lede.appendChild(p2);
     }
-    if (codigoValido) {
-      var slug = codigo.split("-")[0];
-      if (slug && slug !== "pase") ponerNombre(slug.charAt(0).toUpperCase() + slug.slice(1));
+    // ── WhatsApp ── el mensaje dice de parte de quién viene. Mientras responde
+    // el CRM va el nombre del enlace; si el pase no existe, «un cliente de
+    // TR4INER».
+    var numeroWa = WHATSAPP_RESPALDO;
+    var plantillaWa = MENSAJE_RESPALDO;
+    var referidor = REFERIDOR_GENERICO;
+    var continuar = document.getElementById("wa-continuar");
+    var respaldos = document.querySelectorAll(".js-wa");
+    function actualizarWhatsapp() {
+      var texto = plantillaWa.split("{referidor}").join(referidor);
+      var url = "https://wa.me/" + numeroWa + "?text=" + encodeURIComponent(texto);
+      continuar.href = url;
+      for (var i = 0; i < respaldos.length; i++) respaldos[i].href = url;
+    }
+    function ponerReferidorAyuda(nombrePila) {
+      document.getElementById("wa-referidor").textContent = nombrePila || "quien te invitó";
     }
 
-    // ── Calendly ── iframe directo (sin widget.js: un script menos). Con
-    // embed_domain + embed_type Calendly avisa a esta página cada paso.
-    var marco = document.getElementById("marco");
-    var iframe = null;
-    function montarCalendly(base) {
-      if (iframe) return;
-      if (!base) { document.body.classList.add("sin-cal"); return; }
-      var u;
-      try { u = new URL(base); } catch (e) { document.body.classList.add("sin-cal"); return; }
-      u.searchParams.set("embed_domain", location.host);
-      u.searchParams.set("embed_type", "Inline");
-      u.searchParams.set("hide_event_type_details", "1");
-      u.searchParams.set("hide_gdpr_banner", "1");
-      u.searchParams.set("background_color", "ffffff");
-      u.searchParams.set("text_color", "16181a");
-      u.searchParams.set("primary_color", "f5c400");
-      // Los ÚNICOS seis parámetros que Calendly guarda en la agenda (tracking).
-      // utm_medium=pase es lo que n8n usa para mandarla al CRM y no a Meta.
-      u.searchParams.set("utm_source", "Referido");
-      u.searchParams.set("utm_medium", "pase");
-      u.searchParams.set("utm_campaign", "PASE-TR4INER");
-      if (codigoValido) u.searchParams.set("utm_content", codigo);
-      u.searchParams.set("salesforce_uuid", visitId);
+    // ── Número del invitado ── obligatorio antes de abrir el chat (pedido del
+    // usuario, 26-oct-2026): con él el CRM cruza la compra sola. El largo se
+    // valida por país para atajar el error más común (un dígito de más o de
+    // menos); el CRM vuelve a validarlo. [código, nombre, prefijo, largos]
+    var PAISES = [
+      ["PE", "Perú", "51", [9]],
+      ["US", "Estados Unidos", "1", [10]],
+      ["CA", "Canadá", "1", [10]],
+      ["MX", "México", "52", [10]],
+      ["AR", "Argentina", "54", [10]],
+      ["CL", "Chile", "56", [9]],
+      ["CO", "Colombia", "57", [10]],
+      ["EC", "Ecuador", "593", [9]],
+      ["BO", "Bolivia", "591", [8]],
+      ["VE", "Venezuela", "58", [10]],
+      ["UY", "Uruguay", "598", [8]],
+      ["PY", "Paraguay", "595", [9]],
+      ["CR", "Costa Rica", "506", [8]],
+      ["PA", "Panamá", "507", [8]],
+      ["GT", "Guatemala", "502", [8]],
+      ["SV", "El Salvador", "503", [8]],
+      ["HN", "Honduras", "504", [8]],
+      ["DO", "República Dominicana", "1", [10]],
+      ["ES", "España", "34", [9]],
+      ["XX", "Otro país", "", []]
+    ];
+    var EJEMPLO = { PE: "987 654 321", US: "305 555 0142", MX: "55 1234 5678", AR: "351 522 8488", CO: "301 234 5678", CL: "9 1234 5678", ES: "612 34 56 78", XX: "+ código y número" };
 
-      iframe = document.createElement("iframe");
-      iframe.title = "Calendario para agendar tu llamada";
-      iframe.src = u.toString();
-      iframe.setAttribute("allow", "payment");
-      iframe.addEventListener("load", function () {
-        var c = document.getElementById("cargando");
-        if (c) c.remove();
-      });
-      marco.appendChild(iframe);
+    // País por la zona horaria del teléfono: acierta casi siempre sin pedir
+    // permisos ni preguntarle al servidor (la respuesta del CRM está cacheada
+    // por código, no por visitante).
+    function paisPorZona() {
+      var z = "";
+      try { z = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+      if (/^America\/(Lima)$/.test(z)) return "PE";
+      if (/^America\/(Argentina|Buenos_Aires|Cordoba|Mendoza)/.test(z)) return "AR";
+      if (/^America\/(Mexico_City|Monterrey|Merida|Cancun|Tijuana|Chihuahua|Hermosillo|Mazatlan|Matamoros|Bahia_Banderas|Ojinaga|Ciudad_Juarez)$/.test(z)) return "MX";
+      if (/^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|Regina|St_Johns|Moncton)$/.test(z)) return "CA";
+      if (/^(America\/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Boise|Indiana|Kentucky|North_Dakota|Juneau|Sitka|Nome|Adak|Puerto_Rico)|Pacific\/Honolulu)/.test(z)) return "US";
+      var resto = { "America/Santiago": "CL", "America/Bogota": "CO", "America/Guayaquil": "EC", "America/La_Paz": "BO",
+        "America/Caracas": "VE", "America/Montevideo": "UY", "America/Asuncion": "PY", "America/Costa_Rica": "CR",
+        "America/Panama": "PA", "America/Guatemala": "GT", "America/El_Salvador": "SV", "America/Tegucigalpa": "HN",
+        "America/Santo_Domingo": "DO", "Europe/Madrid": "ES", "Atlantic/Canary": "ES" };
+      return resto[z] || "PE";
     }
 
-    window.addEventListener("message", function (e) {
-      if (e.origin !== "https://calendly.com") return;
-      var data = e.data || {};
-      var evento = typeof data.event === "string" ? data.event : "";
-      if (evento.indexOf("calendly.") !== 0) return;
-      var p = data.payload || {};
-      if (evento === "calendly.page_height" && iframe) {
-        var alto = parseInt(p.height, 10);
-        if (alto > 300) { iframe.style.height = alto + "px"; marco.style.minHeight = alto + "px"; }
-      } else if (evento === "calendly.event_type_viewed") {
-        beaconUnaVez("CALENDLY_VISTO");
-      } else if (evento === "calendly.date_and_time_selected") {
-        beaconUnaVez("FECHA_ELEGIDA");
-      } else if (evento === "calendly.event_scheduled") {
-        beacon("AGENDA", {
-          inviteeUri: p.invitee && p.invitee.uri,
-          eventUri: p.event && p.event.uri
-        });
-        document.body.classList.add("agendado");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+    var selPais = document.getElementById("wa-pais");
+    var inputNumero = document.getElementById("wa-numero");
+    var errorNumero = document.getElementById("wa-error");
+    for (var p = 0; p < PAISES.length; p++) {
+      var opcion = document.createElement("option");
+      opcion.value = PAISES[p][0];
+      opcion.textContent = PAISES[p][2] ? PAISES[p][1] + " +" + PAISES[p][2] : PAISES[p][1];
+      selPais.appendChild(opcion);
+    }
+    function paisElegido() {
+      for (var i = 0; i < PAISES.length; i++) if (PAISES[i][0] === selPais.value) return PAISES[i];
+      return PAISES[0];
+    }
+    function alCambiarPais() {
+      var pais = paisElegido();
+      document.getElementById("wa-pais-txt").textContent = pais[2] ? pais[0] + " +" + pais[2] : "+ …";
+      inputNumero.placeholder = EJEMPLO[selPais.value] || "";
+    }
+    selPais.value = paisPorZona();
+    alCambiarPais();
+    selPais.addEventListener("change", function () { alCambiarPais(); limpiarError(); });
+
+    function mostrarError(texto) {
+      errorNumero.textContent = texto;
+      inputNumero.setAttribute("aria-invalid", "true");
+      inputNumero.focus();
+    }
+    function limpiarError() {
+      errorNumero.textContent = "";
+      inputNumero.removeAttribute("aria-invalid");
+    }
+    inputNumero.addEventListener("input", limpiarError);
+
+    // Devuelve { ok, telefono: "+51987654321" } o { ok: false, error }.
+    function leerTelefono() {
+      var crudo = (inputNumero.value || "").trim();
+      var digitos = crudo.replace(/\D/g, "");
+      if (!digitos) return { ok: false, error: "Escribe tu número de WhatsApp." };
+      var pais = paisElegido();
+      // Con «+» adelante (o «Otro país») el número ya trae su código.
+      if (crudo.charAt(0) === "+" || !pais[2]) {
+        if (digitos.length < 8 || digitos.length > 15) {
+          return { ok: false, error: "Escribe el número completo con el código de país, por ejemplo +51 987 654 321." };
+        }
+        return { ok: true, telefono: "+" + digitos };
       }
+      var largos = pais[3];
+      var nacional = digitos.replace(/^0+/, "");
+      // Escribió el código del país sin el «+»: se lo saca.
+      if (nacional.indexOf(pais[2]) === 0 && largos.indexOf(nacional.length - pais[2].length) !== -1) {
+        nacional = nacional.slice(pais[2].length);
+      }
+      if (pais[0] === "AR") {
+        // WhatsApp escribe los celulares de Argentina como +54 9 + 10 dígitos.
+        if (nacional.length === 11 && nacional.charAt(0) === "9") nacional = nacional.slice(1);
+        if (nacional.length === 10) return { ok: true, telefono: "+549" + nacional };
+      }
+      if (largos.indexOf(nacional.length) === -1) {
+        return { ok: false, error: "Revisa tu número: en " + pais[1] + " tiene " + largos[0] + " dígitos." };
+      }
+      if (pais[0] === "PE" && nacional.charAt(0) !== "9") {
+        return { ok: false, error: "Revisa tu número: en Perú el celular empieza con 9." };
+      }
+      return { ok: true, telefono: "+" + pais[2] + nacional };
+    }
+
+    // Va por sendBeacon: sobrevive a que la página se vaya a WhatsApp.
+    var contactoEnviado = null;
+    function enviarContacto(telefono) {
+      if (!codigoValido || contactoEnviado === telefono) return;
+      contactoEnviado = telefono;
+      enviar("contacto", { codigo: codigo, visitorId: visitorId, visitId: visitId, telefono: telefono, referrer: document.referrer || null, equipo: equipo, utm: utm });
+    }
+
+    var botonWa = document.getElementById("boton-wa");
+    botonWa.addEventListener("click", function () {
+      document.body.classList.add("pidiendo");
+      botonWa.setAttribute("aria-expanded", "true");
+      inputNumero.focus();
+      beaconUnaVez("WHATSAPP_FORM");
     });
 
-    // El nombre exacto y el enlace del evento vienen del CRM (cacheado en la
-    // CDN). Si tarda más de lo razonable, el calendario arranca igual con el
-    // respaldo.
-    var reloj = setTimeout(function () { montarCalendly(CALENDLY_RESPALDO); }, ESPERA_MAX_MS);
+    // «Continuar» es un enlace de verdad a wa.me y no un location.href desde
+    // JS: en el iPhone así se abre la app de WhatsApp directo. Si el número no
+    // sirve, se frena la navegación y se muestra el error.
+    continuar.addEventListener("click", function (e) {
+      var r = leerTelefono();
+      if (!r.ok) {
+        e.preventDefault();
+        mostrarError(r.error);
+        return;
+      }
+      actualizarWhatsapp();
+      enviarContacto(r.telefono);
+      document.body.classList.add("enviado");
+    });
+    // Enter (o «Ir» en el teclado del celular) hace lo mismo que el botón.
+    document.getElementById("pedir-wa").addEventListener("submit", function (e) {
+      e.preventDefault();
+      continuar.click();
+    });
+
+    if (codigoValido) {
+      var slug = codigo.split("-")[0];
+      if (slug && slug !== "pase") {
+        var nombreEnlace = slug.charAt(0).toUpperCase() + slug.slice(1);
+        ponerNombre(nombreEnlace);
+        ponerReferidorAyuda(nombreEnlace);
+        referidor = nombreEnlace;
+      }
+    }
+    actualizarWhatsapp();
+
+    // El nombre completo, el número y el mensaje vienen del CRM (cacheado en la
+    // CDN). Si no responde, quedan el nombre del enlace y el respaldo.
     var ruta = CRM + encodeURIComponent(codigoValido ? codigo : "pase-0000");
     fetch(ruta, { mode: "cors", credentials: "omit" })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        clearTimeout(reloj);
-        if (d && d.ok && d.nombre) ponerNombre(d.nombre);
-        else ponerGenerico();
-        montarCalendly((d && d.calendlyUrl) || CALENDLY_RESPALDO);
+        if (d && d.ok && d.nombre) {
+          ponerNombre(d.nombre);
+          ponerReferidorAyuda(d.nombre);
+          referidor = d.referidor || d.nombre;
+        } else {
+          ponerGenerico();
+          ponerReferidorAyuda(null);
+          referidor = REFERIDOR_GENERICO;
+        }
+        if (d && /^\d{8,15}$/.test(d.whatsapp || "")) numeroWa = d.whatsapp;
+        if (d && typeof d.mensaje === "string" && d.mensaje.indexOf("{referidor}") !== -1) plantillaWa = d.mensaje;
+        actualizarWhatsapp();
       })
-      .catch(function () {
-        clearTimeout(reloj);
-        montarCalendly(CALENDLY_RESPALDO);
-      });
+      .catch(function () {});
   })();
   </script>
 </body>
