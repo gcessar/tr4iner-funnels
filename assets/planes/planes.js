@@ -27,7 +27,9 @@
   el chat (pedido del usuario: sin el número no hay forma de saber de qué página y con qué
   UTMs llegó cada conversación). `data-funnel="AN|VA"` elige el WhatsApp de ManyChat de
   Tr4iner o de Veronika; una página de AN con tráfico VA (el marcador de AGENTS.md) va al
-  de Veronika. Los testimonios siguen igual. Quitar el atributo vuelve a los planes.
+  de Veronika. Desde la Ruta (27-oct) manda el lado en que se registró el miembro, que la
+  Ruta pasa en `funnel=AN|VA`, y no el de la página. Los testimonios siguen igual. Quitar
+  el atributo vuelve a los planes.
 
   El número va al CRM por `/api/genesis/diagnostico` (mismo dominio, el puente de la Ruta).
   Quien llega desde la Ruta Tr4iner (`utm_medium=RUTA-TR4INER`) con su sesión en este
@@ -321,9 +323,14 @@
     return salida;
   }
   var ATRIB = atribucion();
+  // Quien llega desde la Ruta Tr4iner trae las UTMs de su registro y, en `funnel`, de qué
+  // lado se registró (AN|VA). Eso decide su WhatsApp, no la página (27-oct, pedido del
+  // usuario: a Rosita, que sólo existe del lado de Veronika, entran también los de Anthoni).
+  var DESDE_RUTA = String(ATRIB.utm_medium || "").toUpperCase() === "RUTA-TR4INER";
   // Las páginas de Veronika rellenan source y campaña cuando el enlace llega sin UTMs, igual
-  // que hacía su Typeform: así el pago y la agenda se cuentan del lado VA.
-  ["utm_source", "utm_campaign"].forEach(function (clave) {
+  // que hacía su Typeform: así el pago y la agenda se cuentan del lado VA. Desde la Ruta no,
+  // porque marcarían de VA a un miembro de Anthoni.
+  if (!DESDE_RUTA) ["utm_source", "utm_campaign"].forEach(function (clave) {
     var respaldo = raiz.getAttribute("data-" + clave.replace("_", "-"));
     if (respaldo && !ATRIB[clave]) ATRIB[clave] = respaldo;
   });
@@ -373,7 +380,9 @@
   }
 
   function montarDiagnostico() {
-    var destino = FUNNEL === "VA" || esTraficoVA(ATRIB) ? "VA" : "AN";
+    var destino = DESDE_RUTA
+      ? (String(ATRIB.funnel || "").toUpperCase() !== "AN" && esTraficoVA(ATRIB) ? "VA" : "AN")
+      : (FUNNEL === "VA" || esTraficoVA(ATRIB) ? "VA" : "AN");
     var wa = WHATSAPP[destino];
     var caso = CASO_DE_PAGINA[SLUG];
     var mensaje = caso

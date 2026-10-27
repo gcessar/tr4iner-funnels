@@ -4307,6 +4307,13 @@
       // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
       // bisagra (oculta desde el 7-oct), el módulo de casos y el llamado
       // debajo del video, que también lleva a /empezar con la misma marca.
+      // El marcador VA de AGENTS.md sobre las UTMs que el CRM guardó al registrarse (sólo
+      // guarda las cinco UTMs y los identificadores de clic).
+      function registroEsVA(atrib) {
+        var marcador = /(^|[-_])VA($|[-_])/i;
+        return Object.keys(atrib).some(function (k) { return k.indexOf('utm_') === 0 && marcador.test(String(atrib[k])); });
+      }
+
       function urlCaso(ruta) {
         // `utm_medium` con el que la Ruta marca a quien abre un caso. El CRM lo
         // tiene que reconocer como cruce (`isGenesisRelay`), igual que el GENESIS
@@ -4334,6 +4341,11 @@
           if (!attr[k]) attr[k] = storedAttr[k];
         });
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
+        // De qué lado se registró (27-oct, pedido del usuario): con el marcador VA en las
+        // UTMs del alta, la sesión de diagnóstico del caso abre el WhatsApp de Veronika; si
+        // no, el de Anthoni, sea de quien sea la página (Rosita sólo existe del lado de
+        // Veronika). Manda el registro y no el enlace de hoy, y se mira antes de pisar el medium.
+        if (memberSession) p.set('funnel', registroEsVA(storedAttr) ? 'VA' : 'AN');
         // Marca del cruce Ruta → caso. Las páginas de testimonio son las mismas
         // del funnel Caso de Estudio, y Typeform sólo guarda y reenvía las cinco
         // UTMs (`funnel`/`funnel_variant` se pierden ahí): el medium es el único
