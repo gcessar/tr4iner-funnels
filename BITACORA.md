@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-10-27 — Ruta: el módulo de casos se llama «Así es como luce un cambio físico en la práctica» y muestra sólo los del sexo del miembro
+
+- **Pedido del usuario:** cambiar el nombre del módulo 4 («Caso de estudio») y mostrar sólo los casos del sexo de la persona: hombres Dashiel y Christian; mujeres, todas las de las páginas de Anthoni y de Veronika, sin repetir a Flor de María (está en las dos).
+- **Casos (`biblioteca/videos/index.html`, `CASOS`):** Flor, Rosita y Andrea para mujeres; Dashiel y Christian para hombres. Andrea también está en las dos versiones (es la misma persona: misma foto del «después» en `assets/casos-optin/` y `assets/casos-va/`). Flor y Andrea van a la página de Anthoni (`/testimonio-flor`, `/testimonio-andrea`), como antes; **Rosita sólo existe en la de Veronika** y va a `/testimonio-rosita-va/video`, con la comparativa de `assets/casos-va/` (que vuelve a usarse). Sin sexo conocido salen los cinco, con «Mujer ·»/«Hombre ·» en el rótulo.
+- **Copy:** título «Así es como luce un cambio físico en la práctica»; subtítulo y contador según la cantidad («Tres transformaciones reales…», «3 CASOS»). El rótulo de cada mujer es el problema con el que la landing VA elige su caso («Subo de peso», «Entreno y no veo cambios», «Bajo y lo recupero»); el de los hombres, la edad, sin el «Hombre ·» que ya no agrega nada.
+- **Diseño:** en el teléfono siguen 2 por fila y la tercera mujer queda centrada; en escritorio una columna por caso, de unos 195 px como antes, sin huecos vacíos.
+- **No cambia:** `urlCaso()` (UTMs + `utm_medium=RUTA-TR4INER`), los eventos `bisagra_view`/`bisagra_click` (ahora `caso` puede ser `rosita`) ni el catálogo del CRM.
+- **Verificación:** local con un servidor que simula `/api/genesis/me` y el catálogo: mujeres 3 casos, hombres 2, sin sexo 5, en celular (375 px) y escritorio (1280 px); enlaces con nombre, correo, sexo, UTMs y el medium de la Ruta.
+- **Para decidir:** quien entra a Rosita desde la Ruta termina en el WhatsApp de **Veronika** (la página tiene `data-funnel="VA"`) y el CRM lo cuenta en Funnel VA.
+
 ## 2026-10-26 (3) — Chat de la Ruta: sin el Plan Esencial ni precios; califica y agenda la sesión de diagnóstico (publicado)
 
 - **Pedido del usuario:** «en el chat de IA de Ruta Tr4iner mejor no ofrezcas el plan de 77$, cualifica al usuario para llevarlo a una sesión de agendamiento».

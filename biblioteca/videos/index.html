@@ -2226,7 +2226,14 @@
        Las comparativas son cuadradas (antes | después): en 16:9 se recortaban, así que
        van en tarjetas propias, 2 por fila en el teléfono y 4 en escritorio. */
     .case-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    @media (min-width: 861px) { .case-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    /* Desde el 27-oct cada miembro ve sólo los casos de su sexo (3 mujeres, 2 hombres): con
+       un número impar, la última tarjeta del teléfono va centrada y no colgando a la izquierda.
+       En escritorio, una columna por caso y con el ancho de antes, sin huecos vacíos. */
+    .case-grid > .case-tile:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 6px); }
+    @media (min-width: 861px) {
+      .case-grid { grid-template-columns: repeat(var(--casos, 4), minmax(0, 1fr)); max-width: calc(var(--casos, 4) * 200px); }
+      .case-grid > .case-tile:last-child:nth-child(odd) { grid-column: auto; justify-self: stretch; width: auto; }
+    }
     .case-tile { display: flex; flex-direction: column; gap: 6px; padding: 8px 8px 12px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--card); color: var(--ink); text-decoration: none; transition: border-color .16s ease; }
     .case-tile:hover { border-color: var(--ink); }
     .case-tile:focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; }
@@ -3261,21 +3268,28 @@
         updateProgressUI();
       }
 
-      // ── Módulo «Caso de estudio» ────────────────────────────
-      // Los cuatro casos del funnel, para todos: el miembro elige el más parecido a él.
+      // ── Módulo de casos («Así es como luce un cambio físico en la práctica») ──
+      // Los casos de las páginas de Anthoni y de Veronika, cada persona una sola vez:
+      // Flor y Andrea están en las dos y van a la de Anthoni; Rosita sólo existe en la
+      // de Veronika (27-oct). Cada miembro ve los de su sexo; sin sexo conocido, todos.
+      // En las mujeres el rótulo es el problema con el que la landing VA elige el caso.
       var CASOS = [
-        { id: 'flor', nombre: 'Flor de María', perfil: 'Mujer · 18 a 35 años', ruta: '/testimonio-flor' },
-        { id: 'dashiel', nombre: 'Dashiel', perfil: 'Hombre · 18 a 35 años', ruta: '/testimonio-dashiel' },
-        { id: 'andrea', nombre: 'Andrea Loayza', perfil: 'Mujer · más de 35', ruta: '/testimonio-andrea' },
-        { id: 'christian', nombre: 'Christian Barrantes', perfil: 'Hombre · más de 35', ruta: '/testimonio-christian' }
+        { id: 'flor', sexo: 'Mujer', nombre: 'Flor de María', perfil: 'Subo de peso', ruta: '/testimonio-flor', fotos: 'casos-optin' },
+        { id: 'rosita', sexo: 'Mujer', nombre: 'Rosita', perfil: 'Entreno y no veo cambios', ruta: '/testimonio-rosita-va/video', fotos: 'casos-va' },
+        { id: 'andrea', sexo: 'Mujer', nombre: 'Andrea Loayza', perfil: 'Bajo y lo recupero', ruta: '/testimonio-andrea', fotos: 'casos-optin' },
+        { id: 'dashiel', sexo: 'Hombre', nombre: 'Dashiel', perfil: '18 a 35 años', ruta: '/testimonio-dashiel', fotos: 'casos-optin' },
+        { id: 'christian', sexo: 'Hombre', nombre: 'Christian Barrantes', perfil: 'Más de 35 años', ruta: '/testimonio-christian', fotos: 'casos-optin' }
       ];
+      var CASOS_EN_LETRAS = ['', 'Una', 'Dos', 'Tres', 'Cuatro', 'Cinco'];
 
       function mkCasosGroup() {
+        var casos = CASOS.filter(function (c) { return !state.sexo || c.sexo === state.sexo; });
         // Sigue la numeración de lo que ya está en el índice, sin huecos.
         var numero = String(libraryEl.querySelectorAll('.route-group').length + 1).padStart(2, '0');
+        var titulo = 'Así es como luce un cambio físico en la práctica';
         var section = document.createElement('details');
         section.className = 'route-group route-casos';
-        section.setAttribute('aria-label', 'Orientación ' + numero + ': Caso de estudio');
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': ' + titulo);
         var visto = false;
         section.addEventListener('toggle', function () {
           if (!section.open) return;
@@ -3288,17 +3302,18 @@
         section.innerHTML =
           '<summary>' +
             '<span class="index-num">' + numero + '</span>' +
-            '<span class="index-copy"><strong>Caso de estudio</strong><small>Cuatro transformaciones reales, contadas paso a paso.</small></span>' +
-            '<b class="index-status">4 CASOS</b>' +
+            '<span class="index-copy"><strong>' + titulo + '</strong><small>' + CASOS_EN_LETRAS[casos.length] + ' transformaciones reales, contadas paso a paso.</small></span>' +
+            '<b class="index-status">' + casos.length + ' CASOS</b>' +
             '<i class="index-arrow" aria-hidden="true">→</i>' +
           '</summary>' +
           '<div class="route-group-body">' +
             '<p class="bloque-desc">Elige el caso más parecido a ti. Al final podrás responder una evaluación y conocer el siguiente paso que te corresponde.</p>' +
-            '<div class="case-grid">' + CASOS.map(function (c) {
+            '<div class="case-grid" style="--casos: ' + casos.length + '">' + casos.map(function (c) {
+              var foto = '/assets/' + c.fotos + '/' + c.id;
               return '<a class="case-tile" data-caso="' + c.id + '" href="' + escapeHtml(urlCaso(c.ruta)) + '">' +
-                '<span class="case-photo"><img src="/assets/casos-optin/' + c.id + '-240.webp" srcset="/assets/casos-optin/' + c.id + '-240.webp 240w, /assets/casos-optin/' + c.id + '-480.webp 480w" ' +
-                  'sizes="(min-width: 861px) 170px, calc((100vw - 64px) / 2)" width="480" height="480" loading="lazy" decoding="async" alt="' + escapeHtml(c.nombre) + ': antes a la izquierda y después a la derecha" /></span>' +
-                '<span class="case-meta">' + escapeHtml(c.perfil) + '</span>' +
+                '<span class="case-photo"><img src="' + foto + '-240.webp" srcset="' + foto + '-240.webp 240w, ' + foto + '-480.webp 480w" ' +
+                  'sizes="(min-width: 861px) 200px, calc((100vw - 64px) / 2)" width="480" height="480" loading="lazy" decoding="async" alt="' + escapeHtml(c.nombre) + ': antes a la izquierda y después a la derecha" /></span>' +
+                '<span class="case-meta">' + escapeHtml((state.sexo ? '' : c.sexo + ' · ') + c.perfil) + '</span>' +
                 '<strong>' + escapeHtml(c.nombre) + '</strong>' +
                 '<span class="case-go">Ver caso <i aria-hidden="true">→</i></span>' +
               '</a>';
@@ -4290,7 +4305,7 @@
       }
 
       // Enlace a un caso con los datos del miembro y toda su atribución. Lo usan la
-      // bisagra (oculta desde el 7-oct), el módulo «Caso de estudio» y el llamado
+      // bisagra (oculta desde el 7-oct), el módulo de casos y el llamado
       // debajo del video, que también lleva a /empezar con la misma marca.
       function urlCaso(ruta) {
         // `utm_medium` con el que la Ruta marca a quien abre un caso. El CRM lo

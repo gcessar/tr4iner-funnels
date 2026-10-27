@@ -62,7 +62,7 @@ Las versiones `clickfunnels.html`, generadores `build-clickfunnels.mjs` y archiv
 | `testimonio-rosita-va/index.html`, `testimonio-rosita-va/video/index.html` | Funnel VA de Rosita: prerregistro + VSL con Typeform. Prerregistro y `/video` con el diseño «Vino crema» y CSS inline: ninguna de las dos carga ya `assets/rosita-va/rosita-theme.css`. |
 | `testimonio-andrea-va/index.html`, `testimonio-andrea-va/video/index.html` | **Funnel VA de Andrea** para las redes de Veronika. Mismo recorrido que Rosita (registro → video + evaluación). Diseño «Vino crema»; CSS y JS inline en cada página. |
 | `assets/andrea-va/` | Portada del VSL de Andrea en WebP 760/1280 px y el JPG de `og:image`. Salió de un fotograma del propio video. |
-| `assets/casos-va/` | Las tres comparativas antes/después que usaba el carrusel de `/casos-de-estudio-va`. **Sin uso desde el 25-sep** (el diseño nuevo no tiene carrusel); se dejan por si se revierte. No son las mismas fotos que `assets/casos-optin/`. |
+| `assets/casos-va/` | Las tres comparativas antes/después que usaba el carrusel de `/casos-de-estudio-va` (sin carrusel desde el 25-sep). Desde el 27-oct la de Rosita se usa en el módulo de casos de la Ruta; las otras dos se dejan por si se revierte. No son las mismas fotos que `assets/casos-optin/`. |
 | `registro-typeform-optimizado-B.html`, `registro-typeform-flor-B.html` | Versiones anteriores archivadas como B; no son las rutas públicas actuales. |
 | `calendly-an-optimizado.html`, `calendly-va/index.html`, `calendly-confirma/index.html` | Páginas canónicas editoriales de agendamiento y confirmación. |
 | `calendly-an-optimizado-B.html`, `calendly-va/index-B.html`, `calendly-confirma/index-B.html` | Versiones visuales anteriores archivadas como B. |
