@@ -22,8 +22,15 @@
   // cuando alguien toca play en un video del chat.
   var REPRODUCTOR = '/assets/tr4-video/tr4-video.js?v=20261013';
   var STORAGE_PREFIX = 'tr4_ruta_chat_v1:';
-  // La foto del botón y de la cabecera (184 px, el círculo amarillo con Anthoni saliéndose por arriba).
-  var FOTO = '/assets/team/anthoni-montalvan.png';
+  // Quién saluda, según de qué lado se registró (3-nov, pedido del usuario): los miembros de
+  // Veronika (marcador VA en sus UTMs) ven su foto, la de /empezar-va, y su equipo. La de
+  // Anthoni es un recorte sobre su círculo amarillo (la cabeza sale por arriba); la de
+  // Veronika es una foto cuadrada que se recorta en el círculo.
+  var PERSONAS = {
+    AN: { foto: '/assets/team/anthoni-montalvan.png', equipo: 'Equipo de Anthoni', recorte: true },
+    VA: { foto: '/assets/va/vero-avatar-92.webp', equipo: 'Equipo de Veronika', recorte: false }
+  };
+  function persona() { return PERSONAS[opts && opts.lado === 'VA' ? 'VA' : 'AN']; }
   var MAX_ITEMS = 80;
 
 
@@ -80,6 +87,12 @@
     '.rc-head-av{position:relative;flex:none;width:30px;height:30px;margin-right:8px}',
     '.rc-head-av::before{position:absolute;inset:-2px;border-radius:50%;background:var(--ink,#111);content:""}',
     '.rc-head-av img{position:absolute;top:-4px;left:50%;width:36px;height:36px;max-width:none;margin-left:-18px}',
+    // La foto cuadrada (Veronika) se recorta en el círculo, encuadrada en la cara.
+    '.rc-face-clip{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#E9E8E4}',
+    '.rc-face-photo{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 0;transform:scale(2);transform-origin:50% 5%;pointer-events:none;user-select:none;-webkit-user-drag:none}',
+    '.rc-head-av--foto{overflow:hidden;border-radius:50%;box-shadow:0 0 0 2px var(--ink,#111)}',
+    '.rc-head-av--foto::before{display:none}',
+    '.rc-head-av--foto img{top:0;left:0;width:100%;height:100%;margin:0;object-fit:cover;object-position:50% 0;transform:scale(2);transform-origin:50% 5%}',
     '.rc-sub{display:block;margin:2px 0 0;color:var(--muted,#6B6B6B);font:500 12px/1.2 var(--sans,system-ui,sans-serif)}',
 
     '.rc{position:fixed;inset:0 0 0 auto;width:min(440px,100vw);height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--rule-strong,rgba(17,17,17,.24));background:var(--card,#fff);color:var(--ink,#111);font-family:var(--sans,system-ui,sans-serif);overscroll-behavior:contain}',
@@ -100,7 +113,14 @@
 
 
     '.rc-turn{display:flex;flex-direction:column;gap:6px;max-width:100%}',
-    '.rc-text{margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line;overflow-wrap:anywhere}',
+    // 3-nov (pedido del usuario: «no hay separación de textos y la lectura se dificulta»): el
+    // mensaje del equipo va en un globo, cada línea es un párrafo con aire y la pregunta del
+    // final, la que pide respuesta, va resaltada.
+    '.rc-text{display:flex;flex-direction:column;gap:9px;margin:0;font-size:15.5px;line-height:1.5;overflow-wrap:anywhere}',
+    '.rc-text p{margin:0}',
+    '.rc-turn--equipo{align-self:flex-start;max-width:90%}',
+    '.rc-turn--equipo .rc-text{padding:12px 15px 13px;border-radius:4px 16px 16px 16px;background:rgba(22,19,14,.055);color:var(--ink,#111)}',
+    '.rc-text .rc-q{font-weight:650}',
     '.rc-turn--yo{align-self:flex-end;max-width:84%}',
     '.rc-turn--yo .rc-text{padding:10px 14px;border-radius:16px 16px 4px 16px;background:var(--ink,#111);color:#fff;font-size:15px}',
     '.rc-turn.is-new{animation:rc-msg .22s ease-out}',
@@ -392,10 +412,20 @@
   }
 
   // ── Render ───────────────────────────────────────────────
+  // Una línea del agente = un párrafo. La última, si es una pregunta, se resalta: es lo que
+  // la persona tiene que contestar.
+  function parrafos(texto, esEquipo) {
+    var partes = String(texto || '').split(/\n+/).map(function (p) { return p.trim(); }).filter(Boolean);
+    return el('div', { className: 'rc-text' }, partes.map(function (p, i) {
+      var pregunta = esEquipo && partes.length > 1 && i === partes.length - 1 && /\?[\s\S]{0,4}$/.test(p);
+      return el('p', pregunta ? { className: 'rc-q', text: p } : { text: p });
+    }));
+  }
+
   function turno(item, nuevo) {
     var esEquipo = item.rol === 'equipo';
     var hijos = [];
-    hijos.push(el('p', { className: 'rc-text', text: item.texto }));
+    hijos.push(parrafos(item.texto, esEquipo));
     if (esEquipo && item.tarjeta) hijos.push(tarjeta(item.tarjeta));
     return el('div', { className: 'rc-turn rc-turn--' + (esEquipo ? 'equipo' : 'yo') + (nuevo ? ' is-new' : '') }, hijos);
   }
@@ -546,17 +576,22 @@
     estilo.textContent = CSS;
     document.head.appendChild(estilo);
 
-    // Diseño B: la foto de Anthoni con un saludo del equipo al costado (ver el CSS).
-    ui.launch = el('button', { type: 'button', className: 'rc-launch', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog', 'aria-label': 'Habla con el equipo de Anthoni', title: 'Habla con el equipo de Anthoni' });
+    // Diseño B: la foto con un saludo del equipo al costado (ver el CSS).
+    var quien = persona();
+    var etiqueta = 'Habla con el ' + quien.equipo.charAt(0).toLowerCase() + quien.equipo.slice(1);
+    var foto = quien.recorte
+      ? '<img class="rc-face-img" src="' + quien.foto + '" alt="" width="77" height="77" draggable="false">'
+      : '<span class="rc-face-clip"><img class="rc-face-photo" src="' + quien.foto + '" alt="" width="64" height="64" draggable="false"></span>';
+    ui.launch = el('button', { type: 'button', className: 'rc-launch', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog', 'aria-label': etiqueta, title: etiqueta });
     ui.launch.innerHTML = '<span class="rc-face-halo" aria-hidden="true"></span><span class="rc-face-halo h2" aria-hidden="true"></span>' +
       '<span class="rc-face-in" aria-hidden="true"><span class="rc-face-wave"><span class="rc-face-ring"></span>' +
-      '<img class="rc-face-img" src="' + FOTO + '" alt="" width="77" height="77" draggable="false"><span class="rc-face-live"></span></span></span>' +
+      foto + '<span class="rc-face-live"></span></span></span>' +
       '<span class="rc-badge" aria-hidden="true">1</span>';
     var cerrarSaludo = el('button', { type: 'button', className: 'rc-t-close', 'aria-label': 'Cerrar el saludo' });
     cerrarSaludo.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
     ui.saludoTexto = el('span', { className: 'rc-t-text' });
-    var saludoAbre = el('button', { type: 'button', className: 'rc-t-body', 'aria-label': 'Abrir el chat con el equipo de Anthoni' }, [
-      el('span', { className: 'rc-t-kicker' }, [el('i', { className: 'rc-t-live', 'aria-hidden': 'true' }), el('span', { text: 'Equipo de Anthoni' })]),
+    var saludoAbre = el('button', { type: 'button', className: 'rc-t-body', 'aria-label': 'Abrir el chat con el ' + quien.equipo.charAt(0).toLowerCase() + quien.equipo.slice(1) }, [
+      el('span', { className: 'rc-t-kicker' }, [el('i', { className: 'rc-t-live', 'aria-hidden': 'true' }), el('span', { text: quien.equipo })]),
       el('span', { className: 'rc-t-typing', 'aria-hidden': 'true' }, [el('i'), el('i'), el('i')]),
       ui.saludoTexto
     ]);
@@ -579,9 +614,9 @@
 
     ui.dialog = el('dialog', { id: 'rc-dialog', className: 'rc', 'aria-labelledby': 'rc-title' }, [
       el('header', { className: 'rc-head' }, [
-        el('span', { className: 'rc-head-av', 'aria-hidden': 'true' }, [el('img', { src: FOTO, alt: '', width: '36', height: '36' })]),
+        el('span', { className: 'rc-head-av' + (quien.recorte ? '' : ' rc-head-av--foto'), 'aria-hidden': 'true' }, [el('img', { src: quien.foto, alt: '', width: '36', height: '36' })]),
         el('div', { className: 'rc-head-id' }, [
-          el('h2', { id: 'rc-title', className: 'rc-title', text: 'Equipo de Anthoni' }),
+          el('h2', { id: 'rc-title', className: 'rc-title', text: quien.equipo }),
           el('span', { className: 'rc-sub', text: 'En línea · responde al instante' })
         ]),
         reiniciar,

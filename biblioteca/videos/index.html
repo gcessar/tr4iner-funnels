@@ -2600,7 +2600,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/videos/rutina.js?v=20261015-sin-boton-reproductor"></script>
-  <script src="/biblioteca/assets/ruta-chat.js?v=20261103-botonb"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261103-lectura"></script>
   <script>
     (async function () {
       'use strict';
@@ -4385,6 +4385,8 @@
           estado: estadoBisagra(),
           whatsapp: advisory ? advisory.href : null,
           leccionActual: function () { return ultimaLeccion; },
+          // Los miembros de Veronika ven su foto y su equipo en el chat (3-nov).
+          lado: registroEsVA((memberSession && memberSession.attribution) || {}) ? 'VA' : 'AN',
           track: track
         });
         if (!listo || !advisory) return;
