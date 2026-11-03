@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-03 (4) — Chat de la Ruta: mensajes más legibles, emojis variados y Veronika para VA (publicado)
+
+- **Pedido del usuario (viendo su propia conversación):** «las respuestas salen con un solo emoticon y el mismo; no hay separación de textos ni saltos de línea y la lectura se dificulta» y «usa la foto de Veronika para el ícono del chat cuando los usuarios tengan UTMs de VA».
+- **Lectura (`biblioteca/assets/ruta-chat.js`):** cada mensaje del equipo va en un globo claro; una línea del agente = un párrafo con aire; la última línea, si es pregunta, en negrita (`.rc-q`). Antes era texto suelto con `pre-line` y todo se leía como un bloque.
+- **Prompt:** variar cómo se reconoce lo que contó (nada de «Perfecto/Entiendo, [nombre] 🙌» en cada mensaje), el nombre cada 3-4 mensajes, como mucho un emoji y nunca el mismo seguido; 🙌 sólo en el saludo; la pregunta sola en la última línea. Probado con el agente de preview de n8n sobre la misma conversación (ejecución 967102): respondió sin nombre ni emoji y con un arranque distinto.
+- **VA:** `registroEsVA` sobre las UTMs del registro → opción `lado` del chat. Los miembros de Veronika ven su foto (`/assets/va/vero-chat-192.webp`: recorte en la cara de una foto de estudio que pasó el usuario, 192 px, 4,4 KB; la de `/empezar-va` de 92 px se veía pixelada) en el botón y la cabecera, y «Equipo de Veronika».
+- **Verificación:** 57/57. Local a 375 px (versión AN y VA, la conversación del usuario cargada). Producción (`main` 54a727a): la página pide `ruta-chat.js?v=20261103-lectura` y trae el globo y la foto; la foto responde 200 (4.418 B); el chat responde 401 sin sesión.
+
 ## 2026-11-03 (3) — Chat de la Ruta a producción: setteo firme, lecciones y botón con la foto de Anthoni (publicado)
 
 - **Pedido del usuario:** «el enfoque principal es encaminar a los usuarios a una sesión agendada con el coach de TR4INER o enviarlos al WhatsApp; en segundo plano, responder las dudas de las lecciones» y «envía a producción la actualización del chat con el nuevo diseño, opción B con el saludo».
