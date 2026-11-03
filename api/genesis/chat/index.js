@@ -3,6 +3,7 @@ const { forward } = require('../../../lib/genesis-proxy');
 const ruta = require('../../../lib/ruta-chat');
 const PROMPT = require('../../../lib/ruta-chat-prompt');
 const LECCIONES = require('../../../lib/ruta-chat-lecciones');
+const temario = require('../../../lib/ruta-chat-temario');
 
 // El agente corre en n8n («RUTA-CHAT · Equipo») porque ahí está la credencial de
 // OpenAI. La memoria ya no: vive en el CRM (7-oct), junto al historial que ve el
@@ -19,8 +20,9 @@ const AGENDAR_URL = process.env.RUTA_CHAT_AGENDAR_URL || N8N + 'ruta-chat-agenda
 // n8n arma la reserva completa pero no la envía a Calendly.
 const AGENDA_REAL = process.env.RUTA_CHAT_AGENDA_REAL === '1';
 // Cada turno guardado dice con qué prompt (y qué lecciones) se respondió: así se
-// comparan versiones contra ventas.
-const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT + '\n' + LECCIONES).digest('hex').slice(0, 10);
+// comparan versiones contra ventas. Desde el 3-nov también cuenta el índice de la Ruta y
+// sus transcripciones: cambian lo que el agente sabe.
+const PROMPT_VERSION = crypto.createHash('sha256').update(PROMPT + '\n' + LECCIONES + '\n' + temario.VERSION).digest('hex').slice(0, 10);
 
 // El historial y el registro son accesorios: si el CRM tarda o falla, el chat sigue.
 async function historialDe(request, response, conversacion) {
@@ -143,9 +145,14 @@ module.exports = async function chat(request, response) {
   const geo = ruta.geoDesde(request.headers);
   const mercado = ruta.mercadoPara(geo, eco);
   const zona = ruta.zonaValida(body.zona);
-  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES, eco);
 
   const historial = await historialDe(request, response, conversacion);
+  // Si pregunta por una lección (o repregunta sobre la de su mensaje anterior), el agente
+  // recibe lo que dice ese video. La lección que abrió por última vez la manda el navegador
+  // y sólo decide cuando no dice cuál («¿qué quiso decir en el video?»).
+  const abierta = temario.leccionDelNavegador(body.leccion);
+  const consulta = temario.consultaPara(temario.leccionConsultada(mensaje, historial, perfil, abierta), perfil, abierta);
+  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES, eco, consulta);
   const base = {
     conversacion: conversacion,
     mensajeUsuario: mensaje,
@@ -216,6 +223,7 @@ module.exports = async function chat(request, response) {
     tarjeta: respuesta.tarjeta ? (respuesta.tarjeta.escalon || respuesta.tarjeta.tipo) : null,
     nivel: respuesta.registro.calificacion.nivel,
     reserva: reserva ? (reserva.ok ? (reserva.prueba ? 'prueba' : 'real') : reserva.motivo) : null,
+    leccion: consulta ? consulta.slug + (consulta.motivo === 'anterior' ? ' (repregunta)' : '') : null,
     vendedor: respuesta.registro.vendedor || null,
     montos_invalidos: respuesta.registro.montos_invalidos
   }));

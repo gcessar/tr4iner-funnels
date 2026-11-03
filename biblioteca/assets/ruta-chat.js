@@ -425,6 +425,12 @@
     return null;
   }
 
+  // La lección que abrió por última vez en la página (3-nov): si pregunta «¿qué quiso decir
+  // en el video?» sin decir cuál, el servidor le pasa al agente lo que dice esa.
+  function leccionAbierta() {
+    try { return opts.leccionActual ? opts.leccionActual() : null; } catch (e) { return null; }
+  }
+
   // ── Envío ────────────────────────────────────────────────
   function enviar(textoLibre) {
     var texto = String(textoLibre == null ? ui.input.value : textoLibre).trim();
@@ -446,7 +452,8 @@
         eco: state.eco,
         ajuste: state.ajuste,
         zona: zonaLocal(),
-        ultima: ultimaTarjeta()
+        ultima: ultimaTarjeta(),
+        leccion: leccionAbierta()
       })
     }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) { return { status: res.status, data: data }; });

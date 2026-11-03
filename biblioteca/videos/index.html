@@ -3403,6 +3403,8 @@
       var pollTimer = null;
       var openId = 0;
       var activeVideo = null;
+      // La última lección que abrió en esta visita, para el chat: no se borra al cerrar el video.
+      var ultimaLeccion = null;
       var watchedDelta = 0;
       var playStartedSent = false;
       var playerLastFocus = null;
@@ -3805,6 +3807,7 @@
 
       function openPlayer(v, b) {
         var myOpen = ++openId;
+        ultimaLeccion = { slug: v.slug || null, video: v.video ? v.video.base : null };
         playerLastFocus = document.activeElement;
         track('sesion_play', { sesion: v.id, bloque: v.bloque });
         document.getElementById('player-bloque').textContent = 'ORIENTACIÓN · ' + b.name.toUpperCase();
@@ -4381,6 +4384,7 @@
           email: lead.email || '',
           estado: estadoBisagra(),
           whatsapp: advisory ? advisory.href : null,
+          leccionActual: function () { return ultimaLeccion; },
           track: track
         });
         if (!listo || !advisory) return;
