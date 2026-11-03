@@ -4,48 +4,116 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-  <!-- GTM centraliza GA4, Clarity y Meta para no duplicar page_view. -->
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-T88G63P');
+    /*
+      Una sola definición de «tráfico VA» para todo el repo (AGENTS.md). Se resuelve acá, antes
+      de pintar nada, porque decide la portada del video: así la imagen correcta sale en el
+      primer cuadro y el script del final la lee de `TR4_FIT4_VA` sin volver a calcularla.
+    */
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var campaign = (params.get('utm_campaign') || '').trim().toUpperCase();
+      var funnel = (params.get('funnel') || '').trim().toUpperCase();
+      var funnelVariant = (params.get('funnel_variant') || '').trim();
+      var vaMarker = /(^|[-_])VA($|[-_])/i;
+      window.TR4_FIT4_VA = campaign === 'TR4INER-VA' ||
+        campaign === 'CASOS-VA' ||
+        funnel === 'VA' ||
+        vaMarker.test(funnelVariant) ||
+        Array.from(params.entries()).some(function (entry) {
+          return entry[0].toLowerCase().indexOf('utm_') === 0 && vaMarker.test(entry[1]);
+        });
+    })();
   </script>
 
-  <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#F2EEE2" />
-  <title>FIT4CHALLENGE · Presentación privada</title>
-  <meta name="description" content="Mira la presentación de FIT4CHALLENGE y elige tu bloque: 3 o 6 meses de entrenamiento y alimentación con seguimiento." />
-  <link rel="canonical" href="https://metodo.tr4iner.com/fit4" />
+  <!--
+    GTM centraliza GA4, Clarity y Meta. Igual que en /empezar, NO se carga al abrir la página:
+    el contenedor trae ~1 MB de terceros (gtag, Meta, Clarity, ManyChat, Hotmart, Brevo) que en
+    un teléfono se pelean con el video por el procesador. Lo carga `despertar()` (final del
+    <body>) con el primer toque, desliz o tecla, o a los 5 s del `load`. Costo aceptado: quien
+    se va antes de tocar nada y antes de esos 5 s no cuenta como visita en GA4 ni en Meta.
+  -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    window.TR4_CARGAR_GTM = function () {
+      if (window.TR4_CARGAR_GTM.hecho) return;
+      window.TR4_CARGAR_GTM.hecho = true;
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-T88G63P');
+    };
+  </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://fast.vidalytics.com" />
-  <!-- Se carga sin bloquear el render; con display=swap el texto ya salía en la fuente de respaldo. -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
+  <!-- Paso de venta del funnel: no se indexa (regla SEO/GEO de AGENTS.md). -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F2F3F5" />
+  <title>FIT4CHALLENGE · Tu plan de entrenamiento y alimentación</title>
+  <meta name="description" content="Entrena en casa o en el gym con un plan hecho para ti, come sin prohibiciones y recibe una evaluación cada mes. Bloques de 3 o 6 meses desde US$21 al mes." />
+  <link rel="canonical" href="https://metodo.tr4iner.com/fit4" />
+  <link rel="icon" href="/assets/empezar/favicon-48.png" sizes="48x48" type="image/png" />
+
+  <!-- El reproductor llega después de la portada: sólo se resuelve el DNS. -->
+  <link rel="dns-prefetch" href="https://fast.vidalytics.com" />
+
+  <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 pedidos a Google. -->
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/lexend-normal-latin.woff2" crossorigin />
 
   <style>
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Stack Sans Headline";font-style:normal;font-weight:200 700;font-display:swap;src:url("/assets/fonts/stack-sans-headline-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  @font-face{font-family:"Lexend";font-style:normal;font-weight:300 500;font-display:swap;src:url("/assets/fonts/lexend-normal-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 600;font-display:swap;src:url("/assets/fonts/jetbrains-mono-normal-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+  </style>
+
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────
+       Los de /casos-de-estudio (13-oct-2026): superficie única #F2F3F5, los bloques se
+       separan por aire y no por líneas, y lo que se toca se despega con luz y sombra.
+       El amarillo es el único color saturado y vive como relleno de botón (nunca como
+       texto sobre la superficie: 1,7:1); el óxido marca el énfasis de los títulos. */
     :root {
-      --bg: #F2EEE2;
-      --bg-deeper: #EBE6D6;
-      --ink: #0A0A0A;
-      --ink-soft: #2B2826;
-      --muted: #6B6660;
-      --rule: rgba(10, 10, 10, 0.14);
-      --rule-strong: rgba(10, 10, 10, 0.28);
+      --bg: #F2F3F5;
+      --ink: #16181A;
+      --ink-soft: #575F67;
+      /* Calculados contra #F2F3F5, no contra blanco: #636A71 da 4,94:1. */
+      --muted: #636A71;
       --accent: #F5C518;
-      --cream: #F5F1E5;
-      --serif: "Fraunces", Georgia, serif;
-      --sans: "Instrument Sans", -apple-system, sans-serif;
+      /* El óxido un punto más oscuro (#9E5738) llega a 4,88:1 en los rótulos de 10 px. */
+      --oxide: #9E5738;
+      --oxide-line: rgba(184, 115, 85, 0.58);
+      --hint: #FFF7D7;
+      --marker: #FBE7A0;
+      --error: #A1261C;
+
+      --neu-dark: rgba(32, 41, 52, 0.15);
+      --neu-dark-soft: rgba(32, 41, 52, 0.10);
+      --neu-light: #FFFFFF;
+      --raise: 12px 12px 28px var(--neu-dark), -12px -12px 28px var(--neu-light);
+      --raise-lg: 18px 18px 40px var(--neu-dark), -18px -18px 40px var(--neu-light);
+      --raise-md: 8px 8px 18px var(--neu-dark-soft), -8px -8px 18px var(--neu-light);
+      --raise-sm: 5px 5px 12px var(--neu-dark-soft), -5px -5px 12px var(--neu-light);
+      --sink: inset 4px 4px 9px var(--neu-dark-soft), inset -4px -4px 9px var(--neu-light);
+      --sink-sm: inset 3px 3px 7px var(--neu-dark-soft), inset -3px -3px 7px var(--neu-light);
+      --btn-shadow: 0 16px 28px -16px rgba(120, 92, 0, 0.6);
+
+      --display: "Stack Sans Headline", -apple-system, "Helvetica Neue", sans-serif;
+      --sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: "JetBrains Mono", ui-monospace, monospace;
       --ease: cubic-bezier(.2, .7, .2, 1);
+      --max: 640px;
+      --gutter: 16px;
     }
+
+    /* Ni Stack Sans Headline ni Lexend traen itálica: el énfasis lo llevan color y peso. */
+    em, i { font-style: normal; }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { color-scheme: light; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
     body {
       min-height: 100dvh;
@@ -53,34 +121,17 @@
       background: var(--bg);
       color: var(--ink);
       font-family: var(--sans);
-      font-size: 17px;
-      line-height: 1.55;
-      text-rendering: optimizeLegibility;
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Grano de papel: es lo que separa el crema de un fondo plano. */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0.045;
-      mix-blend-mode: multiply;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-      background-size: 240px 240px;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: rgba(245, 197, 24, .28);
-    }
+    a, button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
     img { display: block; max-width: 100%; }
-    :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
     ::selection { background: var(--accent); color: var(--ink); }
 
     .skip-link {
@@ -89,275 +140,462 @@
       left: 12px;
       z-index: 100;
       padding: 9px 12px;
+      border-radius: 10px;
       background: var(--ink);
-      color: var(--cream);
+      color: #FFFFFF;
       font-family: var(--mono);
       font-size: 12px;
+      text-decoration: none;
       transform: translateY(-160%);
-      transition: transform .16s var(--ease);
     }
     .skip-link:focus { transform: none; }
 
     .page {
-      width: min(100%, 760px);
+      width: 100%;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: calc(22px + env(safe-area-inset-top)) clamp(14px, 4vw, 28px) calc(48px + env(safe-area-inset-bottom));
+      padding: calc(22px + env(safe-area-inset-top)) var(--gutter) 40px;
     }
 
-    .masthead {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: clamp(30px, 6vw, 52px);
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--rule-strong);
+    /* ── Rótulos y títulos ───────────────────────────────── */
+    .mark {
+      margin-bottom: 16px;
       font-family: var(--mono);
       font-size: 10.5px;
       font-weight: 500;
-      letter-spacing: 0.14em;
+      line-height: 1.5;
+      letter-spacing: .14em;
       text-transform: uppercase;
     }
-    .masthead-meta { color: var(--muted); }
-
-    /* ══ Tipografía editorial ═════════════════════════════════ */
-    .kicker {
-      margin-bottom: 12px;
-      font-family: var(--mono);
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .mark span {
+      padding: 2px 4px;
+      background: linear-gradient(transparent 35%, var(--marker) 35%, var(--marker) 92%, transparent 92%);
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
     }
 
     h1 {
-      font-family: var(--serif);
-      font-size: clamp(32px, 6.6vw, 52px);
-      font-variation-settings: "opsz" 100;
-      font-weight: 560;
-      line-height: 1.06;
-      letter-spacing: -0.035em;
+      font-family: var(--display);
+      font-size: clamp(32px, 8.6vw, 46px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -.035em;
       text-wrap: balance;
     }
-    h1 em { font-style: italic; font-weight: 500; }
+    /* El subrayado de marcador de la landing: detrás del texto, nunca encima. */
+    .hl { background: linear-gradient(transparent 76%, var(--accent) 76%, var(--accent) 94%, transparent 94%); }
 
-    /* El resaltado va detrás del texto, nunca sobre la tinta. */
-    .hl {
-      position: relative;
-      z-index: 0;
-      white-space: nowrap;
+    .dek {
+      max-width: 54ch;
+      margin-top: 14px;
+      color: var(--ink-soft);
+      font-size: 15.5px;
+      line-height: 1.58;
+      text-wrap: pretty;
     }
-    .hl::before {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      inset: .12em -.1em .04em;
-      background: var(--accent);
-      transform: skewX(-9deg);
+    .dek strong { color: var(--ink); font-weight: 500; }
+
+    .sec { margin-top: clamp(68px, 13vw, 108px); scroll-margin-top: 16px; }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 13px;
+      color: var(--oxide);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: .13em;
+      text-transform: uppercase;
     }
+    .kicker::before { content: ""; width: 25px; height: 1px; flex: 0 0 auto; background: var(--oxide-line); }
 
     .h2 {
-      font-family: var(--serif);
-      font-size: clamp(26px, 4.6vw, 38px);
-      font-variation-settings: "opsz" 100;
-      font-weight: 560;
+      font-family: var(--display);
+      font-size: clamp(28px, 6.6vw, 40px);
+      font-weight: 700;
       line-height: 1.08;
-      letter-spacing: -0.03em;
+      letter-spacing: -.03em;
       text-wrap: balance;
     }
-    .h2 em { font-style: italic; font-weight: 500; }
+    .h2 em { color: var(--oxide); font-weight: 500; }
 
-    .copy { max-width: 56ch; color: var(--muted); font-size: 16px; line-height: 1.6; }
-
-    .sec { padding: clamp(46px, 8vw, 76px) 0 0; scroll-margin-top: 18px; }
-    .sec-head { margin-bottom: 30px; }
-
-    .rule { height: 1px; margin-top: clamp(46px, 8vw, 76px); background: var(--rule-strong); }
-
-    /* ══ Botones ══════════════════════════════════════════════ */
-    .cta {
-      position: relative;
+    /* ── Botones ─────────────────────────────────────────── */
+    .btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       width: 100%;
-      padding: 21px 24px;
-      overflow: hidden;
-      background: var(--ink);
-      color: var(--cream);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color .35s var(--ease);
-    }
-    .cta::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 0;
+      min-height: 58px;
+      padding: 10px 11px 10px 22px;
+      border: 0;
+      border-radius: 16px;
       background: var(--accent);
-      transform: translateX(-100%);
-      transition: transform .45s cubic-bezier(.7, 0, .3, 1);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: .05em;
+      text-align: left;
+      text-decoration: none;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: var(--btn-shadow);
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
     }
-    .cta:hover::before { transform: translateX(0); }
-    .cta:hover { color: var(--ink); }
-    .cta span { position: relative; z-index: 1; }
-    .cta-action::after { content: " →"; }
+    .btn b {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    .btn:hover { filter: brightness(.96); }
+    .btn:active { transform: scale(.99); box-shadow: 0 8px 18px -12px rgba(120, 92, 0, .6); }
 
-    .microcopy {
+    .micro {
       margin-top: 12px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10px;
-      letter-spacing: .06em;
+      font-weight: 500;
+      line-height: 1.6;
+      letter-spacing: .08em;
+      text-align: center;
       text-transform: uppercase;
+      text-wrap: balance;
     }
 
-    /* ══ Hero ═════════════════════════════════════════════════ */
-    .hero-lead { margin-top: 18px; }
-
-    .player-shell {
-      margin-top: 26px;
+    /* ── Hero y VSL ──────────────────────────────────────── */
+    .vsl {
+      margin-top: 22px;
+      padding: 8px;
+      border-radius: 20px;
+      background: var(--bg);
+      box-shadow: var(--raise);
+    }
+    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada (CLS 0). */
+    .vsl-marco {
+      position: relative;
       overflow: hidden;
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+      aspect-ratio: 16 / 9;
+      border-radius: 13px;
+      background: #111;
+      isolation: isolate;
     }
-    #f4c-player > div { width: 100%; }
+    .vsl-marco > div {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    /* Portada propia encima del reproductor: es el LCP y pinta el primer cuadro del video al
+       instante. Se va cuando Vidalytics ya muestra el suyo. */
+    .vsl-portada {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: 0;
+      background: #111;
+      cursor: pointer;
+      transition: opacity 260ms ease;
+    }
+    .vsl-portada img { width: 100%; height: 100%; object-fit: cover; }
+    .vsl-portada.saliendo { opacity: 0; pointer-events: none; }
+    .vsl-aviso {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 18px 11px 13px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: var(--ink);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .35);
+      transform: translate(-50%, -50%);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .vsl-aviso svg { width: 26px; height: 26px; flex: 0 0 auto; }
+    .vsl-aviso small { display: block; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+    .vsl-aviso strong { display: block; font-size: 16px; font-weight: 500; line-height: 1.15; }
+    .vsl-portada.cargando .vsl-aviso { animation: latido 700ms ease-in-out infinite alternate; }
+    @keyframes latido { to { opacity: .7; } }
 
     .hero-cta { margin-top: 22px; }
 
-    /* ══ Bloques de dolor ═════════════════════════════════════ */
-    .pain-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 1px;
-      margin-top: 26px;
-      background: var(--rule-strong);
-      border: 1px solid var(--rule-strong);
-    }
-    .pain { padding: 22px 20px; background: var(--bg); }
-    .pain h3 {
-      margin-bottom: 9px;
+    /* ── Dolor y giro ────────────────────────────────────── */
+    .dolores { display: grid; gap: 14px; margin-top: 24px; list-style: none; }
+    .dolor { padding: 19px 20px 20px; border-radius: 20px; background: var(--bg); box-shadow: var(--raise-md); }
+    .dolor h3 {
+      margin-bottom: 7px;
       font-family: var(--mono);
       font-size: 10.5px;
       font-weight: 600;
-      letter-spacing: .14em;
+      line-height: 1.4;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
-    .pain p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .dolor p { color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
 
-    /* ══ Presentación del programa ════════════════════════════ */
-    .reveal-sec { text-align: center; }
-    .reveal-lead {
-      max-width: 44ch;
-      margin: 0 auto 22px;
-      font-family: var(--serif);
-      font-size: clamp(19px, 3vw, 24px);
-      font-variation-settings: "opsz" 100;
-      font-weight: 500;
-      font-style: italic;
-      line-height: 1.2;
-      letter-spacing: -.02em;
+    .giro { text-align: center; }
+    .giro-frase {
+      max-width: 22ch;
+      margin: 0 auto;
+      font-family: var(--display);
+      font-size: clamp(25px, 6vw, 34px);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -.025em;
+      text-wrap: balance;
     }
-    .mockup { width: min(460px, 88%); height: auto; aspect-ratio: 732 / 574; margin: 0 auto 14px; }
-    .brand-title {
-      font-family: var(--serif);
-      font-size: clamp(30px, 5.4vw, 44px);
-      font-variation-settings: "opsz" 100;
+    .giro-frase span { display: block; margin-bottom: 4px; color: var(--muted); font-weight: 300; }
+    .giro-frase em { color: var(--oxide); font-weight: 500; }
+    .mockup { width: min(440px, 92%); height: auto; aspect-ratio: 732 / 574; margin: 26px auto 4px; }
+    .marca {
+      font-family: var(--display);
+      font-size: clamp(30px, 7.4vw, 44px);
       font-weight: 700;
       line-height: 1;
-      letter-spacing: -.035em;
+      letter-spacing: -.03em;
       text-transform: uppercase;
     }
-    .reveal-copy { max-width: 52ch; margin: 18px auto 0; color: var(--muted); font-size: 16px; }
-    .reveal-copy b { color: var(--ink); font-weight: 600; }
+    .giro .dek { margin: 14px auto 0; }
 
-    /* ══ Qué incluye ══════════════════════════════════════════ */
-    .feat-list { margin-top: 26px; border-top: 1px solid var(--rule); }
-    .feat {
+    /* ── Qué incluye: una sola placa, filas separadas por aire ── */
+    .incluye {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
-      gap: 16px;
-      padding: 20px 2px;
-      border-bottom: 1px solid var(--rule);
+      gap: 2px;
+      margin-top: 24px;
+      padding: 10px 6px;
+      border-radius: 26px;
+      background: var(--bg);
+      box-shadow: var(--raise);
+      list-style: none;
     }
-    .feat-ico svg {
-      width: 24px;
-      height: 24px;
-      margin-top: 2px;
-      fill: none;
-      stroke: var(--ink);
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-    .feat h3 { margin-bottom: 4px; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
-    .feat p { color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .feat { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 14px 14px; }
+    .feat-ico { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; box-shadow: var(--sink); }
+    .feat-ico svg { width: 20px; height: 20px; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .feat h3 { margin: 1px 0 4px; font-size: 16px; font-weight: 500; line-height: 1.3; }
+    .feat p { color: var(--ink-soft); font-size: 14.5px; line-height: 1.55; }
 
-    /* ══ Planes ═══════════════════════════════════════════════
-       Los dos bloques traen lo mismo: lo único que cambia es
-       cuánto dura. Un solo selector y una sola ficha; la tira de
-       meses se estira al cambiar y ahí se ve el valor. */
-    .plan-toggle {
+    /* ── Testimonios (los 19 de R2, los mismos de /empezar) ── */
+    .casos-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    .casos-head .dek { margin-top: 12px; }
+    .flechas { display: none; gap: 10px; flex: 0 0 auto; }
+    .flechas button,
+    .filtro {
+      border: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      box-shadow: var(--raise-sm);
+      cursor: pointer;
+      transition: box-shadow 160ms ease, color 160ms ease;
+    }
+    .flechas button { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; font-size: 22px; line-height: 1; }
+    .flechas button:active,
+    .filtro[aria-selected="true"] { box-shadow: var(--sink); }
+    .filtros { display: flex; gap: 10px; margin-top: 20px; }
+    .filtro { min-height: 42px; padding: 8px 17px; border-radius: 999px; color: var(--ink-soft); font-size: 13.5px; font-weight: 400; }
+    .filtro[aria-selected="true"] { color: var(--ink); font-weight: 500; }
+
+    .casos-fila {
+      display: flex;
+      gap: 14px;
+      margin: 0 calc(var(--gutter) * -1);
+      padding: 18px var(--gutter) 28px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-padding-inline: var(--gutter);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      /* Alto de una tarjeta (portada 9:16 + nombre, rótulo y cuatro líneas) reservado antes
+         de que el script las monte. */
+      min-height: calc(clamp(150px, 42vw, 200px) * 16 / 9 + 177px);
+    }
+    .casos-fila::-webkit-scrollbar { display: none; }
+    .caso {
+      display: flex;
+      flex: 0 0 clamp(150px, 42vw, 200px);
+      flex-direction: column;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      scroll-snap-align: start;
+      text-align: left;
+    }
+    .caso[hidden] { display: none; }
+    .caso-marco {
       position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      max-width: 420px;
-      margin-top: 26px;
-      border: 1px solid var(--rule-strong);
+      display: block;
+      overflow: hidden;
+      aspect-ratio: 9 / 16;
+      border-radius: 18px;
+      background: #D9DDE1;
+      box-shadow: var(--raise);
+      transition: transform 200ms ease;
     }
-    .plan-toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-    .plan-toggle label {
+    .caso-marco img { width: 100%; height: 100%; object-fit: cover; }
+    /* El mismo play del reproductor de la rutina: negro con triángulo amarillo. */
+    .caso-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      width: 46px;
+      height: 46px;
+      margin: -23px 0 0 -23px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 4px 14px rgba(22, 19, 14, .4);
+    }
+    .caso-play svg { width: 15px; height: 15px; margin-left: 3px; fill: var(--accent); }
+    @media (hover: hover) { .caso:hover .caso-marco { transform: translateY(-3px); } }
+    .caso-nombre { margin-top: 14px; font-size: 14.5px; font-weight: 500; line-height: 1.25; }
+    .caso-meta { margin-top: 3px; color: var(--muted); font-family: var(--mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; }
+    .caso-texto {
+      display: -webkit-box;
+      margin-top: 7px;
+      overflow: hidden;
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.42;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+    }
+
+    /* Visor: el video vertical a casi toda la altura, con el reproductor sin descarga. */
+    .visor {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
       display: grid;
       place-items: center;
-      gap: 2px;
-      padding: 13px 8px;
+      padding: 16px;
+      background: rgba(10, 11, 12, .88);
+    }
+    .visor[hidden] { display: none; }
+    .visor-caja { width: min(100%, calc((100dvh - 120px) * 9 / 16), 420px); }
+    .visor-video { position: relative; overflow: hidden; aspect-ratio: 9 / 16; border-radius: 18px; background: #000; }
+    .visor-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .visor-pie { margin-top: 12px; color: #C9CDD1; font-size: 13.5px; text-align: center; }
+    .visor-pie b { color: #F5F1E5; font-weight: 500; }
+    .visor-cerrar {
+      position: absolute;
+      top: calc(10px + env(safe-area-inset-top));
+      right: 10px;
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .14);
+      color: #FFFFFF;
+      font-size: 26px;
+      line-height: 1;
       cursor: pointer;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      transition: background .26s var(--ease), color .26s var(--ease);
     }
-    .plan-toggle label + input + label { border-left: 1px solid var(--rule-strong); }
-    .plan-toggle label small { font-size: 9.5px; font-weight: 500; letter-spacing: .1em; opacity: .8; }
-    .plan-toggle label:hover { color: var(--ink); }
-    .plan-toggle input:checked + label { background: var(--ink); color: var(--cream); }
-    .plan-toggle input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: -3px; }
+    html.bloqueo, html.bloqueo body { overflow: hidden; }
 
-    .plan-card {
+    /* ── Planes ──────────────────────────────────────────────
+       Los dos bloques traen lo mismo: lo único que cambia es cuánto dura. Un solo selector
+       y una sola ficha; la tira de meses se estira al cambiar y ahí se ve el valor. El
+       selector usa las opciones de la landing: en relieve, y la elegida se hunde con su
+       crema y su tilde. */
+    .toggle { display: flex; gap: 12px; margin-top: 24px; }
+    .toggle input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .toggle label {
       position: relative;
-      margin-top: 18px;
-      padding: clamp(22px, 4vw, 32px);
-      border: 1px solid var(--rule-strong);
-      background: var(--bg-deeper);
+      display: grid;
+      flex: 1;
+      min-height: 64px;
+      place-items: center;
+      align-content: center;
+      gap: 3px;
+      padding: 10px 8px;
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      background: var(--bg);
+      color: var(--ink-soft);
+      font-size: 15.5px;
+      font-weight: 400;
+      line-height: 1.15;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 4px 4px 10px var(--neu-dark-soft), -4px -4px 10px var(--neu-light);
+      transition: box-shadow 160ms ease, background 150ms ease, border-color 150ms ease;
     }
-    .plan-card::before {
+    .toggle label small { color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+    .toggle input:checked + label {
+      border-color: var(--ink);
+      background: var(--hint);
+      color: var(--ink);
+      font-weight: 500;
+      box-shadow: inset 3px 3px 7px rgba(120, 96, 20, .14), inset -3px -3px 7px rgba(255, 255, 255, .7);
+    }
+    .toggle input:checked + label small { color: var(--ink-soft); }
+    .toggle input:checked + label::after {
       content: "";
       position: absolute;
-      inset: 0 0 auto;
-      height: 2px;
-      background: var(--ink);
+      top: 9px;
+      right: 11px;
+      width: 5px;
+      height: 9px;
+      border: solid currentColor;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .toggle input:focus-visible + label { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+    .plan {
+      position: relative;
+      margin-top: 22px;
+      padding: 22px 18px 22px;
+      border-radius: 26px;
+      background: var(--bg);
+      box-shadow: var(--raise-lg);
     }
 
-    /* ── La tira de mesociclo: la firma de la ficha ─────────── */
-    .strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
-    .blk {
-      position: relative;
-      height: 24px;
-      border: 1px solid var(--rule-strong);
-      overflow: hidden;
+    /* La firma de la página: la tira de mesociclo, un canal hundido con seis meses que se
+       llenan en tinta. Con 3 meses quedan tres casillas vacías a la vista. */
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+      padding: 6px;
+      border-radius: 12px;
+      box-shadow: var(--sink-sm);
     }
+    .blk { position: relative; height: 16px; overflow: hidden; border-radius: 5px; }
     .blk::after {
       content: "";
       position: absolute;
-      inset: -1px;
+      inset: 0;
+      border-radius: inherit;
       background: var(--ink);
       transform: scaleX(0);
       transform-origin: left center;
@@ -369,17 +607,17 @@
     .strip-legend {
       display: flex;
       justify-content: space-between;
-      margin: 10px 0 22px;
+      margin: 10px 2px 18px;
       color: var(--muted);
       font-family: var(--mono);
       font-size: 10.5px;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
     .strip-legend b { color: var(--ink); font-weight: 600; }
 
-    /* Los dos paneles comparten celda: la ficha toma la altura
-       del más alto y cambiar de plan no salta el layout. */
+    /* Los dos paneles comparten celda: la ficha toma la altura del más alto y cambiar de
+       plan no salta el layout. */
     .panels { display: grid; }
     .panel {
       grid-area: 1 / 1;
@@ -390,257 +628,238 @@
     }
     .panel.on { opacity: 1; visibility: visible; transform: none; }
 
-    .plan-goal { margin-bottom: 18px; color: var(--ink-soft); font-size: 16px; }
+    .plan-goal { margin-bottom: 16px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
 
-    /* ── Anclaje de precio ─────────────────────────────────────
-       El $174 no es un precio anterior sino lo que costaría
-       comprar dos bloques de 3: va resaltado, pero etiquetado. */
-    .plan-anchor {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      min-height: 26px;
-      margin-bottom: 4px;
-    }
+    /* El US$174 no es un precio anterior sino lo que costaría comprar dos bloques de 3:
+       va tachado, pero etiquetado. «US$» y no «$»: en México, Chile o Argentina el signo
+       solo se lee como pesos. */
+    .plan-anchor { display: flex; align-items: baseline; gap: 10px; min-height: 26px; margin-bottom: 6px; }
     .was {
       position: relative;
-      font-family: var(--serif);
-      font-size: 24px;
-      font-variation-settings: "opsz" 100;
-      font-weight: 560;
+      color: var(--muted);
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 500;
       line-height: 1;
-      letter-spacing: -.03em;
+      letter-spacing: -.02em;
       text-decoration: none;
+      font-variant-numeric: tabular-nums;
     }
     .was::after {
       content: "";
       position: absolute;
-      left: -3px;
+      top: 52%;
       right: -3px;
-      top: 50%;
+      left: -3px;
       height: 2px;
       background: var(--ink);
       transform: scaleX(0);
       transform-origin: left center;
       transition: transform .5s var(--ease);
     }
-    .plan-card.is-in .panel.on .was::after { transform: scaleX(1); transition-delay: .45s; }
-
-    .anchor-label, .anchor-rate {
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .plan.is-in .panel.on .was::after { transform: scaleX(1); transition-delay: .45s; }
+    .anchor-label,
+    .anchor-rate { color: var(--muted); font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
     .anchor-rate { color: var(--ink-soft); }
 
-    .plan-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+    .plan-price { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
     .plan-price b {
-      font-family: var(--serif);
-      font-size: clamp(46px, 9vw, 62px);
-      font-variation-settings: "opsz" 100;
-      font-weight: 560;
-      line-height: 1;
-      letter-spacing: -.045em;
+      display: flex;
+      align-items: baseline;
+      font-family: var(--display);
+      font-size: clamp(54px, 15vw, 64px);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.035em;
+      font-variant-numeric: tabular-nums;
     }
-    .plan-price > span {
-      white-space: nowrap;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10.5px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
+    .plan-price b small { align-self: flex-start; margin: 6px 4px 0 0; font-size: 18px; font-weight: 600; letter-spacing: 0; }
+    .plan-price > span { color: var(--muted); font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
     .save-chip {
-      padding: 5px 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
       background: var(--accent);
-      color: var(--ink);
-      font-family: var(--mono);
-      font-size: 10px;
+      color: var(--ink) !important;
       font-weight: 600;
-      letter-spacing: .12em;
-      text-transform: uppercase;
       opacity: 0;
       transform: translate3d(0, 6px, 0);
       transition: opacity .34s var(--ease), transform .34s var(--ease);
     }
-    .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; transition-delay: .85s; }
+    .plan.is-in .panel.on .save-chip { opacity: 1; transform: none; transition-delay: .85s; }
 
-    .plan-math {
-      margin: 14px 0 22px;
-      padding-top: 12px;
-      border-top: 1px solid var(--rule);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-    .plan-math b { color: var(--ink); font-weight: 600; }
+    .plan-math { margin: 12px 0 20px; color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; }
+    .plan-math b { color: var(--ink); font-weight: 500; }
 
-    .plan-guarantee {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-top: 12px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
-    .plan-guarantee svg { width: 13px; height: 13px; fill: none; stroke: var(--ink); stroke-width: 2; }
+    .garantia { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; color: var(--ink-soft); font-size: 13.5px; line-height: 1.45; }
+    .garantia svg { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .garantia strong { color: var(--ink); font-weight: 500; }
 
-    /* ── Lo que traen los dos (una sola vez, no dos listas) ── */
-    .shared { margin-top: 18px; padding: 22px 2px 0; border-top: 1px solid var(--rule-strong); }
-    .shared-title {
-      margin-bottom: 16px;
+    .shared { margin-top: 24px; padding-top: 22px; }
+    .shared-title,
+    .pasos-title {
+      margin-bottom: 14px;
+      color: var(--ink);
       font-family: var(--mono);
       font-size: 10.5px;
       font-weight: 600;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
-    .shared ul {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 9px 24px;
-      list-style: none;
-    }
-    .shared li {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      color: var(--ink-soft);
-      font-size: 15px;
-    }
-    .shared li svg {
-      flex: 0 0 15px;
-      width: 15px;
-      height: 15px;
-      margin-top: 5px;
-      fill: none;
-      stroke: var(--ink);
-      stroke-width: 2.6;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .shared ul { display: grid; gap: 11px; list-style: none; font-size: 14.5px; line-height: 1.45; }
+    .shared li { position: relative; padding-left: 30px; color: var(--ink-soft); }
+    /* El tilde de los planes: círculo de tinta y marca amarilla, hecho con una máscara. */
+    .shared li::before,
+    .shared li::after { content: ""; position: absolute; top: 1px; left: 0; width: 19px; height: 19px; border-radius: 50%; }
+    .shared li::before { background: var(--ink); }
+    .shared li::after {
+      background: var(--accent);
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4l2.6 2.5L12 5.4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.4l2.6 2.5L12 5.4' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat;
     }
 
-    /* ══ FAQ ══════════════════════════════════════════════════ */
-    .faq { margin-top: 26px; border-top: 1px solid var(--rule); }
-    .faq details { border-bottom: 1px solid var(--rule); }
+    /* Qué pasa después de pagar: es una secuencia real, por eso lleva números. */
+    .pasos-wrap { margin-top: 34px; }
+    .pasos { display: grid; gap: 14px; list-style: none; counter-reset: paso; }
+    .pasos li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; }
+    .pasos li::before {
+      content: counter(paso);
+      counter-increment: paso;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: var(--raise-sm);
+    }
+    .pasos li span { padding-top: 6px; }
+    .pasos strong { color: var(--ink); font-weight: 500; }
+
+    /* ── FAQ ─────────────────────────────────────────────── */
+    .faq { display: grid; gap: 12px; margin-top: 24px; }
+    .faq details { border-radius: 18px; background: var(--bg); box-shadow: var(--raise-sm); }
     .faq summary {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 17px 2px;
+      gap: 14px;
+      min-height: 58px;
+      padding: 13px 14px 13px 20px;
       cursor: pointer;
       list-style: none;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: -.01em;
-      transition: color .2s var(--ease);
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.35;
     }
-    .faq summary:hover { color: var(--muted); }
     .faq summary::-webkit-details-marker { display: none; }
     .faq summary::marker { content: ""; }
     .faq-pm {
+      display: grid;
+      width: 30px;
+      height: 30px;
       flex: 0 0 auto;
+      place-items: center;
+      border-radius: 50%;
       font-family: var(--mono);
-      font-size: 17px;
-      line-height: 1;
+      font-size: 16px;
+      font-weight: 400;
+      box-shadow: var(--sink-sm);
       transition: transform .3s var(--ease);
     }
     .faq details[open] .faq-pm { transform: rotate(45deg); }
-    .faq p { padding: 0 2px 19px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .faq details p { padding: 0 20px 18px; color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; }
 
-    /* ══ Cierre ═══════════════════════════════════════════════ */
+    /* ── Cierre y pie ────────────────────────────────────── */
     .final { text-align: center; }
-    .final .copy { margin: 18px auto 0; }
-    .final .cta { max-width: 420px; margin: 26px auto 0; }
-    .final .microcopy { text-align: center; }
+    .final .dek { margin: 14px auto 0; }
+    .final .btn { max-width: 420px; margin: 26px auto 0; }
 
-    footer {
-      margin-top: clamp(46px, 8vw, 76px);
-      padding-top: 22px;
-      border-top: 1px solid var(--rule-strong);
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-    footer p { margin: 4px 0; }
+    .firma { display: flex; align-items: center; justify-content: center; gap: 13px; margin-top: clamp(64px, 12vw, 96px); }
+    .firma img { width: 46px; height: 46px; flex: 0 0 auto; border-radius: 50%; object-fit: cover; background: #E6E8EB; box-shadow: var(--raise-sm); }
+    .firma-rol { margin-bottom: 2px; color: var(--muted); font-family: var(--mono); font-size: 9.5px; letter-spacing: .13em; text-transform: uppercase; }
+    .firma-nombre { font-size: 14px; font-weight: 400; }
+    .firma-nombre .sub { color: var(--muted); font-weight: 300; }
+    .foot { margin-top: 24px; color: var(--muted); font-size: 11px; line-height: 1.8; text-align: center; }
+    .foot a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(99, 106, 113, .35); }
+    .foot .sep { margin: 0 7px; opacity: .5; }
 
-    /* ══ Barra fija de compra (móvil) ═════════════════════════ */
+    /* ── Barra fija de compra (celular) ──────────────────────
+       Entra cuando el botón del hero sale de vista y se va mientras los planes están en
+       pantalla, para no repetir el mismo botón dos veces. */
     .buybar {
       position: fixed;
-      inset: auto 0 0;
-      z-index: 90;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 40;
       display: none;
       align-items: center;
       gap: 12px;
-      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
-      border-top: 1px solid var(--rule-strong);
-      background: rgba(242, 238, 226, .95);
-      backdrop-filter: blur(10px);
+      padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+      background: var(--bg);
+      box-shadow: 0 -10px 26px -12px rgba(32, 41, 52, .3);
+      visibility: hidden;
       transform: translate3d(0, 110%, 0);
-      transition: transform .34s var(--ease);
+      transition: transform .3s var(--ease), visibility 0s linear .3s;
     }
-    .buybar.is-up { transform: none; }
-    .buybar-info { flex: 1 1 auto; line-height: 1.2; }
-    .buybar-info b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-    .buybar-info span {
-      display: block;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 9.5px;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-    .buybar .cta { width: auto; flex: 0 0 auto; padding: 13px 18px; font-size: 10.5px; }
+    .buybar.is-up { visibility: visible; transform: none; transition: transform .3s var(--ease), visibility 0s; }
+    .buybar-info { flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+    .buybar-info b { display: block; font-size: 15px; font-weight: 500; }
+    .buybar-info span { display: block; color: var(--muted); font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; }
+    .buybar .btn { width: auto; min-height: 50px; flex: 0 0 auto; gap: 12px; padding: 7px 7px 7px 18px; font-size: 13px; }
+    .buybar .btn b { width: 34px; height: 34px; }
 
-    /* ══ Movimiento ═══════════════════════════════════════════ */
-    [data-reveal] {
-      opacity: 0;
-      transform: translate3d(0, 16px, 0);
-      transition: opacity .6s var(--ease), transform .6s var(--ease);
-      transition-delay: calc(var(--i, 0) * 70ms);
-    }
-    [data-reveal].is-in { opacity: 1; transform: none; }
-
-    @media (max-width: 600px) {
-      body { padding-bottom: 70px; }
+    @media (max-width: 759px) {
       .buybar { display: flex; }
-      .masthead { margin-bottom: 26px; }
-      .cta { padding: 18px; font-size: 10.5px; }
-      .plan-toggle { max-width: none; }
+      .page { padding-bottom: 100px; }
+    }
+
+    @media (max-width: 350px) {
+      .btn { padding-left: 16px; font-size: 13px; letter-spacing: .03em; }
+      .toggle label { font-size: 14.5px; }
+    }
+
+    /* ── Escritorio ──────────────────────────────────────── */
+    @media (min-width: 760px) {
+      .page { padding-top: 52px; }
+      .vsl { padding: 12px; border-radius: 26px; box-shadow: 20px 20px 44px var(--neu-dark), -20px -20px 44px var(--neu-light); }
+      .vsl-marco { border-radius: 16px; }
+      .hero-cta { max-width: 420px; margin-right: auto; margin-left: auto; }
+      .plan { padding: 30px 32px 28px; }
+      .incluye { grid-template-columns: 1fr 1fr; padding: 16px 12px; }
+      /* La fila de testimonios sale de la columna de 640 px y ocupa hasta 980 px. */
+      .casos {
+        --ancho: min(980px, calc(100vw - 48px));
+        position: relative;
+        left: 50%;
+        width: var(--ancho);
+        margin-left: calc(var(--ancho) / -2);
+      }
+      .flechas { display: flex; }
+      .casos-fila { margin: 0; padding: 18px 4px 30px; scroll-padding-inline: 4px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after {
-        animation: none !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
+        transition-delay: 0s !important;
       }
-      [data-reveal] { opacity: 1; transform: none; }
-      .blk.on::after { transform: scaleX(1); }
       .panel { transform: none; }
-      .plan-card.is-in .panel.on .was::after { transform: scaleX(1); }
-      .plan-card.is-in .panel.on .save-chip { opacity: 1; transform: none; }
     }
   </style>
-  <!-- Sin JS las entradas nunca se disparan y el toggle no cambia de panel:
-       la página no puede quedar en blanco ni esconder un plan. -->
+  <!-- Sin JS el selector no cambia de panel: se muestran los dos bloques, uno debajo del otro. -->
   <noscript>
     <style>
-      [data-reveal] { opacity: 1 !important; transform: none !important; }
-      .plan-toggle, .strip, .strip-legend { display: none; }
+      .toggle, .strip, .strip-legend, .vsl-aviso { display: none; }
       .panels { display: block; }
       .panel { opacity: 1 !important; visibility: visible !important; transform: none !important; }
-      .panel + .panel { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--rule-strong); }
+      .panel + .panel { margin-top: 28px; }
       .was::after { transform: scaleX(1) !important; }
       .save-chip { opacity: 1 !important; transform: none !important; }
     </style>
@@ -652,125 +871,149 @@
   <a class="skip-link" href="#planes">Saltar a los planes</a>
 
   <main class="page" id="contenido">
-    <header class="masthead">
-      <span>TR4INER / FIT4</span>
-      <span class="masthead-meta">Presentación privada</span>
-    </header>
-
     <section aria-labelledby="page-title">
-      <p class="kicker" data-reveal>FIT4CHALLENGE · Antes de empezar</p>
-      <h1 id="page-title" data-reveal style="--i:1">Sientes que te esfuerzas mucho pero no sabes si te acercas <em class="hl">al cuerpo que quieres</em></h1>
-      <p class="copy hero-lead" data-reveal style="--i:2">Aprende a organizar tus entrenamientos y tu alimentación para empezar a ver los cambios que estás buscando.</p>
+      <p class="mark"><span>FIT4CHALLENGE · Programa online</span></p>
+      <h1 id="page-title">Deja de adivinar. Entrena y come con un plan <span class="hl">hecho para ti</span>.</h1>
+      <p class="dek">Rutina en casa o en el gym desde 30 minutos, comidas sin dejar el arroz ni el pan y un equipo que revisa tu avance cada mes. <strong>Dale play y después elige tu bloque.</strong></p>
 
-      <div class="player-shell" id="f4c-player" data-reveal style="--i:3" aria-label="Presentación de FIT4CHALLENGE"></div>
-
-      <a href="#planes" class="cta hero-cta" data-reveal style="--i:4">
-        <span>Quiero unirme hoy</span>
-        <span class="cta-action">Ver planes</span>
-      </a>
-      <p class="microcopy" data-reveal style="--i:5">Pago único<span> · </span>Sin renovación automática</p>
-    </section>
-
-    <section class="sec">
-      <div class="sec-head" data-reveal>
-        <h2 class="h2">¿Llevas tiempo <em>intentándolo?</em></h2>
-        <p class="copy" style="margin-top:14px">No estás solo. La mayoría de las personas que llegan a nosotros están atrapadas en:</p>
-      </div>
-
-      <div class="pain-grid" data-reveal>
-        <article class="pain">
-          <h3>Siempre vuelves a empezar</h3>
-          <p>Entre semana haces todo «bien», pero cuando sales a comer o se complica un día sientes que ya dañaste todo.</p>
-        </article>
-        <article class="pain">
-          <h3>No sabes qué ajustar</h3>
-          <p>Entrenas, comes saludable y aún así no sabes qué te está faltando para reducir cintura, definirte o construir el cuerpo que buscas.</p>
-        </article>
-        <article class="pain">
-          <h3>No sabes si lo haces bien</h3>
-          <p>Un día haces más cardio, otro comes menos, otro pruebas una dieta diferente. Al final te esfuerzas, pero no sabes si de verdad está funcionando.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="sec reveal-sec">
-      <div data-reveal>
-        <p class="reveal-lead">Si te identificas con al menos uno, esto es exactamente lo que resolvemos con:</p>
-        <img class="mockup" src="/assets/fit4/fit4-mockup-caja-app.webp" width="732" height="574" loading="lazy" decoding="async" alt="Mockup de FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
-        <h2 class="brand-title" translate="no">Fit4&nbsp;Challenge</h2>
-        <p class="reveal-copy">Un programa que combina entrenamiento, alimentación y mentalidad para ayudarte a construir el cuerpo que buscas. <b>No es una rutina genérica en PDF que terminas dejando a la mitad.</b></p>
-      </div>
-    </section>
-
-    <section class="sec">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">Qué incluye</p>
-        <h2 class="h2">Todo lo que hay <em>dentro</em></h2>
-      </div>
-
-      <div class="feat-list">
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V4m5 16v-7m5 7V8"></path></svg></div>
-          <div>
-            <h3>Evaluación inicial y mensual</h3>
-            <p>Cada mes revisamos tus avances y te decimos qué ajustar para que sigas viendo resultados.</p>
-          </div>
+      <div class="vsl">
+        <div class="vsl-marco" id="f4c-player" aria-label="Presentación de FIT4CHALLENGE">
+          <!-- Primer cuadro del VSL (ffmpeg sobre el HLS de Vidalytics), en WebP de 23 y 53 KB. -->
+          <button class="vsl-portada" type="button" id="vsl-portada" aria-label="Ver la presentación de FIT4CHALLENGE">
+            <img id="vsl-poster" src="/assets/fit4/vsl-an-640.webp" srcset="/assets/fit4/vsl-an-640.webp 640w, /assets/fit4/vsl-an-1280.webp 1280w" sizes="(min-width: 760px) 592px, calc(100vw - 48px)" width="1280" height="720" alt="" fetchpriority="high" decoding="async" />
+            <span class="vsl-aviso" aria-hidden="true">
+              <svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" fill="#16181A"/><path d="M10.5 8.6v8.8l7-4.4z" fill="#F5C518"/></svg>
+              <span><small>Paso 1</small><strong>Mira el video</strong></span>
+            </span>
+          </button>
+          <script>
+            // El tráfico de Veronika ve su propio video desde la portada.
+            if (window.TR4_FIT4_VA) {
+              var posterVa = document.getElementById('vsl-poster');
+              posterVa.srcset = '/assets/fit4/vsl-va-640.webp 640w, /assets/fit4/vsl-va-1280.webp 1280w';
+              posterVa.src = '/assets/fit4/vsl-va-640.webp';
+            }
+          </script>
         </div>
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2m12 0h2M6 9v6m12-6v6M8 12h8M9 10.5h6v3H9z"></path></svg></div>
+      </div>
+
+      <a href="#planes" class="btn hero-cta" id="hero-cta" data-ver-planes="hero">Ver planes y precios <b aria-hidden="true">→</b></a>
+      <p class="micro">Desde US$21 al mes · Pago único · 7 días de garantía</p>
+    </section>
+
+    <section class="sec" aria-labelledby="dolor-title">
+      <p class="kicker">Si te pasa esto</p>
+      <h2 class="h2" id="dolor-title">¿Te esfuerzas y <em>no ves el cambio?</em></h2>
+      <p class="dek">Es lo que más nos cuentan las personas que llegan a TR4INER. Casi siempre es una de estas tres:</p>
+      <ul class="dolores">
+        <li class="dolor">
+          <h3>Siempre vuelves a empezar</h3>
+          <p>Entre semana haces todo «bien», pero sales a comer o se complica un día y sientes que ya arruinaste todo.</p>
+        </li>
+        <li class="dolor">
+          <h3>No sabes qué ajustar</h3>
+          <p>Entrenas y comes sano, pero no sabes qué te falta para bajar cintura, definirte o ganar músculo.</p>
+        </li>
+        <li class="dolor">
+          <h3>No sabes si funciona</h3>
+          <p>Un día más cardio, otro menos comida, otra semana otra dieta. Mucho esfuerzo y ninguna certeza.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sec giro" aria-labelledby="marca-title">
+      <p class="giro-frase"><span>No es falta de ganas.</span> Es que nadie te dio un plan <em>hecho para ti.</em></p>
+      <img class="mockup" src="/assets/fit4/fit4-mockup-caja-app.webp" width="732" height="574" loading="lazy" decoding="async" alt="FIT4CHALLENGE: caja del programa, área de miembros y app de entrenamiento" />
+      <h2 class="marca" id="marca-title" translate="no">Fit4&nbsp;Challenge</h2>
+      <p class="dek">Entrenamiento, alimentación y mentalidad en un solo programa, con un equipo que te acompaña. <strong>No es una rutina genérica en PDF que terminas dejando a la mitad.</strong></p>
+    </section>
+
+    <section class="sec" aria-labelledby="incluye-title">
+      <p class="kicker">Qué incluye</p>
+      <h2 class="h2" id="incluye-title">Todo lo que recibes <em>al unirte</em></h2>
+      <ul class="incluye">
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h2m12 0h2M6 9v6m12-6v6M8 12h8M9 10.5h6v3H9z"></path></svg></span>
           <div>
             <h3>Plan de entrenamiento personalizado</h3>
-            <p>Armamos tu rutina en casa o gym desde 30 min. Si un ejercicio te molesta o no tienes el equipo, te mostramos con cuál reemplazarlo.</p>
+            <p>Tu rutina en casa o en el gym, desde 30 minutos. Si un ejercicio te molesta o no tienes el equipo, te mostramos con cuál reemplazarlo.</p>
           </div>
-        </div>
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 1-2 3-2 5s.5 3 2 4v9"></path></svg></div>
+        </li>
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 3v18M17 3c-1.5 1-2 3-2 5s.5 3 2 4v9"></path></svg></span>
           <div>
-            <h3>Alimentación sin restricciones</h3>
-            <p>Aprende cuánto comer según tu objetivo y cómo adaptar tus comidas sin dejar el arroz, pan o lo que más te gusta.</p>
+            <h3>Alimentación sin prohibiciones</h3>
+            <p>Aprendes cuánto comer según tu objetivo, con 3 opciones por cada comida y sin dejar el arroz, el pan o lo que más te gusta.</p>
           </div>
-        </div>
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg></div>
+        </li>
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m5 10V4m5 16v-7m5 7V8"></path></svg></span>
           <div>
-            <h3>Respuestas directas de expertos</h3>
-            <p>¿Dudas con un ejercicio o alimentación? Escríbenos y un entrenador te ayudará a responderlas.</p>
+            <h3>Evaluación inicial y mensual</h3>
+            <p>Cada mes revisamos tu avance y te decimos qué ajustar para que sigas viendo resultados.</p>
           </div>
-        </div>
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M11 18h2"></path></svg></div>
+        </li>
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg></span>
           <div>
-            <h3>Área de miembros + video tutoriales</h3>
-            <p>Cada ejercicio tiene un video para que sepas exactamente cómo hacerlo y entrenes con seguridad.</p>
+            <h3>Un entrenador responde tus dudas</h3>
+            <p>¿Dudas con un ejercicio o una comida? Escribes en el área de miembros y te responde una persona del equipo.</p>
           </div>
-        </div>
-        <div class="feat" data-reveal>
-          <div class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5zM9 18h6m-5 3h4"></path></svg></div>
+        </li>
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"></rect><path d="M11 18h2"></path></svg></span>
           <div>
-            <h3>Audios semanales de motivación</h3>
-            <p>Cada semana recibirás un audio para ayudarte a ser constante y dejar de volver a empezar cada vez que algo se salga del plan.</p>
+            <h3>Video tutorial de cada ejercicio</h3>
+            <p>Para que sepas exactamente cómo hacerlo y entrenes con seguridad.</p>
           </div>
-        </div>
-      </div>
+        </li>
+        <li class="feat">
+          <span class="feat-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5c0 2 1 3 1 5h8c0-2 1-3 1-5a5 5 0 0 0-5-5zM9 18h6m-5 3h4"></path></svg></span>
+          <div>
+            <h3>Audios semanales de mentalidad</h3>
+            <p>Uno por semana, para que seas constante y dejes de volver a empezar cuando algo se sale del plan.</p>
+          </div>
+        </li>
+      </ul>
     </section>
 
-    <section class="sec" id="planes">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">Elige tu bloque</p>
-        <h2 class="h2">Elige el plan que más <em>te convenga</em></h2>
-        <p class="copy" style="margin-top:14px">Los dos incluyen exactamente lo mismo. Lo único que cambia es cuánto dura tu proceso.</p>
+    <!-- Testimonios en video vertical desde R2 (video.mediatr4iner.com): los mismos 19 de
+         /empezar y de la tabla de planes. Son clientes de TR4INER; el copy no dice que hayan
+         hecho FIT4CHALLENGE. Las tarjetas las arma el script del final. -->
+    <section class="sec casos" id="casos" aria-labelledby="casos-title">
+      <div class="casos-head">
+        <div>
+          <p class="kicker">Casos reales</p>
+          <h2 class="h2" id="casos-title">Personas como tú que <em>ya lo lograron.</em></h2>
+          <p class="dek">Clientes de TR4INER cuentan su proceso en video. Toca una historia para verla.</p>
+        </div>
+        <div class="flechas">
+          <button type="button" id="casos-antes" aria-label="Testimonios anteriores">‹</button>
+          <button type="button" id="casos-despues" aria-label="Más testimonios">›</button>
+        </div>
       </div>
+      <div class="filtros" role="tablist" aria-label="Filtrar testimonios">
+        <button class="filtro" type="button" role="tab" aria-selected="true" data-filtro="todos">Todos</button>
+        <button class="filtro" type="button" role="tab" aria-selected="false" data-filtro="mujer">Mujeres</button>
+        <button class="filtro" type="button" role="tab" aria-selected="false" data-filtro="hombre">Hombres</button>
+      </div>
+      <div class="casos-fila" id="casos-fila"></div>
+    </section>
 
-      <div class="plan-toggle" role="radiogroup" aria-label="Duración del bloque" data-reveal>
-        <!-- autocomplete=off: si no, el navegador restaura la selección previa
-             y el usuario puede volver con el bloque corto ya elegido. -->
+    <section class="sec" id="planes" aria-labelledby="planes-title">
+      <p class="kicker">Elige tu bloque</p>
+      <h2 class="h2" id="planes-title">Mismo programa. <em>Tú eliges cuánto dura.</em></h2>
+      <p class="dek">Los dos bloques incluyen exactamente lo mismo. Con 6 meses completas el proceso entero y pagas menos por mes.</p>
+
+      <div class="toggle" role="radiogroup" aria-label="Duración del bloque">
+        <!-- autocomplete=off no alcanza: el plan inicial se fuerza por JS (ver DEFAULT_PLAN). -->
         <input type="radio" name="bloque" id="bloque-3" value="3-meses" autocomplete="off" />
-        <label for="bloque-3">3 meses<small>$87</small></label>
+        <label for="bloque-3">3 meses<small>US$87</small></label>
         <input type="radio" name="bloque" id="bloque-6" value="6-meses" autocomplete="off" checked />
-        <label for="bloque-6">6 meses<small>Ahorras&nbsp;$47</small></label>
+        <label for="bloque-6">6 meses<small>Ahorras US$47</small></label>
       </div>
 
-      <div class="plan-card" id="plan-card" data-reveal style="--i:1">
+      <div class="plan" id="plan-card">
         <div class="strip" id="strip" aria-hidden="true">
           <span class="blk" style="--i:0"></span>
           <span class="blk" style="--i:1"></span>
@@ -782,107 +1025,126 @@
 
         <div class="panels">
           <div class="panel" id="panel-3-meses" role="region" aria-label="Bloque de 3 meses">
-            <div class="strip-legend"><span><b>12</b>&nbsp;semanas</span><span>Bloque corto</span></div>
-            <p class="plan-goal">Para empezar con estructura y ver tus primeros cambios.</p>
-            <div class="plan-anchor"><span class="anchor-rate">$29 al mes</span></div>
-            <div class="plan-price"><b>$87</b><span>USD&nbsp;· pago único</span></div>
-            <p class="plan-math">Con el bloque de 6 meses bajarías a <b>$21 al mes</b> y ahorrarías $47.</p>
-            <a class="cta" data-checkout="3-meses" href="#" rel="noopener">
-              <span>Empezar con 3 meses</span>
-              <span class="cta-action">Ahora</span>
-            </a>
-            <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+            <div class="strip-legend"><span><b>12</b>&nbsp;semanas</span><span>Para empezar</span></div>
+            <p class="plan-goal">Para arrancar con estructura y ver tus primeros cambios.</p>
+            <div class="plan-anchor"><span class="anchor-rate">US$29 al mes</span></div>
+            <div class="plan-price"><b><small>US$</small>87</b><span>Pago único</span></div>
+            <p class="plan-math">Con 6 meses bajas a <b>US$21 al mes</b> y ahorras US$47.</p>
+            <a class="btn" data-checkout="3-meses" href="#" rel="noopener">Empezar con 3 meses <b aria-hidden="true">→</b></a>
           </div>
 
           <div class="panel on" id="panel-6-meses" role="region" aria-label="Bloque de 6 meses">
             <div class="strip-legend"><span><b>24</b>&nbsp;semanas</span><span>Proceso completo</span></div>
             <p class="plan-goal">Para completar el proceso entero sin volver a empezar a mitad de camino.</p>
             <div class="plan-anchor">
-              <del class="was">$174</del>
+              <del class="was">US$174</del>
               <span class="anchor-label">en dos bloques de 3</span>
             </div>
             <div class="plan-price">
-              <b>$127</b><span>USD&nbsp;· pago único</span>
-              <span class="save-chip">Ahorras&nbsp;$47</span>
+              <b><small>US$</small>127</b><span>Pago único</span>
+              <span class="save-chip">Ahorras US$47</span>
             </div>
-            <p class="plan-math">Te sale <b>$21 al mes</b> · 27% menos.</p>
-            <a class="cta" data-checkout="6-meses" href="#" rel="noopener">
-              <span>Quiero los 6 meses</span>
-              <span class="cta-action">Ahora</span>
-            </a>
-            <p class="plan-guarantee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg>7 días de garantía</p>
+            <p class="plan-math">Te sale <b>US$21 al mes</b> · 27% menos.</p>
+            <a class="btn" data-checkout="6-meses" href="#" rel="noopener">Quiero los 6 meses <b aria-hidden="true">→</b></a>
           </div>
         </div>
+
+        <p class="garantia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span><strong>7 días de garantía.</strong> Si no es para ti, te devolvemos tu dinero. Pago único y seguro con Hotmart, sin renovación automática.</span></p>
 
         <div class="shared">
           <p class="shared-title">Los dos bloques incluyen</p>
           <ul>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Evaluación inicial y mensual</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Plan de alimentación personalizado</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Entrenamientos adaptados (casa o gym)</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Área privada con video tutoriales</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Audios semanales de mentalidad</li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"></path></svg>Chat de soporte directo con expertos</li>
+            <li>Plan de entrenamiento en casa o gym</li>
+            <li>Plan de alimentación personalizado</li>
+            <li>Evaluación inicial y mensual</li>
+            <li>Chat de soporte con el equipo</li>
+            <li>Área privada con video tutoriales</li>
+            <li>Audios semanales de mentalidad</li>
           </ul>
         </div>
       </div>
+
+      <div class="pasos-wrap">
+        <p class="pasos-title">Qué pasa después de pagar</p>
+        <ol class="pasos">
+          <li><span><strong>Recibes tu acceso</strong> por WhatsApp y por correo, de inmediato.</span></li>
+          <li><span><strong>Entras al club</strong> y completas tu evaluación inicial.</span></li>
+          <li><span><strong>El equipo arma tu plan</strong> según tu punto de partida y tu objetivo.</span></li>
+        </ol>
+      </div>
     </section>
 
-    <section class="sec">
-      <div class="sec-head" data-reveal>
-        <h2 class="h2">¿Tienes dudas? <em>Aquí las resolvemos</em></h2>
-      </div>
-
+    <section class="sec" aria-labelledby="faq-title">
+      <p class="kicker">Preguntas frecuentes</p>
+      <h2 class="h2" id="faq-title">¿Tienes dudas? <em>Aquí las resolvemos.</em></h2>
       <div class="faq">
-        <details data-reveal>
+        <details>
           <summary>¿Funciona si nunca he entrenado antes?<span class="faq-pm" aria-hidden="true">+</span></summary>
-          <p>Sí. El plan se adapta a tu nivel actual. No importa si eres principiante total o si llevas años sin moverte: nuestro equipo evalúa tu punto de partida y diseña una estrategia progresiva para ti.</p>
+          <p>Sí. El plan se adapta a tu nivel actual. No importa si eres principiante o si llevas años sin moverte: el equipo evalúa tu punto de partida y diseña una estrategia progresiva para ti.</p>
         </details>
-        <details data-reveal>
+        <details>
+          <summary>¿Necesito ir al gym?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>No. Tu rutina puede ser en casa o en el gym, desde 30 minutos. Si no tienes el equipo para un ejercicio, te mostramos con cuál reemplazarlo.</p>
+        </details>
+        <details>
           <summary>¿Tengo que comer solo pollo y arroz?<span class="faq-pm" aria-hidden="true">+</span></summary>
-          <p>Para nada. Recibirás un plan con 3 opciones variadas por cada comida del día, con las calorías ajustadas a tu objetivo. Sin pasar hambre y sin comer feo.</p>
+          <p>Para nada. Recibes un plan con 3 opciones variadas por cada comida del día, con las calorías ajustadas a tu objetivo. Sin pasar hambre y sin comer feo.</p>
         </details>
-        <details data-reveal>
-          <summary>¿Sirve si quiero ganar masa muscular y no perder peso?<span class="faq-pm" aria-hidden="true">+</span></summary>
-          <p>Completamente. Tu plan se ajusta según tu objetivo: perder grasa, tonificar o ganar masa muscular. Si buscas definirte y construir músculo, diseñamos tus cargas y tu alimentación exactamente para ese resultado.</p>
+        <details>
+          <summary>¿Sirve si quiero ganar músculo y no bajar de peso?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Sí. Tu plan se ajusta a tu objetivo: perder grasa, tonificar o ganar masa muscular. Si buscas definirte y construir músculo, tus cargas y tu alimentación se diseñan para ese resultado.</p>
         </details>
-        <details data-reveal>
-          <summary>¿Realmente me responderá una persona real?<span class="faq-pm" aria-hidden="true">+</span></summary>
-          <p>Sí. En FIT4CHALLENGE hablas directamente con nuestro equipo de profesionales dentro del área de miembros para responder todo tipo de dudas.</p>
+        <details>
+          <summary>¿Me responde una persona real?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Sí. Dentro del área de miembros hablas directamente con el equipo de profesionales, que responde tus dudas de entrenamiento y alimentación.</p>
         </details>
-        <details data-reveal>
-          <summary>¿Puedo cancelar cuando quiera?<span class="faq-pm" aria-hidden="true">+</span></summary>
-          <p>Sí. Sin letras pequeñas ni contratos escondidos. Tienes 7 días de garantía de reembolso completo: si no es para ti, te devolvemos tu dinero.</p>
+        <details>
+          <summary>¿Se renueva solo? ¿Y si no es para mí?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>No se renueva: es un pago único y al terminar tu bloque no se te cobra nada más. Y tienes 7 días de garantía: si no es para ti, te devolvemos tu dinero.</p>
+        </details>
+        <details>
+          <summary>¿Cómo recibo el acceso?<span class="faq-pm" aria-hidden="true">+</span></summary>
+          <p>Apenas se aprueba el pago en Hotmart recibes tu usuario y contraseña por WhatsApp y por correo (llega desde clientes@club.tr4iner.com; revisa también spam o promociones). Entras al club y completas tu evaluación inicial.</p>
         </details>
       </div>
     </section>
 
-    <div class="rule"></div>
-
-    <section class="sec final">
-      <div data-reveal>
-        <h2 class="h2">Dentro de unos meses vas a agradecer haber <em class="hl">empezado hoy</em></h2>
-        <p class="copy">Cada semana que pasa sin un plan es otra semana preguntándote si lo que haces realmente está funcionando. Empieza a seguir un plan diseñado para ayudarte a construir el cuerpo que buscas.</p>
-        <a href="#planes" class="cta">
-          <span>Quiero empezar hoy</span>
-          <span class="cta-action">Ver planes</span>
-        </a>
-        <p class="microcopy">Acceso inmediato<span> · </span>Pago seguro vía Hotmart</p>
-      </div>
+    <section class="sec final" aria-labelledby="final-title">
+      <h2 class="h2" id="final-title">Dentro de unos meses vas a agradecer haber <span class="hl">empezado hoy.</span></h2>
+      <p class="dek">Cada semana sin un plan es otra semana preguntándote si lo que haces funciona. Empieza con uno hecho para ti.</p>
+      <a href="#planes" class="btn" data-ver-planes="final">Elegir mi bloque <b aria-hidden="true">→</b></a>
+      <p class="micro">Desde US$21 al mes · 7 días de garantía</p>
     </section>
 
     <footer>
-      <p>Entrenamiento y nutrición online · Miembros en +14 países</p>
-      <p>Acceso inmediato · Pago seguro vía Hotmart</p>
+      <div class="firma">
+        <img src="/assets/team/anthoni-montalvan-92.webp" width="46" height="46" loading="lazy" decoding="async" alt="" />
+        <div>
+          <div class="firma-rol">Producción · TR4INER</div>
+          <div class="firma-nombre">Anthoni Montalván <span class="sub">· Coach</span></div>
+        </div>
+      </div>
+      <p class="foot">
+        Entrenamiento y nutrición online · Miembros en +14 países
+        <br />
+        © 2026 TR4INER · BodyMindFitCo LLC
+        <br />
+        <a href="https://tr4iner.com/politica-de-privacidad/" target="_blank" rel="noopener">Privacidad</a><span class="sep">|</span><a href="https://tr4iner.com/terminos-y-condiciones/" target="_blank" rel="noopener">Términos</a>
+      </p>
     </footer>
   </main>
 
-  <div class="buybar" id="buybar" aria-hidden="true">
+  <div class="buybar" id="buybar">
     <div class="buybar-info">
-      <b>6 meses · $127</b>
-      <span>Pago único · $21/mes</span>
+      <b>6 meses · US$127</b>
+      <span>Pago único · US$21 al mes</span>
     </div>
-    <a class="cta" data-checkout="6-meses" data-src="buybar" href="#" rel="noopener"><span>Empezar</span></a>
+    <a class="btn" data-checkout="6-meses" data-src="buybar" href="#" rel="noopener">Empezar <b aria-hidden="true">→</b></a>
+  </div>
+
+  <div class="visor" id="visor" role="dialog" aria-modal="true" aria-labelledby="visor-pie" hidden>
+    <div class="visor-caja"><div class="visor-video" id="visor-video"></div><p class="visor-pie" id="visor-pie"></p></div>
+    <button class="visor-cerrar" type="button" id="visor-cerrar" aria-label="Cerrar video">×</button>
   </div>
 
   <script src="/attribution.js"></script>
@@ -898,19 +1160,8 @@
 
       var params = new URLSearchParams(window.location.search);
 
-      // Reconoce también campañas que terminan en “-VA” y marcadores funcionales del funnel.
-      var campaign = (params.get('utm_campaign') || '').trim().toUpperCase();
-      var funnel = (params.get('funnel') || '').trim().toUpperCase();
-      var funnelVariant = (params.get('funnel_variant') || '').trim();
-      var vaMarker = /(^|[-_])VA($|[-_])/i;
-      var isVA = campaign === 'TR4INER-VA' ||
-        campaign === 'CASOS-VA' ||
-        funnel === 'VA' ||
-        vaMarker.test(funnelVariant) ||
-        Array.from(params.entries()).some(function (entry) {
-          return entry[0].toLowerCase().indexOf('utm_') === 0 && vaMarker.test(entry[1]);
-        });
-
+      // Se calcula en el <head> (decide la portada); acá sólo se lee.
+      var isVA = window.TR4_FIT4_VA === true;
       var variant = isVA ? 'VA' : 'AN';
       var video = isVA
         ? { id: 'vidalytics_embed_Rl_cXuqDVuhtabtp', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/Rl_cXuqDVuhtabtp/' }
@@ -924,7 +1175,31 @@
       } catch (error) { /* Safari privado o almacenamiento bloqueado: la compra sigue igual. */ }
 
       window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'fit4_vsl_loaded', fit4_variant: variant });
+      function medir(evento, extra) {
+        var datos = { event: evento, fit4_variant: variant };
+        Object.keys(extra || {}).forEach(function (clave) { datos[clave] = extra[clave]; });
+        window.dataLayer.push(datos);
+      }
+
+      // ── Despertador: VSL y GTM con el primer toque o a los 5 s del load ──
+      // Mismo criterio que /empezar. `fit4_vsl_loaded` sale recién acá, detrás del `gtm.js`
+      // del contenedor, para que GA4 lo procese con la página ya contada.
+      var despertar = (function () {
+        var hecho = false;
+        var EVENTOS = ['pointerdown', 'touchstart', 'keydown', 'scroll', 'wheel', 'mousemove'];
+        function despertar() {
+          if (hecho) return;
+          hecho = true;
+          EVENTOS.forEach(function (evento) { window.removeEventListener(evento, despertar, { passive: true }); });
+          cargarVidalytics();
+          if (window.TR4_CARGAR_GTM) window.TR4_CARGAR_GTM();
+          medir('fit4_vsl_loaded');
+        }
+        EVENTOS.forEach(function (evento) { window.addEventListener(evento, despertar, { passive: true }); });
+        if (document.readyState === 'complete') setTimeout(despertar, 5000);
+        else window.addEventListener('load', function () { setTimeout(despertar, 5000); }, { once: true });
+        return despertar;
+      })();
 
       // Hotmart recibe todos los parámetros presentes, no una lista que quede vieja con la próxima campaña.
       function buildCheckoutUrl(plan) {
@@ -950,12 +1225,16 @@
         cta.href = buildCheckoutUrl(cta.getAttribute('data-checkout'));
         cta.addEventListener('click', function () {
           // El plan se lee al hacer clic: el de la barra fija cambia con el toggle.
-          window.dataLayer.push({
-            event: 'fit4_checkout_click',
-            fit4_variant: variant,
+          medir('fit4_checkout_click', {
             fit4_plan: cta.getAttribute('data-checkout'),
             fit4_cta: cta.getAttribute('data-src') || 'card'
           });
+        });
+      });
+
+      Array.prototype.forEach.call(document.querySelectorAll('[data-ver-planes]'), function (enlace) {
+        enlace.addEventListener('click', function () {
+          medir('fit4_ver_planes', { fit4_cta: enlace.getAttribute('data-ver-planes') });
         });
       });
 
@@ -966,18 +1245,18 @@
       var blocks = Array.prototype.slice.call(document.querySelectorAll('#strip .blk'));
       var radios = Array.prototype.slice.call(document.querySelectorAll('input[name="bloque"]'));
       var buybar = document.getElementById('buybar');
-      var buybarCta = buybar && buybar.querySelector('[data-checkout]');
-      var buybarInfo = buybar && buybar.querySelector('.buybar-info');
+      var buybarCta = buybar.querySelector('[data-checkout]');
+      var buybarInfo = buybar.querySelector('.buybar-info');
       var currentPlan = '6-meses';
 
       var BUYBAR_COPY = {
-        '3-meses': { title: '3 meses · $87', note: 'Pago único · $29/mes' },
-        '6-meses': { title: '6 meses · $127', note: 'Pago único · $21/mes' }
+        '3-meses': { title: '3 meses · US$87', note: 'Pago único · US$29 al mes' },
+        '6-meses': { title: '6 meses · US$127', note: 'Pago único · US$21 al mes' }
       };
 
       function paintStrip() {
-        // La tira solo se llena cuando la ficha ya entró en vista, si no
-        // la animación se gasta detrás de un elemento invisible.
+        // La tira sólo se llena cuando la ficha ya entró en vista; si no, la animación se
+        // gasta fuera de pantalla.
         var filled = planCard.classList.contains('is-in') ? MONTHS[currentPlan] : 0;
         blocks.forEach(function (blk, i) { blk.classList.toggle('on', i < filled); });
       }
@@ -985,83 +1264,72 @@
       function selectPlan(plan) {
         currentPlan = plan;
         Object.keys(MONTHS).forEach(function (key) {
-          var panel = document.getElementById('panel-' + key);
-          if (panel) panel.classList.toggle('on', key === plan);
+          document.getElementById('panel-' + key).classList.toggle('on', key === plan);
         });
         paintStrip();
-
-        if (buybarCta) {
-          buybarCta.href = buildCheckoutUrl(plan);
-          buybarCta.setAttribute('data-checkout', plan);
-          buybarInfo.querySelector('b').textContent = BUYBAR_COPY[plan].title;
-          buybarInfo.querySelector('span').textContent = BUYBAR_COPY[plan].note;
-        }
+        buybarCta.href = buildCheckoutUrl(plan);
+        buybarCta.setAttribute('data-checkout', plan);
+        buybarInfo.querySelector('b').textContent = BUYBAR_COPY[plan].title;
+        buybarInfo.querySelector('span').textContent = BUYBAR_COPY[plan].note;
       }
 
       radios.forEach(function (radio) {
         radio.addEventListener('change', function () {
           if (!radio.checked) return;
           selectPlan(radio.value);
-          window.dataLayer.push({
-            event: 'fit4_plan_toggle',
-            fit4_variant: variant,
-            fit4_plan: radio.value
-          });
+          medir('fit4_plan_toggle', { fit4_plan: radio.value });
         });
       });
 
-      // El arranque se fuerza acá y no se lee del DOM: `autocomplete=off` no
-      // impide que el navegador restaure la selección previa al recargar, y la
-      // página siempre debe abrir en el bloque de 6 meses.
+      // El arranque se fuerza acá y no se lee del DOM: `autocomplete=off` no impide que el
+      // navegador restaure la selección previa al recargar, y la página siempre debe abrir en
+      // el bloque de 6 meses.
       var DEFAULT_PLAN = '6-meses';
       radios.forEach(function (radio) { radio.checked = radio.value === DEFAULT_PLAN; });
       selectPlan(DEFAULT_PLAN);
 
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // ── Entradas escalonadas ──────────────────────────────
-      var revealables = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
-      var markIn = function (el) {
-        el.classList.add('is-in');
-        // La tira arranca su llenado recién cuando la ficha es visible.
-        if (el === planCard) paintStrip();
-      };
-
-      if (reduceMotion || !('IntersectionObserver' in window)) {
-        revealables.forEach(markIn);
+      // La tira, el tachado y el chip se disparan una vez, cuando la ficha entra en vista.
+      // Es el único movimiento de la página: el resto se pinta quieto para no demorar nada.
+      function planVisible() { planCard.classList.add('is-in'); paintStrip(); }
+      if ('IntersectionObserver' in window) {
+        // Por el borde y no por porcentaje: la ficha mide casi una pantalla de alto.
+        new IntersectionObserver(function (entries, obs) {
+          if (!entries[0].isIntersecting) return;
+          obs.disconnect();
+          planVisible();
+        }, { threshold: 0, rootMargin: '0px 0px -30% 0px' }).observe(planCard);
       } else {
-        var revealObserver = new IntersectionObserver(function (entries, obs) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) { markIn(entry.target); obs.unobserve(entry.target); }
-          });
-        }, { threshold: .15, rootMargin: '0px 0px -8% 0px' });
-        revealables.forEach(function (el) { revealObserver.observe(el); });
-        // Red de seguridad: si el observer no dispara, nada queda invisible.
-        setTimeout(function () { revealables.forEach(markIn); }, 2500);
+        planVisible();
       }
 
-      // ── Barra fija: entra cuando los planes salen de vista ──
+      // ── Barra fija: entre el botón del hero y los planes ──
+      var heroCta = document.getElementById('hero-cta');
       var planes = document.getElementById('planes');
-      if ('IntersectionObserver' in window && buybar && planes) {
+      var pasoHero = false;
+      var planesEnVista = false;
+      function pintarBarra() { buybar.classList.toggle('is-up', pasoHero && !planesEnVista); }
+      if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            // Solo después de haber pasado los planes, no mientras sigue arriba.
-            var passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-            buybar.classList.toggle('is-up', passed);
-            buybar.setAttribute('aria-hidden', passed ? 'false' : 'true');
-          });
-        }, { threshold: 0 }).observe(planes);
+          // Sólo cuando el botón quedó arriba, no mientras todavía no se llega a él.
+          pasoHero = !entries[0].isIntersecting && entries[0].boundingClientRect.top < 0;
+          pintarBarra();
+        }, { threshold: 0 }).observe(heroCta);
+        new IntersectionObserver(function (entries) {
+          planesEnVista = entries[0].isIntersecting;
+          pintarBarra();
+        }, { threshold: 0, rootMargin: '0px 0px -25% 0px' }).observe(planes);
       }
 
       // ── VSL ────────────────────────────────────────────────
+      var portada = document.getElementById('vsl-portada');
       var embed = document.createElement('div');
       embed.id = video.id;
-      embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
       document.getElementById('f4c-player').appendChild(embed);
 
-      loadVidalytics(video.id, video.url);
-
-      function loadVidalytics(embedId, embedUrl) {
+      function cargarVidalytics() {
+        if (window.TR4_VIDALYTICS) return;
+        window.TR4_VIDALYTICS = true;
+        vigilarVideo();
         (function (v, i, d, a, l, y, t, c, s) {
           y='_'+d.toLowerCase();c=d+'L';if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}
           var vl='Loader',vli=v[y][vl],vsl=v[c][vl+'Script'],vlf=v[c][vl+'Loaded'],ve='Embed';
@@ -1071,8 +1339,203 @@
           i.getElementsByTagName('head')[0].appendChild(s);};}
           vsl(l+'loader.min.js',function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}
           vli.loadScript(l+'player.min.js',function(){var vec=v[d][ve];t=new vec();t.run(a);});});
-        })(window, document, 'Vidalytics', embedId, embedUrl);
+        })(window, document, 'Vidalytics', video.id, video.url);
       }
+
+      // La portada se va cuando el video de Vidalytics ya tiene imagen (o a los 6 s de
+      // pedirlo, para no tapar nunca su botón de play si el navegador frena el autoplay).
+      function vigilarVideo() {
+        var listo = false;
+        function sacar() {
+          if (listo) return;
+          listo = true;
+          portada.classList.add('saliendo');
+          setTimeout(function () { portada.hidden = true; }, 300);
+        }
+        function escuchar(el) {
+          if (el.readyState >= 2) return sacar();
+          el.addEventListener('loadeddata', sacar, { once: true });
+          el.addEventListener('playing', sacar, { once: true });
+        }
+        var observador = new MutationObserver(function () {
+          var el = embed.querySelector('video');
+          if (!el) return;
+          observador.disconnect();
+          escuchar(el);
+        });
+        observador.observe(embed, { childList: true, subtree: true });
+        setTimeout(sacar, 6000);
+      }
+
+      // Tocar la portada antes de que llegue el reproductor lo pide en el acto.
+      portada.addEventListener('click', function () {
+        portada.classList.add('cargando');
+        despertar();
+      });
+
+      // ── Testimonios ───────────────────────────────────────
+      var R2 = 'https://video.mediatr4iner.com/';
+      var PLAY = '<span class="caso-play"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.5v13l11-6.5z"/></svg></span>';
+      // Los 19 de /empezar y de assets/planes/planes.js, en el mismo orden (alternan mujer y
+      // hombre). Si se agrega uno, va en los tres lados.
+      var CASOS = [
+        ['mujer', 'ana-briones-856509800', 'ana-briones', 'Ana Briones', 'Perú', 'Enfermera de UCI y madre de dos: perdió 13 kg sin pasar hambre ni dejar su vida.'],
+        ['hombre', 'same-leon-925219212', 'same-leon', 'Same Leon', 'Chile', 'Pasó de 89 a 69 kg y del 30% al 20% de grasa en 12 meses, sin dietas extremas.'],
+        ['mujer', 'flor-zevallos-925596958', 'flor-zevallos', 'Flor Zevallos', '29 años', 'Pasó de 78 a 56 kg, con pérdida de grasa en todo el cuerpo.'],
+        ['hombre', 'alejandro-sorto-1053581216', 'alejandro-sorto', 'Alejandro Sorto', '30 años', 'Nunca había entrenado y pasó de 115 a 87 kg, bajando grasa en todo el cuerpo.'],
+        ['mujer', 'guadalupe-eligio-925245130', 'guadalupe-eligio', 'Guadalupe Eligio', 'EE. UU.', 'A los 48 perdió 10 kg empezando desde cero, sin saber qué era un macro.'],
+        ['hombre', 'daniel-alarcon-925218766', 'daniel-alarcon', 'Daniel Alarcón', 'México', 'Perdió 11 kg y llegó al 17% de grasa en 6 meses, con un plan a su medida.'],
+        ['mujer', 'victoria-sifuentes-925245461', 'victoria-sifuentes', 'Victoria Sifuentes', 'Perú', 'Llegó por salud tras un cuadro de estrés y bajó 10 kg entrenando desde casa.'],
+        ['hombre', 'mauricio-custode-1053581311', 'mauricio-custode', 'Mauricio Custode', '42 años', 'Pasó de 107 a 80 kg, con menos grasa en la zona media y brazos y hombros firmes.'],
+        ['mujer', 'josefa-damian-925245204', 'josefa-damian', 'Josefa Damian', 'EE. UU.', 'A sus 46 años perdió 11 kg y recuperó su autoestima.'],
+        ['hombre', 'anzonny-malave-925218713', 'anzonny-malave', 'Anzonny Malave', 'Chile', 'Bajó del 26% al 18% de grasa en 6 meses, sin comida desabrida.'],
+        ['mujer', 'edith-jimenez-1053581383', 'edith-jimenez', 'Edith Jimenez', '45 años', 'Pasó de 73 a 59 kg, con brazos tonificados y menos grasa abdominal.'],
+        ['hombre', 'dashiell-ezequiel-925218792', 'dashiell-ezequiel', 'Dashiell Ezequiel', 'Perú', 'Bajó del 32% al 22% de grasa viviendo solo y sin dejar los dulces.'],
+        ['mujer', 'leticia-pereira-856835613', 'leticia-pereira', 'Leticia Pereira', 'EE. UU.', 'Perdió 10 kg y definió el abdomen que otras dietas nunca le dieron.'],
+        ['hombre', 'jhonatan-coronado-1053507277', 'jhonatan-coronado', 'Jhonatan Coronado', '25 años', 'Pasó de 87 a 76 kg y ganó músculo en brazos, hombros y piernas, con el abdomen marcado.'],
+        ['mujer', 'martha-munguia-1053507164', 'martha-munguia', 'Martha Munguia', '51 años', 'Su cuerpo no cambiaba: pasó de 55 a 47 kg, con menos grasa abdominal y piernas más firmes.'],
+        ['hombre', 'fernando-pena-856846588', 'fernando-pena', 'Fernando Peña', 'Perú', 'A sus 57 años bajó 7 kg y 5 puntos de grasa.'],
+        ['mujer', 'irene-salom-925245166', 'irene-salom', 'Irene Salom', 'EE. UU.', 'Entrenó desde casa y comió lo mismo que su familia, sin platos aparte.'],
+        ['hombre', 'kevin-de-la-cruz-1053507210', 'kevin-de-la-cruz', 'Kevin De la Cruz', '29 años', 'Pasó de 67 a 59 kg, con brazos y hombros definidos y el abdomen marcado.'],
+        ['mujer', 'elisa-linares-1053506420', 'elisa-linares', 'Elisa Linares', '36 años', 'Se sentía débil: con casi el mismo peso (de 53 a 54 kg) tonificó brazos, piernas y abdomen.']
+      ];
+
+      var fila = document.getElementById('casos-fila');
+      var casos = [];
+      var filtroActual = 'todos';
+      var visor = document.getElementById('visor');
+      var visorVideo = document.getElementById('visor-video');
+      var reproductor = null;
+      var casoAbierto = null;
+
+      // Las tarjetas se montan cuando la sección se acerca y no con la página: con
+      // `loading=lazy` solo, Chrome igual pedía las portadas de la fila (~185 KB) en el
+      // arranque. La fila ya tiene su alto reservado en el CSS, así el salto a #planes no
+      // se corre cuando aparecen.
+      function montarCasos() {
+        if (casos.length) return;
+        fila.innerHTML = CASOS.map(function (c) {
+          var img = '/assets/empezar/testimonios/' + c[2];
+          return '<button class="caso" type="button" data-sexo="' + c[0] + '" data-carpeta="testimonios/' + c[1] + '/"' +
+            (filtroActual !== 'todos' && c[0] !== filtroActual ? ' hidden' : '') + '>' +
+            '<span class="caso-marco"><img src="' + img + '-240.webp" srcset="' + img + '-240.webp 240w, ' + img + '.webp 360w" sizes="(min-width: 760px) 200px, 42vw" width="360" height="640" loading="lazy" decoding="async" alt="Antes y después de ' + c[3] + '" />' + PLAY + '</span>' +
+            '<span class="caso-nombre">' + c[3] + '</span><span class="caso-meta">' + c[4] + '</span><span class="caso-texto">' + c[5] + '</span></button>';
+        }).join('');
+        casos = Array.prototype.slice.call(fila.querySelectorAll('.caso'));
+        casos.forEach(function (caso) {
+          caso.addEventListener('click', function () { abrirCaso(caso); });
+        });
+      }
+
+      // El reproductor (18 KB) se pide junto con las tarjetas: así ya está cuando tocan una y
+      // el play sale dentro del mismo toque (iPhone no deja arrancar con sonido si el video
+      // se monta después de una espera).
+      function cargarReproductor(alListo) {
+        if (window.TR4Video) { if (alListo) alListo(); return; }
+        var script = document.getElementById('tr4-video-js');
+        if (!script) {
+          script = document.createElement('script');
+          script.id = 'tr4-video-js';
+          script.src = '/assets/tr4-video/tr4-video.js?v=20261013';
+          document.body.appendChild(script);
+        }
+        if (alListo) script.addEventListener('load', alListo, { once: true });
+      }
+      if ('IntersectionObserver' in window) {
+        var cercaCasos = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          cercaCasos.disconnect();
+          montarCasos();
+          cargarReproductor();
+        }, { rootMargin: '700px 0px' });
+        cercaCasos.observe(fila);
+      } else {
+        montarCasos();
+        cargarReproductor();
+      }
+
+      // 720p salvo ahorro de datos o red lenta.
+      function calidad() {
+        var c = navigator.connection || {};
+        if (c.saveData || /^(slow-)?2g$/.test(c.effectiveType || '')) return 'play_360p.mp4';
+        if (c.effectiveType === '3g') return 'play_480p.mp4';
+        return 'play_720p.mp4';
+      }
+
+      // La regla WAF de R2 exige el origen de la página; si un teléfono pide el video sin él,
+      // R2 responde 403 y el mismo testimonio se abre en Vimeo desde donde iba.
+      function respaldoVimeo() {
+        var id = casoAbierto && (/-(\d+)\/$/.exec(casoAbierto.getAttribute('data-carpeta')) || [])[1];
+        if (!id || visor.hidden) return false;
+        var en = Math.floor(reproductor ? reproductor.getCurrentTime() : 0);
+        if (reproductor) { reproductor.destruir(); reproductor = null; }
+        var marco = document.createElement('iframe');
+        marco.title = 'Video testimonio';
+        marco.allow = 'autoplay; fullscreen';
+        marco.src = 'https://player.vimeo.com/video/' + id + '?autoplay=1' + (en ? '#t=' + en + 's' : '');
+        visorVideo.innerHTML = '';
+        visorVideo.appendChild(marco);
+        medir('testimonio_respaldo_vimeo', { testimonio_vimeo_id: id });
+        return true;
+      }
+
+      function abrirCaso(caso) {
+        // Si tocaron antes de que llegara el reproductor, se abre apenas carga.
+        if (!window.TR4Video) { cargarReproductor(function () { abrirCaso(caso); }); return; }
+        casoAbierto = caso;
+        var nombre = caso.querySelector('.caso-nombre').textContent;
+        var pie = document.getElementById('visor-pie');
+        pie.innerHTML = '<b></b> · ';
+        pie.firstChild.textContent = nombre;
+        pie.appendChild(document.createTextNode(caso.querySelector('.caso-meta').textContent));
+        visor.hidden = false;
+        document.documentElement.classList.add('bloqueo');
+        reproductor = window.TR4Video.montar(visorVideo, {
+          base: R2 + caso.getAttribute('data-carpeta'),
+          archivo: calidad(),
+          poster: caso.querySelector('img').currentSrc || caso.querySelector('img').src,
+          titulo: 'Testimonio de ' + nombre,
+          alError: respaldoVimeo
+        });
+        medir('fit4_testimonio_play', { testimonio: caso.getAttribute('data-carpeta').split('/')[1] });
+        document.getElementById('visor-cerrar').focus({ preventScroll: true });
+      }
+
+      function cerrarCaso() {
+        if (visor.hidden) return;
+        if (reproductor) { reproductor.destruir(); reproductor = null; }
+        visorVideo.innerHTML = '';
+        visor.hidden = true;
+        document.documentElement.classList.remove('bloqueo');
+        if (casoAbierto) casoAbierto.focus({ preventScroll: true });
+        casoAbierto = null;
+      }
+
+      document.getElementById('visor-cerrar').addEventListener('click', cerrarCaso);
+      visor.addEventListener('click', function (evento) { if (evento.target === visor) cerrarCaso(); });
+      document.addEventListener('keydown', function (evento) {
+        if (evento.key === 'Escape') cerrarCaso();
+      });
+
+      var filtros = Array.prototype.slice.call(document.querySelectorAll('.filtro'));
+      filtros.forEach(function (boton) {
+        boton.addEventListener('click', function () {
+          var elegido = boton.getAttribute('data-filtro');
+          filtroActual = elegido;
+          filtros.forEach(function (otro) { otro.setAttribute('aria-selected', String(otro === boton)); });
+          casos.forEach(function (caso) {
+            caso.hidden = elegido !== 'todos' && caso.getAttribute('data-sexo') !== elegido;
+          });
+          fila.scrollLeft = 0;
+          medir('fit4_testimonios_filtro', { filtro: elegido });
+        });
+      });
+
+      function desplazar(direccion) {
+        fila.scrollBy({ left: direccion * Math.max(220, fila.clientWidth * .8), behavior: 'smooth' });
+      }
+      document.getElementById('casos-antes').addEventListener('click', function () { desplazar(-1); });
+      document.getElementById('casos-despues').addEventListener('click', function () { desplazar(1); });
     })();
   </script>
 </body>
