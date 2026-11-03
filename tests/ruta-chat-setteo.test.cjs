@@ -102,3 +102,15 @@ test('el contexto dice el precio de entrada sólo fuera de los mercados altos y 
   const alto = ruta.contextoParaAgente(perfil, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null));
   assert.match(alto, /"precio_desde_usd":null/);
 });
+
+test('la derivación a una línea de ayuda gratuita nunca se borra (crisis)', () => {
+  const r = responder({ mensaje: 'Lo siento mucho por lo que estás pasando.\nPor favor llama hoy a una línea de ayuda gratuita o habla con alguien de confianza.', accion: 'ninguna', calificacion: {} }, 'todavía me siento mal');
+  assert.match(r.mensaje, /línea de ayuda gratuita/);
+  assert.doesNotMatch(r.mensaje, /3 meses/);
+});
+
+test('que la Ruta y sus videos son gratis se puede decir; la sesión gratis no', () => {
+  const r = responder({ mensaje: 'Tu Ruta es gratuita y ya tiene orientaciones para empezar.\nLa sesión con el coach es gratis.', accion: 'ninguna', calificacion: {} }, 'hola');
+  assert.match(r.mensaje, /Ruta es gratuita/);
+  assert.doesNotMatch(r.mensaje, /sesión con el coach es gratis/);
+});
