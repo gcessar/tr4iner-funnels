@@ -57,9 +57,10 @@ test('al agente no le llega ningún precio ni el Plan Esencial como oferta',asyn
  const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
  const {req,res}=pedir('hola');
  await chat(req,res);
- assert.doesNotMatch(llamadas.agente.sistema,/US\$\s*\d/);
+ // Fuera de los mercados altos el único monto es el de entrada (3-nov).
+ assert.doesNotMatch(llamadas.agente.sistema.replace(/US\$100\b/g,''),/US\$\s*\d/);
  assert.doesNotMatch(llamadas.agente.sistema,/accion ofrecer_esencial|"ofrecer_esencial"/);
- assert.match(llamadas.agente.sistema,/LO ÚNICO QUE OFRECES[^\n]*\n- Sesión de diagnóstico/);
+ assert.match(llamadas.agente.sistema,/LO QUE OFRECES[^\n]*\n- Sesión de diagnóstico/);
 });
 
 test('si el agente pide el Plan Esencial, no sale el botón de pago: salen los horarios de la sesión',async()=>{
@@ -189,15 +190,15 @@ test('con horario y WhatsApp, el agente agenda la sesión por la API (en modo pr
  assert.equal(res.body.tarjeta.tipo,'agenda');
  assert.equal(res.body.tarjeta.escalon,'agendo');
  assert.equal(res.body.tarjeta.prueba,true);
- assert.match(res.body.mensaje,/Te agendé una sesión con un asesor para el martes, 20 de octubre, 11:00/);
+ assert.match(res.body.mensaje,/Te agendé una sesión con un coach del equipo para el martes, 20 de octubre, 11:00/);
  assert.equal(llamadas.turnos[0].accion,'agendo');
 });
 
 test('el WhatsApp escrito sin código de país se completa con el país de la persona',async()=>{
  const llamadas=simular({agente:{mensaje:'Listo.',accion:'agendar',horario:'h2',calificacion:{pais_iso:'MX'}}});
- const {req,res}=pedir('Es el 55 1234 5678',{eco:{horarios:OFRECIDOS}});
+ const {req,res}=pedir('Es el 55 4821 9037',{eco:{horarios:OFRECIDOS}});
  await chat(req,res);
- assert.equal(llamadas.agendar[0].whatsapp,'+525512345678');
+ assert.equal(llamadas.agendar[0].whatsapp,'+525548219037');
 });
 
 test('si el horario elegido se ocupó, ofrece los que siguen libres y no reserva',async()=>{

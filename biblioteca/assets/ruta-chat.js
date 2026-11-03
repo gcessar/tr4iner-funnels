@@ -287,7 +287,8 @@
     if (t.reprogramar) links.push(el('a', { href: t.reprogramar, target: '_blank', rel: 'noopener', text: 'Cambiar día u hora' }));
     if (t.cancelar) links.push(el('a', { href: t.cancelar, target: '_blank', rel: 'noopener', text: 'Cancelar la sesión' }));
     return el('article', { className: 'rc-card rc-card--agenda' }, [
-      el('p', { className: 'rc-card-code', text: 'Sesión con un asesor · 30 min · Gratis' }),
+      // Sin «Gratis» (3-nov): la sesión es para conocer el servicio, no un regalo.
+      el('p', { className: 'rc-card-code', text: 'Sesión con un coach de TR4INER · 30 min' }),
       el('div', { className: 'rc-ok', role: 'status' }, [
         el('i', { 'aria-hidden': 'true', text: '✓' }),
         el('div', {}, [
@@ -321,6 +322,8 @@
       if (t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
       if (t.cuotas) hijos.push(el('p', { className: 'rc-card-note', text: t.cuotas }));
     }
+    // WhatsApp con un coach (3-nov): antes de abrirlo, qué va a pasar del otro lado.
+    if (esWhatsApp && t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
     var cta = el('a', { className: 'rc-card-cta', href: t.url, target: '_blank', rel: 'noopener' }, [
       el('span', { text: t.boton }), el('i', { 'aria-hidden': 'true', text: '→' })
     ]);
