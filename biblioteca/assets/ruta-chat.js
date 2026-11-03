@@ -23,12 +23,12 @@
   var REPRODUCTOR = '/assets/tr4-video/tr4-video.js?v=20261013';
   var STORAGE_PREFIX = 'tr4_ruta_chat_v1:';
   // Quién saluda, según de qué lado se registró (3-nov, pedido del usuario): los miembros de
-  // Veronika (marcador VA en sus UTMs) ven su foto, la de /empezar-va, y su equipo. La de
-  // Anthoni es un recorte sobre su círculo amarillo (la cabeza sale por arriba); la de
-  // Veronika es una foto cuadrada que se recorta en el círculo.
+  // Veronika (marcador VA en sus UTMs) ven su foto y su equipo. La de Anthoni es un recorte
+  // sobre su círculo amarillo (la cabeza sale por arriba); la de Veronika, una foto de estudio
+  // encuadrada en la cara (192 px, 4 KB) que se recorta en el círculo.
   var PERSONAS = {
     AN: { foto: '/assets/team/anthoni-montalvan.png', equipo: 'Equipo de Anthoni', recorte: true },
-    VA: { foto: '/assets/va/vero-avatar-92.webp', equipo: 'Equipo de Veronika', recorte: false }
+    VA: { foto: '/assets/va/vero-chat-192.webp', equipo: 'Equipo de Veronika', recorte: false }
   };
   function persona() { return PERSONAS[opts && opts.lado === 'VA' ? 'VA' : 'AN']; }
   var MAX_ITEMS = 80;
@@ -87,12 +87,12 @@
     '.rc-head-av{position:relative;flex:none;width:30px;height:30px;margin-right:8px}',
     '.rc-head-av::before{position:absolute;inset:-2px;border-radius:50%;background:var(--ink,#111);content:""}',
     '.rc-head-av img{position:absolute;top:-4px;left:50%;width:36px;height:36px;max-width:none;margin-left:-18px}',
-    // La foto cuadrada (Veronika) se recorta en el círculo, encuadrada en la cara.
+    // La foto cuadrada (Veronika) se recorta en el círculo; ya viene encuadrada en la cara.
     '.rc-face-clip{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#E9E8E4}',
-    '.rc-face-photo{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 0;transform:scale(2);transform-origin:50% 5%;pointer-events:none;user-select:none;-webkit-user-drag:none}',
+    '.rc-face-photo{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-drag:none}',
     '.rc-head-av--foto{overflow:hidden;border-radius:50%;box-shadow:0 0 0 2px var(--ink,#111)}',
     '.rc-head-av--foto::before{display:none}',
-    '.rc-head-av--foto img{top:0;left:0;width:100%;height:100%;margin:0;object-fit:cover;object-position:50% 0;transform:scale(2);transform-origin:50% 5%}',
+    '.rc-head-av--foto img{top:0;left:0;width:100%;height:100%;margin:0;object-fit:cover}',
     '.rc-sub{display:block;margin:2px 0 0;color:var(--muted,#6B6B6B);font:500 12px/1.2 var(--sans,system-ui,sans-serif)}',
 
     '.rc{position:fixed;inset:0 0 0 auto;width:min(440px,100vw);height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--rule-strong,rgba(17,17,17,.24));background:var(--card,#fff);color:var(--ink,#111);font-family:var(--sans,system-ui,sans-serif);overscroll-behavior:contain}',
