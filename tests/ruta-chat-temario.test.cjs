@@ -60,6 +60,7 @@ test('la nombra por el título: esa lección, en la versión de su sexo', () => 
   assert.equal(consultada('¿Qué es la sobrecarga progresiva?', mujer), 'ruta-sobrecarga-mujeres');
   assert.equal(consultada('¿Qué es la sobrecarga progresiva?', hombre), 'ruta-sobrecarga');
   assert.equal(consultada('¿Puedo entrenar con el ciclo menstrual?', mujer), 'ruta-ciclo-menstrual');
+  assert.equal(consultada('¿Puedo entrenar estando con la regla?', mujer), 'ruta-ciclo-menstrual');
   assert.equal(consultada('¿Cada cuánto la comida libre?', hombre), 'ruta-comidas');
 });
 
