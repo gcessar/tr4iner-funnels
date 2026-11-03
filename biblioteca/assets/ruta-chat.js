@@ -22,19 +22,65 @@
   // cuando alguien toca play en un video del chat.
   var REPRODUCTOR = '/assets/tr4-video/tr4-video.js?v=20261013';
   var STORAGE_PREFIX = 'tr4_ruta_chat_v1:';
+  // La foto del botón y de la cabecera (184 px, el círculo amarillo con Anthoni saliéndose por arriba).
+  var FOTO = '/assets/team/anthoni-montalvan.png';
   var MAX_ITEMS = 80;
 
 
   var CSS = [
-    '.rc-launch{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;border-radius:50%;background:var(--ink,#111);color:#fff;font:700 15px/1 var(--sans,system-ui,sans-serif);letter-spacing:-.01em;cursor:pointer;box-shadow:0 14px 34px -14px rgba(0,0,0,.55);transform:translateY(0);opacity:1;transition:transform .28s cubic-bezier(.2,.8,.2,1),opacity .2s ease,background .16s ease}',
-    '.rc-launch:hover{background:#2B2B2B}',
-    '.rc-launch:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:3px}',
-    '.rc-launch[hidden]{display:none}',
-    '.rc-launch.is-waiting{transform:translateY(14px);opacity:0;pointer-events:none}',
-    // Sólo ícono (7-oct): el cuadrito amarillo de la marca queda como insignia en la esquina.
-    '.rc-launch svg{width:24px;height:24px}',
-    '.rc-launch-mark{position:absolute;top:9px;right:9px;width:10px;height:10px;border-radius:3px;background:var(--mark,#FFD43B);box-shadow:0 0 0 2px var(--ink,#111)}',
-    'body.modal-open .rc-launch,body.mobile-video-playing .rc-launch,#tour:not([hidden]) ~ .rc-launch{display:none}',
+    // Diseño B (3-nov, decisión del usuario sobre la maqueta del 2-nov): la foto de Anthoni
+    // sobre su círculo amarillo con un aro negro, y un saludo simple del equipo una vez por
+    // día. El texto dice «Equipo de Anthoni»: responde el equipo, no él.
+    '.rc-fab{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));pointer-events:none}',
+    '.rc-fab>*{pointer-events:auto}',
+    '.rc-fab[hidden]{display:none}',
+    'body.modal-open .rc-fab,body.mobile-video-playing .rc-fab,#tour:not([hidden]) ~ .rc-fab{display:none}',
+    '.rc-launch{position:relative;display:block;width:64px;height:64px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}',
+    '.rc-launch:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:6px}',
+    '.rc-face-in{position:absolute;inset:0;opacity:0;transform:translateY(26px) scale(.55)}',
+    '.rc-fab.is-in .rc-face-in{animation:rc-face-in .7s cubic-bezier(.25,1.35,.5,1) forwards}',
+    '@keyframes rc-face-in{0%{opacity:0;transform:translateY(26px) scale(.55)}70%{opacity:1;transform:translateY(-3px) scale(1.04)}100%{opacity:1;transform:none}}',
+    '.rc-face-wave{position:absolute;inset:0;transform-origin:50% 92%;transition:transform .25s cubic-bezier(.2,.8,.2,1)}',
+    '.rc-fab.is-in .rc-face-wave{animation:rc-face-wave 1s ease-in-out .75s 1}',
+    '@keyframes rc-face-wave{0%,100%{transform:rotate(0)}18%{transform:rotate(-9deg)}38%{transform:rotate(7deg)}58%{transform:rotate(-5deg)}78%{transform:rotate(2deg)}}',
+    // Aro negro detrás del círculo: sobre la Ruta blanca y sus botones amarillos el borde se perdía.
+    '.rc-face-ring{position:absolute;inset:-4px;border-radius:50%;background:var(--ink,#111);box-shadow:0 12px 22px -8px rgba(17,17,17,.55)}',
+    // El círculo amarillo de la foto ocupa el 83% del cuadro: a 77 px calza con el botón de 64 y la cabeza se sale por arriba.
+    '.rc-face-img{position:absolute;top:-8px;left:50%;width:77px;height:77px;max-width:none;margin-left:-38.5px;filter:drop-shadow(0 8px 12px rgba(17,17,17,.28));pointer-events:none;user-select:none;-webkit-user-drag:none}',
+    '.rc-face-live{position:absolute;z-index:3;right:1px;bottom:2px;width:14px;height:14px;border-radius:50%;background:#22A35A;box-shadow:0 0 0 2.5px #fff;opacity:0;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.6,.5,1) .9s,opacity .2s ease .9s}',
+    '.rc-fab.is-in .rc-face-live{opacity:1;transform:scale(1)}',
+    '.rc-face-live::after{position:absolute;inset:0;border-radius:50%;background:#22A35A;content:"";animation:rc-live 2.4s ease-out infinite}',
+    '@keyframes rc-live{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(2.2)}}',
+    '.rc-face-halo{position:absolute;inset:-4px;border:2.5px solid var(--mark,#FFD43B);border-radius:50%;opacity:0;pointer-events:none}',
+    '.rc-fab.is-in .rc-face-halo{animation:rc-halo 1.8s cubic-bezier(.2,.7,.3,1) 1.7s 3}',
+    '.rc-fab.is-in .rc-face-halo.h2{animation-delay:2.2s}',
+    '@keyframes rc-halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.75)}}',
+    '@media (hover:hover){.rc-launch:hover .rc-face-wave{transform:scale(1.06)}}',
+    '.rc-launch:active .rc-face-wave{transform:scale(.94)}',
+    // «1»: es verdad, el chat ya tiene el saludo del equipo esperando.
+    '.rc-badge{position:absolute;z-index:6;top:-1px;right:-5px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--ink,#111);color:#fff;font:700 11px/20px var(--sans,system-ui,sans-serif);text-align:center;box-shadow:0 0 0 2px #fff;transform:scale(0);transition:transform .3s cubic-bezier(.3,1.6,.5,1)}',
+    '.rc-fab.con-badge .rc-badge{transform:scale(1)}',
+    // Saludo: globo al costado del botón, tapa una franja baja y nada más.
+    '.rc-teaser{position:absolute;right:calc(100% + 10px);bottom:4px;width:200px;border:1px solid var(--rule-strong,rgba(17,17,17,.16));border-radius:14px 14px 4px 14px;background:var(--card,#fff);color:var(--ink,#111);box-shadow:0 22px 40px -22px rgba(17,17,17,.5),0 2px 6px rgba(17,17,17,.06);opacity:0;visibility:hidden;transform:translateY(8px) scale(.94);transform-origin:100% 100%;transition:opacity .2s ease,transform .34s cubic-bezier(.2,.9,.25,1.15),visibility 0s linear .34s}',
+    '.rc-fab.teaser-on .rc-teaser{opacity:1;visibility:visible;transform:none;transition:opacity .2s ease,transform .34s cubic-bezier(.2,.9,.25,1.15),visibility 0s}',
+    '.rc-t-body{display:block;width:100%;padding:9px 28px 10px 11px;border:0;border-radius:inherit;background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}',
+    '.rc-t-close{position:absolute;z-index:2;top:3px;right:3px;display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--muted,#6B6B6B);cursor:pointer}',
+    '.rc-t-close svg{width:12px;height:12px}',
+    '.rc-t-kicker{display:flex;align-items:center;gap:6px;margin:0;color:var(--muted,#6B6B6B);font:700 8px/1.3 var(--mono,ui-monospace,monospace);letter-spacing:.14em;text-transform:uppercase}',
+    '.rc-t-live{flex:none;width:6px;height:6px;border-radius:50%;background:#22A35A;box-shadow:0 0 0 3px rgba(34,163,90,.16)}',
+    '.rc-t-text{display:block;margin:4px 0 0;font:500 12.5px/1.4 var(--sans,system-ui,sans-serif);text-wrap:pretty}',
+    '.rc-t-typing{display:none;gap:4px;align-items:center;height:22px;margin-top:3px}',
+    '.rc-t-typing i{width:6px;height:6px;border-radius:50%;background:var(--ink,#111);animation:rc-dot 1s ease-in-out infinite}',
+    '.rc-t-typing i:nth-child(2){animation-delay:.15s}.rc-t-typing i:nth-child(3){animation-delay:.3s}',
+    '@keyframes rc-dot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:.9;transform:translateY(-3px)}}',
+    '.rc-fab.is-typing .rc-t-typing{display:inline-flex}',
+    '.rc-fab.is-typing .rc-t-text{display:none}',
+    '@media (hover:hover){.rc-t-close:hover{background:rgba(17,17,17,.06);color:var(--ink,#111)}}',
+    // La foto también en la cabecera del chat.
+    '.rc-head-av{position:relative;flex:none;width:30px;height:30px;margin-right:8px}',
+    '.rc-head-av::before{position:absolute;inset:-2px;border-radius:50%;background:var(--ink,#111);content:""}',
+    '.rc-head-av img{position:absolute;top:-4px;left:50%;width:36px;height:36px;max-width:none;margin-left:-18px}',
+    '.rc-sub{display:block;margin:2px 0 0;color:var(--muted,#6B6B6B);font:500 12px/1.2 var(--sans,system-ui,sans-serif)}',
 
     '.rc{position:fixed;inset:0 0 0 auto;width:min(440px,100vw);height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--rule-strong,rgba(17,17,17,.24));background:var(--card,#fff);color:var(--ink,#111);font-family:var(--sans,system-ui,sans-serif);overscroll-behavior:contain}',
     '.rc[open]{display:flex;flex-direction:column;animation:rc-in-side .28s cubic-bezier(.2,.8,.2,1)}',
@@ -127,7 +173,7 @@
     '.rc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
 
     '@media (max-width:719px){',
-    '.rc-launch{right:16px;bottom:calc(16px + env(safe-area-inset-bottom));width:52px;height:52px}',
+    '.rc-fab{right:16px;bottom:calc(18px + env(safe-area-inset-bottom))}',
     '.rc{inset:auto 0 0 0;width:100vw;height:min(92dvh,780px);border-left:0;border-top:1px solid var(--rule-strong,rgba(17,17,17,.24));border-radius:14px 14px 0 0}',
     '.rc[open]{animation-name:rc-in-up}',
     '.rc-head{padding-top:10px}',
@@ -135,7 +181,7 @@
     '.rc-chips{padding:4px 16px 10px}',
     '.rc-compose{padding:10px 12px calc(10px + env(safe-area-inset-bottom)) 16px}',
     '}',
-    '@media (prefers-reduced-motion:reduce){.rc[open],.rc-turn.is-new,.rc-dots i{animation:none}.rc-launch{transition:none}.rc-log{scroll-behavior:auto}}'
+    '@media (prefers-reduced-motion:reduce){.rc[open],.rc-turn.is-new,.rc-dots i,.rc-fab .rc-face-in,.rc-fab .rc-face-wave,.rc-face-halo,.rc-face-live::after,.rc-t-typing i{animation:none}.rc-fab .rc-face-in{opacity:1;transform:none}.rc-teaser,.rc-badge,.rc-face-live{transition:none}.rc-log{scroll-behavior:auto}}'
   ].join('\n');
 
   function el(tag, attrs, children) {
@@ -500,11 +546,22 @@
     estilo.textContent = CSS;
     document.head.appendChild(estilo);
 
-    // Sin texto: el nombre accesible y el tooltip dicen qué abre.
-    ui.launch = el('button', { type: 'button', className: 'rc-launch is-waiting', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog', 'aria-label': 'Habla con el equipo', title: 'Habla con el equipo' }, [
-      el('span', { className: 'rc-launch-mark', 'aria-hidden': 'true' })
+    // Diseño B: la foto de Anthoni con un saludo del equipo al costado (ver el CSS).
+    ui.launch = el('button', { type: 'button', className: 'rc-launch', 'aria-haspopup': 'dialog', 'aria-controls': 'rc-dialog', 'aria-label': 'Habla con el equipo de Anthoni', title: 'Habla con el equipo de Anthoni' });
+    ui.launch.innerHTML = '<span class="rc-face-halo" aria-hidden="true"></span><span class="rc-face-halo h2" aria-hidden="true"></span>' +
+      '<span class="rc-face-in" aria-hidden="true"><span class="rc-face-wave"><span class="rc-face-ring"></span>' +
+      '<img class="rc-face-img" src="' + FOTO + '" alt="" width="77" height="77" draggable="false"><span class="rc-face-live"></span></span></span>' +
+      '<span class="rc-badge" aria-hidden="true">1</span>';
+    var cerrarSaludo = el('button', { type: 'button', className: 'rc-t-close', 'aria-label': 'Cerrar el saludo' });
+    cerrarSaludo.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
+    ui.saludoTexto = el('span', { className: 'rc-t-text' });
+    var saludoAbre = el('button', { type: 'button', className: 'rc-t-body', 'aria-label': 'Abrir el chat con el equipo de Anthoni' }, [
+      el('span', { className: 'rc-t-kicker' }, [el('i', { className: 'rc-t-live', 'aria-hidden': 'true' }), el('span', { text: 'Equipo de Anthoni' })]),
+      el('span', { className: 'rc-t-typing', 'aria-hidden': 'true' }, [el('i'), el('i'), el('i')]),
+      ui.saludoTexto
     ]);
-    ui.launch.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 3.5V16A2.5 2.5 0 0 1 4 13.5v-7A2.5 2.5 0 0 1 6.5 4z"/></svg>');
+    ui.teaser = el('div', { className: 'rc-teaser', role: 'status' }, [cerrarSaludo, saludoAbre]);
+    ui.fab = el('div', { className: 'rc-fab' }, [ui.teaser, ui.launch]);
 
     var cerrar = el('button', { type: 'button', className: 'rc-close', 'aria-label': 'Cerrar el chat' });
     cerrar.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
@@ -522,8 +579,10 @@
 
     ui.dialog = el('dialog', { id: 'rc-dialog', className: 'rc', 'aria-labelledby': 'rc-title' }, [
       el('header', { className: 'rc-head' }, [
+        el('span', { className: 'rc-head-av', 'aria-hidden': 'true' }, [el('img', { src: FOTO, alt: '', width: '36', height: '36' })]),
         el('div', { className: 'rc-head-id' }, [
-          el('h2', { id: 'rc-title', className: 'rc-title', text: 'Equipo TR4INER' })
+          el('h2', { id: 'rc-title', className: 'rc-title', text: 'Equipo de Anthoni' }),
+          el('span', { className: 'rc-sub', text: 'En línea · responde al instante' })
         ]),
         reiniciar,
         cerrar
@@ -533,10 +592,16 @@
       form
     ]);
 
-    document.body.appendChild(ui.launch);
+    document.body.appendChild(ui.fab);
     document.body.appendChild(ui.dialog);
 
-    ui.launch.addEventListener('click', abrir);
+    ui.launch.addEventListener('click', function () { abrir('boton'); });
+    saludoAbre.addEventListener('click', function () { abrir('saludo'); });
+    cerrarSaludo.addEventListener('click', function () { retirarSaludo(); });
+    // Al seguir leyendo, el saludo se va.
+    window.addEventListener('scroll', function () {
+      if (ui.fab.classList.contains('teaser-on') && Math.abs(window.scrollY - scrollAlSaludar) > 40) retirarSaludo();
+    }, { passive: true });
     cerrar.addEventListener('click', function () { ui.dialog.close(); });
     reiniciar.addEventListener('click', function () {
       state = estadoInicial();
@@ -550,7 +615,7 @@
     });
     ui.dialog.addEventListener('close', function () {
       soltarVideo();
-      ui.launch.hidden = false;
+      ui.fab.hidden = false;
       document.documentElement.style.overflow = '';
       ui.launch.focus();
     });
@@ -561,20 +626,79 @@
     });
 
     // Entra un instante después de la página, para que no compita con la
-    // primera lectura de la Ruta.
-    setTimeout(function () { ui.launch.classList.remove('is-waiting'); }, 900);
+    // primera lectura de la Ruta; el saludo, unos segundos después.
+    setTimeout(function () { ui.fab.classList.add('is-in'); }, 900);
+    programarSaludo();
   }
 
-  function abrir() {
+  // ── Saludo ───────────────────────────────────────────────
+  // Una vez por día y nunca encima de un video, un formulario o el recorrido guiado: si en
+  // ese momento hay uno abierto, espera a que se cierre.
+  var SALUDO_KEY = 'tr4_ruta_chat_saludo';
+  var SALUDO_ESPERA = 6000;
+  var scrollAlSaludar = 0;
+  var timersSaludo = [];
+
+  function hoy() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function saludoDeHoyVisto() {
+    try { return window.localStorage.getItem(SALUDO_KEY) === hoy(); } catch (e) { return false; }
+  }
+  function marcarSaludo() {
+    try { window.localStorage.setItem(SALUDO_KEY, hoy()); } catch (e) { /* sin almacenamiento, sale en cada visita */ }
+  }
+  function tapado() {
+    var b = document.body.classList;
+    var tour = document.getElementById('tour');
+    return b.contains('modal-open') || b.contains('mobile-video-playing') || (tour && !tour.hidden) || (ui.dialog && ui.dialog.open);
+  }
+  function programarSaludo() {
+    if (saludoDeHoyVisto()) return;
+    var intentos = 0;
+    (function probar() {
+      timersSaludo.push(setTimeout(function () {
+        if (ui.dialog && ui.dialog.open) return;
+        if (tapado()) { if (++intentos < 30) probar(); return; }
+        saludar();
+      }, intentos ? 2000 : SALUDO_ESPERA));
+    })();
+  }
+  function saludar() {
+    var reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var c = ui.fab.classList;
+    ui.saludoTexto.textContent = 'Hola' + (opts.nombre ? ', ' + opts.nombre : '') + ' 👋 Si necesitas ayuda con tu plan, escríbenos aquí.';
+    scrollAlSaludar = window.scrollY;
+    marcarSaludo();
+    c.add('teaser-on');
+    track('chat_saludo', { diseno: 'B' });
+    if (reducido) c.add('con-badge');
+    else {
+      c.add('is-typing');
+      timersSaludo.push(setTimeout(function () { c.remove('is-typing'); c.add('con-badge'); }, 1200));
+    }
+    timersSaludo.push(setTimeout(retirarSaludo, 10200));
+  }
+  function retirarSaludo() {
+    timersSaludo.forEach(clearTimeout);
+    timersSaludo = [];
+    ui.fab.classList.remove('teaser-on', 'is-typing');
+  }
+
+  function abrir(origen) {
     if (!ui.dialog || ui.dialog.open) return;
-    ui.launch.hidden = true;
+    retirarSaludo();
+    ui.fab.classList.remove('con-badge');
+    ui.fab.hidden = true;
     document.documentElement.style.overflow = 'hidden';
     ui.dialog.showModal();
     pintarTodo();
     if (window.matchMedia('(pointer: fine)').matches) ui.input.focus();
     if (!abiertoUnaVez) {
       abiertoUnaVez = true;
-      track('chat_abierto', { estado: opts.estado || null, mensajes_previos: state.items.length - 1 });
+      // `origen` separa el botón, el saludo y el enlace de la bisagra (2-nov: hasta ahora no se distinguían).
+      track('chat_abierto', { estado: opts.estado || null, mensajes_previos: state.items.length - 1, origen: typeof origen === 'string' ? origen : 'bisagra', diseno: 'B' });
     }
   }
 
@@ -589,7 +713,7 @@
       construir();
       return true;
     },
-    open: abrir,
+    open: function () { abrir('bisagra'); },
     disponible: function () { return Boolean(ui.dialog); }
   };
 })();
