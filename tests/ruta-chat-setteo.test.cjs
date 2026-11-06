@@ -5,7 +5,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const ruta = require('../lib/ruta-chat.js');
 
-const perfil = { email: 'x@y.com', nombre: 'Ana', atribucion: {}, orientaciones_completadas: 1, orientaciones_empezadas: 1 };
+// Con 2 lecciones completas ya avanzó: fuera de un mercado alto queda «calificado» y puede ver horarios (6-nov).
+const perfil = { email: 'x@y.com', nombre: 'Ana', atribucion: {}, orientaciones_completadas: 2, orientaciones_empezadas: 2 };
 const geoUY = { pais: 'UY', ciudad: 'Montevideo' };
 const geoUS = { pais: 'US', ciudad: 'Miami' };
 const horarios = [{ id: 'h1', inicio: '2026-11-04T17:00:00Z', etiqueta: 'Mié 4 · 12:00', larga: 'miércoles, 4 de noviembre, 12:00' }];
@@ -263,4 +264,58 @@ test('si al sacar un botón prohibido queda uno solo, no queda ninguno', () => {
 test('al agente se le corrige «su Ruta» por «tu Ruta»', () => {
   const r = responder({ mensaje: 'Su Ruta ya tiene orientaciones para empezar.\nSi más adelante quieres, aquí seguimos con su Ruta.', accion: 'ninguna', calificacion: {} }, 'No');
   assert.equal(r.mensaje, 'Tu Ruta ya tiene orientaciones para empezar.\nSi más adelante quieres, aquí seguimos con tu Ruta.');
+});
+
+// ── Camino comercial (6-nov, calibrado con las compras de la Ruta) ─────────────────────────
+const nuevo = { email: 'n@y.com', nombre: 'Lu', atribucion: {}, orientaciones_completadas: 0, orientaciones_empezadas: 0 };
+const conTest = Object.assign({}, nuevo, { hizo_test: true });
+
+test('el camino sale del país y de lo que ya hizo en su Ruta', () => {
+  assert.equal(ruta.caminoPara(conTest, geoUS, {}).id, 'prioridad');
+  assert.equal(ruta.caminoPara(perfil, { pais: 'ES' }, {}).id, 'prioridad');
+  assert.equal(ruta.caminoPara(nuevo, geoUS, {}).id, 'alto_nuevo');
+  assert.equal(ruta.caminoPara(perfil, geoUY, {}).id, 'calificado');
+  assert.equal(ruta.caminoPara(conTest, { pais: 'PE' }, {}).id, 'calificado');
+  assert.equal(ruta.caminoPara(nuevo, { pais: 'MX' }, {}).id, 'nutrir');
+  assert.equal(ruta.caminoPara(Object.assign({}, nuevo, { orientaciones_completadas: 1 }), { pais: 'CO' }, {}).id, 'nutrir');
+  assert.equal(ruta.caminoPara(conTest, { pais: 'CU' }, {}).id, 'whatsapp');
+  assert.equal(ruta.caminoPara(perfil, { pais: 'PE' }, { pais: 'VE' }).id, 'whatsapp');
+  // Lo que declara sólo suma para el mercado alto (como mercadoPara).
+  assert.equal(ruta.caminoPara(conTest, { pais: 'PE' }, { pais: 'US' }).id, 'prioridad');
+});
+
+test('el botón del chat se oculta sólo por la IP de Cuba o Venezuela', () => {
+  assert.equal(ruta.chatDisponiblePara({ pais: 'CU' }), false);
+  assert.equal(ruta.chatDisponiblePara({ pais: 've' }), false);
+  for (const pais of ['PE', 'US', 'MX', '']) assert.equal(ruta.chatDisponiblePara({ pais }), true, pais);
+});
+
+test('a quien no va a sesión, los horarios que pide el agente se cambian por WhatsApp', () => {
+  for (const [p, geo] of [[nuevo, { pais: 'MX' }], [conTest, { pais: 'CU' }]]) {
+    const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', resumen_caso: 'Quiero bajar grasa', calificacion: {} }, p, geo, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'latam' }, {});
+    assert.equal(r.pendiente, null);
+    assert.equal(r.tarjeta.tipo, 'whatsapp');
+    assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
+    assert.equal(r.registro.accion, 'pasar_a_whatsapp');
+    assert.ok(['nutrir', 'whatsapp'].includes(r.registro.camino));
+    assert.match(r.ajuste, /no va la sesión por videollamada/);
+  }
+  const prioridad = ruta.resolverRespuesta({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, conTest, geoUS, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'alto' }, {});
+  assert.equal(prioridad.pendiente.tipo, 'horarios');
+  assert.equal(prioridad.registro.calificacion.camino, 'prioridad');
+});
+
+test('el WhatsApp que reemplaza a la sesión no se repite igual dos veces', () => {
+  const r = ruta.resolverRespuesta({ mensaje: 'Horarios 👇', accion: 'proponer_horarios', calificacion: {} }, nuevo, { pais: 'MX' }, [], 'Quiero agendar', 'c1',
+    { numero: 6, mercado: 'latam', anteriores: [ruta.MENSAJE_WHATSAPP_CAMINO] }, {});
+  assert.notEqual(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
+  assert.equal(r.tarjeta.tipo, 'whatsapp');
+});
+
+test('el agente recibe su camino y su avance, para hablarle sin recitarle datos', () => {
+  const ctx = ruta.contextoParaAgente(nuevo, { pais: 'MX' }, 'latam', [], null, 'America/Mexico_City', '', ruta.ecoValido(null));
+  assert.match(ctx, /CAMINO PARA ESTA PERSONA[^\n]*: nutrir\. Recién empieza su Ruta/);
+  assert.match(ctx, /SU AVANCE EN LA RUTA: 0 lecciones completas; todavía no hizo el test de macros/);
+  const alto = ruta.contextoParaAgente(conTest, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null));
+  assert.match(alto, /: prioridad\. Es de las personas que más compran/);
 });

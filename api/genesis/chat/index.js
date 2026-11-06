@@ -146,6 +146,13 @@ module.exports = async function chat(request, response) {
   const mercado = ruta.mercadoPara(geo, eco);
   const zona = ruta.zonaValida(body.zona);
 
+  // Cuba y Venezuela, por la IP: el botón del chat no se muestra (`disponible.js`). Si igual llega
+  // un mensaje (una página vieja en caché), va directo a WhatsApp sin pasar por el agente.
+  if (!ruta.chatDisponiblePara(geo)) {
+    const solo = ruta.respuestaSoloWhatsApp(perfil);
+    return response.status(200).json({ mensaje: solo.mensaje, opciones: [], tarjeta: solo.tarjeta, eco: eco, ajuste: null });
+  }
+
   const historial = await historialDe(request, response, conversacion);
   // Si pregunta por una lección (o repregunta sobre la de su mensaje anterior), el agente
   // recibe lo que dice ese video. La lección que abrió por última vez la manda el navegador

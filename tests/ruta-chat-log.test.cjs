@@ -31,7 +31,7 @@ function simular({agente,historial=[{rol:'persona',texto:'hola'},{rol:'equipo',t
 }
 function pedir(mensaje='¿cuánto cuesta?',extra={}){
  const res={code:0,body:null,headers:{},status(c){this.code=c;return this;},json(b){this.body=b;return this;},setHeader(k,v){this.headers[k]=v;}};
- const req={method:'POST',body:Object.assign({mensaje,conversacion:'principal',zona:'America/Lima'},extra),headers:{cookie:'tr4_genesis_session=abc'}};
+ const req={method:'POST',body:Object.assign({mensaje,conversacion:'principal',zona:'America/Lima'},extra),headers:Object.assign({cookie:'tr4_genesis_session=abc','x-vercel-ip-country':'US'},extra.headers||{})};
  return {req,res};
 }
 
@@ -321,4 +321,24 @@ test('la segunda vez que pregunta si es gratis, el agente recibe la nota y no se
  assert.match(llamadas.agente.sistema,/SOBRE ESTE MENSAJE: Ya había preguntado por el costo/);
  assert.match(res.body.mensaje,/Te lo digo directo/);
  assert.notEqual(res.body.mensaje,anterior);
+});
+
+// 6-nov: Cuba y Venezuela, por la IP, no ven el chat; si igual escriben, va a WhatsApp sin agente.
+test('desde una IP de Cuba el chat no llama al agente y ofrece WhatsApp',async()=>{
+ const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
+ const {req,res}=pedir('hola',{headers:{'x-vercel-ip-country':'CU'}});
+ await chat(req,res);
+ assert.equal(res.code,200);
+ assert.equal(llamadas.agente,null);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
+});
+
+test('el botón sólo se oculta con IP de Cuba o Venezuela',()=>{
+ const disponible=require('../api/genesis/chat/disponible');
+ for(const [pais,esperado] of [['CU',false],['VE',false],['PE',true],['US',true],[undefined,true]]){
+  const res={code:0,body:null,headers:{},status(c){this.code=c;return this;},json(b){this.body=b;return this;},setHeader(k,v){this.headers[k]=v;}};
+  disponible({method:'GET',headers:pais?{'x-vercel-ip-country':pais}:{}},res);
+  assert.equal(res.body.disponible,esperado,String(pais));
+  assert.equal(res.headers['Cache-Control'],'private, no-store');
+ }
 });

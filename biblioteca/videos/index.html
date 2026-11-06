@@ -4376,8 +4376,21 @@
       // ── Chat del equipo ─────────────────────────────────────
       // Sólo para miembros con sesión: el servidor la necesita para saber con
       // quién habla y hasta dónde puede ofrecer.
+      // En Cuba y Venezuela el chat no se muestra (6-nov): lo decide el servidor por la IP. La
+      // bisagra queda con su enlace de WhatsApp de siempre. Si la consulta falla, el chat sale.
+      function chatDisponible() {
+        return fetch('/api/genesis/chat/disponible', { cache: 'no-store', credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : { disponible: true }; })
+          .then(function (d) { return !d || d.disponible !== false; })
+          .catch(function () { return true; });
+      }
+
       function setupRutaChat() {
         if (!memberSession || !window.TR4RutaChat) return;
+        chatDisponible().then(function (si) { if (si) montarRutaChat(); });
+      }
+
+      function montarRutaChat() {
         var advisory = document.getElementById('bridge-advisory');
         var listo = window.TR4RutaChat.init({
           nombre: String(lead.nombre || '').split(' ')[0],
