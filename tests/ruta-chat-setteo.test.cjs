@@ -109,7 +109,9 @@ test('el contexto no trae montos ni el mercado, y sí los 3 meses como mínimo',
 
 // ── Aviso de la sesión (6-nov) ──────────────────────────────────────────────
 const libres = [{ inicio: '2026-11-06T15:00:00Z' }, { inicio: '2026-11-06T20:00:00Z' }];
+// Los horarios son sólo para los mercados altos (6-nov): estas pruebas son desde EE. UU.
 function horariosCon(cruda, persona, opciones) {
+  opciones = Object.assign({ geo: geoUS, mercado: 'alto' }, opciones);
   const r = responder(cruda, persona, opciones);
   return ruta.completarHorarios(r, (opciones && opciones.libres) || libres, 'America/Lima', (opciones && opciones.perfil) || perfil, 'c1', false);
 }
@@ -165,7 +167,8 @@ test('del mensaje del agente no pasa lo que repite el aviso, una hora prometida 
 test('el aviso cuenta como leído si está en la memoria del CRM', () => {
   assert.equal(ruta.avisoEnHistorial([{ rol: 'equipo', texto: ruta.AVISO_SESION.join('\n') }]), true);
   assert.equal(ruta.avisoEnHistorial([{ rol: 'persona', texto: 'como mínimo, ninguno mensual' }, { rol: 'equipo', texto: 'Hola' }]), false);
-  const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', calificacion: {} }, perfil, geoUY, [], 'Sí', 'c1', { numero: 6, mercado: 'latam', aviso: true }, {});
+  const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', calificacion: {} }, perfil, geoUS, [], 'Sí', 'c1', { numero: 6, mercado: 'alto', aviso: true }, {});
+  assert.equal(r.pendiente.tipo, 'horarios');
   assert.equal(r.aviso, null);
 });
 
@@ -276,6 +279,11 @@ test('el camino sale del país y de lo que ya hizo en su Ruta', () => {
   assert.equal(ruta.caminoPara(nuevo, geoUS, {}).id, 'alto_nuevo');
   assert.equal(ruta.caminoPara(perfil, geoUY, {}).id, 'calificado');
   assert.equal(ruta.caminoPara(conTest, { pais: 'PE' }, {}).id, 'calificado');
+  // Sólo los mercados altos van a sesión.
+  assert.equal(ruta.caminoPara(conTest, geoUS, {}).sesion, true);
+  assert.equal(ruta.caminoPara(nuevo, geoUS, {}).sesion, true);
+  assert.equal(ruta.caminoPara(perfil, geoUY, {}).sesion, false);
+  assert.equal(ruta.caminoPara(nuevo, { pais: 'MX' }, {}).sesion, false);
   assert.equal(ruta.caminoPara(nuevo, { pais: 'MX' }, {}).id, 'nutrir');
   assert.equal(ruta.caminoPara(Object.assign({}, nuevo, { orientaciones_completadas: 1 }), { pais: 'CO' }, {}).id, 'nutrir');
   assert.equal(ruta.caminoPara(conTest, { pais: 'CU' }, {}).id, 'whatsapp');
@@ -291,13 +299,15 @@ test('el botón del chat se oculta sólo por la IP de Cuba o Venezuela', () => {
 });
 
 test('a quien no va a sesión, los horarios que pide el agente se cambian por WhatsApp', () => {
-  for (const [p, geo] of [[nuevo, { pais: 'MX' }], [conTest, { pais: 'CU' }]]) {
+  // Decisión del usuario (6-nov): fuera de los mercados altos, aunque haya avanzado, WhatsApp.
+  for (const [p, geo] of [[nuevo, { pais: 'MX' }], [conTest, { pais: 'CU' }], [perfil, geoUY], [conTest, { pais: 'PE' }]]) {
     const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', resumen_caso: 'Quiero bajar grasa', calificacion: {} }, p, geo, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'latam' }, {});
     assert.equal(r.pendiente, null);
     assert.equal(r.tarjeta.tipo, 'whatsapp');
     assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
     assert.equal(r.registro.accion, 'pasar_a_whatsapp');
-    assert.ok(['nutrir', 'whatsapp'].includes(r.registro.camino));
+    assert.ok(['nutrir', 'whatsapp', 'calificado'].includes(r.registro.camino));
+    assert.match(r.mensaje, /inscribirte al programa, que es pagado/);
     assert.match(r.ajuste, /no va la sesión por videollamada/);
   }
   const prioridad = ruta.resolverRespuesta({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, conTest, geoUS, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'alto' }, {});
@@ -318,4 +328,10 @@ test('el agente recibe su camino y su avance, para hablarle sin recitarle datos'
   assert.match(ctx, /SU AVANCE EN LA RUTA: 0 lecciones completas; todavía no hizo el test de macros/);
   const alto = ruta.contextoParaAgente(conTest, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null));
   assert.match(alto, /: prioridad\. Es de las personas que más compran/);
+});
+
+test('una reserva ya en curso (con horarios ofrecidos) no se corta aunque el camino no tenga sesión', () => {
+  const r = ruta.resolverRespuesta({ mensaje: 'Listo.', accion: 'agendar', horario: 'h1', whatsapp: '+59891099271', calificacion: {} }, perfil, geoUY, [], '+59891099271', 'c1',
+    { numero: 6, mercado: 'latam' }, { horarios, horario_elegido: 'h1' });
+  assert.equal(r.pendiente.tipo, 'agendar');
 });
