@@ -152,7 +152,11 @@ module.exports = async function chat(request, response) {
   // y sólo decide cuando no dice cuál («¿qué quiso decir en el video?»).
   const abierta = temario.leccionDelNavegador(body.leccion);
   const consulta = temario.consultaPara(temario.leccionConsultada(mensaje, historial, perfil, abierta), perfil, abierta);
-  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES, eco, consulta);
+  // Las preguntas que ya hizo van aparte para que no las repita (6-nov: 128 de 223
+  // conversaciones repetían una); el aviso de la sesión cuenta como leído si está en la memoria.
+  const avisoLeido = eco.aviso || ruta.avisoEnHistorial(historial);
+  const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES,
+    Object.assign({}, eco, { aviso: avisoLeido }), consulta, ruta.preguntasHechas(historial));
   const base = {
     conversacion: conversacion,
     mensajeUsuario: mensaje,
@@ -176,7 +180,7 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado };
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido };
   let respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno, body.eco);
   let reserva = null;
   if (respuesta.pendiente && respuesta.pendiente.tipo === 'horarios') {

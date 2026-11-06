@@ -57,8 +57,8 @@ test('al agente no le llega ningún precio ni el Plan Esencial como oferta',asyn
  const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
  const {req,res}=pedir('hola');
  await chat(req,res);
- // Fuera de los mercados altos el único monto es el de entrada (3-nov).
- assert.doesNotMatch(llamadas.agente.sistema.replace(/US\$100\b/g,''),/US\$\s*\d/);
+ // 6-nov: ni el «desde US$100» del 3-nov, en ningún país.
+ assert.doesNotMatch(llamadas.agente.sistema,/US\$\s*\d|precio_desde/);
  assert.doesNotMatch(llamadas.agente.sistema,/accion ofrecer_esencial|"ofrecer_esencial"/);
  assert.match(llamadas.agente.sistema,/LO QUE OFRECES[^\n]*\n- Sesión de diagnóstico/);
 });
@@ -70,7 +70,7 @@ test('si el agente pide el Plan Esencial, no sale el botón de pago: salen los h
  assert.equal(res.body.tarjeta,null);
  assert.equal(llamadas.horarios,1);
  assert.deepEqual(res.body.opciones,['Mar 20 · 11:00','Mié 21 · 14:00']);
- assert.match(res.body.mensaje,/sesión de diagnóstico/);
+ assert.match(res.body.mensaje,/no tiene costo/);
  assert.doesNotMatch(res.body.mensaje,/77|Esencial|pago/);
  assert.match(res.body.ajuste,/ya no se ofrece/);
  assert.equal(llamadas.turnos[0].escalonPedido,null);
@@ -282,4 +282,30 @@ test('ya agendada, no se ofrecen ni reservan más sesiones',async()=>{
  await chat(req,res);
  assert.equal(llamadas.horarios,0);
  assert.match(res.body.ajuste,/ya tiene la sesión agendada/);
+});
+
+// 6-nov: antes de los horarios, el aviso de la sesión, una sola vez.
+test('la primera vez que pide horarios, la persona lee el aviso; si ya está en la memoria, no se repite',async()=>{
+ let llamadas=simular({agente:{mensaje:'Te dejo los horarios 👇',accion:'proponer_horarios'}});
+ let {req,res}=pedir('Quiero empezar ya');
+ await chat(req,res);
+ assert.match(res.body.mensaje,/no tiene costo y dura entre 30 y 40 minutos/);
+ assert.match(res.body.mensaje,/Si estás lista para empezar/);
+ assert.equal(res.body.eco.aviso,true);
+ assert.equal(res.body.opciones.length,2);
+ assert.match(llamadas.agente.sistema,/"ya_leyo_el_aviso_de_la_sesion":false/);
+ llamadas=simular({agente:{mensaje:'Te dejo los horarios 👇',accion:'proponer_horarios'},
+  historial:[{rol:'persona',texto:'Sí'},{rol:'equipo',texto:'La sesión no tiene costo.\nTodos son de 3 meses como mínimo, ninguno mensual.'}]});
+ ({req,res}=pedir('¿Hay otro día?'));
+ await chat(req,res);
+ assert.doesNotMatch(res.body.mensaje,/no tiene costo/);
+ assert.match(llamadas.agente.sistema,/"ya_leyo_el_aviso_de_la_sesion":true/);
+});
+
+test('las preguntas que el agente ya hizo le llegan aparte para que no las repita',async()=>{
+ const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'},
+  historial:[{rol:'persona',texto:'Bajar grasa'},{rol:'equipo',texto:'Vamos por partes.\n¿Qué es lo que más te cuesta hoy?'}]});
+ const {req,res}=pedir('La comida');
+ await chat(req,res);
+ assert.match(llamadas.agente.sistema,/PREGUNTAS QUE YA LE HICISTE[^\n]*\n- ¿Qué es lo que más te cuesta hoy\?/);
 });

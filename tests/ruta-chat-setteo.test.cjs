@@ -1,6 +1,6 @@
 // Reglas del servidor para el setteo del chat de la Ruta (3-nov-2026): WhatsApp
-// válido, la sesión nunca como «gratis», el precio de entrada según el mercado y el
-// WhatsApp de Anthoni o de Veronika según el registro.
+// válido, la sesión nunca como «gratis» y el WhatsApp de Anthoni o de Veronika según el
+// registro. 6-nov: ningún monto, el aviso de la sesión antes de los horarios y sin muletillas.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const ruta = require('../lib/ruta-chat.js');
@@ -63,16 +63,15 @@ test('la sesión no se vende como gratis: se saca la frase y las respuestas ráp
   assert.deepEqual(r.opciones, ['Tengo una duda']);
 });
 
-test('fuera de los mercados altos se puede decir «desde US$100» y nada más', () => {
-  const ok = responder({ mensaje: 'Puedes empezar desde US$100 y el plan se arma según tu caso.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?');
-  assert.match(ok.mensaje, /US\$100/);
+test('ningún monto llega a la persona, en ningún país: tampoco el «desde US$100» (6-nov)', () => {
+  for (const mercado of ['latam', 'alto']) {
+    const r = responder({ mensaje: 'Puedes empezar desde US$100 y el plan se arma según tu caso.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?', { mercado });
+    assert.doesNotMatch(r.mensaje, /US\$|100/);
+    assert.match(r.mensaje, /3 meses como mínimo/);
+    assert.match(r.ajuste, /no se dan montos/);
+  }
   const otro = responder({ mensaje: 'El plan de 3 meses sale US$397.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?');
   assert.doesNotMatch(otro.mensaje, /397/);
-});
-
-test('en un mercado alto no llega ningún monto, ni el de entrada', () => {
-  const r = responder({ mensaje: 'Puedes empezar desde US$100.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?', { geo: geoUS, mercado: 'alto' });
-  assert.doesNotMatch(r.mensaje, /US\$100/);
 });
 
 test('Lima y Cuba ya no cuentan como mercado alto; EE. UU. sí', () => {
@@ -95,12 +94,113 @@ test('el IMC sale de peso y altura del test, y no se inventa sin ellos', () => {
   assert.equal(ruta.imcDe({ peso: null, altura: 160 }), null);
 });
 
-test('el contexto dice el precio de entrada sólo fuera de los mercados altos y no inventa ofertas', () => {
-  const latam = ruta.contextoParaAgente(perfil, geoUY, 'latam', [], null, 'America/Montevideo', '', ruta.ecoValido(null));
-  assert.match(latam, /"precio_desde_usd":100/);
-  assert.match(latam, /OFERTA VIGENTE: ninguna/);
-  const alto = ruta.contextoParaAgente(perfil, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null));
-  assert.match(alto, /"precio_desde_usd":null/);
+test('el contexto no trae montos ni el mercado, y sí los 3 meses como mínimo', () => {
+  for (const [geo, mercado] of [[geoUY, 'latam'], [geoUS, 'alto']]) {
+    const ctx = ruta.contextoParaAgente(perfil, geo, mercado, [], null, 'America/Montevideo', '', ruta.ecoValido(null));
+    assert.doesNotMatch(ctx, /precio_desde|US\$|"mercado"|latam/);
+    assert.match(ctx, /3 meses como mínimo; ninguno es mensual/);
+    assert.match(ctx, /30 a 40 minutos/);
+    assert.match(ctx, /OFERTA VIGENTE: ninguna/);
+    assert.match(ctx, /"ya_leyo_el_aviso_de_la_sesion":false/);
+  }
+});
+
+// ── Aviso de la sesión (6-nov) ──────────────────────────────────────────────
+const libres = [{ inicio: '2026-11-06T15:00:00Z' }, { inicio: '2026-11-06T20:00:00Z' }];
+function horariosCon(cruda, persona, opciones) {
+  const r = responder(cruda, persona, opciones);
+  return ruta.completarHorarios(r, (opciones && opciones.libres) || libres, 'America/Lima', (opciones && opciones.perfil) || perfil, 'c1', false);
+}
+
+test('la primera vez que ve horarios lee el aviso entero, con la línea de su caso arriba', () => {
+  const r = horariosCon({ mensaje: 'Tiene sentido.\nLo de comer a deshora por el estrés de la casa es lo primero que el coach ordena contigo.\nTe dejo los horarios 👇 ¿cuál te queda mejor?', accion: 'proponer_horarios', calificacion: {} }, 'Sí, quiero empezar');
+  const lineas = r.mensaje.split('\n');
+  assert.equal(lineas[0], 'Lo de comer a deshora por el estrés de la casa es lo primero que el coach ordena contigo.');
+  for (const linea of ruta.AVISO_SESION) assert.ok(lineas.includes(linea), linea);
+  assert.match(r.mensaje, /no tiene costo y dura entre 30 y 40 minutos/);
+  assert.match(r.mensaje, /3 meses como mínimo, ninguno mensual/);
+  assert.match(r.mensaje, /pareja, pueden conectarse los dos/);
+  assert.equal(lineas[lineas.length - 1], '¿Qué te parece? Si quieres empezar, elige el horario que te quede mejor 👇');
+  assert.doesNotMatch(r.mensaje, /Tiene sentido|cuál te queda/);
+  assert.equal(r.eco.aviso, true);
+  assert.equal(r.opciones.length, 2);
+  assert.match(r.ajuste, /leyó el aviso de la sesión/);
+});
+
+test('el cierre del aviso va con el género de la persona', () => {
+  const ana = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo: 'Mujer' }) });
+  assert.match(ana.mensaje, /Si estás lista para empezar, elige el horario/);
+  const beto = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo: 'Hombre' }) });
+  assert.match(beto.mensaje, /Si estás listo para empezar/);
+});
+
+test('con el aviso ya leído no se repite: van sólo los horarios', () => {
+  const r = horariosCon({ mensaje: 'Te dejo los horarios más próximos 👇', accion: 'proponer_horarios', calificacion: {} }, 'Otro día', { eco: { aviso: true } });
+  assert.doesNotMatch(r.mensaje, /no tiene costo|como mínimo/);
+  assert.equal(r.mensaje, 'Te dejo los horarios más próximos 👇');
+  assert.equal(r.eco.aviso, true);
+});
+
+test('el aviso sale igual aunque no haya lugar en el momento que pidió o no haya horarios', () => {
+  const sinLugar = horariosCon({ mensaje: '', accion: 'proponer_horarios', preferencia_horario: { fecha: '2026-11-06', franja: 'noche' }, calificacion: {} }, 'De noche');
+  assert.match(sinLugar.mensaje, /como mínimo, ninguno mensual/);
+  assert.match(sinLugar.mensaje, /No nos quedan horarios/);
+  assert.doesNotMatch(sinLugar.mensaje, /elige el horario que te quede mejor/);
+  const vacio = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { libres: [] });
+  assert.match(vacio.mensaje, /como mínimo, ninguno mensual/);
+  assert.match(vacio.mensaje, /Te dejo el calendario del equipo/);
+  assert.equal(vacio.tarjeta.destino, 'calendly');
+});
+
+test('del mensaje del agente no pasa lo que repite el aviso, una hora prometida ni una pregunta', () => {
+  const r = horariosCon({ mensaje: 'La sesión no tiene costo y es de 30 minutos.\nTenemos el jueves a las 19:00.\n¿Te queda bien?', accion: 'proponer_horarios', calificacion: {} }, 'Sí');
+  assert.equal(r.mensaje.split('\n')[0], ruta.AVISO_SESION[0]);
+  assert.doesNotMatch(r.mensaje, /19:00|30 minutos|Te queda bien/);
+});
+
+test('el aviso cuenta como leído si está en la memoria del CRM', () => {
+  assert.equal(ruta.avisoEnHistorial([{ rol: 'equipo', texto: ruta.AVISO_SESION.join('\n') }]), true);
+  assert.equal(ruta.avisoEnHistorial([{ rol: 'persona', texto: 'como mínimo, ninguno mensual' }, { rol: 'equipo', texto: 'Hola' }]), false);
+  const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', calificacion: {} }, perfil, geoUY, [], 'Sí', 'c1', { numero: 6, mercado: 'latam', aviso: true }, {});
+  assert.equal(r.aviso, null);
+});
+
+// ── Muletillas (6-nov: «evita las respuestas con patrones de redundancia así como "tiene sentido"») ──
+test('la muletilla del arranque se saca y el resto queda igual', () => {
+  const casos = [
+    ['Tiene sentido 💪\nPara bajar grasa, lo que más suele trabar es sostenerlo.', 'Para bajar grasa, lo que más suele trabar es sostenerlo.'],
+    ['Te entiendo, ahí suele estar el freno más grande.', 'Ahí suele estar el freno más grande.'],
+    ['Gracias, Lore 🙌 Eso nos ayuda mucho.\n\nPor lo que nos cuentas, ya tienes el tiempo.', 'Por lo que nos cuentas, ya tienes el tiempo.'],
+    ['Perfecto, Jossi.\nPara ganar músculo de verdad hace falta un plan.', 'Para ganar músculo de verdad hace falta un plan.'],
+    ['Eso explica mucho: estás intentando adivinar con la comida.', 'Estás intentando adivinar con la comida.'],
+    ['¡Perfecto! Te armamos la rutina según tu tiempo.', 'Te armamos la rutina según tu tiempo.']
+  ];
+  for (const [entrada, salida] of casos) assert.equal(ruta.sinMuletilla(entrada).mensaje, salida, entrada);
+});
+
+test('lo que no es muletilla no se toca, y una muletilla sola tampoco', () => {
+  for (const texto_ of ['Entiendo que quieras empezar ya, y se puede.', 'Sí, la sesión es por videollamada.', 'Gracias a ti por escribirnos.', 'Perfecto 🙌', 'Eso dice mucho de tu constancia.']) {
+    assert.equal(ruta.sinMuletilla(texto_).mensaje, texto_, texto_);
+  }
+});
+
+test('la muletilla sacada vuelve como nota para el turno siguiente', () => {
+  const r = responder({ mensaje: 'Tiene sentido.\nLos antojos de la tarde suelen venir de llegar con hambre.\n¿Qué comes al mediodía?', accion: 'ninguna', calificacion: {} }, 'En la tarde');
+  assert.match(r.mensaje, /^Los antojos de la tarde/);
+  assert.match(r.ajuste, /Se sacó «Tiene sentido»/);
+});
+
+test('las preguntas que ya hizo llegan al agente para que no las repita', () => {
+  const historial = [
+    { rol: 'persona', texto: 'Bajar grasa' },
+    { rol: 'equipo', texto: 'Para bajar grasa hay que sostenerlo.\n¿Qué es lo que más te cuesta hoy: la comida, el entrenamiento o la constancia?' },
+    { rol: 'persona', texto: 'La comida' },
+    { rol: 'equipo', texto: 'Te dejo el video 👇' }
+  ];
+  const preguntas = ruta.preguntasHechas(historial);
+  assert.deepEqual(preguntas, ['¿Qué es lo que más te cuesta hoy: la comida, el entrenamiento o la constancia?']);
+  const ctx = ruta.contextoParaAgente(perfil, geoUY, 'latam', [], null, 'America/Lima', '', ruta.ecoValido(null), null, preguntas);
+  assert.match(ctx, /PREGUNTAS QUE YA LE HICISTE[^\n]*\n- ¿Qué es lo que más te cuesta hoy/);
 });
 
 test('la derivación a una línea de ayuda gratuita nunca se borra (crisis)', () => {
