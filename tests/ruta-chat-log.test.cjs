@@ -290,7 +290,8 @@ test('la primera vez que pide horarios, la persona lee el aviso; si ya está en 
  let {req,res}=pedir('Quiero empezar ya');
  await chat(req,res);
  assert.match(res.body.mensaje,/no tiene costo y dura entre 30 y 40 minutos/);
- assert.match(res.body.mensaje,/Si estás lista para empezar/);
+ assert.match(res.body.mensaje,/Si estás pensando en inscribirte/);
+ assert.match(res.body.mensaje,/intención de inscribirse al programa, que sí es pagado/);
  assert.equal(res.body.eco.aviso,true);
  assert.equal(res.body.opciones.length,2);
  assert.match(llamadas.agente.sistema,/"ya_leyo_el_aviso_de_la_sesion":false/);
@@ -308,4 +309,16 @@ test('las preguntas que el agente ya hizo le llegan aparte para que no las repit
  const {req,res}=pedir('La comida');
  await chat(req,res);
  assert.match(llamadas.agente.sistema,/PREGUNTAS QUE YA LE HICISTE[^\n]*\n- ¿Qué es lo que más te cuesta hoy\?/);
+});
+
+// 6-nov (tarde): preguntó dos veces si era gratis y el agente iba a contestar lo mismo.
+test('la segunda vez que pregunta si es gratis, el agente recibe la nota y no se repite la respuesta',async()=>{
+ const anterior='La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?';
+ const llamadas=simular({agente:{mensaje:anterior,accion:'ninguna'},
+  historial:[{rol:'persona',texto:'Es gratis?'},{rol:'equipo',texto:anterior}]});
+ const {req,res}=pedir('Es gratis?');
+ await chat(req,res);
+ assert.match(llamadas.agente.sistema,/SOBRE ESTE MENSAJE: Ya había preguntado por el costo/);
+ assert.match(res.body.mensaje,/Te lo digo directo/);
+ assert.notEqual(res.body.mensaje,anterior);
 });

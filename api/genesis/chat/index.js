@@ -155,8 +155,12 @@ module.exports = async function chat(request, response) {
   // Las preguntas que ya hizo van aparte para que no las repita (6-nov: 128 de 223
   // conversaciones repetían una); el aviso de la sesión cuenta como leído si está en la memoria.
   const avisoLeido = eco.aviso || ruta.avisoEnHistorial(historial);
+  // Si vuelve a preguntar por el costo, el agente lo sabe antes de responder (6-nov: a una
+  // persona le contestó dos veces lo mismo); y el servidor compara contra lo último que le dijo.
+  const nota = ruta.notaDelTurno(mensaje, historial);
+  const anteriores = historial.filter(function (m) { return m && m.rol === 'equipo'; }).slice(-4).map(function (m) { return String(m.texto || ''); });
   const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES,
-    Object.assign({}, eco, { aviso: avisoLeido }), consulta, ruta.preguntasHechas(historial));
+    Object.assign({}, eco, { aviso: avisoLeido }), consulta, ruta.preguntasHechas(historial), nota);
   const base = {
     conversacion: conversacion,
     mensajeUsuario: mensaje,
@@ -180,7 +184,7 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido };
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido, anteriores: anteriores };
   let respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno, body.eco);
   let reserva = null;
   if (respuesta.pendiente && respuesta.pendiente.tipo === 'horarios') {

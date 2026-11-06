@@ -60,7 +60,8 @@ test('la sesión no se vende como gratis: se saca la frase y las respuestas ráp
   const r = responder({ mensaje: 'Sí, la sesión es gratuita y dura 30 minutos.\n¿Qué día te acomoda?', opciones: ['Sesión gratis', 'Quiero empezar', 'Tengo una duda'], accion: 'ninguna', calificacion: {} }, '¿Es gratis?');
   assert.doesNotMatch(r.mensaje, /gratu|gratis/i);
   assert.match(r.mensaje, /qué día/i);
-  assert.deepEqual(r.opciones, ['Tengo una duda']);
+  // Sacar las dos dejaba sola «Tengo una duda»: con una sola no van botones (6-nov).
+  assert.deepEqual(r.opciones, []);
 });
 
 test('ningún monto llega a la persona, en ningún país: tampoco el «desde US$100» (6-nov)', () => {
@@ -118,20 +119,22 @@ test('la primera vez que ve horarios lee el aviso entero, con la línea de su ca
   assert.equal(lineas[0], 'Lo de comer a deshora por el estrés de la casa es lo primero que el coach ordena contigo.');
   for (const linea of ruta.AVISO_SESION) assert.ok(lineas.includes(linea), linea);
   assert.match(r.mensaje, /no tiene costo y dura entre 30 y 40 minutos/);
+  assert.match(r.mensaje, /profundiza contigo en nuestra metodología, para que decidas con toda la información/);
+  assert.match(r.mensaje, /intención de inscribirse al programa, que sí es pagado/);
   assert.match(r.mensaje, /3 meses como mínimo, ninguno mensual/);
   assert.match(r.mensaje, /pareja, pueden conectarse los dos/);
-  assert.equal(lineas[lineas.length - 1], '¿Qué te parece? Si quieres empezar, elige el horario que te quede mejor 👇');
+  assert.equal(lineas[lineas.length - 1], '¿Qué te parece? Si estás pensando en inscribirte, elige el horario que te quede mejor 👇');
   assert.doesNotMatch(r.mensaje, /Tiene sentido|cuál te queda/);
   assert.equal(r.eco.aviso, true);
   assert.equal(r.opciones.length, 2);
   assert.match(r.ajuste, /leyó el aviso de la sesión/);
 });
 
-test('el cierre del aviso va con el género de la persona', () => {
-  const ana = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo: 'Mujer' }) });
-  assert.match(ana.mensaje, /Si estás lista para empezar, elige el horario/);
-  const beto = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo: 'Hombre' }) });
-  assert.match(beto.mensaje, /Si estás listo para empezar/);
+test('el cierre del aviso ata el horario a inscribirse, igual para todos', () => {
+  for (const sexo of ['Mujer', 'Hombre', null]) {
+    const r = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo }) });
+    assert.match(r.mensaje, /Si estás pensando en inscribirte, elige el horario que te quede mejor/);
+  }
 });
 
 test('con el aviso ya leído no se repite: van sólo los horarios', () => {
@@ -213,4 +216,51 @@ test('que la Ruta y sus videos son gratis se puede decir; la sesión gratis no',
   const r = responder({ mensaje: 'Tu Ruta es gratuita y ya tiene orientaciones para empezar.\nLa sesión con el coach es gratis.', accion: 'ninguna', calificacion: {} }, 'hola');
   assert.match(r.mensaje, /Ruta es gratuita/);
   assert.doesNotMatch(r.mensaje, /sesión con el coach es gratis/);
+});
+
+// ── 6-nov (tarde): un chat preguntó dos veces si era gratis y recibió lo mismo ─────────────
+test('si vuelve a preguntar por el costo y el agente repite su respuesta, sale la versión corta y directa', () => {
+  const anterior = 'La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?';
+  const r = ruta.resolverRespuesta({ mensaje: anterior, accion: 'ninguna', opciones: ['Sí'], calificacion: {} }, perfil, geoUY, [], 'Es gratis?', 'c1',
+    { numero: 5, mercado: 'latam', anteriores: ['Hola', anterior] }, {});
+  assert.equal(r.mensaje, ruta.MENSAJE_COSTO_OTRA_VEZ);
+  assert.deepEqual(r.opciones, []);
+  assert.equal(r.repetido, true);
+  assert.match(r.ajuste, /Ibas a repetir/);
+  // Si la versión corta también ya la leyó, no se le repite a ella tampoco: queda el aviso al agente.
+  const otra = ruta.resolverRespuesta({ mensaje: ruta.MENSAJE_COSTO_OTRA_VEZ, accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], '¿Es gratis?', 'c1',
+    { numero: 7, mercado: 'latam', anteriores: [anterior, ruta.MENSAJE_COSTO_OTRA_VEZ] }, {});
+  assert.match(otra.ajuste, /repitió palabra por palabra/);
+});
+
+test('un mensaje distinto no cuenta como repetido aunque hable de lo mismo', () => {
+  const r = ruta.resolverRespuesta({ mensaje: 'La sesión no se cobra y el programa sí, de 3 meses como mínimo.\n¿Lo estás pensando?', accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], 'Es gratis?', 'c1',
+    { numero: 5, mercado: 'latam', anteriores: ['La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?'] }, {});
+  assert.equal(r.repetido, false);
+  assert.doesNotMatch(r.mensaje, /Te lo digo directo/);
+});
+
+test('la segunda pregunta por el costo llega al agente con su nota', () => {
+  const historial = [{ rol: 'persona', texto: 'Es gratis?' }, { rol: 'equipo', texto: 'La sesión no tiene costo…' }];
+  assert.match(ruta.notaDelTurno('Es gratis?', historial), /Ya había preguntado por el costo/);
+  assert.equal(ruta.notaDelTurno('Es gratis?', [{ rol: 'persona', texto: 'Bajar grasa' }]), '');
+  assert.equal(ruta.notaDelTurno('Tengo 4 días', historial), '');
+  const ctx = ruta.contextoParaAgente(perfil, geoUY, 'latam', [], null, 'America/Lima', '', ruta.ecoValido(null), null, [], ruta.notaDelTurno('Es gratis?', historial));
+  assert.match(ctx, /SOBRE ESTE MENSAJE: Ya había preguntado por el costo/);
+});
+
+test('la pregunta de si quiere inscribirse va sin botones', () => {
+  const r = responder({ mensaje: 'La culpa después de picar te está frenando.\n¿Estás pensando en inscribirte a un programa con un coach en estos días, o por ahora prefieres avanzar con tu Ruta?', opciones: ['Empezar con coach', 'Seguir en mi Ruta'], accion: 'ninguna', calificacion: {} }, 'Me da culpa');
+  assert.deepEqual(r.opciones, []);
+  assert.match(r.ajuste, /lo contesta escribiendo/);
+});
+
+test('si al sacar un botón prohibido queda uno solo, no queda ninguno', () => {
+  const r = responder({ mensaje: 'La constancia se rompe cuando el plan no encaja.\n¿Cómo lo quieres trabajar?', opciones: ['Quiero empezar', 'Seguir con mi Ruta'], accion: 'ninguna', calificacion: {} }, 'La constancia');
+  assert.deepEqual(r.opciones, []);
+});
+
+test('al agente se le corrige «su Ruta» por «tu Ruta»', () => {
+  const r = responder({ mensaje: 'Su Ruta ya tiene orientaciones para empezar.\nSi más adelante quieres, aquí seguimos con su Ruta.', accion: 'ninguna', calificacion: {} }, 'No');
+  assert.equal(r.mensaje, 'Tu Ruta ya tiene orientaciones para empezar.\nSi más adelante quieres, aquí seguimos con tu Ruta.');
 });
