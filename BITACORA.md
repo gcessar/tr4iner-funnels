@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-09 — Ruta: ventana de entrada con el video prometido por un reel o el aviso del equipo (SIN publicar)
+## 2026-11-09 — Ruta: ventana de entrada con el video prometido por un reel o el aviso del equipo (publicado)
 
 - **Pedido del usuario:** cada reel invita a registrarse para ver una lección; al abrir la Ruta, antes de dar play, una ventana con la portada del video prometido, dónde está y cómo verlo. Los avisos de GENESIS → Publicar deben verse apenas se abre la Ruta.
 - **Antes:** `?video=` ya viajaba del registro a la Ruta, pero sólo abría el reproductor a quien tenía plan de macros (un recién registrado no lo tiene) y sólo con el id exacto del video. El aviso era una banda (`.new-release`) que en el teléfono no se veía mientras estaba el modo «paso de hoy». Nunca se usó ninguno de los dos.
@@ -9,7 +9,8 @@
 - **Invitación a activar notificaciones (`#invita-avisos`):** sólo 23 de 18.863 miembros tenían avisos porque el permiso se pedía únicamente en el temporizador de descanso. Ahora, al abrir la Ruta, una ventana invita una vez por navegador (`tr4_avisos_invitado`) y sólo a quien puede aceptar con un toque (`RutaPush.puedeInvitar()`; iPhone sólo con la Ruta instalada; el navegador interno de Instagram no admite push). `push.js` expone `activar` y `puedeInvitar` y avisa con el evento `ruta:push-listo`; el botón del temporizador usa la misma `activar`. Versiones de `rutina.js` y `push.js` subidas a `20261109-invitacion`. Probada con el permiso simulado: el navegador de pruebas bloquea notificaciones, falta un teléfono real.
 - **Enlaces:** el equipo arma sus UTMs a mano y agrega `&video=<clave>`; GENESIS → Publicar → «Enlaces para reels» lo hace solo sobre el enlace que se le pegue. El service worker ya aceptaba título, texto y destino: no cambió.
 - **Verificación:** página servida con un CRM simulado, en tamaño de celular: ventana del video prometido, versión por sexo, no repetir, aviso y reproductor. Sin errores de script.
-- **Pendiente:** publicar con OK del usuario y probar un enlace real. Detalle en `docs/biblioteca-pipeline.md` del CRM.
+- **Publicación (9-nov, con OK del usuario):** `main` 9dea120 → 0598d80; producción verificada (`#aviso-dialog`, `#invita-avisos`, `puedeInvitar` en `push.js`). CRM `main` f71c80e.
+- **Pendiente:** probar un enlace real y activar los avisos en un teléfono real. Detalle en `docs/biblioteca-pipeline.md` del CRM.
 
 ## 2026-11-06 (2) — Chat de la Ruta: camino comercial por país y avance, sin chat en Cuba y Venezuela, y «¿es gratis?» sin repetir (publicado)
 
