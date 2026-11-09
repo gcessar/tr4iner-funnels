@@ -115,17 +115,32 @@
     const sub=await registration?.pushManager.getSubscription();if(sub)await sub.unsubscribe();subscriptionId=null;remote=null;refreshButton();status('Notificaciones desactivadas en este dispositivo.');
   }
   $('timer-alert').onclick=showHelp;
-  $('push-enable').onclick=async()=>{
+  // Devuelve 'ok', 'sin-permiso' o 'error'. Lo usan el botón del temporizador y la
+  // invitación al abrir la Ruta (9-nov-2026).
+  async function activar() {
     // El permiso se pide directamente desde el gesto del usuario, también en iOS.
-    if(!supported()||!registration||!config?.enabled){status('Los avisos no están disponibles. Recarga la ruta e inténtalo de nuevo.');return;}
+    if(!supported()||!registration||!config?.enabled){status('Los avisos no están disponibles. Recarga la ruta e inténtalo de nuevo.');return 'error';}
     const permission=await Notification.requestPermission();
-    if(permission!=='granted'){showHelp();return;}
-    $('push-enable').disabled=true;
+    if(permission!=='granted')return 'sin-permiso';
     try {
       const sub=await registration.pushManager.getSubscription() || await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes(config.publicKey)});
-      await linkSubscription(sub);$('push-help').close();status('Notificaciones activadas en este dispositivo.');
+      await linkSubscription(sub);status('Notificaciones activadas en este dispositivo.');
       if(local&&!local.paused&&remaining()>0)await enqueue(()=>startRemote(remaining()));
-    }catch(error){status(error.message || 'No se pudo activar Web Push.');}finally{$('push-enable').disabled=false;}
+      return 'ok';
+    }catch(error){status(error.message || 'No se pudo activar Web Push.');return 'error';}
+  }
+  // Sólo se invita a quien puede aceptar con un toque: navegador compatible, iPhone con la
+  // Ruta en la pantalla de inicio, permiso todavía sin responder y sin avisos activos.
+  function puedeInvitar() {
+    return Boolean(config?.enabled&&registration&&supported()&&!(ios()&&!standalone())&&Notification.permission==='default'&&!subscriptionId);
+  }
+  $('push-enable').onclick=async()=>{
+    $('push-enable').disabled=true;
+    try {
+      const resultado=await activar();
+      if(resultado==='ok')$('push-help').close();
+      else if(resultado==='sin-permiso')showHelp();
+    } finally {$('push-enable').disabled=false;}
   };
   $('push-disable').onclick=()=>enqueue(async()=>{await disable();$('push-help').close();});
   $('timer-close').onclick=()=>window.RutaPush.cancel();
@@ -167,7 +182,8 @@
     dismiss(remote?.id||local?.remoteId);remote=null;local=null;persist();paint();
     if(trigger?.isConnected)trigger.focus({preventScroll:true});
     if(target)await cancelRemote(target);
-  });},disable};
+  });},disable,activar,puedeInvitar};
+  ready.then(()=>document.dispatchEvent(new CustomEvent('ruta:push-listo')));
   setInterval(paint,250);
   window.addEventListener('online',retryCancel);
   retryCancel();

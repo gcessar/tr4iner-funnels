@@ -878,6 +878,17 @@
       current.forEach(function (value, key) { memberUrl.searchParams.set(key, value); });
       document.getElementById('member-entry').href = memberUrl.toString();
 
+      // Un reel promete un video (?video=). Quien ya es miembro y tiene la sesión abierta en
+      // este navegador no vuelve a registrarse: entra a su ruta, donde lo espera ese video.
+      if (current.get('video')) {
+        fetch('/api/genesis/me', { cache: 'no-store' }).then(function (response) {
+          if (!response.ok) return;
+          var ruta = new URL('/biblioteca/videos/', window.location.origin);
+          current.forEach(function (value, key) { ruta.searchParams.set(key, value); });
+          window.location.replace(ruta.toString());
+        }).catch(function () { /* sin red: sigue el registro */ });
+      }
+
       var intro = document.getElementById('intro-content');
       var wizard = document.getElementById('route-wizard');
       var steps = {

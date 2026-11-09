@@ -4,7 +4,7 @@
    maneja /biblioteca/ruta/push.js, el mismo que ya estaba probado. */
 (function () {
   'use strict';
-  var PUSH_VERSION = '20260926-rutina1';
+  var PUSH_VERSION = '20261109-invitacion';
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {

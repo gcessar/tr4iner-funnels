@@ -391,28 +391,18 @@
     .gate-note { margin-top: 14px; }
     .gate-note a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
 
-    /* Aviso editorial: una sola señal amarilla, no un popup que interrumpe. */
-    .new-release {
-      display: grid;
-      grid-template-columns: 150px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 18px;
-      margin: -6px 0 30px;
-      padding: 15px;
-      background: var(--card);
-      border: 1px solid var(--rule-strong);
-      border-left: 5px solid var(--mark);
-      box-shadow: 0 16px 36px -26px rgba(22, 19, 14, .45);
-    }
-    .new-release[hidden] { display: none !important; }
-    .new-release img { width: 150px; aspect-ratio: 16/9; object-fit: cover; }
-    .new-release-kicker { color: #8A6F00; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
-    .new-release h2 { margin-top: 4px; font-family: var(--serif); font-size: clamp(19px, 2.5vw, 25px); font-weight: 560; line-height: 1.15; }
-    .new-release p:not(.new-release-kicker) { margin-top: 4px; color: var(--muted); font-size: 13.5px; }
-    .new-release-actions { display: flex; align-items: center; gap: 8px; }
-    .new-release-open, .new-release-close { border: none; font-family: var(--sans); cursor: pointer; }
-    .new-release-open { padding: 12px 15px; background: var(--mark); color: var(--ink); font-size: 13px; font-weight: 700; white-space: nowrap; }
-    .new-release-close { padding: 9px; background: transparent; color: var(--muted); font-size: 20px; }
+    /* Aviso de entrada (9-nov-2026): el video que prometió el reel o el aviso que publicó el
+       equipo. Es una ventana y no la banda de antes: en el teléfono la banda no se veía. */
+    .aviso-body { padding: 18px 18px 20px; }
+    .aviso-thumb { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--paper-deep); cursor: pointer; }
+    .aviso-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
+    .aviso-thumb::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 58px; height: 58px; transform: translate(-50%, -50%); border-radius: 50%; background: rgba(17, 17, 17, .78) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center / 30px no-repeat; }
+    .aviso-body h2 { margin-top: 16px; font-size: clamp(21px, 5.4vw, 26px); font-weight: 750; letter-spacing: -.03em; line-height: 1.15; }
+    .aviso-text { margin-top: 8px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+    .aviso-donde { margin-top: 12px; padding: 10px 12px; border-left: 3px solid var(--mark); background: var(--paper-deep); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+    .aviso-donde[hidden] { display: none; }
+    .aviso-ver { width: 100%; min-height: 52px; margin-top: 18px; border: 0; border-radius: 6px; background: var(--ink); color: var(--card); font: 700 15px var(--sans); cursor: pointer; }
+    .aviso-luego { width: 100%; min-height: 44px; margin-top: 6px; border: 0; background: transparent; color: var(--muted); font: 600 13px var(--sans); cursor: pointer; }
 
     /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
     .onboard[hidden], #next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
@@ -422,10 +412,6 @@
       .onboard { grid-template-columns: 1fr; }
       .next-card { grid-template-columns: 1fr; }
       .next-card .thumb { max-height: 180px; }
-      .new-release { grid-template-columns: 96px minmax(0, 1fr); gap: 12px; }
-      .new-release img { width: 96px; }
-      .new-release-actions { grid-column: 1 / -1; }
-      .new-release-open { flex: 1; }
     }
 
     /* ── Filtros por bloque ── */
@@ -1740,10 +1726,6 @@
     .gate .onboard-cta { border: 1px solid var(--ink); }
     .gate-ghost { min-height: 52px; border-radius: 6px; background: var(--card); }
     .gate-input { min-height: 54px; border-radius: 6px; }
-    .new-release { border-radius: 8px; background: #FAFAFA; box-shadow: none; }
-    .new-release h2 { font-weight: 750; letter-spacing: -0.035em; }
-    .new-release-open { min-height: 48px; border-radius: 5px; background: var(--ink); color: var(--card); }
-    .new-release-close { min-width: 44px; min-height: 44px; }
 
     .library-layout { grid-template-columns: minmax(280px, .31fr) minmax(0, .69fr); gap: 32px; }
     .file-sheet { overflow: hidden; border-color: var(--rule-strong); border-radius: 8px; box-shadow: none; }
@@ -1804,8 +1786,6 @@
       .gate-row { align-items: stretch; flex-direction: column; }
       .gate-input { flex: 0 1 auto; }
       .gate-row .onboard-cta, .gate-row .gate-ghost { width: 100%; }
-      .new-release { grid-template-columns: 80px minmax(0, 1fr); padding: 12px; }
-      .new-release img { width: 80px; }
       .library-layout { gap: 34px; }
       .profile-summary { order: 2; }
       .route-content { order: 1; }
@@ -1902,7 +1882,6 @@
         padding-top: calc(24px + env(safe-area-inset-top));
         padding-bottom: calc(24px + env(safe-area-inset-bottom));
       }
-      body.mobile-focus-mode .new-release,
       body.mobile-focus-mode #program-content > :not(.mobile-focus):not(.mobile-profile-trigger),
       body.mobile-focus-mode footer { display: none !important; }
       body.mobile-focus-mode #program-content { display: block; }
@@ -2269,19 +2248,6 @@
       </div>
     </header>
 
-    <section class="new-release" id="new-release" hidden aria-label="Nuevo contenido disponible">
-      <img id="new-release-img" src="" alt="" width="320" height="180" />
-      <div>
-        <p class="new-release-kicker">Nuevo en tu Ruta Tr4iner</p>
-        <h2 id="new-release-title"></h2>
-        <p id="new-release-body"></p>
-      </div>
-      <div class="new-release-actions">
-        <button type="button" class="new-release-open" id="new-release-open">Ver ahora →</button>
-        <button type="button" class="new-release-close" id="new-release-close" aria-label="Ocultar aviso">×</button>
-      </div>
-    </section>
-
     <section class="onboard gate" id="gate" hidden aria-label="Confirma tu plaza">
       <div>
         <h2 id="gate-title"></h2>
@@ -2525,6 +2491,40 @@
     </div>
   </dialog>
 
+  <dialog class="profile-dialog" id="aviso-dialog" aria-labelledby="aviso-title">
+    <div class="profile-dialog-head">
+      <span id="aviso-kicker">Nuevo en tu Ruta Tr4iner</span>
+      <button type="button" class="profile-dialog-close" id="aviso-close" aria-label="Cerrar aviso">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="aviso-body">
+      <button type="button" class="aviso-thumb" id="aviso-thumb" aria-label="Ver el video ahora">
+        <img id="aviso-img" src="" alt="" width="960" height="540" />
+      </button>
+      <h2 id="aviso-title"></h2>
+      <p class="aviso-text" id="aviso-text"></p>
+      <p class="aviso-donde" id="aviso-donde" hidden></p>
+      <button type="button" class="aviso-ver" id="aviso-ver">Ver ahora →</button>
+      <button type="button" class="aviso-luego" id="aviso-luego">Verlo después</button>
+    </div>
+  </dialog>
+
+  <dialog class="profile-dialog" id="invita-avisos" aria-labelledby="invita-avisos-title">
+    <div class="profile-dialog-head">
+      <span>Avisos de tu Ruta</span>
+      <button type="button" class="profile-dialog-close" id="invita-avisos-close" aria-label="Ahora no">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="aviso-body">
+      <h2 id="invita-avisos-title" style="margin-top:6px">Entérate cuando salga un video nuevo.</h2>
+      <p class="aviso-text" id="invita-avisos-text">Activa las notificaciones en este dispositivo y te avisamos cada vez que haya una lección nueva en tu ruta. También te avisa cuando termina tu descanso entre series.</p>
+      <button type="button" class="aviso-ver" id="invita-avisos-ok">Activar notificaciones</button>
+      <button type="button" class="aviso-luego" id="invita-avisos-no">Ahora no</button>
+    </div>
+  </dialog>
+
   <dialog class="profile-dialog" id="dias-dialog" aria-labelledby="dias-title">
     <div class="profile-dialog-head">
       <span>Tu semana de entrenamiento</span>
@@ -2599,7 +2599,7 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20261015-sin-boton-reproductor"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261109-invitacion"></script>
   <script src="/biblioteca/assets/ruta-chat.js?v=20261103-lectura"></script>
   <script>
     (async function () {
@@ -2719,7 +2719,7 @@
       var activeAnnouncement = null;
       var catalogFailed = false;
       var rutaPorDias = false;
-      var announcementShown = false;
+      var avisoMostrado = false;
       if (memberSession) {
         // Un fallo nunca debe reactivar el catálogo antiguo y saltarse el calendario del CRM.
         BLOQUES = []; VIDEOS = [];
@@ -2928,7 +2928,7 @@
         setupMobileExperience();
         updateBridge();
         maybeStartTour();
-        showAnnouncement();
+        mostrarAvisoDeEntrada();
       }
 
       function resolverIdentidad() {
@@ -3412,7 +3412,7 @@
       function syncModalState() {
         var routineSheet = document.getElementById('routine-sheet');
         var diasDialog = document.getElementById('dias-dialog');
-        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open) || (diasDialog && diasDialog.open)));
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open) || (diasDialog && diasDialog.open) || (avisoDialog && avisoDialog.open) || (invitaAvisos && invitaAvisos.open)));
       }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
@@ -3891,32 +3891,159 @@
         }).catch(function () {});
       }
 
-      function showAnnouncement() {
-        if (!activeAnnouncement || gateActivo || mobileFocusActive || announcementShown) return;
-        var banner = document.getElementById('new-release');
-        document.getElementById('new-release-img').src = activeAnnouncement.thumbnail ||
-          ('https://i.ytimg.com/vi/' + activeAnnouncement.videoId + '/hqdefault.jpg');
-        document.getElementById('new-release-title').textContent = activeAnnouncement.title;
-        document.getElementById('new-release-body').textContent = activeAnnouncement.body || activeAnnouncement.videoTitle;
-        banner.hidden = false;
-        announcementShown = true;
+      // ── Aviso de entrada (9-nov-2026) ────────────────────────
+      // Uno por visita. Primero el video que prometió el reel: llega como ?video= desde el
+      // registro, el correo de acceso o el enlace del reel. Si no hay, el aviso de GENESIS.
+      var avisoDialog = document.getElementById('aviso-dialog');
+      var avisoActual = null;
+      var avisoAccion = '';
+      var PROMESA_KEY = 'tr4_promesa_';
+
+      // La clave es el id del video o el slug de la lección, con o sin «ruta-». Las lecciones
+      // con una versión por sexo llevan a la de la ruta de este miembro.
+      function videoPrometido() {
+        var clave = String(params.get('video') || '').trim();
+        if (!clave) return null;
+        var base = clave.replace(/^ruta-/, '').replace(/-mujeres$/, '');
+        var candidatos = [clave, 'ruta-' + clave, 'ruta-' + base, 'ruta-' + base + '-mujeres'];
+        for (var i = 0; i < candidatos.length; i++) {
+          var candidato = candidatos[i];
+          var hallado = VIDEOS.find(function (item) { return item.id === candidato || item.slug === candidato; });
+          if (hallado) return hallado;
+        }
+        return null;
+      }
+      function empezado(v) {
+        var avance = remoteProgress[v.id];
+        return isDone(v.id) || !!(avance && (avance.completed || avance.watchedSeconds > 0));
+      }
+      function promesaCerrada(v) {
+        try { return !!window.localStorage.getItem(PROMESA_KEY + v.id); } catch (e) { return false; }
+      }
+      function dondeEsta(v, b) {
+        var delModulo = VIDEOS.filter(function (item) { return item.bloque === v.bloque; });
+        var lugar = 'Módulo ' + b.num + ' · ' + b.name;
+        if (delModulo.length > 1) lugar += ' · lección ' + (delModulo.indexOf(v) + 1) + ' de ' + delModulo.length;
+        return lugar;
+      }
+      function abrirAviso(datos) {
+        avisoActual = datos;
+        avisoAccion = '';
+        avisoMostrado = true;
+        document.getElementById('aviso-kicker').textContent = datos.kicker;
+        document.getElementById('aviso-title').textContent = datos.title;
+        document.getElementById('aviso-text').textContent = datos.text;
+        var donde = document.getElementById('aviso-donde');
+        donde.hidden = !datos.donde;
+        donde.textContent = datos.donde || '';
+        // Cerrar un aviso lo da por visto para siempre; el video prometido queda en la ruta.
+        document.getElementById('aviso-luego').textContent = datos.tipo === 'promesa' ? 'Verlo después' : 'Ahora no';
+        var img = document.getElementById('aviso-img');
+        if (datos.video) pintarMiniatura(img, datos.video);
+        else { img.removeAttribute('srcset'); img.src = datos.thumb; }
+        avisoDialog.showModal();
+        syncModalState();
+        document.getElementById('aviso-ver').focus({ preventScroll: true });
+      }
+      // Devuelve true si la visita ya tiene destino (ventana abierta o video en marcha).
+      function mostrarAvisoDeEntrada() {
+        if (avisoMostrado || gateActivo || !memberSession || !avisoDialog) return false;
+        var diasDialog = document.getElementById('dias-dialog');
+        // Los días van primero: sin ellos no hay rutina. Al cerrar esa ventana se reintenta.
+        if ((diasDialog && diasDialog.open) || player.open) return false;
+        var prometido = videoPrometido();
+        var bloquePrometido = prometido && BLOQUES.find(function (item) { return item.id === prometido.bloque; });
+        if (prometido && bloquePrometido) {
+          // Quien ya lo empezó sigue donde lo dejó; quien dijo «después» no se lo repite.
+          if (empezado(prometido)) {
+            avisoMostrado = true;
+            setTimeout(function () { openPlayer(prometido, bloquePrometido); }, 350);
+            return true;
+          }
+          if (!promesaCerrada(prometido)) {
+            abrirAviso({
+              tipo: 'promesa', video: prometido, bloque: bloquePrometido,
+              kicker: 'El video que viniste a ver',
+              title: prometido.title,
+              text: 'Ya está en tu ruta. Tócalo y empieza ahora.',
+              donde: 'Lo encuentras en tu ruta: ' + dondeEsta(prometido, bloquePrometido) + '.'
+            });
+            return true;
+          }
+        }
+        if (!activeAnnouncement) return false;
+        var anunciado = VIDEOS.find(function (item) { return item.id === activeAnnouncement.videoId; });
+        var bloqueAnunciado = anunciado && BLOQUES.find(function (item) { return item.id === anunciado.bloque; });
+        abrirAviso({
+          tipo: 'aviso', video: anunciado || null, bloque: bloqueAnunciado || null,
+          thumb: activeAnnouncement.thumbnail || urlMiniatura(activeAnnouncement.videoId, false),
+          kicker: 'Nuevo en tu Ruta Tr4iner',
+          title: activeAnnouncement.title,
+          text: activeAnnouncement.body || activeAnnouncement.videoTitle,
+          donde: anunciado && bloqueAnunciado ? 'Lo encuentras en tu ruta: ' + dondeEsta(anunciado, bloqueAnunciado) + '.' : ''
+        });
         announceEvent('viewed');
+        return true;
       }
 
-      document.getElementById('new-release-open').addEventListener('click', function () {
-        if (!activeAnnouncement) return;
-        var video = VIDEOS.find(function (item) { return item.id === activeAnnouncement.videoId; });
-        var block = video && BLOQUES.find(function (item) { return item.id === video.bloque; });
-        announceEvent('clicked');
-        document.getElementById('new-release').hidden = true;
-        if (video && block) openPlayer(video, block);
+      function verAviso() {
+        avisoAccion = 'ver';
+        avisoDialog.close();
+      }
+      document.getElementById('aviso-ver').addEventListener('click', verAviso);
+      document.getElementById('aviso-thumb').addEventListener('click', verAviso);
+      document.getElementById('aviso-luego').addEventListener('click', function () { avisoDialog.close(); });
+      document.getElementById('aviso-close').addEventListener('click', function () { avisoDialog.close(); });
+      avisoDialog.addEventListener('click', function (event) {
+        if (event.target === avisoDialog) avisoDialog.close();
       });
-      document.getElementById('new-release-close').addEventListener('click', function () {
-        announceEvent('dismissed');
-        document.getElementById('new-release').hidden = true;
-        activeAnnouncement = null;
-        maybeStartTour();
+      // Un solo cierre para el botón, la X, Escape y el toque afuera.
+      avisoDialog.addEventListener('close', function () {
+        var datos = avisoActual;
+        avisoActual = null;
+        syncModalState();
+        if (!datos) return;
+        if (datos.tipo === 'promesa') {
+          try { window.localStorage.setItem(PROMESA_KEY + datos.video.id, '1'); } catch (e) { /* incógnito */ }
+        } else {
+          announceEvent(avisoAccion === 'ver' ? 'clicked' : 'dismissed');
+          activeAnnouncement = null;
+        }
+        if (avisoAccion === 'ver' && datos.video && datos.bloque) openPlayer(datos.video, datos.bloque);
+        else { maybeStartTour(); invitarAvisos(); }
       });
+
+      // ── Invitación a activar las notificaciones (9-nov-2026) ──
+      // El permiso sólo se pedía dentro del temporizador de descanso: 23 de 18.863 miembros lo
+      // tenían. Se invita una vez por navegador, sólo a quien puede aceptar con un toque
+      // (lo decide push.js) y nunca encima de otra ventana ni del recorrido de bienvenida.
+      var invitaAvisos = document.getElementById('invita-avisos');
+      var INVITA_KEY = 'tr4_avisos_invitado';
+      function invitarAvisos() {
+        if (!invitaAvisos || invitaAvisos.open || gateActivo || !memberSession) return;
+        if (!window.RutaPush || !window.RutaPush.puedeInvitar || !window.RutaPush.puedeInvitar()) return;
+        try { if (window.localStorage.getItem(INVITA_KEY)) return; } catch (e) { return; }
+        if (document.querySelector('dialog[open]') || !tour.hidden) return;
+        try { window.localStorage.setItem(INVITA_KEY, String(Date.now())); } catch (e) { /* incógnito */ }
+        invitaAvisos.showModal();
+        syncModalState();
+      }
+      document.addEventListener('ruta:push-listo', function () { setTimeout(invitarAvisos, 1200); });
+      document.getElementById('invita-avisos-ok').addEventListener('click', function () {
+        var boton = this;
+        boton.disabled = true;
+        // Sin esperas antes de este llamado: el navegador exige que el permiso salga del toque.
+        window.RutaPush.activar().then(function (resultado) {
+          if (resultado !== 'ok') { invitaAvisos.close(); return; }
+          document.getElementById('invita-avisos-title').textContent = 'Listo, avisos activados.';
+          document.getElementById('invita-avisos-text').textContent = 'Te avisaremos en este dispositivo cuando haya algo nuevo en tu ruta.';
+          boton.hidden = true;
+          document.getElementById('invita-avisos-no').textContent = 'Cerrar';
+        }).catch(function () { invitaAvisos.close(); });
+      });
+      document.getElementById('invita-avisos-no').addEventListener('click', function () { invitaAvisos.close(); });
+      document.getElementById('invita-avisos-close').addEventListener('click', function () { invitaAvisos.close(); });
+      invitaAvisos.addEventListener('close', syncModalState);
 
       // ── URL del wizard del plan, con identidad + atribución ──
       function planUrl() {
@@ -4235,7 +4362,7 @@
         routeIndexTitle.setAttribute('aria-level', '1');
         mobileProfileTrigger.hidden = false;
         ensureLibraryRendered();
-        showAnnouncement();
+        mostrarAvisoDeEntrada();
         requestAnimationFrame(checkReveals);
         if (moveFocus) {
           setTimeout(function () {
@@ -4275,7 +4402,7 @@
         var wasMobileExperience = document.body.classList.contains('mobile-video-experience');
         setupMobileExperience();
         if (wasMobileExperience && !mobileViewport.matches) {
-          showAnnouncement();
+          mostrarAvisoDeEntrada();
           maybeStartTour();
         }
       }
@@ -4586,7 +4713,8 @@
       setupRutaChat();
       // Primero los días (sin ellos no hay rutina); el tour queda para cuando vuelve con la rutina.
       if (!pedirDias()) maybeStartTour();
-      showAnnouncement();
+      else document.getElementById('dias-dialog').addEventListener('close', mostrarAvisoDeEntrada);
+      mostrarAvisoDeEntrada();
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
       if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
         window.RutinaUI.init({
@@ -4597,11 +4725,6 @@
             prepararRuta();
           }
         });
-      }
-      if (memberSession && plan && params.get('video')) {
-        var requested = VIDEOS.find(function (item) { return item.id === params.get('video'); });
-        var requestedBlock = requested && BLOQUES.find(function (item) { return item.id === requested.bloque; });
-        if (requested && requestedBlock) setTimeout(function () { openPlayer(requested, requestedBlock); }, 350);
       }
       requestAnimationFrame(checkReveals);
       setTimeout(checkReveals, 250);
