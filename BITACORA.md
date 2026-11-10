@@ -3,6 +3,7 @@
 ## 2026-11-10 — Ruta: banner sutil y Paso 6 «Recursos» en lugar de los popups (SOLO en la vista previa del equipo)
 
 - **Decisión del equipo (10-nov):** los popups de entrada no van. Debajo de «Ver tus siguientes pasos» (`#mobile-show-library`) sale un banner de una línea: «El video que te prometí está en el Paso 4», «Las recetas que te prometí están en el Paso 6», «Tu test de macros está en el Paso 3» (con botón «Hacer el test»). Los avisos de GENESIS → Publicar usan el mismo banner. Al tocarlo abre el paso, lo trae a la vista y lo resalta; la × lo oculta para siempre en ese navegador.
+- **Sale cada vez que el enlace trae `?video=` (corrección del mismo día, pedido del equipo):** el banner ya no se recuerda en el navegador; la × sólo lo oculta en esa visita. Antes quedaba oculto para siempre tras tocarlo o cerrarlo (`tr4_promesa_*`).
 - **`?video=<clave>`** acepta una lección (`constancia`), un recurso (`recetas`, `lista-compras`) o `test-macros`. Con `?video=` la pantalla móvil ya no salta el paso de inicio.
 - **Paso «Recursos»** (número 6, después de los casos, sólo en la Ruta por días): Recetario y Lista de compras son **texto de relleno** de la página, sin archivo detrás; falta decidir de dónde saldrán (panel GENESIS).
 - **Archivos:** `biblioteca/videos/index.html` (CSS, dos instancias del banner —móvil dentro de `#mobile-focus`, escritorio sobre la lista— y `mkRecursosGroup`). Se quitó `#aviso-dialog`; la invitación a activar notificaciones (`#invita-avisos`) sigue como ventana, a la espera de decisión.

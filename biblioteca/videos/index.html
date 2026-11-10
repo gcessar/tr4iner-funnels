@@ -3939,7 +3939,6 @@
       // el aviso que publicó el equipo en GENESIS → Publicar.
       var avisoActual = null;
       var avisoMostrado = false;
-      var PROMESA_KEY = 'tr4_promesa_';
       var bannerEls = ['aviso-banner-m', 'aviso-banner-d'].map(function (id) { return document.getElementById(id); });
 
       var ICONOS = {
@@ -3994,9 +3993,6 @@
         }
         return null;
       }
-      function promesaCerrada(id) {
-        try { return !!window.localStorage.getItem(PROMESA_KEY + id); } catch (e) { return false; }
-      }
 
       function pintarBanner(datos) {
         avisoActual = datos;
@@ -4016,7 +4012,8 @@
         bannerEls.forEach(function (el) { el.hidden = true; });
         avisoActual = null;
         if (!datos) return;
-        if (datos.clave) { try { window.localStorage.setItem(PROMESA_KEY + datos.clave, '1'); } catch (e) { /* incógnito */ } }
+        // Lo prometido por un enlace (`?video=`) sale cada vez que el enlace lo trae: la × sólo
+        // lo oculta en esta visita (10-nov, pedido del equipo). No se guarda nada.
         if (datos.publicacion) { announceEvent(porClic ? 'clicked' : 'dismissed'); activeAnnouncement = null; }
       }
 
@@ -4027,7 +4024,7 @@
         var clave = String(params.get('video') || '').trim().toLowerCase();
         var prometido = videoPrometido();
         var bloque = prometido && BLOQUES.find(function (item) { return item.id === prometido.bloque; });
-        if (prometido && bloque && !promesaCerrada(prometido.id)) {
+        if (prometido && bloque) {
           var n = numeroDelPaso(bloque.id);
           pintarBanner({
             clave: prometido.id, thumb: prometido.thumb || urlMiniatura(prometido.id, false),
@@ -4037,7 +4034,7 @@
           return true;
         }
         var alias = ALIAS_PROMESA[clave];
-        if (alias === 'macros' && !promesaCerrada('macros')) {
+        if (alias === 'macros') {
           var paso = numeroDelPaso('ruta-alimentacion');
           pintarBanner({
             clave: 'macros', icono: 'calculadora', accion: 'Hacer el test',
@@ -4048,7 +4045,7 @@
           return true;
         }
         var recurso = RECURSOS.find(function (item) { return item.id === alias; });
-        if (recurso && !promesaCerrada(recurso.id)) {
+        if (recurso) {
           pintarBanner({
             clave: recurso.id, icono: recurso.icono,
             titulo: recurso.promesa + ' están en el Paso ' + (numeroDeRecursos() || '6'),
