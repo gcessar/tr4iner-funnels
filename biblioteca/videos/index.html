@@ -3269,7 +3269,7 @@
           libraryEl.appendChild(section);
         });
         if (shown > 0 && state.bloque === 'todos') libraryEl.appendChild(mkCasosGroup());
-        if (shown > 0 && state.bloque === 'todos' && rutaPorDias) libraryEl.appendChild(mkRecursosGroup());
+        if (RECURSOS_VISIBLES && shown > 0 && state.bloque === 'todos' && rutaPorDias) libraryEl.appendChild(mkRecursosGroup());
 
         emptyEl.classList.toggle('visible', shown === 0);
         if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
@@ -3949,6 +3949,9 @@
 
       // Material para llevar el plan al día a día (nuevos y antiguos). Por ahora vive en la página;
       // cuando el equipo lo suba desde GENESIS saldrá del catálogo, con la misma forma.
+      // APAGADO para todos (10-nov): todavía no hay recursos reales y el paso no debe verse. Para
+      // encenderlo hay que decidir a quién (todos o cuentas puntuales) y cargar los recursos.
+      var RECURSOS_VISIBLES = false;
       var RECURSOS = [
         { id: 'recetas', icono: 'libro', etiqueta: 'PDF', titulo: 'Recetario Tr4iner', texto: 'Recetas simples para llevar tu plan de comidas al día a día.', promesa: 'Las recetas que te prometí' },
         { id: 'lista-compras', icono: 'lista', etiqueta: 'PDF', titulo: 'Lista de compras base', texto: 'Lo que necesitas en casa para cumplir tus comidas de la semana.', promesa: 'La lista de compras que te prometí' }
@@ -4045,7 +4048,7 @@
           return true;
         }
         var recurso = RECURSOS.find(function (item) { return item.id === alias; });
-        if (recurso) {
+        if (recurso && RECURSOS_VISIBLES) {
           pintarBanner({
             clave: recurso.id, icono: recurso.icono,
             titulo: recurso.promesa + ' están en el Paso ' + (numeroDeRecursos() || '6'),

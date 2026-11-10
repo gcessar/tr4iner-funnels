@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-10 (2) — Ruta: el paso «Recursos» se oculta para todos (publicado)
+
+- **Pedido del usuario:** el paso «Recursos» con «Recetario Tr4iner» y «Lista de compras base» se veía en su cuenta de miembro y no debe verse: todavía no hay recursos reales y, cuando los haya, sólo lo verá quien se decida.
+- **Cambio (`biblioteca/videos/index.html`):** interruptor `RECURSOS_VISIBLES = false`. Con él apagado no se dibuja el paso y los enlaces `?video=recetas` / `?video=lista-compras` no muestran banner (el del test de macros y los de lecciones siguen). El código del paso se conserva para cuando se encienda.
+- **Pendiente:** definir qué recursos hay, de dónde se cargan y a quién se muestran (todos o cuentas puntuales) antes de encenderlo.
+
 ## 2026-11-10 — Ruta: banner sutil y Paso 6 «Recursos» en lugar de los popups (publicado)
 
 - **Decisión del equipo (10-nov):** los popups de entrada no van. Debajo de «Ver tus siguientes pasos» (`#mobile-show-library`) sale un banner de una línea: «El video que te prometí está en el Paso 4», «Las recetas que te prometí están en el Paso 6», «Tu test de macros está en el Paso 3» (con botón «Hacer el test»). Los avisos de GENESIS → Publicar usan el mismo banner. Al tocarlo abre el paso, lo trae a la vista y lo resalta; la × lo oculta para siempre en ese navegador.
