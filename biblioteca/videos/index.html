@@ -391,18 +391,38 @@
     .gate-note { margin-top: 14px; }
     .gate-note a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
 
-    /* Aviso de entrada (9-nov-2026): el video que prometió el reel o el aviso que publicó el
-       equipo. Es una ventana y no la banda de antes: en el teléfono la banda no se veía. */
-    .aviso-body { padding: 18px 18px 20px; }
-    .aviso-thumb { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 8px; overflow: hidden; background: var(--paper-deep); cursor: pointer; }
-    .aviso-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
-    .aviso-thumb::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 58px; height: 58px; transform: translate(-50%, -50%); border-radius: 50%; background: rgba(17, 17, 17, .78) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center / 30px no-repeat; }
-    .aviso-body h2 { margin-top: 16px; font-size: clamp(21px, 5.4vw, 26px); font-weight: 750; letter-spacing: -.03em; line-height: 1.15; }
-    .aviso-text { margin-top: 8px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
-    .aviso-donde { margin-top: 12px; padding: 10px 12px; border-left: 3px solid var(--mark); background: var(--paper-deep); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
-    .aviso-donde[hidden] { display: none; }
-    .aviso-ver { width: 100%; min-height: 52px; margin-top: 18px; border: 0; border-radius: 6px; background: var(--ink); color: var(--card); font: 700 15px var(--sans); cursor: pointer; }
-    .aviso-luego { width: 100%; min-height: 44px; margin-top: 6px; border: 0; background: transparent; color: var(--muted); font: 600 13px var(--sans); cursor: pointer; }
+    /* Banner de aviso (10-nov-2026): la ventana de entrada resultó invasiva. Una línea sutil
+       debajo de «Ver tus siguientes pasos» dice dónde está lo que se prometió. */
+    .aviso-banner { display: flex; align-items: center; gap: 4px; width: 100%; min-width: 0; max-width: 100%; margin: 10px 0 0; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper-deep); color: var(--ink); animation: aviso-in .4s ease-out both; }
+    .aviso-banner[hidden] { display: none !important; }
+    .aviso-main { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 9px 4px 9px 10px; border: 0; background: transparent; color: inherit; cursor: pointer; font-family: var(--sans); text-align: left; }
+    .aviso-ico { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 9px; background: var(--mark); color: var(--ink); }
+    .aviso-ico svg { width: 23px; height: 23px; }
+    .aviso-mini { position: relative; flex: none; width: 76px; aspect-ratio: 16/9; overflow: hidden; border-radius: 5px; background: var(--ink); }
+    .aviso-mini img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .aviso-mini::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 22px; height: 22px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--mark) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23111' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center / 14px no-repeat; }
+    .aviso-copy { flex: 1; min-width: 0; display: block; }
+    .aviso-copy strong { display: block; font-size: 13.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
+    .aviso-copy small { display: -webkit-box; margin-top: 3px; overflow: hidden; color: var(--muted); font-size: 12px; line-height: 1.3; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .aviso-go { flex: none; padding: 0 4px 0 2px; font-size: 17px; font-style: normal; }
+    .aviso-pill { flex: none; padding: 7px 11px; border-radius: 999px; background: var(--ink); color: var(--card); font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .aviso-x { flex: none; width: 36px; height: 44px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 19px; line-height: 1; }
+    .aviso-x:hover { color: var(--ink); }
+    .aviso-banner--desk { max-width: 560px; margin: 0 0 22px; }
+    body.mobile-video-experience .aviso-banner--desk, body:not(.mobile-video-experience) .aviso-banner--mob { display: none !important; }
+    @keyframes aviso-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    .aviso-resalta { animation: aviso-resalta 2.4s ease-out 1; }
+    @keyframes aviso-resalta { 0%, 70% { box-shadow: 0 0 0 3px var(--mark); } 100% { box-shadow: 0 0 0 3px transparent; } }
+    @media (prefers-reduced-motion: reduce) { .aviso-banner { animation: none; } .aviso-resalta { animation: none; box-shadow: 0 0 0 3px var(--mark); } }
+    /* Paso de «Recursos»: material para llevar el plan al día a día. */
+    .recurso { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--card); color: var(--ink); cursor: pointer; font-family: var(--sans); text-align: left; }
+    .recurso + .recurso { margin-top: 10px; }
+    .recurso .aviso-ico { width: 48px; height: 48px; }
+    .recurso strong { display: block; font-size: 15px; font-weight: 750; letter-spacing: -.01em; }
+    .recurso em { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 13px; font-style: normal; line-height: 1.35; }
+    .recurso small { display: block; margin-bottom: 3px; color: var(--muted); font: 600 8.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .recurso > i { flex: none; margin-left: auto; font-size: 18px; font-style: normal; }
+    .recurso:hover { background: var(--paper-deep); }
 
     /* display:grid/flex pisa el atributo hidden del UA — lo restauramos explícito */
     .onboard[hidden], #next-card[hidden], .plan-chip[hidden], .avance[hidden], .gate[hidden] { display: none !important; }
@@ -2306,6 +2326,10 @@
           </span>
           <i aria-hidden="true">→</i>
         </button>
+        <div class="aviso-banner aviso-banner--mob" id="aviso-banner-m" role="region" aria-label="Aviso" hidden>
+          <button type="button" class="aviso-main"></button>
+          <button type="button" class="aviso-x" aria-label="Ocultar aviso">×</button>
+        </div>
       </section>
 
       <button type="button" class="routine-trigger" id="routine-trigger" aria-haspopup="dialog" aria-controls="routine-sheet" hidden>
@@ -2321,6 +2345,11 @@
         </span>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </button>
+
+      <div class="aviso-banner aviso-banner--desk" id="aviso-banner-d" role="region" aria-label="Aviso" hidden>
+          <button type="button" class="aviso-main"></button>
+          <button type="button" class="aviso-x" aria-label="Ocultar aviso">×</button>
+        </div>
 
       <div class="library-layout">
         <aside class="file-sheet profile-summary rv" aria-label="Resumen privado de tu punto de partida">
@@ -2488,25 +2517,6 @@
         <p id="profile-dialog-progress-label">Tu avance queda guardado.</p>
       </div>
       <a class="profile-dialog-plan" id="profile-dialog-plan" href="/biblioteca/plan/">Ver o actualizar mi punto de partida →</a>
-    </div>
-  </dialog>
-
-  <dialog class="profile-dialog" id="aviso-dialog" aria-labelledby="aviso-title">
-    <div class="profile-dialog-head">
-      <span id="aviso-kicker">Nuevo en tu Ruta Tr4iner</span>
-      <button type="button" class="profile-dialog-close" id="aviso-close" aria-label="Cerrar aviso">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
-      </button>
-    </div>
-    <div class="aviso-body">
-      <button type="button" class="aviso-thumb" id="aviso-thumb" aria-label="Ver el video ahora">
-        <img id="aviso-img" src="" alt="" width="960" height="540" />
-      </button>
-      <h2 id="aviso-title"></h2>
-      <p class="aviso-text" id="aviso-text"></p>
-      <p class="aviso-donde" id="aviso-donde" hidden></p>
-      <button type="button" class="aviso-ver" id="aviso-ver">Ver ahora →</button>
-      <button type="button" class="aviso-luego" id="aviso-luego">Verlo después</button>
     </div>
   </dialog>
 
@@ -3259,6 +3269,7 @@
           libraryEl.appendChild(section);
         });
         if (shown > 0 && state.bloque === 'todos') libraryEl.appendChild(mkCasosGroup());
+        if (shown > 0 && state.bloque === 'todos' && rutaPorDias) libraryEl.appendChild(mkRecursosGroup());
 
         emptyEl.classList.toggle('visible', shown === 0);
         if (catalogFailed) { emptyEl.querySelector('p').textContent = 'No pudimos cargar tu ruta. Recarga para reintentar.'; }
@@ -3325,6 +3336,37 @@
             track('bisagra_click', { estado: estadoBisagra(), caso: a.getAttribute('data-caso'), origen: 'modulo_casos' });
           });
         });
+        return section;
+      }
+
+      // ── Paso de recursos (10-nov-2026) ──
+      // Recetas y material descargable o interactivo para miembros nuevos y antiguos. Aquí queda
+      // lo que un video ofrece «en la descripción»: el banner de entrada lleva hasta este paso.
+      function mkRecursosGroup() {
+        var numero = String(libraryEl.querySelectorAll('.route-group').length + 1).padStart(2, '0');
+        var titulo = 'Recursos';
+        var section = document.createElement('details');
+        section.className = 'route-group route-recursos';
+        section.setAttribute('aria-label', 'Orientación ' + numero + ': ' + titulo);
+        section.addEventListener('toggle', function () {
+          if (!section.open) return;
+          libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) { if (otro !== section) otro.open = false; });
+        });
+        section.innerHTML =
+          '<summary>' +
+            '<span class="index-num">' + numero + '</span>' +
+            '<span class="index-copy"><strong>' + titulo + '</strong><small>Recetas y material para llevar tu plan al día a día.</small></span>' +
+            '<b class="index-status">' + RECURSOS.length + ' RECURSOS</b>' +
+            '<i class="index-arrow" aria-hidden="true">→</i>' +
+          '</summary>' +
+          '<div class="route-group-body">' +
+            RECURSOS.map(function (r) {
+              return '<button type="button" class="recurso" data-recurso="' + r.id + '">' +
+                '<span class="aviso-ico">' + ICONOS[r.icono] + '</span>' +
+                '<span><small>' + escapeHtml(r.etiqueta) + '</small><strong>' + escapeHtml(r.titulo) + '</strong><em>' + escapeHtml(r.texto) + '</em></span>' +
+                '<i aria-hidden="true">→</i></button>';
+            }).join('') +
+          '</div>';
         return section;
       }
 
@@ -3412,7 +3454,7 @@
       function syncModalState() {
         var routineSheet = document.getElementById('routine-sheet');
         var diasDialog = document.getElementById('dias-dialog');
-        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open) || (diasDialog && diasDialog.open) || (avisoDialog && avisoDialog.open) || (invitaAvisos && invitaAvisos.open)));
+        document.body.classList.toggle('modal-open', !!(player.open || profileDialog.open || (routineSheet && routineSheet.open) || (diasDialog && diasDialog.open) || (invitaAvisos && invitaAvisos.open)));
       }
 
       // La API puede estar bloqueada (adblockers): si no carga en 2.5s,
@@ -3891,16 +3933,55 @@
         }).catch(function () {});
       }
 
-      // ── Aviso de entrada (9-nov-2026) ────────────────────────
-      // Uno por visita. Primero el video que prometió el reel: llega como ?video= desde el
-      // registro, el correo de acceso o el enlace del reel. Si no hay, el aviso de GENESIS.
-      var avisoDialog = document.getElementById('aviso-dialog');
+      // ── Banner de aviso (10-nov-2026) ────────────────────────
+      // Sustituye a la ventana de entrada. Uno por visita, debajo de «Ver tus siguientes pasos».
+      // Primero lo que prometió el reel (`?video=<clave>`: una lección o un recurso); si no hay,
+      // el aviso que publicó el equipo en GENESIS → Publicar.
       var avisoActual = null;
-      var avisoAccion = '';
+      var avisoMostrado = false;
       var PROMESA_KEY = 'tr4_promesa_';
+      var bannerEls = ['aviso-banner-m', 'aviso-banner-d'].map(function (id) { return document.getElementById(id); });
 
-      // La clave es el id del video o el slug de la lección, con o sin «ruta-». Las lecciones
-      // con una versión por sexo llevan a la de la ruta de este miembro.
+      var ICONOS = {
+        libro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 3c-2 1.5-3 4-3 7 0 1.4.9 2 2 2h1v9"/></svg>',
+        calculadora: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>',
+        lista: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6l.9.9 1.6-1.8M4.5 12l.9.9 1.6-1.8M4.5 18l.9.9 1.6-1.8"/></svg>'
+      };
+
+      // Material para llevar el plan al día a día (nuevos y antiguos). Por ahora vive en la página;
+      // cuando el equipo lo suba desde GENESIS saldrá del catálogo, con la misma forma.
+      var RECURSOS = [
+        { id: 'recetas', icono: 'libro', etiqueta: 'PDF', titulo: 'Recetario Tr4iner', texto: 'Recetas simples para llevar tu plan de comidas al día a día.', promesa: 'Las recetas que te prometí' },
+        { id: 'lista-compras', icono: 'lista', etiqueta: 'PDF', titulo: 'Lista de compras base', texto: 'Lo que necesitas en casa para cumplir tus comidas de la semana.', promesa: 'La lista de compras que te prometí' }
+      ];
+      var ALIAS_PROMESA = { recetas: 'recetas', recetario: 'recetas', 'lista-compras': 'lista-compras', 'test-macros': 'macros', macros: 'macros' };
+
+      function numeroDelPaso(bloqueId) {
+        var resumen = libraryEl.querySelector('summary [data-meta="' + bloqueId + '"]');
+        var num = resumen && resumen.closest('summary').querySelector('.index-num');
+        return num ? String(Number(num.textContent)) : null;
+      }
+      function pasoDeRecursos() { return libraryEl.querySelector('details.route-recursos'); }
+      function numeroDeRecursos() {
+        var num = pasoDeRecursos() && pasoDeRecursos().querySelector('.index-num');
+        return num ? String(Number(num.textContent)) : null;
+      }
+
+      // Abre el paso, lo trae a la vista y resalta lo prometido un momento.
+      function irAlPaso(section, destino) {
+        if (!section) return;
+        if (document.body.classList.contains('mobile-focus-mode')) showMobileLibrary(true);
+        ensureLibraryRendered();
+        libraryEl.querySelectorAll('details.route-group[open]').forEach(function (otro) { if (otro !== section) otro.open = false; });
+        section.open = true;
+        setTimeout(function () {
+          var objetivo = (destino && section.querySelector(destino)) || section;
+          objetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          objetivo.classList.add('aviso-resalta');
+          setTimeout(function () { objetivo.classList.remove('aviso-resalta'); }, 2500);
+        }, 160);
+      }
+
       function videoPrometido() {
         var clave = String(params.get('video') || '').trim();
         if (!clave) return null;
@@ -3913,104 +3994,89 @@
         }
         return null;
       }
-      function empezado(v) {
-        var avance = remoteProgress[v.id];
-        return isDone(v.id) || !!(avance && (avance.completed || avance.watchedSeconds > 0));
+      function promesaCerrada(id) {
+        try { return !!window.localStorage.getItem(PROMESA_KEY + id); } catch (e) { return false; }
       }
-      function promesaCerrada(v) {
-        try { return !!window.localStorage.getItem(PROMESA_KEY + v.id); } catch (e) { return false; }
-      }
-      function dondeEsta(v, b) {
-        var delModulo = VIDEOS.filter(function (item) { return item.bloque === v.bloque; });
-        var lugar = 'Módulo ' + b.num + ' · ' + b.name;
-        if (delModulo.length > 1) lugar += ' · lección ' + (delModulo.indexOf(v) + 1) + ' de ' + delModulo.length;
-        return lugar;
-      }
-      function abrirAviso(datos) {
+
+      function pintarBanner(datos) {
         avisoActual = datos;
-        avisoAccion = '';
         avisoMostrado = true;
-        document.getElementById('aviso-kicker').textContent = datos.kicker;
-        document.getElementById('aviso-title').textContent = datos.title;
-        document.getElementById('aviso-text').textContent = datos.text;
-        var donde = document.getElementById('aviso-donde');
-        donde.hidden = !datos.donde;
-        donde.textContent = datos.donde || '';
-        // Cerrar un aviso lo da por visto para siempre; el video prometido queda en la ruta.
-        document.getElementById('aviso-luego').textContent = datos.tipo === 'promesa' ? 'Verlo después' : 'Ahora no';
-        var img = document.getElementById('aviso-img');
-        if (datos.video) pintarMiniatura(img, datos.video);
-        else { img.removeAttribute('srcset'); img.src = datos.thumb; }
-        avisoDialog.showModal();
-        syncModalState();
-        document.getElementById('aviso-ver').focus({ preventScroll: true });
+        bannerEls.forEach(function (el) {
+          var visual = datos.thumb
+            ? '<span class="aviso-mini"><img src="' + escapeHtml(datos.thumb) + '" alt="" width="152" height="86" decoding="async" /></span>'
+            : '<span class="aviso-ico">' + ICONOS[datos.icono] + '</span>';
+          el.querySelector('.aviso-main').innerHTML = visual +
+            '<span class="aviso-copy"><strong>' + escapeHtml(datos.titulo) + '</strong><small>' + escapeHtml(datos.texto) + '</small></span>' +
+            (datos.accion ? '<span class="aviso-pill">' + escapeHtml(datos.accion) + '</span>' : '<i class="aviso-go" aria-hidden="true">→</i>');
+          el.hidden = false;
+        });
       }
-      // Devuelve true si la visita ya tiene destino (ventana abierta o video en marcha).
+      function cerrarBanner(porClic) {
+        var datos = avisoActual;
+        bannerEls.forEach(function (el) { el.hidden = true; });
+        avisoActual = null;
+        if (!datos) return;
+        if (datos.clave) { try { window.localStorage.setItem(PROMESA_KEY + datos.clave, '1'); } catch (e) { /* incógnito */ } }
+        if (datos.publicacion) { announceEvent(porClic ? 'clicked' : 'dismissed'); activeAnnouncement = null; }
+      }
+
+      // Devuelve true si ya hay un banner a la vista.
       function mostrarAvisoDeEntrada() {
-        if (avisoMostrado || gateActivo || !memberSession || !avisoDialog) return false;
-        var diasDialog = document.getElementById('dias-dialog');
-        // Los días van primero: sin ellos no hay rutina. Al cerrar esa ventana se reintenta.
-        if ((diasDialog && diasDialog.open) || player.open) return false;
+        if (avisoMostrado || gateActivo || !memberSession || !bannerEls[0]) return false;
+        ensureLibraryRendered();
+        var clave = String(params.get('video') || '').trim().toLowerCase();
         var prometido = videoPrometido();
-        var bloquePrometido = prometido && BLOQUES.find(function (item) { return item.id === prometido.bloque; });
-        if (prometido && bloquePrometido) {
-          // Quien ya lo empezó sigue donde lo dejó; quien dijo «después» no se lo repite.
-          if (empezado(prometido)) {
-            avisoMostrado = true;
-            setTimeout(function () { openPlayer(prometido, bloquePrometido); }, 350);
-            return true;
-          }
-          if (!promesaCerrada(prometido)) {
-            abrirAviso({
-              tipo: 'promesa', video: prometido, bloque: bloquePrometido,
-              kicker: 'El video que viniste a ver',
-              title: prometido.title,
-              text: 'Ya está en tu ruta. Tócalo y empieza ahora.',
-              donde: 'Lo encuentras en tu ruta: ' + dondeEsta(prometido, bloquePrometido) + '.'
-            });
-            return true;
-          }
+        var bloque = prometido && BLOQUES.find(function (item) { return item.id === prometido.bloque; });
+        if (prometido && bloque && !promesaCerrada(prometido.id)) {
+          var n = numeroDelPaso(bloque.id);
+          pintarBanner({
+            clave: prometido.id, thumb: prometido.thumb || urlMiniatura(prometido.id, false),
+            titulo: 'El video que te prometí está en el Paso ' + n, texto: prometido.title,
+            abrir: function () { irAlPaso(libraryEl.querySelector('summary [data-meta="' + bloque.id + '"]').closest('details'), '[data-video-id="' + prometido.id + '"]'); }
+          });
+          return true;
+        }
+        var alias = ALIAS_PROMESA[clave];
+        if (alias === 'macros' && !promesaCerrada('macros')) {
+          var paso = numeroDelPaso('ruta-alimentacion');
+          pintarBanner({
+            clave: 'macros', icono: 'calculadora', accion: 'Hacer el test',
+            titulo: 'Tu test de macros está en el Paso ' + (paso || '3'),
+            texto: plan ? 'Mira tus calorías y macros de cada día.' : 'Calcula tus calorías y macros en 2 minutos.',
+            abrir: function () { ACCESOS.macros.abrir(); }
+          });
+          return true;
+        }
+        var recurso = RECURSOS.find(function (item) { return item.id === alias; });
+        if (recurso && !promesaCerrada(recurso.id)) {
+          pintarBanner({
+            clave: recurso.id, icono: recurso.icono,
+            titulo: recurso.promesa + ' están en el Paso ' + (numeroDeRecursos() || '6'),
+            texto: recurso.titulo + ' · ' + recurso.etiqueta,
+            abrir: function () { irAlPaso(pasoDeRecursos(), '[data-recurso="' + recurso.id + '"]'); }
+          });
+          return true;
         }
         if (!activeAnnouncement) return false;
         var anunciado = VIDEOS.find(function (item) { return item.id === activeAnnouncement.videoId; });
         var bloqueAnunciado = anunciado && BLOQUES.find(function (item) { return item.id === anunciado.bloque; });
-        abrirAviso({
-          tipo: 'aviso', video: anunciado || null, bloque: bloqueAnunciado || null,
-          thumb: activeAnnouncement.thumbnail || urlMiniatura(activeAnnouncement.videoId, false),
-          kicker: 'Nuevo en tu Ruta Tr4iner',
-          title: activeAnnouncement.title,
-          text: activeAnnouncement.body || activeAnnouncement.videoTitle,
-          donde: anunciado && bloqueAnunciado ? 'Lo encuentras en tu ruta: ' + dondeEsta(anunciado, bloqueAnunciado) + '.' : ''
+        pintarBanner({
+          publicacion: activeAnnouncement.id, thumb: activeAnnouncement.thumbnail || urlMiniatura(activeAnnouncement.videoId, false),
+          titulo: activeAnnouncement.title, texto: activeAnnouncement.body || activeAnnouncement.videoTitle,
+          abrir: function () { if (anunciado && bloqueAnunciado) irAlPaso(libraryEl.querySelector('summary [data-meta="' + bloqueAnunciado.id + '"]').closest('details'), '[data-video-id="' + anunciado.id + '"]'); }
         });
         announceEvent('viewed');
         return true;
       }
 
-      function verAviso() {
-        avisoAccion = 'ver';
-        avisoDialog.close();
-      }
-      document.getElementById('aviso-ver').addEventListener('click', verAviso);
-      document.getElementById('aviso-thumb').addEventListener('click', verAviso);
-      document.getElementById('aviso-luego').addEventListener('click', function () { avisoDialog.close(); });
-      document.getElementById('aviso-close').addEventListener('click', function () { avisoDialog.close(); });
-      avisoDialog.addEventListener('click', function (event) {
-        if (event.target === avisoDialog) avisoDialog.close();
-      });
-      // Un solo cierre para el botón, la X, Escape y el toque afuera.
-      avisoDialog.addEventListener('close', function () {
-        var datos = avisoActual;
-        avisoActual = null;
-        syncModalState();
-        if (!datos) return;
-        if (datos.tipo === 'promesa') {
-          try { window.localStorage.setItem(PROMESA_KEY + datos.video.id, '1'); } catch (e) { /* incógnito */ }
-        } else {
-          announceEvent(avisoAccion === 'ver' ? 'clicked' : 'dismissed');
-          activeAnnouncement = null;
-        }
-        if (avisoAccion === 'ver' && datos.video && datos.bloque) openPlayer(datos.video, datos.bloque);
-        else { maybeStartTour(); invitarAvisos(); }
+      bannerEls.forEach(function (el) {
+        el.querySelector('.aviso-main').addEventListener('click', function () {
+          var datos = avisoActual;
+          if (!datos) return;
+          cerrarBanner(true);
+          datos.abrir();
+        });
+        el.querySelector('.aviso-x').addEventListener('click', function () { cerrarBanner(false); });
       });
 
       // ── Invitación a activar las notificaciones (9-nov-2026) ──
@@ -4324,7 +4390,9 @@
       });
 
       function setupMobileExperience() {
-        var enabled = mobileViewport.matches && !gateActivo && !params.get('video');
+        // Con `?video=` ya no se salta esta pantalla (10-nov): el reel promete un video y el banner
+        // de abajo dice en qué paso está, en vez de abrirlo de golpe.
+        var enabled = mobileViewport.matches && !gateActivo;
         document.body.classList.toggle('mobile-video-experience', enabled);
         mobileProfileTrigger.hidden = !enabled;
         if (!enabled) {

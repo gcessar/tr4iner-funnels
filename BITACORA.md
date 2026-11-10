@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-10 — Ruta: banner sutil y Paso 6 «Recursos» en lugar de los popups (SOLO en la vista previa del equipo)
+
+- **Decisión del equipo (10-nov):** los popups de entrada no van. Debajo de «Ver tus siguientes pasos» (`#mobile-show-library`) sale un banner de una línea: «El video que te prometí está en el Paso 4», «Las recetas que te prometí están en el Paso 6», «Tu test de macros está en el Paso 3» (con botón «Hacer el test»). Los avisos de GENESIS → Publicar usan el mismo banner. Al tocarlo abre el paso, lo trae a la vista y lo resalta; la × lo oculta para siempre en ese navegador.
+- **`?video=<clave>`** acepta una lección (`constancia`), un recurso (`recetas`, `lista-compras`) o `test-macros`. Con `?video=` la pantalla móvil ya no salta el paso de inicio.
+- **Paso «Recursos»** (número 6, después de los casos, sólo en la Ruta por días): Recetario y Lista de compras son **texto de relleno** de la página, sin archivo detrás; falta decidir de dónde saldrán (panel GENESIS).
+- **Archivos:** `biblioteca/videos/index.html` (CSS, dos instancias del banner —móvil dentro de `#mobile-focus`, escritorio sobre la lista— y `mkRecursosGroup`). Se quitó `#aviso-dialog`; la invitación a activar notificaciones (`#invita-avisos`) sigue como ventana, a la espera de decisión.
+- **Dónde está:** rama `work/ruta-hombres-preview` (Preview privado del equipo). **Producción sigue con los popups del 9-nov.**
+- **Verificación:** `node --test tests/*.test.cjs` 85/85; probado en local con el contenido real de producción (`scripts/ruta-local.ts` del CRM), móvil y escritorio.
+- **Pendiente:** OK del equipo en la vista previa; decidir los recursos reales y la invitación a notificaciones; actualizar en el CRM la vista previa de Publicar (todavía dibuja una ventana).
+
 ## 2026-11-09 — Ruta: ventana de entrada con el video prometido por un reel o el aviso del equipo (publicado)
 
 - **Pedido del usuario:** cada reel invita a registrarse para ver una lección; al abrir la Ruta, antes de dar play, una ventana con la portada del video prometido, dónde está y cómo verlo. Los avisos de GENESIS → Publicar deben verse apenas se abre la Ruta.
