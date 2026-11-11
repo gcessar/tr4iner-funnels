@@ -721,6 +721,55 @@
     ui.fab.classList.remove('teaser-on', 'is-typing');
   }
 
+  // ── Retomar ──────────────────────────────────────────────
+  // Si la última vez escribió que quería empezar y el chat no le dio el paso (11-nov), al volver
+  // a su Ruta el chat se abre solo con el mensaje que faltó: el WhatsApp del equipo o, en los
+  // mercados con sesión, la elección entre videollamada y WhatsApp. Quién y qué lee lo decide el
+  // servidor (`/api/genesis/chat/retomar`); acá sólo se pregunta una vez por día, se espera a que
+  // no haya un video, un formulario o el recorrido abiertos, y se avisa que se mostró para que
+  // no vuelva a salir.
+  var RETOMAR = ENDPOINT + '/retomar';
+  var RETOMAR_KEY = 'tr4_ruta_chat_retomar:';
+  var RETOMAR_ESPERA = 2500;
+
+  function consultarRetomar() {
+    var clave = RETOMAR_KEY + (opts.email || 'anon');
+    if (store(clave) === hoy()) return;
+    fetch(RETOMAR, { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        // Sin respuesta no se marca el día: se vuelve a preguntar en la próxima visita.
+        if (!d) return;
+        if (!d.retomar || !d.retomar.mensaje) { store(clave, hoy()); return; }
+        var intentos = 0;
+        (function probar() {
+          setTimeout(function () {
+            // Si ella misma abrió el chat mientras tanto, el mensaje entra ahí.
+            if (tapado() && !(ui.dialog && ui.dialog.open)) { if (++intentos < 60) probar(); return; }
+            mostrarRetomar(d.retomar, clave);
+          }, intentos ? 2000 : RETOMAR_ESPERA);
+        })();
+      })
+      .catch(function () { /* la Ruta sigue igual */ });
+  }
+
+  function mostrarRetomar(item, clave) {
+    store(clave, hoy());
+    // El saludo del día ya no hace falta: el chat se abre con algo más concreto.
+    marcarSaludo();
+    retirarSaludo();
+    fetch(RETOMAR, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin', keepalive: true,
+      body: JSON.stringify({ conversacion: state.conversacion })
+    }).catch(function () { /* si no se guarda, mañana se vuelve a ofrecer */ });
+    var nuevo = { rol: 'equipo', texto: String(item.mensaje), opciones: Array.isArray(item.opciones) ? item.opciones : [], tarjeta: item.tarjeta || null };
+    track('chat_retomado', { destino: nuevo.tarjeta ? 'whatsapp' : 'elige_canal' });
+    if (ui.dialog.open) { agregar(nuevo); return; }
+    state.items.push(nuevo);
+    guardar();
+    abrir('retomar');
+  }
+
   function abrir(origen) {
     if (!ui.dialog || ui.dialog.open) return;
     retirarSaludo();
@@ -746,6 +795,7 @@
       state.mostrados = Array.isArray(state.mostrados) ? state.mostrados : [];
       state.eco = state.eco || {};
       construir();
+      consultarRetomar();
       return true;
     },
     open: function () { abrir('bisagra'); },

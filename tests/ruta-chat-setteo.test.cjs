@@ -360,7 +360,7 @@ test('EE. UU.: escribió «Si» a la oferta de empezar y el agente la repitió: 
   const r = ruta.resolverRespuesta(cruda, nuevo, geoUS, [], 'Si', 'c1', { numero: 5, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
   assert.deepEqual(r.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
   assert.match(r.mensaje, /¿Prefieres la sesión por videollamada o seguir por WhatsApp con un coach del equipo\?$/);
-  assert.match(r.ajuste, /escribió que sí a tu oferta de empezar/);
+  assert.match(r.ajuste, /escribió que quiere empezar y no le diste el paso/);
 });
 
 test('fuera de EE. UU. y Europa: el mismo «sí» va directo a WhatsApp', () => {
@@ -427,4 +427,93 @@ test('un mensaje sin pregunta ni paso le llega al agente como nota para el turno
   assert.match(r.ajuste, /terminó sin una pregunta ni un paso concreto/);
   const conPregunta = ruta.resolverRespuesta({ mensaje: '¿Cuánto tiempo llevas así?', accion: 'ninguna', calificacion: {} }, nuevo, geoUS, [], 'Bien', 'c1', { numero: 2, mercado: 'alto' }, {});
   assert.equal(conPregunta.ajuste, null);
+});
+
+test('quien escribe por su cuenta que quiere empezar o que la guíen recibe su paso (el atajo)', () => {
+  for (const si of ['Quiero empezar', 'Quiero que me guíen', 'Quisiera tener un coach', 'Necesito un coach', '¿Cómo me inscribo?', 'Quiero inscribirme']) assert.equal(ruta.pideEmpezar(si), true, si);
+  for (const no of ['Quiero empezar a entrenar en casa', 'Quiero bajar grasa', 'Quiero empezar pero después', 'No quiero un coach', 'Bajar grasa']) assert.equal(ruta.pideEmpezar(no), false, no);
+  // España, 8-nov: «Quiero que me guíen» y el chat siguió hablando sin dar el paso.
+  const cruda = { mensaje: 'El coach revisa tu caso y te da un diagnóstico claro.', accion: 'ninguna', calificacion: {} };
+  const alto = ruta.resolverRespuesta(cruda, nuevo, { pais: 'ES' }, [], 'Quiero que me guíen', 'c1', { numero: 2, mercado: 'alto', anteriores: ['¿Qué te gustaría lograr?'] }, {});
+  assert.deepEqual(alto.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
+  const latam = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Quiero que me guíen', 'c1', { numero: 2, mercado: 'latam', anteriores: ['¿Qué te gustaría lograr?'] }, {});
+  assert.equal(latam.tarjeta.tipo, 'whatsapp');
+  assert.match(ruta.notaDelTurno('Quiero que me guíen', [{ rol: 'equipo', texto: '¿Qué te gustaría lograr?' }], ruta.caminoPara(perfil, geoUY, {})), /es el atajo/);
+});
+
+test('«sí, muéstrenme» a «¿quieres que te mostremos cómo lo trabajamos con un coach?» pide ver, no empezar', () => {
+  assert.equal(ruta.ofertaEn('¿Quieres que te mostremos cómo lo trabajamos con un coach?').tipo, 'video');
+  assert.equal(ruta.ofertaEn('Si ya quieres que te guíen, te mostramos cómo sería la sesión y te damos el siguiente paso.').tipo, 'empezar');
+  // Si después de la oferta cierra con otra pregunta, el «sí» responde a esa.
+  assert.equal(ruta.ofertaEn('Si quieres, te mostramos cómo armamos el entrenamiento.\n¿Te hace sentido con lo que buscas?'), null);
+  const r = ruta.resolverRespuesta({ mensaje: 'Te mostramos cómo lo trabajamos.\n¿Cuántos días entrenas?', accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], 'Sí, muéstrenme', 'c1',
+    { numero: 3, mercado: 'latam', anteriores: ['¿Quieres que te mostremos cómo lo trabajamos con un coach?'] }, {});
+  assert.equal(r.tarjeta, null);
+});
+
+// ── Retomar a quien quedó sin su paso (11-nov-2026) ────────
+const AHORA = new Date('2026-11-11T18:00:00Z');
+function t(persona, equipo, extra) {
+  return Object.assign({ conversacion: 'c1', at: '2026-11-10T15:00:00.000Z', persona, equipo, accion: 'ninguna', opciones: [], tarjeta: null, camino: 'alto_nuevo' }, extra || {});
+}
+const SIN_HECHOS = { agendo: false, whatsappAt: null, diagnosticoAt: null, cliente: false };
+const SESION = { sesion: true };
+const SIN_SESION = { sesion: false };
+
+test('retomar: escribió que sí a la oferta de empezar y el chat no le dio el paso', () => {
+  // EE. UU., 10-nov: el caso real que dijo «sí» cuatro veces.
+  const turnos = [t('Ganar músculo', OFERTA_EMPEZAR), t('Si', 'Ese “sí” nos sirve para avanzar.\nSi ya quieres empezar, te armamos el siguiente paso con un coach.')];
+  assert.deepEqual(ruta.pasoPendiente(turnos, SIN_HECHOS, SESION, AHORA), { motivo: 'si_sin_paso', at: '2026-11-10T15:00:00.000Z' });
+  // Sin nada del CRM (falló la consulta de hechos) también se decide con los turnos.
+  assert.equal(ruta.pasoPendiente(turnos, null, SESION, AHORA).motivo, 'si_sin_paso');
+});
+
+test('retomar: pidió empezar por su cuenta, o quedó en «¿videollamada o WhatsApp?» sin ir a sesión', () => {
+  assert.equal(ruta.pasoPendiente([t('Quiero que me guíen', 'El coach revisa tu caso.')], SIN_HECHOS, SESION, AHORA).motivo, 'pidio_empezar');
+  const eleccion = [t('Guia', '¿Prefieres seguir por WhatsApp o la sesión?', { opciones: ['Por WhatsApp', 'Sesión por videollamada'], camino: 'nutrir' })];
+  assert.equal(ruta.pasoPendiente(eleccion, SIN_HECHOS, SIN_SESION, AHORA).motivo, 'eleccion_sin_sesion');
+  // A quien sí va a sesión, esa elección fue su paso: no se la persigue.
+  assert.equal(ruta.pasoPendiente(eleccion.map((x) => Object.assign({}, x, { camino: 'prioridad' })), SIN_HECHOS, SESION, AHORA), null);
+});
+
+test('retomar: no se molesta a quien ya tuvo su paso, frenó, pidió ver algo o ya fue', () => {
+  const pendiente = [t('Ganar músculo', OFERTA_EMPEZAR), t('Si', 'Si ya quieres empezar, el coach revisa tu caso.')];
+  const sin = (turnos, hechos, camino) => assert.equal(ruta.pasoPendiente(turnos, hechos || SIN_HECHOS, camino || SESION, AHORA), null);
+  sin(pendiente.concat([t('Por WhatsApp', 'Te pasamos 👇', { accion: 'pasar_a_whatsapp', tarjeta: { tipo: 'whatsapp', destino: 'whatsapp' } })]));
+  sin(pendiente.concat([t('Sesión por videollamada', 'Horarios:', { accion: 'proponer_horarios' })]));
+  sin(pendiente.concat([t('[Volvió a su Ruta]', 'Hola de nuevo…', { accion: 'retomar' })]));
+  sin(pendiente.concat([t('Por ahora sigo con mi Ruta', 'Sigue con tu Ruta.')]));
+  sin([t('x', '¿Quieres que te mostremos cómo lo trabajamos con un coach?'), t('Sí, muéstrenme', 'Te mostramos.')]);
+  sin([t('x', OFERTA_EMPEZAR), t('Si', 'Te dejo el video 👇', { accion: 'mostrar_video', tarjeta: { tipo: 'video', destino: null } })]);
+  sin([t('x', OFERTA_EMPEZAR), t('Bien', 'Si ya quieres empezar…')]); // un «ok» no alcanza
+  sin(pendiente, Object.assign({}, SIN_HECHOS, { agendo: true }));
+  sin(pendiente, Object.assign({}, SIN_HECHOS, { cliente: true }));
+  sin(pendiente, Object.assign({}, SIN_HECHOS, { whatsappAt: '2026-11-10T16:00:00.000Z' }));
+  sin(pendiente, Object.assign({}, SIN_HECHOS, { diagnosticoAt: '2026-11-10T15:03:00.000Z' }));
+  // Un clic ANTERIOR al «sí» no cuenta: después volvió a pedir y no recibió nada.
+  assert.equal(ruta.pasoPendiente(pendiente, Object.assign({}, SIN_HECHOS, { whatsappAt: '2026-11-01T10:00:00.000Z' }), SESION, AHORA).motivo, 'si_sin_paso');
+  // Charlas de antes del 6-nov (sin camino calculado): ahí el chat vendía el Plan Esencial o agendaba a todos.
+  sin([t('x', '¿Estás buscando información o quieres empezar a hacer el cambio?', { camino: null }), t('Quiero empezar', 'Con el Esencial te armamos tu plan…', { camino: null })]);
+  // Pasó más de un mes, o la charla siguió largo por otro lado.
+  sin(pendiente.map((x) => Object.assign({}, x, { at: '2026-10-01T15:00:00.000Z' })));
+  sin(pendiente.concat([t('a', 'b'), t('c', 'd'), t('e', 'f'), t('g', 'h')]));
+  // La oferta de otra conversación no cuenta como la que contestó.
+  sin([t('x', OFERTA_EMPEZAR, { conversacion: 'vieja' }), t('Si', 'Cuéntanos más.')]);
+  sin([], SIN_HECHOS);
+});
+
+test('retomar: lo que lee al volver da el paso que faltó, según su camino', () => {
+  const alto = ruta.respuestaParaRetomar({ nombre: 'Maria' }, SESION);
+  assert.match(alto.mensaje, /^Hola de nuevo, Maria\. La última vez nos dijiste que querías empezar y nos faltó darte el siguiente paso\./);
+  assert.match(alto.mensaje, /¿Prefieres la sesión por videollamada o seguir por WhatsApp con un coach del equipo\?$/);
+  assert.deepEqual(alto.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
+  assert.equal(alto.tarjeta, null);
+  const latam = ruta.respuestaParaRetomar(perfil, SIN_SESION);
+  assert.equal(latam.tarjeta.tipo, 'whatsapp');
+  assert.deepEqual(latam.opciones, []);
+  assert.doesNotMatch(latam.mensaje, /videollamada|gratis|\$/i);
+  assert.match(latam.mensaje, /es pagado y de 3 meses como mínimo/);
+  assert.match(ruta.respuestaParaRetomar({}, SIN_SESION).mensaje, /^Hola de nuevo\. /);
+  // El turno de retomar, ya guardado, cuenta como paso dado.
+  assert.equal(ruta.MARCA_RETOMAR, '[Volvió a su Ruta]');
 });
