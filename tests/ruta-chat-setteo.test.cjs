@@ -335,3 +335,96 @@ test('una reserva ya en curso (con horarios ofrecidos) no se corta aunque el cam
     { numero: 6, mercado: 'latam' }, { horarios, horario_elegido: 'h1' });
   assert.equal(r.pendiente.tipo, 'agendar');
 });
+
+// ── Chats que no avanzan (11-nov-2026) ─────────────────────
+// Casos tomados de conversaciones reales del 6 al 11-nov: la persona escribía que sí y el chat
+// volvía a ofrecer lo mismo sin dar el paso.
+const OFERTA_EMPEZAR = 'Lo armamos contigo según tu rutina real y lo que comes hoy.\nSi ya quieres empezar, el coach revisa tu caso y te dice cómo seguir con claridad.';
+
+test('se reconoce un sí escrito, un «ok» que no alcanza y lo que no es un sí', () => {
+  for (const si of ['Si', 'Sí', 'Si por favor', 'Sí, quiero guía', 'Si por favor me ayudas a armar la rutina', 'Guia', 'Quiero que me guíen', 'Claro', 'Dale']) assert.equal(ruta.tipoDeSi(si), 'fuerte', si);
+  for (const ok of ['Ok', 'Bien', 'Muy bien', 'Bueno', 'Vale', 'De acuerdo']) assert.equal(ruta.tipoDeSi(ok), 'debil', ok);
+  for (const no of ['No', 'Sí, pero después', 'Si pero cuánto cuesta', 'Avanzar con mi ruta', 'Por ahora no', 'Bajar grasa', 'Entreno en casa de lunes a viernes', '']) assert.equal(ruta.tipoDeSi(no), null, no);
+});
+
+test('se reconoce qué le ofreció el agente en su último mensaje', () => {
+  assert.equal(ruta.ofertaEn(OFERTA_EMPEZAR).tipo, 'empezar');
+  assert.equal(ruta.ofertaEn('Si quieres, te mostramos el video de alimentación.').tipo, 'video');
+  assert.equal(ruta.ofertaEn('¿Quieres que te muestre esa lección o prefieres seguir avanzando con tu Ruta?').dosOpciones, true);
+  assert.equal(ruta.ofertaEn(OFERTA_EMPEZAR).dosOpciones, false);
+  assert.equal(ruta.ofertaEn('¿Qué es lo que más te cuesta hoy?'), null);
+});
+
+test('EE. UU.: escribió «Si» a la oferta de empezar y el agente la repitió: el sistema le da a elegir sesión o WhatsApp', () => {
+  const cruda = { mensaje: 'Ese “sí” nos sirve para avanzar.\nSi ya quieres empezar, te armamos el siguiente paso con un coach que revisa tu caso y te dice cómo seguir con claridad.', opciones: ['Quiero empezar'], accion: 'ninguna', calificacion: {} };
+  const r = ruta.resolverRespuesta(cruda, nuevo, geoUS, [], 'Si', 'c1', { numero: 5, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
+  assert.deepEqual(r.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
+  assert.match(r.mensaje, /¿Prefieres la sesión por videollamada o seguir por WhatsApp con un coach del equipo\?$/);
+  assert.match(r.ajuste, /escribió que sí a tu oferta de empezar/);
+});
+
+test('fuera de EE. UU. y Europa: el mismo «sí» va directo a WhatsApp', () => {
+  const cruda = { mensaje: 'Si ya quieres empezar, el coach revisa tu caso.', accion: 'ninguna', calificacion: {} };
+  const r = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Si por favor', 'c1', { numero: 5, mercado: 'latam', anteriores: [OFERTA_EMPEZAR] }, {});
+  assert.equal(r.tarjeta.tipo, 'whatsapp');
+  assert.equal(r.registro.accion, 'pasar_a_whatsapp');
+  assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
+});
+
+test('a quien no va a sesión nunca se le da a elegir la videollamada: ve el WhatsApp', () => {
+  // Colombia, 8-nov: «¿Prefieres seguir por WhatsApp o agendar una sesión por videollamada?» y la persona se fue.
+  const cruda = { mensaje: 'Sí, te ayudamos a armarlo contigo.\n¿Prefieres seguir por WhatsApp con un coach del equipo o agendar una sesión por videollamada?', opciones: ['Por WhatsApp', 'Sesión por videollamada'], accion: 'ninguna', calificacion: {} };
+  const r = ruta.resolverRespuesta(cruda, perfil, { pais: 'CO' }, [], 'Si por favor me ayudas a armar la rutina', 'c1', { numero: 4, mercado: 'latam', anteriores: ['¿Quieres que te ayudemos a armar eso contigo?'] }, {});
+  assert.equal(r.tarjeta.tipo, 'whatsapp');
+  assert.deepEqual(r.opciones, []);
+  assert.doesNotMatch(r.mensaje, /videollamada/i);
+  // En EE. UU. esa elección sí va, tal como la escribió el agente.
+  const alto = ruta.resolverRespuesta(cruda, conTest, geoUS, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'alto' }, {});
+  assert.deepEqual(alto.opciones, ['Por WhatsApp', 'Sesión por videollamada']);
+  assert.equal(alto.tarjeta, null);
+});
+
+test('un «ok», una pregunta de dos opciones o una sesión ya agendada no fuerzan el paso', () => {
+  const cruda = { mensaje: 'Ese orden evita que entrenes a ciegas.\n¿Cuánto tiempo llevas así?', accion: 'ninguna', calificacion: {} };
+  const debil = ruta.resolverRespuesta(cruda, nuevo, geoUS, [], 'Bien', 'c1', { numero: 3, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
+  assert.deepEqual(debil.opciones, []);
+  assert.equal(debil.mensaje, cruda.mensaje);
+  const dos = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Si', 'c1', { numero: 3, mercado: 'latam', anteriores: ['Si quieres que un coach revise tu caso, lo vemos por WhatsApp.\n¿Quieres seguir por ahí o prefieres avanzar con tu Ruta?'] }, {});
+  assert.equal(dos.tarjeta, null);
+  const agendada = ruta.resolverRespuesta(cruda, nuevo, geoUS, ['agendo'], 'Si', 'c1', { numero: 9, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
+  assert.deepEqual(agendada.opciones, []);
+  // Si el agente ya dio el paso, no se toca.
+  const yaDio = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios.', accion: 'proponer_horarios', calificacion: {} }, nuevo, geoUS, [], 'Si', 'c1', { numero: 5, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
+  assert.equal(yaDio.pendiente.tipo, 'horarios');
+});
+
+test('el agente sabe, antes de responder, que la persona contestó que sí y qué paso toca', () => {
+  const historial = [{ rol: 'persona', texto: 'Ganar músculo' }, { rol: 'equipo', texto: OFERTA_EMPEZAR }];
+  const alto = ruta.notaDelTurno('Si', historial, ruta.caminoPara(nuevo, geoUS, {}));
+  assert.match(alto, /ya es la señal de que quiere empezar/);
+  assert.match(alto, /«Sesión por videollamada» y «Por WhatsApp»/);
+  const latam = ruta.notaDelTurno('Sí, quiero guía', historial, ruta.caminoPara(perfil, geoUY, {}));
+  assert.match(latam, /accion pasar_a_whatsapp/);
+  assert.doesNotMatch(latam, /videollamada/);
+  assert.match(ruta.notaDelTurno('Bien', historial, ruta.caminoPara(nuevo, geoUS, {})), /pregunta del paso 6/);
+  const yaPregunto = historial.concat([{ rol: 'persona', texto: 'x' }, { rol: 'equipo', texto: '¿Estás pensando en inscribirte a un programa con un coach?' }, { rol: 'persona', texto: 'y' }, { rol: 'equipo', texto: OFERTA_EMPEZAR }]);
+  assert.match(ruta.notaDelTurno('Ok', yaPregunto, ruta.caminoPara(nuevo, geoUS, {})), /no insistas/);
+  const video = [{ rol: 'equipo', texto: '¿Quieres que te muestre el video de alimentación?' }];
+  assert.match(ruta.notaDelTurno('Si', video, ruta.caminoPara(perfil, geoUY, {})), /mostrar_video/);
+  const dos = [{ rol: 'equipo', texto: '¿Quieres que te muestre esa lección o prefieres seguir avanzando con tu Ruta?' }];
+  assert.match(ruta.notaDelTurno('Si', dos, ruta.caminoPara(perfil, geoUY, {})), /un sí a la primera/);
+  // Sin oferta previa, o sin un sí, no hay nota; y la del costo sigue saliendo.
+  assert.equal(ruta.notaDelTurno('Si', [{ rol: 'equipo', texto: '¿Entrenas en casa?' }], ruta.caminoPara(perfil, geoUY, {})), '');
+  assert.equal(ruta.notaDelTurno('Entreno en casa', historial, ruta.caminoPara(perfil, geoUY, {})), '');
+  const ctx = ruta.contextoParaAgente(nuevo, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null), null, [], alto);
+  assert.ok(ctx.includes('SOBRE ESTE MENSAJE: ' + alto));
+});
+
+test('un mensaje sin pregunta ni paso le llega al agente como nota para el turno siguiente', () => {
+  const r = ruta.resolverRespuesta({ mensaje: 'Ese orden evita que entrenes a ciegas.\nSi quieres, te mostramos cómo se ve el plan en tu caso.', opciones: ['Sí, quiero empezar'], accion: 'ninguna', calificacion: {} },
+    nuevo, geoUS, [], 'Muy bien', 'c1', { numero: 2, mercado: 'alto' }, {});
+  assert.deepEqual(r.opciones, []);
+  assert.match(r.ajuste, /terminó sin una pregunta ni un paso concreto/);
+  const conPregunta = ruta.resolverRespuesta({ mensaje: '¿Cuánto tiempo llevas así?', accion: 'ninguna', calificacion: {} }, nuevo, geoUS, [], 'Bien', 'c1', { numero: 2, mercado: 'alto' }, {});
+  assert.equal(conPregunta.ajuste, null);
+});

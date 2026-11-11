@@ -164,7 +164,7 @@ module.exports = async function chat(request, response) {
   const avisoLeido = eco.aviso || ruta.avisoEnHistorial(historial);
   // Si vuelve a preguntar por el costo, el agente lo sabe antes de responder (6-nov: a una
   // persona le contestó dos veces lo mismo); y el servidor compara contra lo último que le dijo.
-  const nota = ruta.notaDelTurno(mensaje, historial);
+  const nota = ruta.notaDelTurno(mensaje, historial, ruta.caminoPara(perfil, geo, eco));
   const anteriores = historial.filter(function (m) { return m && m.rol === 'equipo'; }).slice(-4).map(function (m) { return String(m.texto || ''); });
   const sistema = PROMPT + '\n\n' + ruta.contextoParaAgente(perfil, geo, mercado, mostrados, String(body.ajuste || '').slice(0, 900), zona, LECCIONES,
     Object.assign({}, eco, { aviso: avisoLeido }), consulta, ruta.preguntasHechas(historial), nota);

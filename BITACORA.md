@@ -1,5 +1,14 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-11 — Chat de la Ruta: no se queda dando vueltas cuando la persona ya dijo que sí (rama `claude/chat-ruta-no-se-traba`, sin publicar)
+
+- **Por qué (análisis del 11-nov sobre los chats desde el cambio del 6-nov):** de 221 personas, 15 contestaron «sí» dos veces o más y el chat nunca les dio un paso. El agente cerraba con una oferta en el aire («Si ya quieres empezar, el coach revisa tu caso»), el servidor le sacaba el botón «Quiero empezar» y el mensaje quedaba sin pregunta; al «Sí» respondía con la misma oferta con otras palabras (una persona de EE. UU. dijo que sí cuatro veces). Además, a personas que no van a sesión (Colombia) les daba a elegir «Sesión por videollamada / Por WhatsApp», y ofrecía «mostrar» lecciones de la Ruta que el chat no puede mostrar.
+- **Servidor (`lib/ruta-chat.js`):** `tipoDeSi` reconoce un sí escrito (fuerte) y un «ok» (débil); `ofertaEn` reconoce qué ofreció el agente en su último mensaje. `notaDelTurno` (ahora recibe el camino) le avisa al agente, antes de responder, que contestó que sí y qué paso toca. `resolverRespuesta` da el paso si el agente no lo da: con sesión (EE. UU./Europa) pregunta «¿videollamada o WhatsApp?» con sus dos botones; sin sesión muestra el WhatsApp. Quien no va a sesión nunca ve la opción de videollamada. Un mensaje sin pregunta ni paso vuelve como nota al turno siguiente. No se fuerza nada con un «ok», con una pregunta de dos opciones, con la sesión ya agendada ni con un menor.
+- **Instrucciones (`lib/ruta-chat-prompt.js`, cambia la versión del prompt):** cada mensaje termina en pregunta o paso; un sí escrito a una oferta cuenta; la elección de canal es sólo para quien va a sesión; no se ofrece «mostrar» una lección de la Ruta.
+- **No cambia:** los caminos por país y avance del 6-nov, el aviso de la sesión, que el compromiso se escribe (sigue sin botón «Quiero empezar») ni que no se dan montos.
+- **Verificación:** `node --test tests/*.test.cjs` → 93 de 93 (8 nuevos con casos reales). Repaso de los 15 chats trabados: 14 reciben intervención (5 con el paso dado por el servidor; 9 con nota al agente, casi todos por un video o lección prometidos). Sin probar con el modelo real: eso se ve en el Preview.
+- **Pendiente:** OK del usuario para publicar (merge a `main`). Después, medir con la versión nueva del prompt cuántos «sí» quedan sin paso.
+
 ## 2026-11-10 (2) — Ruta: el paso «Recursos» se oculta para todos (publicado)
 
 - **Pedido del usuario:** el paso «Recursos» con «Recetario Tr4iner» y «Lista de compras base» se veía en su cuenta de miembro y no debe verse: todavía no hay recursos reales y, cuando los haya, sólo lo verá quien se decida.
