@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-11 (2) — Chat de la Ruta: retoma al volver a quien quedó sin su paso (rama `claude/chat-ruta-no-se-traba`, sin publicar)
+## 2026-11-11 (2) — Chat de la Ruta: retoma al volver a quien quedó sin su paso (publicado)
 
 - **Pedido del usuario:** «para el resto de leads que se quedaron sin la acción de agendar o de ir al WhatsApp, detecta la próxima vez que entren a ver su Ruta y activa el chat mostrando el mensaje para enviarlos a donde se debió enviar antes».
 - **Cómo funciona:** al entrar a la Ruta, el chat (`biblioteca/assets/ruta-chat.js`, `consultarRetomar`) le pregunta al servidor una vez por día (`GET /api/genesis/chat/retomar`). Si hay un paso pendiente, espera a que no haya un video, un formulario o el recorrido abiertos y **abre el chat solo** con un mensaje fijo, que no pasa por el agente: «Hola de nuevo, {nombre}. La última vez nos dijiste que querías empezar y nos faltó darte el siguiente paso.» Fuera de EE. UU. y Europa sigue con la tarjeta del WhatsApp del equipo; en EE. UU. y Europa, con la pregunta «¿videollamada o WhatsApp?» y sus dos botones. Al mostrarlo avisa (`POST`), el servidor lo guarda como un turno del chat (`accion="retomar"`) y no vuelve a salir, tampoco en otro dispositivo. Evento `chat_retomado`.
@@ -9,7 +9,8 @@
 - **Datos:** el CRM entrega sus últimos turnos y lo que hizo fuera del chat (`chat-log?reciente=1`, cambio en el repo del CRM). Si el CRM falla, tarda o todavía no tiene ese cambio, la respuesta es «nada que retomar» y la Ruta sigue igual.
 - **También en esta rama (afina lo publicado hoy):** «sí, muéstrenme» a «¿quieres que te mostremos cómo lo trabajamos con un coach?» ya no cuenta como querer empezar (pide ver); si después de la oferta el mensaje cierra con otra pregunta, el «sí» responde a esa; y quien escribe por su cuenta «quiero que me guíen» o «¿cómo me inscribo?» recibe su paso aunque el agente no lo dé (`pideEmpezar`).
 - **Verificación:** `node --test tests/*.test.cjs` → 105 de 105 (12 nuevos; `tests/ruta-chat-retomar.test.cjs` simula el CRM). En local con `scripts/ruta-local.ts` del CRM (`/__retomar?caso=whatsapp|canal`) y el contenido real: el chat se abre solo en los dos casos, avisa que se mostró y no se reabre en la segunda visita. **No verificado:** contra el CRM de producción.
-- **Pendiente:** OK del usuario para publicar (CRM primero, después este repo).
+- **Publicación (con OK del usuario: «Sí, publicala»):** CRM `main` f0f39bd y después este repo, `main` 2ac782d → e1b35c5. En producción `/api/genesis/chat/retomar` responde 200 y la página carga `ruta-chat.js?v=20261111-retomar`; sin errores en los registros de los primeros minutos.
+- **Pendiente:** hacia el 20-nov, medir cuántos mensajes de retomar se mostraron (turnos con `accion='retomar'` en el CRM) y qué hicieron después.
 
 ## 2026-11-11 — Chat de la Ruta: no se queda dando vueltas cuando la persona ya dijo que sí (publicado)
 
