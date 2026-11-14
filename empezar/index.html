@@ -71,7 +71,7 @@
   <!-- El video no entra en la primera pantalla (la pinta la portada propia): sólo se
        resuelve el DNS de R2 para que llegue rápido cuando se lo pide. -->
   <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
-  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114b" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 peticiones
        a Google. Se precargan las dos que dibujan la primera pantalla. -->
@@ -337,8 +337,9 @@
     /*
       El VSL (desde nov-2026 con el reproductor propio y el video en R2; antes Vidalytics, ~300 KB
       de reproductor y ~3 s de procesador en un teléfono medio) no se carga con la página: la portada pinta el primer cuadro al instante y
-      el reproductor se monta con el primer toque, desliz o tecla, o a los 5 s del
-      `load` si la persona no hace nada. GTM se despierta en el mismo momento.
+      el reproductor se monta (sin arrancar) con el primer toque, desliz o tecla, o a los 5 s
+      del `load` si la persona no hace nada. GTM se despierta en el mismo momento. El video
+      empieza recién cuando tocan la portada.
     */
     var TR4_DESPERTAR = (function () {
       var hecho = false;
@@ -348,6 +349,7 @@
         if (hecho) return;
         hecho = true;
         EVENTOS.forEach(function (evento) { window.removeEventListener(evento, despertar, { passive: true }); });
+        window.TR4_VSL_QUIERE = true;
         cargarVideo();
         if (window.TR4_CARGAR_GTM) window.TR4_CARGAR_GTM();
         pendientes.splice(0).forEach(function (fn) { fn(); });
@@ -363,53 +365,37 @@
       return despertar;
     })();
 
+    // El reproductor se monta sin arrancar (deja el video listo detrás de la portada). El
+    // «Paso 1» queda a la vista hasta que la persona toca, y recién ahí el video empieza con
+    // sonido desde el principio (pedido del usuario del 14-nov: en el iPhone el play aparecía
+    // encima del «Paso 1» un segundo después).
     function cargarVideo() {
-      if (window.TR4_VSL_PEDIDO) return;
-      window.TR4_VSL_PEDIDO = true;
-      vigilarVideo();
-      // vsl.js llega con defer: si alguien toca antes de que termine de leerse la página,
-      // se monta en ese momento.
-      function montar() { window.TR4VSL.montar("vsl-empezar", "empezar"); }
-      if (window.TR4VSL) montar();
-      else document.addEventListener("DOMContentLoaded", montar, { once: true });
+      if (window.TR4_VSL_PEDIDO) return window.TR4_VSL_PEDIDO;
+      if (!window.TR4VSL) return null;
+      window.TR4_VSL_PEDIDO = window.TR4VSL.montar("vsl-empezar", "empezar", { autoplay: false });
+      return window.TR4_VSL_PEDIDO;
     }
+    // vsl.js llega con defer: si el primer toque llega antes, se monta al terminar de leer.
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.TR4_VSL_QUIERE) cargarVideo();
+    }, { once: true });
 
-    // La portada se va cuando el video ya tiene imagen (o, por las dudas, a
-    // los 6 s de pedirlo, para no tapar nunca su botón de play si el navegador frena la
-    // reproducción automática).
-    function vigilarVideo() {
-      var portada = document.getElementById("vsl-portada");
-      var caja = document.getElementById("vsl-empezar");
-      var listo = false;
-      function sacar() {
-        if (listo) return;
-        listo = true;
-        portada.classList.add("saliendo");
-        setTimeout(function () { portada.hidden = true; }, 300);
-      }
-      function escuchar(video) {
-        if (video.readyState >= 2) return sacar();
-        video.addEventListener("loadeddata", sacar, { once: true });
-        video.addEventListener("playing", sacar, { once: true });
-      }
-      var observador = new MutationObserver(function () {
-        var video = caja.querySelector("video");
-        if (!video) return;
-        observador.disconnect();
-        escuchar(video);
-      });
-      observador.observe(caja, { childList: true, subtree: true });
-      setTimeout(sacar, 6000);
-    }
-
-    // Tocar la portada antes de que llegue el reproductor lo pide en el acto.
     document.getElementById("vsl-portada").addEventListener("click", function () {
-      this.classList.add("cargando");
+      var portada = this;
       TR4_DESPERTAR();
+      var reproductor = cargarVideo();
+      portada.classList.add("saliendo");
+      setTimeout(function () { portada.hidden = true; }, 300);
+      if (reproductor) reproductor.reproducirConSonido();
+      else document.addEventListener("DOMContentLoaded", function () {
+        // Sin el gesto a mano el navegador puede no dejar arrancar: queda el cartel para tocar.
+        var r = cargarVideo();
+        if (r) r.reproducirConSonido();
+      }, { once: true });
     });
   </script>
 
-  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
+  <script src="/assets/vsl/vsl.js?v=20261114b" defer></script>
   <script src="/attribution.js"></script>
   <script src="/assets/planes/planes.js?v=20261027" defer></script>
   <script src="/assets/whatsapp/flotante.js?v=20261026" data-numero="17439014239" data-pagina="empezar" defer></script>

@@ -15,7 +15,13 @@
 
   Uso: <div data-tr4vsl="flor"></div> se monta solo al cargar. Para montarlo más tarde (las
   páginas que difieren el video al primer toque) se pone data-tr4vsl-diferido y se llama
-  TR4VSL.montar(elemento, 'flor').
+  TR4VSL.montar(elemento, 'flor'). Con TR4VSL.montar(elemento, 'flor', { autoplay: false }) no
+  arranca solo: la página muestra su propia portada («Paso 1») y al tocarla llama a
+  reproducirConSonido() (pedido del usuario del 14-nov: en el iPhone el play aparecía encima
+  del «Paso 1» un segundo después; mejor que el video empiece recién con el clic).
+
+  Mientras no hay sonido se ve el cartel, nunca el botón de play (también cuando el navegador
+  no deja arrancar solo, como el iPhone con ahorro de energía): un solo llamado a tocar.
 
   Mide en el dataLayer: vsl_sonido (activó el sonido), vsl_progreso con vsl_porcentaje 25, 50,
   75 y 95 (sobre el tiempo REAL, no el de la línea) y vsl_completo.
@@ -79,7 +85,8 @@
     return el;
   }
 
-  function montar(destino, slug) {
+  function montar(destino, slug, ajustes) {
+    ajustes = ajustes || {};
     var caja = typeof destino === 'string' ? document.getElementById(destino) : destino;
     var cfg = VIDEOS[slug];
     if (!caja || !cfg) return null;
@@ -100,7 +107,7 @@
     var video = document.createElement('video');
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
-    video.setAttribute('preload', 'auto');
+    video.setAttribute('preload', ajustes.autoplay === false ? 'metadata' : 'auto');
     video.setAttribute('poster', portadaUrl);
     video.setAttribute('controlslist', 'nodownload noremoteplayback noplaybackrate');
     video.setAttribute('disablepictureinpicture', '');
@@ -175,6 +182,7 @@
       estado = nuevo;
       raiz.classList.remove('is-cargando', 'is-silencio', 'is-reproduciendo', 'is-pausado', 'is-esperando', 'is-terminado');
       raiz.classList.add('is-' + nuevo);
+      raiz.classList.toggle('is-consonido', conSonido);
       play.setAttribute('aria-label', nuevo === 'terminado' ? 'Volver a ver' : 'Reproducir');
     }
 
@@ -308,11 +316,11 @@
     })();
     video.addEventListener('timeupdate', pintar);
 
-    poner('cargando');
     cargar();
-    reproducir();
+    if (ajustes.autoplay === false) poner('esperando');
+    else { poner('cargando'); reproducir(); }
 
-    var api = { video: video, raiz: raiz, slug: slug };
+    var api = { video: video, raiz: raiz, slug: slug, reproducirConSonido: activarSonido };
     caja.tr4vsl = api;
     return api;
   }

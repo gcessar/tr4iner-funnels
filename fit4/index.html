@@ -56,7 +56,7 @@
 
   <!-- El reproductor llega después de la portada: sólo se resuelve el DNS. -->
   <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
-  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114b" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 pedidos a Google. -->
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin />
@@ -1148,7 +1148,7 @@
     <button class="visor-cerrar" type="button" id="visor-cerrar" aria-label="Cerrar video">×</button>
   </div>
 
-  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
+  <script src="/assets/vsl/vsl.js?v=20261114b" defer></script>
   <script src="/attribution.js"></script>
   <script>
     (function () {
@@ -1328,46 +1328,27 @@
       embed.id = video.id;
       document.getElementById('f4c-player').appendChild(embed);
 
+      // El reproductor se monta sin arrancar, detrás de la portada. El «Paso 1» queda a la
+      // vista hasta que la persona toca, y recién ahí el video empieza con sonido (pedido del
+      // usuario del 14-nov: en el iPhone el play aparecía encima del «Paso 1»). vsl.js llega
+      // con defer: si el primer toque llega antes, se monta al terminar de leer la página.
+      var quiereVideo = false;
+      var reproductor = null;
       function cargarVideo() {
-        if (window.TR4_VSL_PEDIDO) return;
-        window.TR4_VSL_PEDIDO = true;
-        vigilarVideo();
-        // Reproductor propio con el video en R2 (reemplaza a Vidalytics, nov-2026). vsl.js
-        // llega con defer: si alguien toca antes de que termine de parsear, se espera a ese momento.
-        function montar() { window.TR4VSL.montar(embed, video.slug); }
-        if (window.TR4VSL) montar();
-        else document.addEventListener('DOMContentLoaded', montar, { once: true });
+        quiereVideo = true;
+        if (!reproductor && window.TR4VSL) reproductor = window.TR4VSL.montar(embed, video.slug, { autoplay: false });
+        return reproductor;
       }
+      document.addEventListener('DOMContentLoaded', function () { if (quiereVideo) cargarVideo(); }, { once: true });
 
-      // La portada se va cuando el video ya tiene imagen (o a los 6 s de
-      // pedirlo, para no tapar nunca su botón de play si el navegador frena el autoplay).
-      function vigilarVideo() {
-        var listo = false;
-        function sacar() {
-          if (listo) return;
-          listo = true;
-          portada.classList.add('saliendo');
-          setTimeout(function () { portada.hidden = true; }, 300);
-        }
-        function escuchar(el) {
-          if (el.readyState >= 2) return sacar();
-          el.addEventListener('loadeddata', sacar, { once: true });
-          el.addEventListener('playing', sacar, { once: true });
-        }
-        var observador = new MutationObserver(function () {
-          var el = embed.querySelector('video');
-          if (!el) return;
-          observador.disconnect();
-          escuchar(el);
-        });
-        observador.observe(embed, { childList: true, subtree: true });
-        setTimeout(sacar, 6000);
-      }
-
-      // Tocar la portada antes de que llegue el reproductor lo pide en el acto.
       portada.addEventListener('click', function () {
-        portada.classList.add('cargando');
         despertar();
+        var r = cargarVideo();
+        portada.classList.add('saliendo');
+        setTimeout(function () { portada.hidden = true; }, 300);
+        if (r) r.reproducirConSonido();
+        // Sin el gesto a mano el navegador puede no dejar arrancar: queda el cartel para tocar.
+        else document.addEventListener('DOMContentLoaded', function () { var x = cargarVideo(); if (x) x.reproducirConSonido(); }, { once: true });
       });
 
       // ── Testimonios ───────────────────────────────────────

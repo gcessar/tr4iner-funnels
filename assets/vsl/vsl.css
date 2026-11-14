@@ -10,6 +10,9 @@
   overflow: hidden;
   background: #000;
   cursor: pointer;
+  /* Capa propia: sus botones nunca quedan encima de la portada de la página (/empezar, /fit4). */
+  z-index: 0;
+  isolation: isolate;
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
@@ -43,6 +46,10 @@
   border: 0;
   border-radius: 10px;
   background: var(--vsl-aviso-fondo, #f9b301);
+  /* Un poco transparente para que se vea el video detrás (pedido del usuario, 14-nov). */
+  background: color-mix(in srgb, var(--vsl-aviso-fondo, #f9b301) 78%, transparent);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   color: var(--vsl-aviso-texto, #000);
   box-shadow: 0 10px 30px rgba(0, 0, 0, .38);
   transform: translate(-50%, -50%);
@@ -51,7 +58,9 @@
   cursor: pointer;
   animation: tr4vsl-latido 1.4s ease-in-out infinite;
 }
-.tr4vsl.is-silencio .tr4vsl-aviso { display: flex; }
+.tr4vsl.is-silencio .tr4vsl-aviso,
+.tr4vsl:not(.is-consonido).is-cargando .tr4vsl-aviso,
+.tr4vsl:not(.is-consonido).is-esperando .tr4vsl-aviso { display: flex; }
 .tr4vsl-aviso svg { width: clamp(30px, 7vw, 46px); height: auto; fill: currentColor; }
 .tr4vsl-aviso b { display: block; font-size: clamp(17px, 3.6vw, 28px); font-weight: 800; line-height: 1.05; letter-spacing: .02em; text-transform: uppercase; }
 .tr4vsl-aviso span { display: block; font-size: clamp(12px, 2.2vw, 17px); font-weight: 600; line-height: 1.15; letter-spacing: .04em; text-transform: uppercase; }
@@ -85,9 +94,9 @@
 .tr4vsl-play svg { width: 38%; height: 38%; margin-left: 8%; fill: var(--vsl-color); }
 .tr4vsl-play:active { transform: translate(-50%, -50%) scale(.94); }
 .tr4vsl.is-pausado .tr4vsl-play,
-.tr4vsl.is-esperando .tr4vsl-play,
+.tr4vsl.is-consonido.is-esperando .tr4vsl-play,
 .tr4vsl.is-terminado .tr4vsl-play,
-.tr4vsl.is-cargando .tr4vsl-play { display: grid; }
+.tr4vsl.is-consonido.is-cargando .tr4vsl-play { display: grid; }
 .tr4vsl.is-cargando .tr4vsl-play::after {
   content: "";
   position: absolute;

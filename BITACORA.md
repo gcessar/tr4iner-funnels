@@ -1,5 +1,14 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-14 (2) — VSL: «Paso 1» hasta el clic y cartel translúcido
+
+- **Pedido del usuario (probado en su iPhone):** en `/empezar` (y `/fit4`) salía el «Paso 1» de la portada y al segundo aparecía encima el botón de play del reproductor. Pidió que quede sólo el «Paso 1» y que el video empiece recién con el clic. Además, que el fondo amarillo del cartel «CLIC AQUÍ» sea un poco transparente.
+- **Por qué pasaba:** el iPhone (con ahorro de energía, por ejemplo) no deja arrancar el video solo; el reproductor quedaba «esperando» con su play, la página sacaba la portada a los 6 s y el play quedaba por encima de la portada.
+- **`/empezar` y `/fit4`:** el reproductor se monta sin arrancar (`TR4VSL.montar(…, { autoplay: false })`, `preload="metadata"`) detrás de la portada. El «Paso 1» queda hasta que tocan; ahí la portada se va y el video empieza con sonido desde el principio (`reproducirConSonido()`). Se quitó el retiro automático de la portada.
+- **Reproductor (todas las páginas):** mientras no hay sonido se ve el cartel, nunca el play (también si el navegador no deja arrancar solo). El reproductor es una capa propia (`isolation`), así que sus botones no quedan encima de una portada de la página. El cartel tiene el fondo al 78% con un leve desenfoque detrás.
+- **Corrección de paso:** el parámetro nuevo se llamaba igual que el botón de opciones y lo pisaba; renombrado a `ajustes`.
+- **Verificación local:** `/empezar` y `/fit4` sin arrancar con el «Paso 1» solo a la vista; al tocar, sonido desde 0. En Flor con el arranque bloqueado sale el cartel translúcido sin play. Caché `vsl.js`/`vsl.css` → `v=20261114b`.
+
 ## 2026-11-14 — VSL: de Vidalytics a R2 con reproductor propio y rapid engagement (publicado)
 
 - **Pedido del usuario:** se dan de baja de Vidalytics; pasar a Cloudflare R2 los videos de las páginas de `metodo.tr4iner.com` y sumarles el *rapid engagement* (la barra avanza rápido y después se estabiliza hasta completar el video). En el reproductor no se ve el tiempo: sólo el menú de opciones y el botón de play.
