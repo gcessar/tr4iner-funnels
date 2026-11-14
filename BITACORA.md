@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-14 — VSL: de Vidalytics a R2 con reproductor propio y rapid engagement (rama `work/vidalytics-a-r2`, sin publicar)
+## 2026-11-14 — VSL: de Vidalytics a R2 con reproductor propio y rapid engagement (publicado)
 
 - **Pedido del usuario:** se dan de baja de Vidalytics; pasar a Cloudflare R2 los videos de las páginas de `metodo.tr4iner.com` y sumarles el *rapid engagement* (la barra avanza rápido y después se estabiliza hasta completar el video). En el reproductor no se ve el tiempo: sólo el menú de opciones y el botón de play.
 - **Inventario (`main` f87c648, sin las copias de ClickFunnels):** 15 videos en 17 rutas. Flor `sYxbpUd09oZRWy21`, Dashiel `Vk1OyDQZVxfAOUVI`, Andrea `7cbPQZs876r6l9Ae`, Christian `5gVwwJPsJNtuN4EU`, Flor VA `gIbYz9eSdIofNh2D`, Rosita VA `RymSJVDkKpFH17Z7`, Andrea VA `QzmpW1qqYB8GFVaI`, `/empezar` `o1Hu8Smxc1TpaN4k`, `/empezar-va` `B7JmheiJ3cd63CsY`, `/fit4` AN `T7Hop2PBd6tWQl0W`, `/fit4` VA y `/fit4-va` `Rl_cXuqDVuhtabtp`, `/calendly-an` `w0UY0FRGIQo11cXX`, `/calendly-va` `2s1vpHRi_hOARyIm`, `/calendly-confirma` AN `eSFGvAyB_NIHVP9e` y VA `Mb4FA69mwzRO27Er`. Las dos `-B` archivadas (`4Pcn0XGd58riYOM2`, `5dtuyrV6J4QIqcbI`) quedaron afuera por decisión del usuario: siguen apuntando a Vidalytics y dejarán de reproducir cuando se cierre la cuenta.
@@ -10,9 +10,10 @@
 - **Medición nueva (reemplaza las estadísticas de Vidalytics):** `vsl_sonido`, `vsl_progreso` con `vsl_porcentaje` 25/50/75/95 (sobre el tiempo real) y `vsl_completo`, con `vsl` = nombre del video, al dataLayer. Falta crear los activadores en GTM si se quieren en GA4.
 - **Páginas:** las diez con embed simple cambian el `<div id="vidalytics_embed_…">` por `<div data-tr4vsl="…">` y el cargador por `vsl.js`. `/empezar` y `/fit4` conservan la portada propia y la carga diferida (primer toque o 5 s del `load`), ahora con `TR4VSL.montar`. `/calendly-confirma` conserva `hasVaUtm()` y elige `calendly-confirma-va` o `-an`. `/fit4` conserva la elección AN/VA por UTMs.
 - **Verificación local:** con copias cortas de los videos (`window.TR4VSL_ORIGEN`, porque `localhost` no pasa la regla de origen de R2): arranque en silencio con cartel, toque → inicio con sonido, pausa, menú de velocidad (1,5× aplicado), final con portada y play, eventos del dataLayer, `/empezar` diferido, 375 px sin desborde.
+- **Publicación (con OK del usuario: «No, publícalo directo», sin pasar por el Preview, cuya dirección no está en la regla WAF de R2):** `main` f87c648 → 90dc576, deployment de Production `tr4iner-funnels-csq9r4zos` listo el 14-nov.
+- **Verificación en producción:** las 17 rutas sirven `vsl.js` y ninguna carga Vidalytics. En el navegador cada una reproduce su video de R2 en silencio con el cartel y sin `vsl_error`, incluidas las elecciones por UTM (`/fit4` y `/calendly-confirma` con `TR4INER-VA` cargan el de Veronika).
 - **Pendiente:**
-  - **Preview:** la regla WAF de `video.mediatr4iner.com` no admite el alias de esta rama, así que en el Preview los videos dan 403 (en producción sí cargan). Para revisarlo ahí hay que sumar el alias a la regla (edición del WAF: con OK del usuario).
-  - OK del usuario y publicación (`main`). Después, probar en iPhone y Android reales que arranquen en silencio y que el toque active el sonido.
+  - Probar en iPhone y Android reales que arranquen en silencio y que el toque active el sonido.
   - Recién con esto en producción, dar de baja Vidalytics: las `-B` archivadas y las copias de ClickFunnels quedarán sin video.
   - Activadores de GTM para `vsl_sonido`, `vsl_progreso` y `vsl_completo` si se quieren en GA4.
 
