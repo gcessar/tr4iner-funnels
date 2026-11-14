@@ -55,7 +55,8 @@
   <link rel="icon" href="/assets/empezar/favicon-48.png" sizes="48x48" type="image/png" />
 
   <!-- El reproductor llega después de la portada: sólo se resuelve el DNS. -->
-  <link rel="dns-prefetch" href="https://fast.vidalytics.com" />
+  <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 pedidos a Google. -->
   <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/stack-sans-headline-normal-latin.woff2" crossorigin />
@@ -284,7 +285,7 @@
       background: var(--bg);
       box-shadow: var(--raise);
     }
-    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada (CLS 0). */
+    /* aspect-ratio reserva el alto antes de que el reproductor inserte nada (CLS 0). */
     .vsl-marco {
       position: relative;
       overflow: hidden;
@@ -301,7 +302,7 @@
     }
 
     /* Portada propia encima del reproductor: es el LCP y pinta el primer cuadro del video al
-       instante. Se va cuando Vidalytics ya muestra el suyo. */
+       instante. Se va cuando el reproductor ya muestra el suyo. */
     .vsl-portada {
       position: absolute;
       inset: 0;
@@ -1147,6 +1148,7 @@
     <button class="visor-cerrar" type="button" id="visor-cerrar" aria-label="Cerrar video">×</button>
   </div>
 
+  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
   <script src="/attribution.js"></script>
   <script>
     (function () {
@@ -1164,8 +1166,8 @@
       var isVA = window.TR4_FIT4_VA === true;
       var variant = isVA ? 'VA' : 'AN';
       var video = isVA
-        ? { id: 'vidalytics_embed_Rl_cXuqDVuhtabtp', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/Rl_cXuqDVuhtabtp/' }
-        : { id: 'vidalytics_embed_T7Hop2PBd6tWQl0W', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/T7Hop2PBd6tWQl0W/' };
+        ? { id: 'vsl-fit4-va', slug: 'fit4-va' }
+        : { id: 'vsl-fit4-an', slug: 'fit4-an' };
 
       // La vuelta desde Hotmart no garantiza reenviar el nombre; lo guardamos solo durante esta pestaña.
       var buyerName = params.get('first_name') || params.get('name') || params.get('nombre') || '';
@@ -1191,7 +1193,7 @@
           if (hecho) return;
           hecho = true;
           EVENTOS.forEach(function (evento) { window.removeEventListener(evento, despertar, { passive: true }); });
-          cargarVidalytics();
+          cargarVideo();
           if (window.TR4_CARGAR_GTM) window.TR4_CARGAR_GTM();
           medir('fit4_vsl_loaded');
         }
@@ -1326,23 +1328,18 @@
       embed.id = video.id;
       document.getElementById('f4c-player').appendChild(embed);
 
-      function cargarVidalytics() {
-        if (window.TR4_VIDALYTICS) return;
-        window.TR4_VIDALYTICS = true;
+      function cargarVideo() {
+        if (window.TR4_VSL_PEDIDO) return;
+        window.TR4_VSL_PEDIDO = true;
         vigilarVideo();
-        (function (v, i, d, a, l, y, t, c, s) {
-          y='_'+d.toLowerCase();c=d+'L';if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}
-          var vl='Loader',vli=v[y][vl],vsl=v[c][vl+'Script'],vlf=v[c][vl+'Loaded'],ve='Embed';
-          if(!vsl){vsl=function(u,cb){if(t){cb();return;}s=i.createElement('script');s.type='text/javascript';
-          s.async=1;s.src=u;if(s.readyState){s.onreadystatechange=function(){if(s.readyState==='loaded'||s.readyState==='complete'){
-          s.onreadystatechange=null;vlf=1;cb();}};}else{s.onload=function(){vlf=1;cb();};}
-          i.getElementsByTagName('head')[0].appendChild(s);};}
-          vsl(l+'loader.min.js',function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}
-          vli.loadScript(l+'player.min.js',function(){var vec=v[d][ve];t=new vec();t.run(a);});});
-        })(window, document, 'Vidalytics', video.id, video.url);
+        // Reproductor propio con el video en R2 (reemplaza a Vidalytics, nov-2026). vsl.js
+        // llega con defer: si alguien toca antes de que termine de parsear, se espera a ese momento.
+        function montar() { window.TR4VSL.montar(embed, video.slug); }
+        if (window.TR4VSL) montar();
+        else document.addEventListener('DOMContentLoaded', montar, { once: true });
       }
 
-      // La portada se va cuando el video de Vidalytics ya tiene imagen (o a los 6 s de
+      // La portada se va cuando el video ya tiene imagen (o a los 6 s de
       // pedirlo, para no tapar nunca su botón de play si el navegador frena el autoplay).
       function vigilarVideo() {
         var listo = false;

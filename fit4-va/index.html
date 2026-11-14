@@ -21,7 +21,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <link rel="preconnect" href="https://video.mediatr4iner.com" crossorigin />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
   <!-- Fondo del marco del video: se descubre recién al parsear el CSS y está sobre el pliegue. -->
   <link rel="preload" as="image" href="/assets/fit4/fit4-va-poster.webp" fetchpriority="high" />
   <!-- Solo los pesos que alguna regla usa de verdad; el 500 no se usaba en ninguna.
@@ -1004,6 +1005,7 @@
     <a class="btn btn-solid" data-checkout="6-meses" data-src="buybar" href="#" rel="noopener">Empezar</a>
   </div>
 
+  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
   <script src="/attribution.js"></script>
   <script>
     (function () {
@@ -1023,7 +1025,7 @@
 
       // La ruta separada elimina cualquier ambigüedad: siempre carga la VSL de Veronika.
       var variant = 'VA';
-      var video = { id: 'vidalytics_embed_Rl_cXuqDVuhtabtp', url: 'https://fast.vidalytics.com/embeds/IoH8SL8U/Rl_cXuqDVuhtabtp/' };
+      var video = { id: 'vsl-fit4-va', slug: 'fit4-va' };
 
       // La vuelta desde Hotmart no garantiza reenviar el nombre; lo guardamos solo durante esta pestaña.
       var buyerName = params.get('first_name') || params.get('name') || params.get('nombre') || '';
@@ -1190,23 +1192,13 @@
       // ── VSL ────────────────────────────────────────────────
       var embed = document.createElement('div');
       embed.id = video.id;
-      embed.style.cssText = 'width:100%;position:relative;padding-top:56.25%;';
       document.getElementById('f4c-player').appendChild(embed);
 
-      loadVidalytics(video.id, video.url);
-
-      function loadVidalytics(embedId, embedUrl) {
-        (function (v, i, d, a, l, y, t, c, s) {
-          y='_'+d.toLowerCase();c=d+'L';if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}
-          var vl='Loader',vli=v[y][vl],vsl=v[c][vl+'Script'],vlf=v[c][vl+'Loaded'],ve='Embed';
-          if(!vsl){vsl=function(u,cb){if(t){cb();return;}s=i.createElement('script');s.type='text/javascript';
-          s.async=1;s.src=u;if(s.readyState){s.onreadystatechange=function(){if(s.readyState==='loaded'||s.readyState==='complete'){
-          s.onreadystatechange=null;vlf=1;cb();}};}else{s.onload=function(){vlf=1;cb();};}
-          i.getElementsByTagName('head')[0].appendChild(s);};}
-          vsl(l+'loader.min.js',function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}
-          vli.loadScript(l+'player.min.js',function(){var vec=v[d][ve];t=new vec();t.run(a);});});
-        })(window, document, 'Vidalytics', embedId, embedUrl);
-      }
+      // Reproductor propio con el video en R2 (reemplaza a Vidalytics, nov-2026). vsl.js llega
+      // con defer, así que se monta al terminar de leer la página.
+      function montarVideo() { window.TR4VSL.montar(embed, video.slug); }
+      if (window.TR4VSL) montarVideo();
+      else document.addEventListener('DOMContentLoaded', montarVideo, { once: true });
     })();
   </script>
 </body>

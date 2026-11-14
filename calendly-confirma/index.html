@@ -36,7 +36,8 @@
   <meta name="description" content="Tu sesión con TR4INER quedó agendada. Revisa las indicaciones antes de la evaluación." />
   <link rel="canonical" href="https://metodo.tr4iner.com/calendly-confirma/" />
 
-  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <link rel="preconnect" href="https://video.mediatr4iner.com" crossorigin />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas.
        Antes había que resolver DNS y TLS contra fonts.googleapis y
        fonts.gstatic antes de dibujar una sola letra. Ahora: 0 peticiones
@@ -582,6 +583,7 @@
     </a>
   </div>
 
+  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
   <script>
     function getUrlParams() {
       const urlParams = new URLSearchParams(window.__TR4_SEARCH__ || window.location.search);
@@ -615,84 +617,14 @@
       return false;
     }
 
+    // Reproductor propio con los videos en R2 (reemplaza a Vidalytics, nov-2026). Los dos
+    // videos siguen siendo los mismos: eSFGvAyB_NIHVP9e (Anthoni) y Mb4FA69mwzRO27Er (Veronika).
     function loadDefaultVideo() {
-      const container = document.getElementById("confirmation-video");
-      container.innerHTML = '<div id="vidalytics_embed_eSFGvAyB_NIHVP9e" style="width: 100%; position: relative; padding-top: 56.25%;"></div>';
-      (function (v, i, d, a, l, y, t, c, s) {
-        y = "_" + d.toLowerCase();
-        c = d + "L";
-        if (!v[d]) { v[d] = {}; }
-        if (!v[c]) { v[c] = {}; }
-        if (!v[y]) { v[y] = {}; }
-        var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
-        if (!vsl) {
-          vsl = function (u, cb) {
-            if (t) { cb(); return; }
-            s = i.createElement("script");
-            s.type = "text/javascript";
-            s.async = true;
-            s.src = u;
-            if (s.readyState) {
-              s.onreadystatechange = function () {
-                if (s.readyState === "loaded" || s.readyState === "complete") {
-                  s.onreadystatechange = null;
-                  vlf = 1;
-                  cb();
-                }
-              };
-            } else {
-              s.onload = function () {
-                vlf = 1;
-                cb();
-              };
-            }
-            i.getElementsByTagName("head")[0].appendChild(s);
-          };
-        }
-        vsl(l + "loader.min.js", function () {
-          if (!vli) {
-            var vlc = v[c][vl];
-            vli = new vlc();
-          }
-          vli.loadScript(l + "player.min.js", function () {
-            var vec = v[d][ve];
-            t = new vec();
-            t.run(a);
-          });
-        });
-      })(window, document, "Vidalytics", "vidalytics_embed_eSFGvAyB_NIHVP9e", "https://fast.vidalytics.com/embeds/IoH8SL8U/eSFGvAyB_NIHVP9e/");
+      window.TR4VSL.montar(document.getElementById("confirmation-video"), "calendly-confirma-an");
     }
 
     function loadVaVideo() {
-      const container = document.getElementById("confirmation-video");
-      container.innerHTML = '<div id="Mb4FA69mwzRO27Er" style="width: 100%; position: relative; padding-top: 56.25%;"></div>';
-      (function (v, i, d, a, l, y, t, c, s) {
-        y = "_" + d.toLowerCase();
-        if (!v[y]) { v[y] = {}; }
-        if (!v[y].embeds) { v[y].embeds = {}; }
-        t = function () {
-          if (v[d] && v[d].Embed) {
-            var ve = v[d].Embed;
-            c = new ve();
-            c.run(a);
-            c.loadCss();
-          } else {
-            setTimeout(t, 1000);
-          }
-        };
-        s = new XMLHttpRequest();
-        s.open("GET", l + "?ac=" + (new Date()).getTime(), true);
-        s.onreadystatechange = function () {
-          if (s.readyState === 4) {
-            if (s.status === 200 || s.status === 304) {
-              var sd = JSON.parse(s.responseText);
-              v[y].embeds[a] = { type: "video", options: sd };
-              t();
-            }
-          }
-        };
-        s.send();
-      })(window, document, "Vidalytics", "Mb4FA69mwzRO27Er", "https://fast.vidalytics.com/embeds/IoH8SL8U/Mb4FA69mwzRO27Er/player.settings.json");
+      window.TR4VSL.montar(document.getElementById("confirmation-video"), "calendly-confirma-va");
     }
 
     const whatsappNumbers = {

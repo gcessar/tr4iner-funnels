@@ -68,9 +68,10 @@
   <!-- Sin ícono declarado el navegador pide /favicon.ico, que no existe (404 en consola). -->
   <link rel="icon" href="/assets/empezar/favicon-48.png" sizes="48x48" type="image/png" />
 
-  <!-- Vidalytics ya no entra en la primera pantalla (la pinta la portada propia): sólo se
-       resuelve el DNS para que el reproductor llegue rápido cuando se lo pide. -->
-  <link rel="dns-prefetch" href="https://fast.vidalytics.com" />
+  <!-- El video no entra en la primera pantalla (la pinta la portada propia): sólo se
+       resuelve el DNS de R2 para que llegue rápido cuando se lo pide. -->
+  <link rel="dns-prefetch" href="https://video.mediatr4iner.com" />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
 
   <!-- Tipografías del sistema de /casos-de-estudio, auto-hospedadas: 0 peticiones
        a Google. Se precargan las dos que dibujan la primera pantalla. -->
@@ -164,7 +165,7 @@
       box-shadow: 14px 14px 32px var(--neu-dark), -14px -14px 32px var(--neu-light);
     }
 
-    /* aspect-ratio reserva el alto antes de que Vidalytics inserte nada (CLS 0). */
+    /* aspect-ratio reserva el alto antes de que el reproductor inserte nada (CLS 0). */
     .video-container {
       position: relative;
       overflow: hidden;
@@ -182,7 +183,7 @@
     }
 
     /* Portada propia encima del reproductor: es el LCP y pinta el primer cuadro del video
-       al instante. Se va cuando Vidalytics ya está mostrando el suyo. */
+       al instante. Se va cuando el reproductor ya está mostrando el suyo. */
     .vsl-portada {
       position: absolute;
       inset: 0;
@@ -302,7 +303,7 @@
             <span><small>Paso 1</small><strong>Mira el video</strong></span>
           </span>
         </button>
-        <div id="vidalytics_embed_o1Hu8Smxc1TpaN4k"></div>
+        <div id="vsl-empezar" data-tr4vsl="empezar" data-tr4vsl-diferido></div>
       </div>
     </section>
 
@@ -334,8 +335,8 @@
 
   <script>
     /*
-      El VSL de Vidalytics (~300 KB de reproductor y ~3 s de procesador en un teléfono
-      medio) ya no se carga con la página: la portada pinta el primer cuadro al instante y
+      El VSL (desde nov-2026 con el reproductor propio y el video en R2; antes Vidalytics, ~300 KB
+      de reproductor y ~3 s de procesador en un teléfono medio) no se carga con la página: la portada pinta el primer cuadro al instante y
       el reproductor se monta con el primer toque, desliz o tecla, o a los 5 s del
       `load` si la persona no hace nada. GTM se despierta en el mismo momento.
     */
@@ -347,7 +348,7 @@
         if (hecho) return;
         hecho = true;
         EVENTOS.forEach(function (evento) { window.removeEventListener(evento, despertar, { passive: true }); });
-        cargarVidalytics();
+        cargarVideo();
         if (window.TR4_CARGAR_GTM) window.TR4_CARGAR_GTM();
         pendientes.splice(0).forEach(function (fn) { fn(); });
       }
@@ -362,61 +363,23 @@
       return despertar;
     })();
 
-    function cargarVidalytics() {
-      if (window.TR4_VIDALYTICS) return;
-      window.TR4_VIDALYTICS = true;
+    function cargarVideo() {
+      if (window.TR4_VSL_PEDIDO) return;
+      window.TR4_VSL_PEDIDO = true;
       vigilarVideo();
-      (function (v, i, d, a, l, y, t, c, s) {
-      y = "_" + d.toLowerCase();
-      c = d + "L";
-      if (!v[d]) { v[d] = {}; }
-      if (!v[c]) { v[c] = {}; }
-      if (!v[y]) { v[y] = {}; }
-      var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
-      if (!vsl) {
-        vsl = function (u, cb) {
-          if (t) { cb(); return; }
-          s = i.createElement("script");
-          s.type = "text/javascript";
-          s.async = true;
-          s.src = u;
-          if (s.readyState) {
-            s.onreadystatechange = function () {
-              if (s.readyState === "loaded" || s.readyState === "complete") {
-                s.onreadystatechange = null;
-                vlf = 1;
-                cb();
-              }
-            };
-          } else {
-            s.onload = function () {
-              vlf = 1;
-              cb();
-            };
-          }
-          i.getElementsByTagName("head")[0].appendChild(s);
-        };
-      }
-      vsl(l + "loader.min.js", function () {
-        if (!vli) {
-          var vlc = v[c][vl];
-          vli = new vlc();
-        }
-        vli.loadScript(l + "player.min.js", function () {
-          var vec = v[d][ve];
-          t = new vec();
-          t.run(a);
-        });
-      });
-    })(window, document, "Vidalytics", "vidalytics_embed_o1Hu8Smxc1TpaN4k", "https://fast.vidalytics.com/embeds/IoH8SL8U/o1Hu8Smxc1TpaN4k/");
+      // vsl.js llega con defer: si alguien toca antes de que termine de leerse la página,
+      // se monta en ese momento.
+      function montar() { window.TR4VSL.montar("vsl-empezar", "empezar"); }
+      if (window.TR4VSL) montar();
+      else document.addEventListener("DOMContentLoaded", montar, { once: true });
     }
 
-    // La portada se va cuando el video de Vidalytics ya tiene imagen (o, por las dudas, a
+    // La portada se va cuando el video ya tiene imagen (o, por las dudas, a
     // los 6 s de pedirlo, para no tapar nunca su botón de play si el navegador frena la
     // reproducción automática).
     function vigilarVideo() {
       var portada = document.getElementById("vsl-portada");
-      var caja = document.getElementById("vidalytics_embed_o1Hu8Smxc1TpaN4k");
+      var caja = document.getElementById("vsl-empezar");
       var listo = false;
       function sacar() {
         if (listo) return;
@@ -446,6 +409,7 @@
     });
   </script>
 
+  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
   <script src="/attribution.js"></script>
   <script src="/assets/planes/planes.js?v=20261027" defer></script>
   <script src="/assets/whatsapp/flotante.js?v=20261026" data-numero="17439014239" data-pagina="empezar" defer></script>

@@ -19,7 +19,9 @@
   <meta name="description" content="Mira el análisis de la transformación de Flor de María y pide tu sesión de diagnóstico por WhatsApp con el equipo de Veronika." />
   <link rel="canonical" href="https://metodo.tr4iner.com/testimonio-flor-va" />
 
-  <link rel="preconnect" href="https://fast.vidalytics.com" />
+  <!-- Reproductor propio con los videos en R2 (reemplaza a Vidalytics, nov-2026). -->
+  <link rel="preconnect" href="https://video.mediatr4iner.com" crossorigin />
+  <link rel="stylesheet" href="/assets/vsl/vsl.css?v=20261114" />
 
   <!-- Lora self-hosteada y variable: un archivo cubre el 400 y el 700. -->
   <link rel="preload" href="/assets/fonts/lora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -208,7 +210,7 @@
       <div class="video-label"><span>Mira lo que se hizo para lograr resultados esta vez</span></div>
       <div class="video-box">
         <div class="video-host">
-          <div id="vidalytics_embed_gIbYz9eSdIofNh2D" style="width: 100%; position:relative; padding-top: 56.25%;"></div>
+          <div data-tr4vsl="flor-va"></div>
         </div>
       </div>
     </section>
@@ -242,51 +244,7 @@
     </div>
   </footer>
 
-  <script>
-    (function (v, i, d, a, l, y, t, c, s) {
-      y = "_" + d.toLowerCase();
-      c = d + "L";
-      if (!v[d]) { v[d] = {}; }
-      if (!v[c]) { v[c] = {}; }
-      if (!v[y]) { v[y] = {}; }
-      var vl = "Loader", vli = v[y][vl], vsl = v[c][vl + "Script"], vlf = v[c][vl + "Loaded"], ve = "Embed";
-      if (!vsl) {
-        vsl = function (u, cb) {
-          if (t) { cb(); return; }
-          s = i.createElement("script");
-          s.type = "text/javascript";
-          s.async = true;
-          s.src = u;
-          if (s.readyState) {
-            s.onreadystatechange = function () {
-              if (s.readyState === "loaded" || s.readyState === "complete") {
-                s.onreadystatechange = null;
-                vlf = 1;
-                cb();
-              }
-            };
-          } else {
-            s.onload = function () {
-              vlf = 1;
-              cb();
-            };
-          }
-          i.getElementsByTagName("head")[0].appendChild(s);
-        };
-      }
-      vsl(l + "loader.min.js", function () {
-        if (!vli) {
-          var vlc = v[c][vl];
-          vli = new vlc();
-        }
-        vli.loadScript(l + "player.min.js", function () {
-          var vec = v[d][ve];
-          t = new vec();
-          t.run(a);
-        });
-      });
-    })(window, document, "Vidalytics", "vidalytics_embed_gIbYz9eSdIofNh2D", "https://fast.vidalytics.com/embeds/IoH8SL8U/gIbYz9eSdIofNh2D/");
-  </script>
+  <script src="/assets/vsl/vsl.js?v=20261114" defer></script>
   <script src="/attribution.js"></script>
   <script src="/assets/planes/planes.js?v=20261027" defer></script>
   <script src="/assets/whatsapp/flotante.js?v=20261026" data-numero="15677024560" data-pagina="florva" defer></script>

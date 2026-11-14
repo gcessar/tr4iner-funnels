@@ -1,0 +1,166 @@
+/* Reproductor propio de los VSL (reemplaza a Vidalytics desde nov-2026). Videos en R2.
+   Sólo dos controles a la vista —el botón de play y el menú de velocidad— y una línea de
+   progreso en el borde inferior que avanza rápido al principio (rapid engagement). Sin
+   tiempo, sin barra para adelantar y sin ninguna forma visible de descargar. */
+.tr4vsl {
+  --vsl-color: #ffc138;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tr4vsl video,
+.tr4vsl .tr4vsl-portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+.tr4vsl .tr4vsl-portada { z-index: 1; display: none; }
+.tr4vsl.is-terminado .tr4vsl-portada { display: block; }
+
+/* Cartel de sonido (el «CLIC AQUÍ PARA ESCUCHAR» de Vidalytics). */
+.tr4vsl-aviso {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 46%;
+  max-width: 82%;
+  padding: 14px 22px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--vsl-aviso-fondo, #f9b301);
+  color: var(--vsl-aviso-texto, #000);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .38);
+  transform: translate(-50%, -50%);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  animation: tr4vsl-latido 1.4s ease-in-out infinite;
+}
+.tr4vsl.is-silencio .tr4vsl-aviso { display: flex; }
+.tr4vsl-aviso svg { width: clamp(30px, 7vw, 46px); height: auto; fill: currentColor; }
+.tr4vsl-aviso b { display: block; font-size: clamp(17px, 3.6vw, 28px); font-weight: 800; line-height: 1.05; letter-spacing: .02em; text-transform: uppercase; }
+.tr4vsl-aviso span { display: block; font-size: clamp(12px, 2.2vw, 17px); font-weight: 600; line-height: 1.15; letter-spacing: .04em; text-transform: uppercase; }
+.tr4vsl-aviso span:empty { display: none; }
+/* Variante «button» de Vidalytics (las de agendamiento): más chica, en una fila. */
+.tr4vsl-aviso.is-boton { flex-direction: row; gap: 10px; min-width: 0; padding: 10px 18px; border-radius: 999px; }
+.tr4vsl-aviso.is-boton svg { width: 26px; }
+.tr4vsl-aviso.is-boton b { font-size: clamp(14px, 2.6vw, 19px); }
+.tr4vsl-aviso.is-boton span { font-size: clamp(14px, 2.6vw, 19px); font-weight: 800; white-space: nowrap; }
+.tr4vsl-aviso.is-boton b { white-space: nowrap; }
+@keyframes tr4vsl-latido { 50% { transform: translate(-50%, -50%) scale(1.04); } }
+
+/* Botón de play: negro con el triángulo del color del video (el de la rutina de la Ruta). */
+.tr4vsl-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  place-items: center;
+  width: clamp(58px, 12vw, 84px);
+  height: clamp(58px, 12vw, 84px);
+  padding: 0;
+  border: 3px solid var(--vsl-color);
+  border-radius: 50%;
+  background: #111;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.tr4vsl-play svg { width: 38%; height: 38%; margin-left: 8%; fill: var(--vsl-color); }
+.tr4vsl-play:active { transform: translate(-50%, -50%) scale(.94); }
+.tr4vsl.is-pausado .tr4vsl-play,
+.tr4vsl.is-esperando .tr4vsl-play,
+.tr4vsl.is-terminado .tr4vsl-play,
+.tr4vsl.is-cargando .tr4vsl-play { display: grid; }
+.tr4vsl.is-cargando .tr4vsl-play::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 3px solid transparent;
+  border-top-color: var(--vsl-color);
+  border-radius: 50%;
+  animation: tr4vsl-giro .8s linear infinite;
+}
+@keyframes tr4vsl-giro { to { transform: rotate(360deg); } }
+
+/* Menú de opciones: la única opción es la velocidad (regla de los videos de R2). */
+.tr4vsl-opciones {
+  position: absolute;
+  right: 10px;
+  bottom: 14px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, .68);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.tr4vsl-opciones svg { width: 18px; height: 18px; fill: currentColor; }
+.tr4vsl.is-controles .tr4vsl-opciones,
+.tr4vsl.is-pausado .tr4vsl-opciones,
+.tr4vsl.is-menu .tr4vsl-opciones { opacity: 1; pointer-events: auto; }
+@media (hover: hover) {
+  .tr4vsl.is-reproduciendo:hover .tr4vsl-opciones { opacity: 1; pointer-events: auto; }
+}
+.tr4vsl-menu {
+  position: absolute;
+  right: 10px;
+  bottom: 56px;
+  z-index: 5;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(17, 17, 17, .94);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
+  cursor: default;
+}
+.tr4vsl-menu[hidden] { display: none; }
+.tr4vsl-menu p { margin: 2px 4px 7px; color: rgba(255, 255, 255, .62); font: 600 10px/1.2 ui-monospace, "JetBrains Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+.tr4vsl-menu div { display: flex; gap: 4px; }
+.tr4vsl-menu button { min-width: 44px; min-height: 32px; padding: 0 8px; border: 0; border-radius: 6px; background: rgba(255, 255, 255, .09); color: #fff; font: 600 12px/1 ui-monospace, "JetBrains Mono", monospace; cursor: pointer; }
+.tr4vsl-menu button:hover { background: rgba(255, 255, 255, .18); }
+.tr4vsl-menu button[aria-checked="true"] { background: var(--vsl-color); color: #111; }
+
+/* Línea de progreso en el borde (rapid engagement). */
+.tr4vsl-linea { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 5px; background: rgba(255, 255, 255, .18); pointer-events: none; }
+.tr4vsl-linea i { display: block; height: 100%; background: var(--vsl-color); transform: scaleX(0); transform-origin: left center; }
+.tr4vsl.is-esperando .tr4vsl-linea { display: none; }
+
+.tr4vsl-error { position: absolute; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; background: rgba(17, 17, 17, .86); color: #fff; text-align: center; font-size: 14px; line-height: 1.4; cursor: default; }
+.tr4vsl-error[hidden] { display: none; }
+.tr4vsl.is-error .tr4vsl-play,
+.tr4vsl.is-error .tr4vsl-aviso,
+.tr4vsl.is-error .tr4vsl-opciones { display: none; }
+.tr4vsl-error p { margin: 0; }
+.tr4vsl-error button { min-height: 38px; padding: 0 16px; border: 0; border-radius: 6px; background: var(--vsl-color); color: #111; font: 700 14px/1 inherit; cursor: pointer; }
+
+.tr4vsl button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .tr4vsl-aviso { animation: none; }
+  .tr4vsl.is-cargando .tr4vsl-play::after { animation: none; }
+}
