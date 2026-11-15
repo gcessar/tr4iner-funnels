@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-15 — Ruta: banner promocional Black Tr4iner (publicado)
+
+- **Pedido del usuario:** banner animado, de poco alto y fijo arriba en las páginas de la Ruta, para la promoción Black Tr4iner, con un botón a WhatsApp.
+- **Hecho:** `biblioteca/black-banner.js`, cargado al final de `biblioteca/videos/index.html` y `biblioteca/plan/index.html` (no en registro ni confirmación). Sin precios: la persona se informa en el chat.
+- **WhatsApp `17439014239`, 50/50 al azar (decisión del usuario, no por país):** «Hola, quiero el descuento BLACK» (Argentina) o «Hola, quiero el descuento BLACK TR4INER» (Perú); el sorteo queda en `localStorage` (`tr4_black_variante`).
+- **Oculto a quien ya compró:** pide `/api/genesis/me` y se quita si `member.yaCompro` (dato nuevo del CRM, gcessar/crm-ventas#63, publicado antes). Si la consulta falla, se muestra.
+- **Medición:** `black_tr4iner_click` al dataLayer con la variante; falta el tag en GTM.
+- **Publicación (OK del usuario):** PR #6, `main` b0b3a53. En producción el archivo responde 200 y las dos páginas lo cargan.
+- **Pendiente:** probar con una cuenta de cliente que se oculta; quitar las dos etiquetas `<script>` al terminar la promoción.
+
 ## 2026-11-14 (2) — VSL: «Paso 1» hasta el clic y cartel translúcido
 
 - **Pedido del usuario (probado en su iPhone):** en `/empezar` (y `/fit4`) salía el «Paso 1» de la portada y al segundo aparecía encima el botón de play del reproductor. Pidió que quede sólo el «Paso 1» y que el video empiece recién con el clic. Además, que el fondo amarillo del cartel «CLIC AQUÍ» sea un poco transparente.
