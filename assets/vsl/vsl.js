@@ -55,7 +55,12 @@
     'calendly-an': { carpeta: 'vsl/calendly-an--6739ace2', tema: AN, aviso: ESCUCHAR, boton: true },
     'calendly-va': { carpeta: 'vsl/calendly-va--7a1a794e', tema: AN, aviso: ESCUCHAR, boton: true },
     'calendly-confirma-an': { carpeta: 'vsl/calendly-confirma-an--c697eacb', tema: { color: '#ffbf00', fondo: '#ffbf00', texto: '#000000' }, aviso: ['ESCUCHAR', ''], boton: true, alFinal: 'pausa' },
-    'calendly-confirma-va': { carpeta: 'vsl/calendly-confirma-va--19241045', tema: AN, aviso: ESCUCHAR }
+    'calendly-confirma-va': { carpeta: 'vsl/calendly-confirma-va--19241045', tema: AN, aviso: ESCUCHAR },
+    // Páginas de tr4iner.com (WordPress), 16-nov-2026. El de inicio no arrancaba solo en
+    // Vidalytics: se monta con data-tr4vsl-autoplay="no".
+    'wp-inicio': { carpeta: 'vsl/wp-inicio--398f00e0', tema: { color: '#ffcf00', fondo: '#ffc700', texto: '#000000' }, aviso: ['CLIC PARA ESCUCHAR', ''], boton: true },
+    'wp-dashiel': { carpeta: 'vsl/wp-dashiel--f8151f47', tema: AN, aviso: ESCUCHAR },
+    'wp-flor': { carpeta: 'vsl/wp-flor--b3a666c5', tema: AN, aviso: ESCUCHAR }
   };
 
   var ICONO_SILENCIO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.6 3 2.7-2.7-1.3-1.3-2.7 2.7-2.7-2.7-1.3 1.3 2.7 2.7-2.7 2.7 1.3 1.3 2.7-2.7 2.7 2.7 1.3-1.3-2.7-2.7z"/></svg>';
@@ -327,7 +332,7 @@
 
   function autoMontar() {
     document.querySelectorAll('[data-tr4vsl]:not([data-tr4vsl-diferido])').forEach(function (el) {
-      montar(el, el.getAttribute('data-tr4vsl'));
+      montar(el, el.getAttribute('data-tr4vsl'), { autoplay: el.getAttribute('data-tr4vsl-autoplay') !== 'no' });
     });
   }
 
