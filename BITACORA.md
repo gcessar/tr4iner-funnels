@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-16 (2) — tr4iner.com (WordPress): los 20 videos de Vimeo de testimonios pasan a R2 (publicado)
+
+- **Pedido del usuario:** revisar las páginas de testimonios de tr4iner.com y migrar a R2 los videos de Vimeo incrustados.
+- **Inventario (MCP de WordPress, entradas y páginas en todos los estados):** 20 contenidos publicados, un bloque «Incrustar» de Vimeo cada uno y 20 videos distintos: 18 entradas de testimonios (karla, jose-luis-saavedra, dashiell, christian, patricia-buena-figura-a-los-50-anos, fernando, sadith, flor-de-maria, hanna, sheyla, francisco, nancy, solange, hellen, kelly, romina, grecia, entrenador-personal-online) y 2 páginas (anthoni-montalvan, podcast). Los 5 borradores con Vimeo (karen-angulo, karen-bajar-de-peso, mayra-sobrepeso, yulie-bajar-de-peso, kevin-ganar-masa-muscular) tienen el bloque vacío, sin video. Ninguno coincidía con los 19 testimonios que ya estaban en R2.
+- **Descarga:** HLS público del reproductor de Vimeo pedido con el origen de tr4iner.com, tope 1080p (vienen en 4K). Dos son «no listados» (`691965320` dashiell y `832427662` anthoni-montalvan) y necesitan el código `h` del enlace. Herramientas y originales en `~/Documents/Ruta Tr4iner/vimeo-wordpress/` (`migrar.sh`, `vimeo-config.mjs`, `migrar.log`).
+- **R2:** `testimonios/wp-{slug}-{idVimeo}--{hash}/` (720/480/360, portada, original e `info.json` con el ID de Vimeo). Los 80 archivos de reproducción y portada responden 200 con el origen de tr4iner.com y 403 sin origen (regla de `/testimonios/`).
+- **WordPress:** cada bloque de Vimeo pasa a un bloque HTML con el reproductor de testimonios de metodo (`assets/tr4-video/tr4-video.js`: play con el clic, barra, velocidad, sonido, pantalla completa, sin descarga), en un marco 16:9; se conservan el pie de foto y la alineación. Script: `~/Documents/Ruta Tr4iner/herramientas/wordpress/reemplazar-vimeo.py` (respaldo de cada página antes de tocarla en `~/Documents/Ruta Tr4iner/respaldos-wordpress/*-antes-vimeo.html`). Se probó primero en Karla (se ve en el ancho de la entrada y reproduce con sonido desde R2) y después en las otras 19.
+- **Verificación:** las 20 páginas públicas tienen el reproductor y ninguna carga Vimeo; el video de cada una responde desde R2.
+- **Pendiente:** `anthoni-montalvan` conserva en el SEO de Rank Math un `VideoObject` y `og:video` que apuntan a Vimeo (no carga nada, pero si se borra el video de Vimeo quedan rotos): actualizarlo en Rank Math. No borrar los videos de Vimeo hasta revisar eso.
+
 ## 2026-11-16 — tr4iner.com (WordPress): los 3 videos de Vidalytics pasan a R2 (publicado)
 
 - **Pedido del usuario:** con Vidalytics ya cancelado, buscar con el MCP de WordPress los videos de Vidalytics de tr4iner.com, bajar los que falten, subirlos a R2 y reemplazarlos.
