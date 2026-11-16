@@ -1,5 +1,16 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-16 — tr4iner.com (WordPress): los 3 videos de Vidalytics pasan a R2 (publicado)
+
+- **Pedido del usuario:** con Vidalytics ya cancelado, buscar con el MCP de WordPress los videos de Vidalytics de tr4iner.com, bajar los que falten, subirlos a R2 y reemplazarlos.
+- **Inventario (MCP de WordPress, páginas/entradas/bloques/elementos de GeneratePress en todos los estados, y rastreo de las 189 URLs públicas):** sólo 3 páginas. Inicio (`home-2026`, id 6095) `eJbFvBSHXLTcItdH`; `testimonio-flor` (6769) `4Pcn0XGd58riYOM2`; `testimonio-dashiel` (6770) `5dtuyrV6J4QIqcbI` (los dos últimos son los videos de las `-B` archivadas de este repo). Las otras 22 menciones del sitio eran URLs viejas que ya redirigen a `/calendly-an` y `/calendly-va` de metodo.
+- **Descarga:** con la cuenta cancelada, `player.settings.json` y el HLS seguían respondiendo; se copiaron en 1080p sin recodificar (duraciones iguales a Vidalytics). R2: `vsl/wp-inicio--398f00e0`, `vsl/wp-flor--b3a666c5`, `vsl/wp-dashiel--f8151f47`.
+- **Reproductor (`assets/vsl/vsl.js`, `main` 099dd49):** catálogo `wp-inicio`, `wp-flor`, `wp-dashiel` y `data-tr4vsl-autoplay="no"` (el de inicio no arrancaba solo en Vidalytics).
+- **WordPress:** cada página carga `vsl.css`/`vsl.js` desde `metodo.tr4iner.com` (`?v=20261116`). En Flor y Dashiel el contenedor conserva su `id="vidalytics_embed_…"` a propósito: el script de la página muestra el Typeform cuando el `<video>` de adentro pasa los 2 s. En inicio el bloque lleva `width: 100%` (está en una columna flex centrada y sin eso medía 0). Respaldo previo de las 3 páginas: `~/Documents/Ruta Tr4iner/respaldos-wordpress/pagina-*-2026-11-16-antes.json`.
+- **Regla WAF de `video.mediatr4iner.com` (OK del usuario: «Sí, hazlo todo»):** se suman `https://tr4iner.com` y `https://www.tr4iner.com`. Verificado: tr4iner.com, www y metodo 200; otra web 403; `/testimonios/` sin referer sigue en 403. Respaldo: `~/Documents/Ruta Tr4iner/respaldos-cloudflare/waf-video-mediatr4iner-2026-11-16-antes-tr4iner-com.json`.
+- **MCP de WordPress:** el proxy `@automattic/mcp-wordpress-remote@latest` (0.5.5) busca la ruta del plugin nuevo (`/mcp/mcp-adapter-default-server`) y el sitio tiene el plugin viejo (`/wp/v2/wpmcp`). `WP_API_URL` del MCP de Claude Code apunta a `https://tr4iner.com/wp-json/wp/v2/wpmcp/streamable` (con una ruta, el proxy la usa tal cual). En Claude Desktop sigue la URL vieja.
+- **Verificación en producción:** Flor y Dashiel reproducen su video de R2 en silencio con el cartel y el Typeform aparece a los 2 s; inicio queda esperando el clic y arranca con sonido. Ninguna de las 189 páginas carga Vidalytics.
+
 ## 2026-11-15 — Ruta: banner promocional Black Tr4iner (publicado)
 
 - **Pedido del usuario:** banner animado, de poco alto y fijo arriba en las páginas de la Ruta, para la promoción Black Tr4iner, con un botón a WhatsApp.
