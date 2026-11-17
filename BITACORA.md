@@ -1,5 +1,17 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-17 (2) — `/empezar-va`: sin la pregunta de cancelar y carga más liviana (rama, sin publicar)
+
+- **Pedido del usuario:** quitar la pregunta «¿Puedo cancelar mi suscripción cuando quiera?» y revisar qué se puede optimizar en velocidad y experiencia.
+- **Pregunta:** fuera de las versiones móvil y escritorio (quedan 4).
+- **GTM diferido, como en `/empezar` y `/fit4`:** se carga con el primer toque, desliz o tecla, o a los 5 s del `load`. Medido en producción al abrir: GTM traía más de 20 conexiones de terceros (Meta ~114 KB, Clarity, ManyChat, Hotmart, Brevo, dos gtag) en el mismo momento en que arranca el VSL. `empezar_va_view` y los demás eventos esperan en la cola del dataLayer. **Costo:** quien se va antes de tocar nada y antes de 5 s no cuenta como visita en GA4 ni como PageView en Meta.
+- **Calendly:** sin `preconnect` para todos; la conexión se abre cuando el bloque del plan está a 800 px. Sigue cargando al tocar el botón.
+- **Primera pantalla:** se pide primero la portada del VSL (`preload` con `fetchpriority=high`, es lo más grande a la vista) y la Lora cursiva del titular («adaptamos a tu vida»), que antes cambiaba de fuente al cargar.
+- **Caché:** `/assets/empezar-va/` pasa a `immutable` por un año (`vercel.json`); antes cada visita volvía a consultar las 44 imágenes y fuentes. Regla: nunca reemplazar un archivo de esa carpeta con el mismo nombre.
+- **Experiencia:** al tocar una pregunta ya no aparece el recuadro naranja de foco (queda sólo para quien navega con teclado).
+- **Verificación local:** 4 preguntas por versión y ninguna «cancelar»; GTM ausente al abrir y presente tras el primer scroll; preconnect a Calendly al acercarse al plan; el modal de Calendly abre; sin errores en la consola.
+- **Pendiente:** OK del usuario y publicación.
+
 ## 2026-11-17 — `/empezar-va`: diseño crema nuevo, VSL de R2 y Calendly (publicado)
 
 - **Pedido del usuario:** subir a `/empezar-va` el diseño «PAG TR4INER - VA.html» (Downloads), cambiar su VSL de Vidalytics por el video en R2 y que el CTA abra Calendly «como lo teníamos optimizado antes».
