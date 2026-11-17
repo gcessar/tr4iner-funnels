@@ -4786,7 +4786,9 @@
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
       if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
         window.RutinaUI.init({
-          abrir: params.get('rutina') === '1',
+          // `?video=rutina` lo usan los correos de reactivación (17-nov-2026): el enlace del correo
+          // pasa por /biblioteca/verificar/, que sólo conserva `video`, y la rutina no es una lección.
+          abrir: params.get('rutina') === '1' || String(params.get('video') || '').trim().toLowerCase() === 'rutina',
           // Con la rutina cargada entra al índice como paso propio y toma su frecuencia.
           alCargar: function () {
             if (libraryRendered) renderLibrary();
