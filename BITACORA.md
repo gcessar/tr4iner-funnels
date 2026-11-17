@@ -1,12 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-17 (3) — `/empezar-va`: Calendly sin «Configuración de cookies» (rama, falta publicar)
+## 2026-11-17 (3) — `/empezar-va`: Calendly sin el aviso de cookies (publicado)
 
-- **Pedido del usuario:** quitar el banner de cookies de Calendly.
+- **Pedido del usuario:** quitar el banner de cookies de Calendly (captura de su iPhone: el aviso «Usamos cookies…» con Rechazar/Entiendo tapaba el calendario aunque la URL ya llevaba `hide_gdpr_banner=1`; Calendly lo ignora fuera del modo embed).
 - **Qué se veía:** el aviso grande ya estaba oculto (`hide_gdpr_banner=1`); quedaba el enlace «Configuración de cookies» al pie del calendario y una franja gris debajo. Calendly no tiene parámetro documentado para ese enlace y el iframe es de otro dominio (no se puede tocar con CSS).
 - **Cambio:** la URL del iframe suma `embed_type=Inline` y `embed_domain` (el host de la página), los parámetros que agrega el widget oficial. En modo embed Calendly no dibuja el enlace ni la franja. Probado en producción reemplazando el `src`: el calendario carga sin el enlace.
 - **No verificado:** reservar en modo embed (la herramienta del navegador no llega a hacer clic dentro del iframe de Calendly, con o sin el cambio). Hacer una reserva de prueba desde el celular.
-- **Pendiente:** publicar (el push a `main` lo corre el usuario); si se quiere lo mismo en `/calendly-an` y `/calendly-va`, es el mismo par de líneas.
+- **Publicación (OK del usuario: «Sí, publícalo»):** `main` fb31868 → e0251fa; la página en producción ya arma la URL con `embed_type`.
+- **Pendiente:** confirmar en el iPhone que el aviso no sale; si se quiere lo mismo en `/calendly-an` y `/calendly-va`, es el mismo par de líneas.
 
 ## 2026-11-17 (2) — `/empezar-va`: sin la pregunta de cancelar y carga más liviana (publicado)
 
