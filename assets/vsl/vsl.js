@@ -50,6 +50,9 @@
     'andrea-va': { carpeta: 'vsl/andrea-va--217a5ba3', tema: VA, aviso: ESCUCHAR },
     'empezar': { carpeta: 'vsl/empezar--ae735cf0', tema: AN, aviso: ['PASO 1', 'Mira el video'] },
     'empezar-va': { carpeta: 'vsl/empezar-va--bcb9d860', tema: VA, aviso: ['CLIC AQUÍ', 'PARA MIRAR EL VIDEO'], alFinal: 'pausa' },
+    // /empezar-va con el diseño crema y Calendly (17-nov-2026): «PAGINA VERO» de Vidalytics
+    // (R89mJZkJBpBr3LK6), con los colores crema de su reproductor. El de arriba queda para revertir.
+    'empezar-va-2': { carpeta: 'vsl/empezar-va-2--77e516ac', tema: { color: '#f8f8df', fondo: '#f5f5c1', texto: '#1a1614' }, aviso: ['CLIC PARA ESCUCHAR', ''], alFinal: 'pausa' },
     'fit4-an': { carpeta: 'vsl/fit4-an--3370d078', tema: AN, aviso: ESCUCHAR },
     'fit4-va': { carpeta: 'vsl/fit4-va--de95f818', tema: AN, aviso: ESCUCHAR },
     'calendly-an': { carpeta: 'vsl/calendly-an--6739ace2', tema: AN, aviso: ESCUCHAR, boton: true },
