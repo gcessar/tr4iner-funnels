@@ -250,6 +250,11 @@
       // un «%5B» que sobrevive al primer decode es doble encoding de un salto anterior.
       if (clave.indexOf("utm_") === 0 || pasan.indexOf(clave) !== -1) calendlyUrl.searchParams.set(clave, limpiar(valor));
     });
+    // Modo embed (los parámetros que agrega el widget oficial de Calendly): con ellos Calendly
+    // saca el enlace «Configuración de cookies» y la franja gris del pie, que hide_gdpr_banner
+    // no quita (pedido del usuario, 17-nov).
+    calendlyUrl.searchParams.set("embed_type", "Inline");
+    calendlyUrl.searchParams.set("embed_domain", window.location.hostname);
 
     var modal = d.getElementById("calendar-modal");
     var marco = d.getElementById("calendar-frame");

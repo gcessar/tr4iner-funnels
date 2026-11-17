@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-17 (3) — `/empezar-va`: Calendly sin «Configuración de cookies» (rama, falta publicar)
+
+- **Pedido del usuario:** quitar el banner de cookies de Calendly.
+- **Qué se veía:** el aviso grande ya estaba oculto (`hide_gdpr_banner=1`); quedaba el enlace «Configuración de cookies» al pie del calendario y una franja gris debajo. Calendly no tiene parámetro documentado para ese enlace y el iframe es de otro dominio (no se puede tocar con CSS).
+- **Cambio:** la URL del iframe suma `embed_type=Inline` y `embed_domain` (el host de la página), los parámetros que agrega el widget oficial. En modo embed Calendly no dibuja el enlace ni la franja. Probado en producción reemplazando el `src`: el calendario carga sin el enlace.
+- **No verificado:** reservar en modo embed (la herramienta del navegador no llega a hacer clic dentro del iframe de Calendly, con o sin el cambio). Hacer una reserva de prueba desde el celular.
+- **Pendiente:** publicar (el push a `main` lo corre el usuario); si se quiere lo mismo en `/calendly-an` y `/calendly-va`, es el mismo par de líneas.
+
 ## 2026-11-17 (2) — `/empezar-va`: sin la pregunta de cancelar y carga más liviana (publicado)
 
 - **Pedido del usuario:** quitar la pregunta «¿Puedo cancelar mi suscripción cuando quiera?» y revisar qué se puede optimizar en velocidad y experiencia.
