@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-17 (2) — `/empezar-va`: sin la pregunta de cancelar y carga más liviana (rama, sin publicar)
+## 2026-11-17 (2) — `/empezar-va`: sin la pregunta de cancelar y carga más liviana (publicado)
 
 - **Pedido del usuario:** quitar la pregunta «¿Puedo cancelar mi suscripción cuando quiera?» y revisar qué se puede optimizar en velocidad y experiencia.
 - **Pregunta:** fuera de las versiones móvil y escritorio (quedan 4).
@@ -10,7 +10,8 @@
 - **Caché:** `/assets/empezar-va/` pasa a `immutable` por un año (`vercel.json`); antes cada visita volvía a consultar las 44 imágenes y fuentes. Regla: nunca reemplazar un archivo de esa carpeta con el mismo nombre.
 - **Experiencia:** al tocar una pregunta ya no aparece el recuadro naranja de foco (queda sólo para quien navega con teclado).
 - **Verificación local:** 4 preguntas por versión y ninguna «cancelar»; GTM ausente al abrir y presente tras el primer scroll; preconnect a Calendly al acercarse al plan; el modal de Calendly abre; sin errores en la consola.
-- **Pendiente:** OK del usuario y publicación.
+- **Publicación (OK del usuario: «Sí, publícalos»):** `main` 68a84ac → 6b1ee8e, deployment de Production `tr4iner-funnels-3x8ry7z0v` Ready. En producción: sin la pregunta, GTM ausente al abrir y cargado tras el primer scroll (con el PageView de Meta), VSL desde R2 reproduciendo y `/assets/empezar-va/` con `immutable`.
+- **Pendiente:** en unos días, comparar en GA4/Meta las visitas de `/empezar-va` antes y después del 17-nov para ver cuánto baja el conteo por diferir GTM.
 
 ## 2026-11-17 — `/empezar-va`: diseño crema nuevo, VSL de R2 y Calendly (publicado)
 
