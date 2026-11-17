@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-17 — `/empezar-va`: diseño crema nuevo, VSL de R2 y Calendly (rama, sin publicar)
+## 2026-11-17 — `/empezar-va`: diseño crema nuevo, VSL de R2 y Calendly (publicado)
 
 - **Pedido del usuario:** subir a `/empezar-va` el diseño «PAG TR4INER - VA.html» (Downloads), cambiar su VSL de Vidalytics por el video en R2 y que el CTA abra Calendly «como lo teníamos optimizado antes».
 - **Video:** el exporte traía Vidalytics `R89mJZkJBpBr3LK6` («PAGINA VERO», 62 s), que no estaba entre los 15 migrados. Se bajó en 1080p del HLS público (`~/Documents/Ruta Tr4iner/vidalytics-originales/empezar-va-v2--R89mJZkJBpBr3LK6.mp4`) y se subió con `subir-videos-r2.mjs --prefijo=vsl --nombre=empezar-va-2` → `vsl/empezar-va-2--77e516ac` (720/480/360, portada, original e `info.json`; las cuatro de reproducción responden 200 con el origen de producción). Catálogo de `assets/vsl/vsl.js`: `empezar-va-2` con los colores crema de su reproductor de Vidalytics (cartel `#f5f5c1`, «CLIC PARA ESCUCHAR») y pausa al final. El `empezar-va` viejo queda en el catálogo para revertir.
@@ -9,7 +9,8 @@
 - **Testimonios:** las 10 alumnas del carrusel abren su video de R2 (mismas carpetas que `/empezar`) con `tr4-video.js` y respaldo de Vimeo; evento `empezar_va_testimonio_play`.
 - **Sale de la página:** la tabla de planes / sesión de diagnóstico por WhatsApp (`data-slug="empezarva"`) y el botón flotante de WhatsApp. El slug sigue en `lib/empezar-agenda.js`, `PAGINAS_PLANES` del CRM y el flujo «Checkout directo» (inofensivo); el panel «Planes» de Funnel VA dejará de recibir datos de `/empezar-va` y las agendas pasan a contarse por Calendly (`funnel_variant=empezar-va`).
 - **Verificación local (375 y 1280 px):** VSL con copia local (la regla WAF de R2 no deja `localhost`): arranca en silencio con el cartel crema y al tocar suena desde el inicio; el video cambia de bloque al cruzar 900 px; sin desborde horizontal; las 6 fuentes cargan. Con `?utm_source=MetaAds&utm_campaign=PRUEBA-%5BX%5D&fbclid=abc123&email=…` Calendly recibe `utm_campaign=PRUEBA-[X]`, `fbclid`, `email`, `funnel=VA` y `funnel_variant=empezar-va`, y el calendario abre. El visor de testimonios abre (en local cae al respaldo de Vimeo por la misma regla WAF).
-- **Pendiente:** OK del usuario y publicación. Tras publicar: comprobar en producción el VSL y un testimonio desde R2, y una agenda de prueba en Calendly.
+- **Publicación (OK del usuario: «Sí, publícala»):** `main` a5ebd1a → 5e806fc, deployment de Production `tr4iner-funnels-dd5vpjc75` Ready. En producción el VSL sale de `vsl/empezar-va-2--77e516ac/play_720p.mp4` y suena al tocar; el testimonio de Ana Briones se reproduce desde R2; `vsl.js?v=20261117` trae `empezar-va-2`.
+- **Pendiente:** una agenda real de prueba en Calendly para ver que llegue al sheet AGENDAS y al CRM con `funnel_variant=empezar-va`; probar en iPhone.
 
 ## 2026-11-16 (2) — tr4iner.com (WordPress): los 20 videos de Vimeo de testimonios pasan a R2 (publicado)
 
