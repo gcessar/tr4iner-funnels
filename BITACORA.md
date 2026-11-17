@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-17 (4) — Chat de la Ruta más humano: entrega a una persona, sin sesión (sin publicar)
+## 2026-11-17 (4) — Chat de la Ruta más humano: entrega a una persona, sin sesión (publicado)
 
 - **Pedido del usuario:** «arma el chat sin la prueba AB, aplica las recomendaciones que me das. y trata de que sea más humano, sin texto en negrita». Las recomendaciones salen del análisis del 17-nov en el CRM (`docs/analisis-chat-ruta-2026-11-17.md`): 1.022 chats contra las ventas desde el lanzamiento y 83 expedientes de clientes de oct–nov (llamadas de Martin y chats de WhatsApp).
 - **Sin sesión desde el chat (`SESION_DESDE_EL_CHAT = false` en `lib/ruta-chat.js`):** todo el que quiere que lo guíen va a WhatsApp con una persona del equipo, en cualquier país. Agendaron 131 → 4 compras (US$ 1.235 brutos); abrieron WhatsApp 158 → 6 (US$ 2.152); desde el 9-nov EE. UU. y Europa elegían WhatsApp 18 de 22 veces. La maquinaria de horarios queda: una reserva en curso se termina y volver es cambiar la constante.
@@ -12,7 +12,8 @@
 - **Más humano:** prompt reescrito (`lib/ruta-chat-prompt.js`): a quién le escribe, valor concreto en el primer mensaje, texto plano sin negritas ni markdown, género correcto («verte más grande» a una mujer era un caso real), modo «por su cuenta» como apoyo de la Ruta. Filtro de eco (`sinEco`): se saca el arranque que repite lo que dijo la persona (757 de 5.539 respuestas). Lecciones del agente actualizadas (`lib/ruta-chat-lecciones.js`).
 - **Interfaz (`biblioteca/assets/ruta-chat.js`, `?v=20261117-humano`):** saludo «¿Qué te gustaría cambiar?» con «Bajar grasa», «Ganar músculo», «Entreno y no veo cambios», «Lo necesito por salud», «Tengo una duda»; la pregunta final ya no va en negrita.
 - **Verificación:** 106 tests en verde (`node --test tests/`; setteo, log y retomar reescritos para el comportamiento nuevo). Banco local con la interfaz y las reglas reales (el agente simulado): saludo y botones, la pregunta sin negrita (peso 400), «Quiero que me guíen» → tarjeta con quién responde, precio → WhatsApp, y el enlace real de WhatsApp con el texto prellenado. No probado con el agente real de n8n/OpenAI.
-- **Pendiente:** publicar (OK del usuario); en una semana, mirar en GENESIS → Chats cuántos tocan «Quiero que me guíen», cuántos abren WhatsApp y las ventas; avisar a los closers que el mensaje ya trae lo que la persona contó, para que no lo repregunten; ver con ManyChat que EE. UU. caiga en el mejor closer.
+- **Publicación (OK del usuario: «Sí, publícalo»):** `main` a9e5784 → fa8b06f, deployment de Production `tr4iner-funnels-4vy1lahej` Ready. En producción `/biblioteca/videos/` carga `ruta-chat.js?v=20261117-humano` (con los botones nuevos y la pregunta sin negrita) y los miembros ya la reciben sin errores en los registros; al cierre todavía no había una conversación con la versión nueva.
+- **Pendiente:** revisar las primeras conversaciones con el agente real en GENESIS → Chats; en una semana, mirar en GENESIS → Chats cuántos tocan «Quiero que me guíen», cuántos abren WhatsApp y las ventas; avisar a los closers que el mensaje ya trae lo que la persona contó, para que no lo repregunten; ver con ManyChat que EE. UU. caiga en el mejor closer.
 
 ## 2026-11-17 (3) — `/empezar-va`: Calendly sin el aviso de cookies (publicado)
 
