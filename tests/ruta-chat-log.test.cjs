@@ -57,23 +57,20 @@ test('al agente no le llega ningún precio ni el Plan Esencial como oferta',asyn
  const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
  const {req,res}=pedir('hola');
  await chat(req,res);
- // 6-nov: ni el «desde US$100» del 3-nov, en ningún país.
  assert.doesNotMatch(llamadas.agente.sistema,/US\$\s*\d|precio_desde/);
  assert.doesNotMatch(llamadas.agente.sistema,/accion ofrecer_esencial|"ofrecer_esencial"/);
- assert.match(llamadas.agente.sistema,/LO QUE OFRECES[^\n]*\n- Sesión de diagnóstico/);
+ // 17-nov: lo que ofrece es una persona del equipo por WhatsApp, no la sesión.
+ assert.match(llamadas.agente.sistema,/LO QUE OFRECES[^\n]*\n- Seguir por WhatsApp con una persona del equipo/);
 });
 
-test('si el agente pide el Plan Esencial, no sale el botón de pago: salen los horarios de la sesión',async()=>{
+test('si el agente pide el Plan Esencial, no sale el botón de pago ni horarios: sale el WhatsApp',async()=>{
  const llamadas=simular({agente:{mensaje:'Te dejo el botón de pago del Esencial de US$77.',accion:'ofrecer_esencial',metodo_pago:'hotmart'}});
  const {req,res}=pedir('Quiero empezar');
  await chat(req,res);
- assert.equal(res.body.tarjeta,null);
- assert.equal(llamadas.horarios,1);
- assert.deepEqual(res.body.opciones,['Mar 20 · 11:00','Mié 21 · 14:00']);
- assert.match(res.body.mensaje,/no tiene costo/);
- assert.doesNotMatch(res.body.mensaje,/77|Esencial|pago/);
- assert.match(res.body.ajuste,/ya no se ofrece/);
- assert.equal(llamadas.turnos[0].escalonPedido,null);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
+ assert.equal(llamadas.horarios,0);
+ assert.doesNotMatch(res.body.mensaje,/77|Esencial/);
+ assert.equal(llamadas.turnos[0].accion,'pasar_a_whatsapp');
 });
 
 test('ya agendada, el Plan Esencial tampoco sale y no se ofrecen horarios',async()=>{
@@ -85,23 +82,23 @@ test('ya agendada, el Plan Esencial tampoco sale y no se ofrecen horarios',async
  assert.match(res.body.mensaje,/Ya tienes tu sesión agendada/);
 });
 
-test('un precio escrito a mitad de la charla se cambia por la sesión de diagnóstico',async()=>{
+test('un precio escrito a mitad de la charla no llega: llega cómo se paga y el WhatsApp',async()=>{
  simular({agente:{mensaje:'Nuestros planes van desde US$400.',accion:'ninguna'}});
- const {req,res}=pedir('¿Cuánto cuesta?');
+ const {req,res}=pedir('Quiero bajar grasa');
  await chat(req,res);
  assert.doesNotMatch(res.body.mensaje,/400/);
- assert.match(res.body.mensaje,/sesión de diagnóstico/);
- assert.deepEqual(res.body.opciones,['Sí, ver horarios','Tengo una duda']);
+ assert.match(res.body.mensaje,/no son mensualidades/);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
  assert.match(res.body.ajuste,/nombraba un monto \(400\)/);
 });
 
-test('un precio junto a los horarios no llega: el texto lo pone el servidor',async()=>{
+test('un precio junto a los horarios no llega y no se consultan horarios',async()=>{
  const llamadas=simular({agente:{mensaje:'Son 300 soles, ¿qué horario te queda?',accion:'proponer_horarios'}});
  const {req,res}=pedir('Quiero la sesión');
  await chat(req,res);
- assert.equal(llamadas.horarios,1);
+ assert.equal(llamadas.horarios,0);
  assert.doesNotMatch(res.body.mensaje,/300|soles/);
- assert.equal(res.body.opciones.length,2);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
 });
 
 test('si pregunta por el Esencial que vio antes, pasa a WhatsApp sin repetir el precio',async()=>{
@@ -134,24 +131,24 @@ test('si el CRM no da el historial, el chat sigue sin memoria',async()=>{
  assert.deepEqual(llamadas.agente.historial,[]);
 });
 
-test('los horarios libres de Calendly llegan como respuestas rápidas en la hora de la persona',async()=>{
- const llamadas=simular({agente:{mensaje:'¿Cuál te queda mejor?',accion:'proponer_horarios',calificacion:{nivel:'caliente',potencial:'alto'}}});
+test('aunque pida videollamada, el chat no agenda: le responde una persona por WhatsApp (17-nov)',async()=>{
+ const llamadas=simular({agente:{mensaje:'¿Cuál te queda mejor?',accion:'proponer_horarios',calificacion:{nivel:'caliente',potencial:'alto',objetivo:'Ganar músculo'}}});
  const {req,res}=pedir('Quiero las videollamadas');
  await chat(req,res);
- assert.equal(llamadas.horarios,1);
+ assert.equal(llamadas.horarios,0);
  assert.equal(llamadas.agendar.length,0);
- assert.deepEqual(res.body.opciones,['Mar 20 · 11:00','Mié 21 · 14:00']);
- assert.deepEqual(res.body.eco.horarios.map(h=>h.id),['h1','h2']);
- assert.equal(res.body.tarjeta,null);
- assert.match(res.body.ajuste,/h1 = martes, 20 de octubre, 11:00/);
+ assert.deepEqual(res.body.opciones,[]);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
+ assert.match(res.body.tarjeta.resumen,/Te responde una persona del equipo de Anthoni/);
+ assert.match(decodeURIComponent(res.body.tarjeta.url),/Escribo desde Estados Unidos\./);
 });
 
-test('si el agente escribe horas antes de ver la agenda, el texto se reemplaza',async()=>{
+test('si el agente promete horas, no pasan: sale el WhatsApp',async()=>{
  simular({agente:{mensaje:'Tenemos el jueves a las 19:00.',accion:'proponer_horarios'}});
  const {req,res}=pedir('¿Qué horarios hay?');
  await chat(req,res);
  assert.doesNotMatch(res.body.mensaje,/19:00/);
- assert.equal(res.body.opciones.length,2);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
 });
 
 test('al tocar un horario sin WhatsApp, se lo pide y no reserva todavía',async()=>{
@@ -261,12 +258,13 @@ test('un video que no existe no se muestra',async()=>{
  assert.match(res.body.ajuste,/no existe/);
 });
 
-test('en el primer mensaje no se da el precio: primero se pregunta qué quiere lograr',async()=>{
+test('si en el primer mensaje pregunta el precio, no se da el monto: le responde una persona',async()=>{
  simular({agente:{mensaje:'Los planes cuestan US$77 al mes.',accion:'ninguna'},historial:[]});
  const {req,res}=pedir('¿Cuánto cuesta?');
  await chat(req,res);
  assert.doesNotMatch(res.body.mensaje,/77/);
- assert.match(res.body.mensaje,/qué te gustaría lograr/i);
+ assert.match(res.body.mensaje,/no son mensualidades/);
+ assert.equal(res.body.tarjeta.tipo,'whatsapp');
 });
 
 test('un monto inventado (precio del Premium) no llega a la persona',async()=>{
@@ -285,22 +283,14 @@ test('ya agendada, no se ofrecen ni reservan más sesiones',async()=>{
 });
 
 // 6-nov: antes de los horarios, el aviso de la sesión, una sola vez.
-test('la primera vez que pide horarios, la persona lee el aviso; si ya está en la memoria, no se repite',async()=>{
- let llamadas=simular({agente:{mensaje:'Te dejo los horarios 👇',accion:'proponer_horarios'}});
- let {req,res}=pedir('Quiero empezar ya');
+test('el endpoint le pasa la memoria entera a las reglas: a la tercera respuesta sin paso, la pregunta de si quiere que la guíen',async()=>{
+ const llamadas=simular({agente:{mensaje:'Llegar con hambre a la cena hace que te sirvas de más.\n¿Cuántas horas pasas sin comer?',accion:'ninguna'},
+  historial:[{rol:'persona',texto:'Bajar grasa'},{rol:'equipo',texto:'Para bajar grasa hay que sostenerlo.\n¿Qué te cuesta más?'},{rol:'persona',texto:'La comida'},{rol:'equipo',texto:'Se ordena con porciones.\n¿Almuerzo o cena?'}]});
+ const {req,res}=pedir('La cena',{headers:{'x-vercel-ip-country':'PE'}});
  await chat(req,res);
- assert.match(res.body.mensaje,/no tiene costo y dura entre 30 y 40 minutos/);
- assert.match(res.body.mensaje,/Si estás pensando en inscribirte/);
- assert.match(res.body.mensaje,/intención de inscribirse al programa, que sí es pagado/);
- assert.equal(res.body.eco.aviso,true);
- assert.equal(res.body.opciones.length,2);
- assert.match(llamadas.agente.sistema,/"ya_leyo_el_aviso_de_la_sesion":false/);
- llamadas=simular({agente:{mensaje:'Te dejo los horarios 👇',accion:'proponer_horarios'},
-  historial:[{rol:'persona',texto:'Sí'},{rol:'equipo',texto:'La sesión no tiene costo.\nTodos son de 3 meses como mínimo, ninguno mensual.'}]});
- ({req,res}=pedir('¿Hay otro día?'));
- await chat(req,res);
- assert.doesNotMatch(res.body.mensaje,/no tiene costo/);
- assert.match(llamadas.agente.sistema,/"ya_leyo_el_aviso_de_la_sesion":true/);
+ assert.match(res.body.mensaje,/prefieres seguir por tu cuenta con tu Ruta\?$/);
+ assert.deepEqual(res.body.opciones,['Quiero que me guíen','Sigo por mi cuenta']);
+ assert.match(llamadas.agente.sistema,/SOBRE ESTE MENSAJE: Ya le hiciste 2 mensajes sin ofrecerle nada/);
 });
 
 test('las preguntas que el agente ya hizo le llegan aparte para que no las repita',async()=>{
@@ -313,12 +303,12 @@ test('las preguntas que el agente ya hizo le llegan aparte para que no las repit
 
 // 6-nov (tarde): preguntó dos veces si era gratis y el agente iba a contestar lo mismo.
 test('la segunda vez que pregunta si es gratis, el agente recibe la nota y no se repite la respuesta',async()=>{
- const anterior='La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?';
+ const anterior='Tu Ruta es gratis; el acompañamiento no.\n¿Quieres que te cuente cómo es?';
  const llamadas=simular({agente:{mensaje:anterior,accion:'ninguna'},
   historial:[{rol:'persona',texto:'Es gratis?'},{rol:'equipo',texto:anterior}]});
  const {req,res}=pedir('Es gratis?');
  await chat(req,res);
- assert.match(llamadas.agente.sistema,/SOBRE ESTE MENSAJE: Ya había preguntado por el costo/);
+ assert.match(llamadas.agente.sistema,/SOBRE ESTE MENSAJE: Ya había preguntado si algo es gratis/);
  assert.match(res.body.mensaje,/Te lo digo directo/);
  assert.notEqual(res.body.mensaje,anterior);
 });

@@ -57,23 +57,40 @@ test('una fecha o unas medidas no se toman como WhatsApp si no se lo pidieron', 
   assert.equal(r.mensaje, 'Perfecto, eso nos ayuda mucho.');
 });
 
-test('la sesión no se vende como gratis: se saca la frase y las respuestas rápidas', () => {
+test('nada se presenta como gratis: se saca la frase y el botón que lo dicen', () => {
   const r = responder({ mensaje: 'Sí, la sesión es gratuita y dura 30 minutos.\n¿Qué día te acomoda?', opciones: ['Sesión gratis', 'Quiero empezar', 'Tengo una duda'], accion: 'ninguna', calificacion: {} }, '¿Es gratis?');
   assert.doesNotMatch(r.mensaje, /gratu|gratis/i);
-  assert.match(r.mensaje, /qué día/i);
-  // Sacar las dos dejaba sola «Tengo una duda»: con una sola no van botones (6-nov).
-  assert.deepEqual(r.opciones, []);
+  // 17-nov: sin sesión, «Quiero empezar» de un toque ya no se saca (lleva a una persona por WhatsApp).
+  assert.deepEqual(r.opciones, ['Quiero empezar', 'Tengo una duda']);
 });
 
-test('ningún monto llega a la persona, en ningún país: tampoco el «desde US$100» (6-nov)', () => {
-  for (const mercado of ['latam', 'alto']) {
-    const r = responder({ mensaje: 'Puedes empezar desde US$100 y el plan se arma según tu caso.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?', { mercado });
-    assert.doesNotMatch(r.mensaje, /US\$|100/);
-    assert.match(r.mensaje, /3 meses como mínimo/);
+test('ningún monto llega a la persona, en ningún país (6-nov): lo que llega es cómo se paga y quién da el precio', () => {
+  for (const geo of [geoUY, geoUS]) {
+    const r = responder({ mensaje: 'El plan de 3 meses sale US$397 y puedes empezar desde US$100.', accion: 'ninguna', calificacion: {} }, 'Quiero bajar grasa', { geo });
+    assert.doesNotMatch(r.mensaje, /US\$|397|100/);
+    assert.match(r.mensaje, /no son mensualidades/);
+    assert.match(r.mensaje, /empezar en partes/);
+    assert.equal(r.tarjeta.tipo, 'whatsapp');
     assert.match(r.ajuste, /no se dan montos/);
   }
-  const otro = responder({ mensaje: 'El plan de 3 meses sale US$397.', accion: 'ninguna', calificacion: {} }, '¿Cuánto cuesta?');
-  assert.doesNotMatch(otro.mensaje, /397/);
+});
+
+test('preguntar el precio lleva directo a una persona por WhatsApp, sin «¿estás pensando en inscribirte?» (17-nov)', () => {
+  for (const pregunta of ['¿Cuánto cuesta?', 'Precio?', 'cuanto sale el programa', '¿Es mensual?', '¿Tienen cuotas?', 'Me gustaría saber el costo de sus servicios', 'Hola deseo saber las tarifas actuales']) {
+    const r = responder({ mensaje: 'El programa se arma según tu caso.\n¿Estás pensando en inscribirte?', accion: 'ninguna', calificacion: { objetivo: 'Bajar grasa' } }, pregunta);
+    assert.equal(r.tarjeta.tipo, 'whatsapp', pregunta);
+    assert.equal(r.registro.accion, 'pasar_a_whatsapp', pregunta);
+    assert.equal(r.mensaje, ruta.MENSAJE_PRECIO, pregunta);
+    assert.doesNotMatch(r.mensaje, /inscribirte/);
+  }
+  // Lo de la Ruta es gratis y no es una pregunta de precio; «¿es gratis?» tampoco.
+  for (const otra of ['¿La Ruta tiene costo?', '¿Es gratis?', 'El test de macros cuánto cuesta?', 'No me importa el precio, quiero resultados']) assert.equal(ruta.pidePrecio(otra), false, otra);
+  // Si el agente ya la pasó por WhatsApp, su mensaje se respeta.
+  const propio = responder({ mensaje: 'Te paso con una persona del equipo que te cuenta precio y formas de pago 👇', accion: 'pasar_a_whatsapp', calificacion: {} }, '¿Cuánto cuesta?');
+  assert.match(propio.mensaje, /^Te paso con una persona/);
+  // Un menor de edad no se pasa a WhatsApp.
+  const menor = responder({ mensaje: 'Los planes son para adultos.\n¿Te ayudo con tu Ruta?', accion: 'ninguna', calificacion: { bandera_clinica: 'menor de 18' } }, '¿Cuánto cuesta?');
+  assert.equal(menor.tarjeta, null);
 });
 
 test('Lima y Cuba ya no cuentan como mercado alto; EE. UU. sí', () => {
@@ -82,13 +99,34 @@ test('Lima y Cuba ya no cuentan como mercado alto; EE. UU. sí', () => {
   assert.equal(ruta.mercadoPara(geoUS, {}), 'alto');
 });
 
-test('el WhatsApp sale del lado en que se registró: Veronika con el marcador VA', () => {
-  const va = responder({ mensaje: 'Te paso con un coach.', accion: 'pasar_a_whatsapp', resumen_whatsapp: 'Quiero empezar', calificacion: {} }, 'Prefiero WhatsApp',
-    { perfil: Object.assign({}, perfil, { atribucion: { utm_source: 'STORIES-VA', utm_campaign: 'CASOS-VA' } }) });
+test('el WhatsApp sale del lado en que se registró, dice quién responde y lleva lo que contó', () => {
+  const va = responder({ mensaje: 'Te paso con una persona del equipo.', accion: 'pasar_a_whatsapp', resumen_whatsapp: 'Quiero bajar la grasa del abdomen', calificacion: {} }, 'Quiero que me guíen',
+    { perfil: Object.assign({}, perfil, { atribucion: { utm_source: 'STORIES-VA', utm_campaign: 'CASOS-VA' } }), geo: geoUS });
   assert.match(va.tarjeta.url, /phone=15677024560/);
-  assert.match(va.tarjeta.resumen, /respóndelas todas/);
-  const an = responder({ mensaje: 'Te paso con un coach.', accion: 'pasar_a_whatsapp', calificacion: {} }, 'Prefiero WhatsApp');
+  assert.match(va.tarjeta.resumen, /^Te responde una persona del equipo de Veronika/);
+  assert.match(va.tarjeta.resumen, /no tienes que repetirlo/);
+  assert.doesNotMatch(va.tarjeta.resumen, /respóndelas todas/);
+  const texto = decodeURIComponent(va.tarjeta.url.split('&text=')[1]);
+  assert.match(texto, /^Hola, vengo de mi Ruta Tr4iner y quiero asesoría\.\nQuiero bajar la grasa del abdomen\nEscribo desde Estados Unidos\./);
+  const an = responder({ mensaje: 'Te paso con una persona del equipo.', accion: 'pasar_a_whatsapp', calificacion: { objetivo: 'Ganar músculo', dolor: 'No ve cambios' } }, 'Quiero que me guíen');
   assert.match(an.tarjeta.url, /phone=17439014239/);
+  assert.match(an.tarjeta.resumen, /equipo de Anthoni/);
+  // Sin resumen del agente, lo que contó sale de la calificación.
+  assert.match(decodeURIComponent(an.tarjeta.url), /Ganar músculo\. No ve cambios/);
+});
+
+test('cuándo le responden: lunes a viernes 9 a 18 y sábados 9 a 13, hora de Perú', () => {
+  const en = (iso) => ruta.atencionDelEquipo(new Date(iso));
+  assert.equal(en('2026-11-17T15:00:00Z'), 'abierto'); // martes 10:00 Lima
+  assert.equal(en('2026-11-17T23:30:00Z'), 'manana'); // martes 18:30
+  assert.equal(en('2026-11-17T12:00:00Z'), 'hoy'); // martes 07:00
+  assert.equal(en('2026-11-21T16:00:00Z'), 'abierto'); // sábado 11:00
+  assert.equal(en('2026-11-21T19:00:00Z'), 'lunes'); // sábado 14:00
+  assert.equal(en('2026-11-22T16:00:00Z'), 'lunes'); // domingo
+  assert.equal(en('2026-11-20T23:30:00Z'), 'lunes'); // viernes 18:30
+  const t = ruta.tarjetaWhatsApp('', perfil, 'PE', new Date('2026-11-22T16:00:00Z'));
+  assert.match(t.resumen, /el lunes desde las 9 de la mañana \(hora de Perú\)\.$/);
+  assert.doesNotMatch(t.resumen, /repetirlo/); // sin resumen no se promete
 });
 
 test('el IMC sale de peso y altura del test, y no se inventa sin ellos', () => {
@@ -96,80 +134,20 @@ test('el IMC sale de peso y altura del test, y no se inventa sin ellos', () => {
   assert.equal(ruta.imcDe({ peso: null, altura: 160 }), null);
 });
 
-test('el contexto no trae montos ni el mercado, y sí los 3 meses como mínimo', () => {
+test('el contexto no trae montos ni el mercado, y sí los 3 meses como mínimo; ya no ofrece videollamadas', () => {
   for (const [geo, mercado] of [[geoUY, 'latam'], [geoUS, 'alto']]) {
     const ctx = ruta.contextoParaAgente(perfil, geo, mercado, [], null, 'America/Montevideo', '', ruta.ecoValido(null));
     assert.doesNotMatch(ctx, /precio_desde|US\$|"mercado"|latam/);
-    assert.match(ctx, /3 meses como mínimo; ninguno es mensual/);
-    assert.match(ctx, /30 a 40 minutos/);
+    assert.match(ctx, /3 meses como mínimo; ninguno es mensual\. Se puede empezar en partes/);
+    assert.match(ctx, /Desde el chat no se agendan videollamadas/);
+    assert.doesNotMatch(ctx, /30 a 40 minutos/);
     assert.match(ctx, /OFERTA VIGENTE: ninguna/);
-    assert.match(ctx, /"ya_leyo_el_aviso_de_la_sesion":false/);
   }
 });
 
-// ── Aviso de la sesión (6-nov) ──────────────────────────────────────────────
-const libres = [{ inicio: '2026-11-06T15:00:00Z' }, { inicio: '2026-11-06T20:00:00Z' }];
-// Los horarios son sólo para los mercados altos (6-nov): estas pruebas son desde EE. UU.
-function horariosCon(cruda, persona, opciones) {
-  opciones = Object.assign({ geo: geoUS, mercado: 'alto' }, opciones);
-  const r = responder(cruda, persona, opciones);
-  return ruta.completarHorarios(r, (opciones && opciones.libres) || libres, 'America/Lima', (opciones && opciones.perfil) || perfil, 'c1', false);
-}
-
-test('la primera vez que ve horarios lee el aviso entero, con la línea de su caso arriba', () => {
-  const r = horariosCon({ mensaje: 'Tiene sentido.\nLo de comer a deshora por el estrés de la casa es lo primero que el coach ordena contigo.\nTe dejo los horarios 👇 ¿cuál te queda mejor?', accion: 'proponer_horarios', calificacion: {} }, 'Sí, quiero empezar');
-  const lineas = r.mensaje.split('\n');
-  assert.equal(lineas[0], 'Lo de comer a deshora por el estrés de la casa es lo primero que el coach ordena contigo.');
-  for (const linea of ruta.AVISO_SESION) assert.ok(lineas.includes(linea), linea);
-  assert.match(r.mensaje, /no tiene costo y dura entre 30 y 40 minutos/);
-  assert.match(r.mensaje, /profundiza contigo en nuestra metodología, para que decidas con toda la información/);
-  assert.match(r.mensaje, /intención de inscribirse al programa, que sí es pagado/);
-  assert.match(r.mensaje, /3 meses como mínimo, ninguno mensual/);
-  assert.match(r.mensaje, /pareja, pueden conectarse los dos/);
-  assert.equal(lineas[lineas.length - 1], '¿Qué te parece? Si estás pensando en inscribirte, elige el horario que te quede mejor 👇');
-  assert.doesNotMatch(r.mensaje, /Tiene sentido|cuál te queda/);
-  assert.equal(r.eco.aviso, true);
-  assert.equal(r.opciones.length, 2);
-  assert.match(r.ajuste, /leyó el aviso de la sesión/);
-});
-
-test('el cierre del aviso ata el horario a inscribirse, igual para todos', () => {
-  for (const sexo of ['Mujer', 'Hombre', null]) {
-    const r = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { perfil: Object.assign({}, perfil, { sexo }) });
-    assert.match(r.mensaje, /Si estás pensando en inscribirte, elige el horario que te quede mejor/);
-  }
-});
-
-test('con el aviso ya leído no se repite: van sólo los horarios', () => {
-  const r = horariosCon({ mensaje: 'Te dejo los horarios más próximos 👇', accion: 'proponer_horarios', calificacion: {} }, 'Otro día', { eco: { aviso: true } });
-  assert.doesNotMatch(r.mensaje, /no tiene costo|como mínimo/);
-  assert.equal(r.mensaje, 'Te dejo los horarios más próximos 👇');
-  assert.equal(r.eco.aviso, true);
-});
-
-test('el aviso sale igual aunque no haya lugar en el momento que pidió o no haya horarios', () => {
-  const sinLugar = horariosCon({ mensaje: '', accion: 'proponer_horarios', preferencia_horario: { fecha: '2026-11-06', franja: 'noche' }, calificacion: {} }, 'De noche');
-  assert.match(sinLugar.mensaje, /como mínimo, ninguno mensual/);
-  assert.match(sinLugar.mensaje, /No nos quedan horarios/);
-  assert.doesNotMatch(sinLugar.mensaje, /elige el horario que te quede mejor/);
-  const vacio = horariosCon({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, 'Sí', { libres: [] });
-  assert.match(vacio.mensaje, /como mínimo, ninguno mensual/);
-  assert.match(vacio.mensaje, /Te dejo el calendario del equipo/);
-  assert.equal(vacio.tarjeta.destino, 'calendly');
-});
-
-test('del mensaje del agente no pasa lo que repite el aviso, una hora prometida ni una pregunta', () => {
-  const r = horariosCon({ mensaje: 'La sesión no tiene costo y es de 30 minutos.\nTenemos el jueves a las 19:00.\n¿Te queda bien?', accion: 'proponer_horarios', calificacion: {} }, 'Sí');
-  assert.equal(r.mensaje.split('\n')[0], ruta.AVISO_SESION[0]);
-  assert.doesNotMatch(r.mensaje, /19:00|30 minutos|Te queda bien/);
-});
-
-test('el aviso cuenta como leído si está en la memoria del CRM', () => {
+test('el aviso de la sesión cuenta como leído si está en la memoria del CRM (reservas en curso)', () => {
   assert.equal(ruta.avisoEnHistorial([{ rol: 'equipo', texto: ruta.AVISO_SESION.join('\n') }]), true);
   assert.equal(ruta.avisoEnHistorial([{ rol: 'persona', texto: 'como mínimo, ninguno mensual' }, { rol: 'equipo', texto: 'Hola' }]), false);
-  const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', calificacion: {} }, perfil, geoUS, [], 'Sí', 'c1', { numero: 6, mercado: 'alto', aviso: true }, {});
-  assert.equal(r.pendiente.tipo, 'horarios');
-  assert.equal(r.aviso, null);
 });
 
 // ── Muletillas (6-nov: «evita las respuestas con patrones de redundancia así como "tiene sentido"») ──
@@ -223,44 +201,50 @@ test('que la Ruta y sus videos son gratis se puede decir; la sesión gratis no',
 });
 
 // ── 6-nov (tarde): un chat preguntó dos veces si era gratis y recibió lo mismo ─────────────
-test('si vuelve a preguntar por el costo y el agente repite su respuesta, sale la versión corta y directa', () => {
-  const anterior = 'La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?';
+test('si vuelve a preguntar si es gratis y el agente repite su respuesta, sale la versión corta y directa', () => {
+  const anterior = 'Tu Ruta es gratis; el acompañamiento no.\n¿Quieres que te cuente cómo es?';
   const r = ruta.resolverRespuesta({ mensaje: anterior, accion: 'ninguna', opciones: ['Sí'], calificacion: {} }, perfil, geoUY, [], 'Es gratis?', 'c1',
-    { numero: 5, mercado: 'latam', anteriores: ['Hola', anterior] }, {});
+    { numero: 5, mercado: 'latam', anteriores: [anterior] }, {});
   assert.equal(r.mensaje, ruta.MENSAJE_COSTO_OTRA_VEZ);
-  assert.deepEqual(r.opciones, []);
+  assert.match(r.mensaje, /tu Ruta es gratis; el acompañamiento con el equipo es pagado/);
+  assert.deepEqual(r.opciones, ruta.OPCIONES_COACH);
   assert.equal(r.repetido, true);
   assert.match(r.ajuste, /Ibas a repetir/);
-  // Si la versión corta también ya la leyó, no se le repite a ella tampoco: queda el aviso al agente.
   const otra = ruta.resolverRespuesta({ mensaje: ruta.MENSAJE_COSTO_OTRA_VEZ, accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], '¿Es gratis?', 'c1',
     { numero: 7, mercado: 'latam', anteriores: [anterior, ruta.MENSAJE_COSTO_OTRA_VEZ] }, {});
   assert.match(otra.ajuste, /repitió palabra por palabra/);
 });
 
 test('un mensaje distinto no cuenta como repetido aunque hable de lo mismo', () => {
-  const r = ruta.resolverRespuesta({ mensaje: 'La sesión no se cobra y el programa sí, de 3 meses como mínimo.\n¿Lo estás pensando?', accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], 'Es gratis?', 'c1',
-    { numero: 5, mercado: 'latam', anteriores: ['La sesión no tiene costo; el programa sí.\n¿Estás pensando en inscribirte?'] }, {});
+  const r = ruta.resolverRespuesta({ mensaje: 'Tu Ruta no se cobra; el acompañamiento sí, de 3 meses o más.\n¿Te cuento cómo es?', accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], 'Es gratis?', 'c1',
+    { numero: 5, mercado: 'latam', anteriores: ['Tu Ruta es gratis; el acompañamiento no.\n¿Quieres que te cuente cómo es?'] }, {});
   assert.equal(r.repetido, false);
   assert.doesNotMatch(r.mensaje, /Te lo digo directo/);
 });
 
-test('la segunda pregunta por el costo llega al agente con su nota', () => {
-  const historial = [{ rol: 'persona', texto: 'Es gratis?' }, { rol: 'equipo', texto: 'La sesión no tiene costo…' }];
-  assert.match(ruta.notaDelTurno('Es gratis?', historial), /Ya había preguntado por el costo/);
+test('la segunda pregunta por si es gratis llega al agente con su nota; la de precio, siempre', () => {
+  const historial = [{ rol: 'persona', texto: 'Es gratis?' }, { rol: 'equipo', texto: 'Tu Ruta es gratis…' }];
+  assert.match(ruta.notaDelTurno('Es gratis?', historial), /Ya había preguntado si algo es gratis/);
   assert.equal(ruta.notaDelTurno('Es gratis?', [{ rol: 'persona', texto: 'Bajar grasa' }]), '');
   assert.equal(ruta.notaDelTurno('Tengo 4 días', historial), '');
+  assert.match(ruta.notaDelTurno('¿Cuánto cuesta?', []), /Pregunta el precio: es la mejor señal/);
   const ctx = ruta.contextoParaAgente(perfil, geoUY, 'latam', [], null, 'America/Lima', '', ruta.ecoValido(null), null, [], ruta.notaDelTurno('Es gratis?', historial));
-  assert.match(ctx, /SOBRE ESTE MENSAJE: Ya había preguntado por el costo/);
+  assert.match(ctx, /SOBRE ESTE MENSAJE: Ya había preguntado/);
 });
 
-test('la pregunta de si quiere inscribirse va sin botones', () => {
+test('«¿estás pensando en inscribirte?» se cambia por la pregunta de si quiere que la guíen, con sus dos botones', () => {
   const r = responder({ mensaje: 'La culpa después de picar te está frenando.\n¿Estás pensando en inscribirte a un programa con un coach en estos días, o por ahora prefieres avanzar con tu Ruta?', opciones: ['Empezar con coach', 'Seguir en mi Ruta'], accion: 'ninguna', calificacion: {} }, 'Me da culpa');
-  assert.deepEqual(r.opciones, []);
-  assert.match(r.ajuste, /lo contesta escribiendo/);
+  assert.equal(r.mensaje, 'La culpa después de picar te está frenando.\n' + ruta.PREGUNTA_COACH);
+  assert.deepEqual(r.opciones, ruta.OPCIONES_COACH);
+  // Si ya se la ofreció, esa línea se saca y no se repite.
+  const ya = ruta.resolverRespuesta({ mensaje: 'Eso se ordena con un plan.\n¿Estás pensando en inscribirte?', accion: 'ninguna', calificacion: {} }, perfil, geoUY, [], 'No sé', 'c1',
+    { numero: 4, historial: [{ rol: 'equipo', texto: 'Hola.\n' + ruta.PREGUNTA_COACH }, { rol: 'persona', texto: 'No sé' }] }, {});
+  assert.equal(ya.mensaje, 'Eso se ordena con un plan.');
+  assert.deepEqual(ya.opciones, []);
 });
 
 test('si al sacar un botón prohibido queda uno solo, no queda ninguno', () => {
-  const r = responder({ mensaje: 'La constancia se rompe cuando el plan no encaja.\n¿Cómo lo quieres trabajar?', opciones: ['Quiero empezar', 'Seguir con mi Ruta'], accion: 'ninguna', calificacion: {} }, 'La constancia');
+  const r = responder({ mensaje: 'La constancia se rompe cuando el plan no encaja.\n¿Cómo lo quieres trabajar?', opciones: ['Sesión gratis', 'Seguir con mi Ruta'], accion: 'ninguna', calificacion: {} }, 'La constancia');
   assert.deepEqual(r.opciones, []);
 });
 
@@ -273,23 +257,18 @@ test('al agente se le corrige «su Ruta» por «tu Ruta»', () => {
 const nuevo = { email: 'n@y.com', nombre: 'Lu', atribucion: {}, orientaciones_completadas: 0, orientaciones_empezadas: 0 };
 const conTest = Object.assign({}, nuevo, { hizo_test: true });
 
-test('el camino sale del país y de lo que ya hizo en su Ruta', () => {
+test('el camino sale del país y de lo que ya hizo en su Ruta; desde el 17-nov ninguno va a sesión', () => {
   assert.equal(ruta.caminoPara(conTest, geoUS, {}).id, 'prioridad');
   assert.equal(ruta.caminoPara(perfil, { pais: 'ES' }, {}).id, 'prioridad');
   assert.equal(ruta.caminoPara(nuevo, geoUS, {}).id, 'alto_nuevo');
   assert.equal(ruta.caminoPara(perfil, geoUY, {}).id, 'calificado');
   assert.equal(ruta.caminoPara(conTest, { pais: 'PE' }, {}).id, 'calificado');
-  // Sólo los mercados altos van a sesión.
-  assert.equal(ruta.caminoPara(conTest, geoUS, {}).sesion, true);
-  assert.equal(ruta.caminoPara(nuevo, geoUS, {}).sesion, true);
-  assert.equal(ruta.caminoPara(perfil, geoUY, {}).sesion, false);
-  assert.equal(ruta.caminoPara(nuevo, { pais: 'MX' }, {}).sesion, false);
   assert.equal(ruta.caminoPara(nuevo, { pais: 'MX' }, {}).id, 'nutrir');
   assert.equal(ruta.caminoPara(Object.assign({}, nuevo, { orientaciones_completadas: 1 }), { pais: 'CO' }, {}).id, 'nutrir');
   assert.equal(ruta.caminoPara(conTest, { pais: 'CU' }, {}).id, 'whatsapp');
   assert.equal(ruta.caminoPara(perfil, { pais: 'PE' }, { pais: 'VE' }).id, 'whatsapp');
-  // Lo que declara sólo suma para el mercado alto (como mercadoPara).
   assert.equal(ruta.caminoPara(conTest, { pais: 'PE' }, { pais: 'US' }).id, 'prioridad');
+  for (const [p, geo] of [[conTest, geoUS], [nuevo, geoUS], [perfil, geoUY], [nuevo, { pais: 'MX' }]]) assert.equal(ruta.caminoPara(p, geo, {}).sesion, false);
 });
 
 test('el botón del chat se oculta sólo por la IP de Cuba o Venezuela', () => {
@@ -298,21 +277,16 @@ test('el botón del chat se oculta sólo por la IP de Cuba o Venezuela', () => {
   for (const pais of ['PE', 'US', 'MX', '']) assert.equal(ruta.chatDisponiblePara({ pais }), true, pais);
 });
 
-test('a quien no va a sesión, los horarios que pide el agente se cambian por WhatsApp', () => {
-  // Decisión del usuario (6-nov): fuera de los mercados altos, aunque haya avanzado, WhatsApp.
-  for (const [p, geo] of [[nuevo, { pais: 'MX' }], [conTest, { pais: 'CU' }], [perfil, geoUY], [conTest, { pais: 'PE' }]]) {
+test('los horarios que pida el agente se cambian por WhatsApp, también en EE. UU. y Europa', () => {
+  for (const [p, geo] of [[nuevo, { pais: 'MX' }], [conTest, { pais: 'CU' }], [perfil, geoUY], [conTest, geoUS], [nuevo, { pais: 'ES' }]]) {
     const r = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios 👇', accion: 'proponer_horarios', resumen_caso: 'Quiero bajar grasa', calificacion: {} }, p, geo, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'latam' }, {});
     assert.equal(r.pendiente, null);
     assert.equal(r.tarjeta.tipo, 'whatsapp');
     assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
     assert.equal(r.registro.accion, 'pasar_a_whatsapp');
-    assert.ok(['nutrir', 'whatsapp', 'calificado'].includes(r.registro.camino));
-    assert.match(r.mensaje, /inscribirte al programa, que es pagado/);
-    assert.match(r.ajuste, /no va la sesión por videollamada/);
+    assert.match(r.mensaje, /el precio y las formas de pago/);
+    assert.match(decodeURIComponent(r.tarjeta.url), /Quiero bajar grasa/);
   }
-  const prioridad = ruta.resolverRespuesta({ mensaje: '', accion: 'proponer_horarios', calificacion: {} }, conTest, geoUS, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'alto' }, {});
-  assert.equal(prioridad.pendiente.tipo, 'horarios');
-  assert.equal(prioridad.registro.calificacion.camino, 'prioridad');
 });
 
 test('el WhatsApp que reemplaza a la sesión no se repite igual dos veces', () => {
@@ -327,10 +301,11 @@ test('el agente recibe su camino y su avance, para hablarle sin recitarle datos'
   assert.match(ctx, /CAMINO PARA ESTA PERSONA[^\n]*: nutrir\. Recién empieza su Ruta/);
   assert.match(ctx, /SU AVANCE EN LA RUTA: 0 lecciones completas; todavía no hizo el test de macros/);
   const alto = ruta.contextoParaAgente(conTest, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null));
-  assert.match(alto, /: prioridad\. Es de las personas que más compran/);
+  assert.match(alto, /: prioridad\. Ya avanzó en su Ruta/);
+  assert.doesNotMatch(alto, /sesión por videollamada|proponer_horarios/);
 });
 
-test('una reserva ya en curso (con horarios ofrecidos) no se corta aunque el camino no tenga sesión', () => {
+test('una reserva ya en curso (con horarios ofrecidos) no se corta', () => {
   const r = ruta.resolverRespuesta({ mensaje: 'Listo.', accion: 'agendar', horario: 'h1', whatsapp: '+59891099271', calificacion: {} }, perfil, geoUY, [], '+59891099271', 'c1',
     { numero: 6, mercado: 'latam' }, { horarios, horario_elegido: 'h1' });
   assert.equal(r.pendiente.tipo, 'agendar');
@@ -355,73 +330,56 @@ test('se reconoce qué le ofreció el agente en su último mensaje', () => {
   assert.equal(ruta.ofertaEn('¿Qué es lo que más te cuesta hoy?'), null);
 });
 
-test('EE. UU.: escribió «Si» a la oferta de empezar y el agente la repitió: el sistema le da a elegir sesión o WhatsApp', () => {
-  const cruda = { mensaje: 'Ese “sí” nos sirve para avanzar.\nSi ya quieres empezar, te armamos el siguiente paso con un coach que revisa tu caso y te dice cómo seguir con claridad.', opciones: ['Quiero empezar'], accion: 'ninguna', calificacion: {} };
-  const r = ruta.resolverRespuesta(cruda, nuevo, geoUS, [], 'Si', 'c1', { numero: 5, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
-  assert.deepEqual(r.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
-  assert.match(r.mensaje, /¿Prefieres la sesión por videollamada o seguir por WhatsApp con un coach del equipo\?$/);
-  assert.match(r.ajuste, /escribió que quiere empezar y no le diste el paso/);
-});
-
-test('fuera de EE. UU. y Europa: el mismo «sí» va directo a WhatsApp', () => {
+test('escribió «Si» a la oferta de empezar y el agente la repitió: va a WhatsApp, en cualquier país', () => {
   const cruda = { mensaje: 'Si ya quieres empezar, el coach revisa tu caso.', accion: 'ninguna', calificacion: {} };
-  const r = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Si por favor', 'c1', { numero: 5, mercado: 'latam', anteriores: [OFERTA_EMPEZAR] }, {});
-  assert.equal(r.tarjeta.tipo, 'whatsapp');
-  assert.equal(r.registro.accion, 'pasar_a_whatsapp');
-  assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
+  for (const [p, geo] of [[perfil, geoUY], [nuevo, geoUS]]) {
+    const r = ruta.resolverRespuesta(cruda, p, geo, [], 'Si por favor', 'c1', { numero: 5, mercado: 'latam', anteriores: [OFERTA_EMPEZAR] }, {});
+    assert.equal(r.tarjeta.tipo, 'whatsapp');
+    assert.equal(r.registro.accion, 'pasar_a_whatsapp');
+    assert.equal(r.mensaje, ruta.MENSAJE_WHATSAPP_CAMINO);
+  }
 });
 
-test('a quien no va a sesión nunca se le da a elegir la videollamada: ve el WhatsApp', () => {
-  // Colombia, 8-nov: «¿Prefieres seguir por WhatsApp o agendar una sesión por videollamada?» y la persona se fue.
+test('nunca se da a elegir la videollamada: ve el WhatsApp', () => {
   const cruda = { mensaje: 'Sí, te ayudamos a armarlo contigo.\n¿Prefieres seguir por WhatsApp con un coach del equipo o agendar una sesión por videollamada?', opciones: ['Por WhatsApp', 'Sesión por videollamada'], accion: 'ninguna', calificacion: {} };
-  const r = ruta.resolverRespuesta(cruda, perfil, { pais: 'CO' }, [], 'Si por favor me ayudas a armar la rutina', 'c1', { numero: 4, mercado: 'latam', anteriores: ['¿Quieres que te ayudemos a armar eso contigo?'] }, {});
-  assert.equal(r.tarjeta.tipo, 'whatsapp');
-  assert.deepEqual(r.opciones, []);
-  assert.doesNotMatch(r.mensaje, /videollamada/i);
-  // En EE. UU. esa elección sí va, tal como la escribió el agente.
-  const alto = ruta.resolverRespuesta(cruda, conTest, geoUS, [], 'Quiero empezar', 'c1', { numero: 4, mercado: 'alto' }, {});
-  assert.deepEqual(alto.opciones, ['Por WhatsApp', 'Sesión por videollamada']);
-  assert.equal(alto.tarjeta, null);
+  for (const [p, geo] of [[perfil, { pais: 'CO' }], [conTest, geoUS]]) {
+    const r = ruta.resolverRespuesta(cruda, p, geo, [], 'Si por favor me ayudas a armar la rutina', 'c1', { numero: 4, mercado: 'latam', anteriores: ['¿Quieres que te ayudemos a armar eso contigo?'] }, {});
+    assert.equal(r.tarjeta.tipo, 'whatsapp');
+    assert.deepEqual(r.opciones, []);
+    assert.doesNotMatch(r.mensaje, /videollamada/i);
+  }
 });
 
 test('un «ok», una pregunta de dos opciones o una sesión ya agendada no fuerzan el paso', () => {
   const cruda = { mensaje: 'Ese orden evita que entrenes a ciegas.\n¿Cuánto tiempo llevas así?', accion: 'ninguna', calificacion: {} };
   const debil = ruta.resolverRespuesta(cruda, nuevo, geoUS, [], 'Bien', 'c1', { numero: 3, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
   assert.deepEqual(debil.opciones, []);
-  assert.equal(debil.mensaje, cruda.mensaje);
+  assert.equal(debil.tarjeta, null);
   const dos = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Si', 'c1', { numero: 3, mercado: 'latam', anteriores: ['Si quieres que un coach revise tu caso, lo vemos por WhatsApp.\n¿Quieres seguir por ahí o prefieres avanzar con tu Ruta?'] }, {});
   assert.equal(dos.tarjeta, null);
   const agendada = ruta.resolverRespuesta(cruda, nuevo, geoUS, ['agendo'], 'Si', 'c1', { numero: 9, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
   assert.deepEqual(agendada.opciones, []);
-  // Si el agente ya dio el paso, no se toca.
-  const yaDio = ruta.resolverRespuesta({ mensaje: 'Te dejo los horarios.', accion: 'proponer_horarios', calificacion: {} }, nuevo, geoUS, [], 'Si', 'c1', { numero: 5, mercado: 'alto', anteriores: [OFERTA_EMPEZAR] }, {});
-  assert.equal(yaDio.pendiente.tipo, 'horarios');
+  assert.equal(agendada.tarjeta, null);
 });
 
 test('el agente sabe, antes de responder, que la persona contestó que sí y qué paso toca', () => {
   const historial = [{ rol: 'persona', texto: 'Ganar músculo' }, { rol: 'equipo', texto: OFERTA_EMPEZAR }];
-  const alto = ruta.notaDelTurno('Si', historial, ruta.caminoPara(nuevo, geoUS, {}));
-  assert.match(alto, /ya es la señal de que quiere empezar/);
-  assert.match(alto, /«Sesión por videollamada» y «Por WhatsApp»/);
-  const latam = ruta.notaDelTurno('Sí, quiero guía', historial, ruta.caminoPara(perfil, geoUY, {}));
-  assert.match(latam, /accion pasar_a_whatsapp/);
-  assert.doesNotMatch(latam, /videollamada/);
-  assert.match(ruta.notaDelTurno('Bien', historial, ruta.caminoPara(nuevo, geoUS, {})), /pregunta del paso 6/);
-  const yaPregunto = historial.concat([{ rol: 'persona', texto: 'x' }, { rol: 'equipo', texto: '¿Estás pensando en inscribirte a un programa con un coach?' }, { rol: 'persona', texto: 'y' }, { rol: 'equipo', texto: OFERTA_EMPEZAR }]);
-  assert.match(ruta.notaDelTurno('Ok', yaPregunto, ruta.caminoPara(nuevo, geoUS, {})), /no insistas/);
+  for (const camino of [ruta.caminoPara(nuevo, geoUS, {}), ruta.caminoPara(perfil, geoUY, {})]) {
+    const nota = ruta.notaDelTurno('Si', historial, camino);
+    assert.match(nota, /ya es la señal de que quiere empezar/);
+    assert.match(nota, /accion pasar_a_whatsapp/);
+    assert.doesNotMatch(nota, /videollamada/);
+  }
   const video = [{ rol: 'equipo', texto: '¿Quieres que te muestre el video de alimentación?' }];
   assert.match(ruta.notaDelTurno('Si', video, ruta.caminoPara(perfil, geoUY, {})), /mostrar_video/);
   const dos = [{ rol: 'equipo', texto: '¿Quieres que te muestre esa lección o prefieres seguir avanzando con tu Ruta?' }];
   assert.match(ruta.notaDelTurno('Si', dos, ruta.caminoPara(perfil, geoUY, {})), /un sí a la primera/);
-  // Sin oferta previa, o sin un sí, no hay nota; y la del costo sigue saliendo.
   assert.equal(ruta.notaDelTurno('Si', [{ rol: 'equipo', texto: '¿Entrenas en casa?' }], ruta.caminoPara(perfil, geoUY, {})), '');
   assert.equal(ruta.notaDelTurno('Entreno en casa', historial, ruta.caminoPara(perfil, geoUY, {})), '');
-  const ctx = ruta.contextoParaAgente(nuevo, geoUS, 'alto', [], null, 'America/New_York', '', ruta.ecoValido(null), null, [], alto);
-  assert.ok(ctx.includes('SOBRE ESTE MENSAJE: ' + alto));
 });
 
 test('un mensaje sin pregunta ni paso le llega al agente como nota para el turno siguiente', () => {
-  const r = ruta.resolverRespuesta({ mensaje: 'Ese orden evita que entrenes a ciegas.\nSi quieres, te mostramos cómo se ve el plan en tu caso.', opciones: ['Sí, quiero empezar'], accion: 'ninguna', calificacion: {} },
+  const r = ruta.resolverRespuesta({ mensaje: 'Ese orden evita que entrenes a ciegas.\nUn plan a tu medida lo cambia todo.', accion: 'ninguna', calificacion: {} },
     nuevo, geoUS, [], 'Muy bien', 'c1', { numero: 2, mercado: 'alto' }, {});
   assert.deepEqual(r.opciones, []);
   assert.match(r.ajuste, /terminó sin una pregunta ni un paso concreto/);
@@ -432,12 +390,11 @@ test('un mensaje sin pregunta ni paso le llega al agente como nota para el turno
 test('quien escribe por su cuenta que quiere empezar o que la guíen recibe su paso (el atajo)', () => {
   for (const si of ['Quiero empezar', 'Quiero que me guíen', 'Quisiera tener un coach', 'Necesito un coach', '¿Cómo me inscribo?', 'Quiero inscribirme']) assert.equal(ruta.pideEmpezar(si), true, si);
   for (const no of ['Quiero empezar a entrenar en casa', 'Quiero bajar grasa', 'Quiero empezar pero después', 'No quiero un coach', 'Bajar grasa']) assert.equal(ruta.pideEmpezar(no), false, no);
-  // España, 8-nov: «Quiero que me guíen» y el chat siguió hablando sin dar el paso.
   const cruda = { mensaje: 'El coach revisa tu caso y te da un diagnóstico claro.', accion: 'ninguna', calificacion: {} };
-  const alto = ruta.resolverRespuesta(cruda, nuevo, { pais: 'ES' }, [], 'Quiero que me guíen', 'c1', { numero: 2, mercado: 'alto', anteriores: ['¿Qué te gustaría lograr?'] }, {});
-  assert.deepEqual(alto.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
-  const latam = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Quiero que me guíen', 'c1', { numero: 2, mercado: 'latam', anteriores: ['¿Qué te gustaría lograr?'] }, {});
-  assert.equal(latam.tarjeta.tipo, 'whatsapp');
+  for (const [p, geo] of [[nuevo, { pais: 'ES' }], [perfil, geoUY]]) {
+    const r = ruta.resolverRespuesta(cruda, p, geo, [], 'Quiero que me guíen', 'c1', { numero: 2, mercado: 'alto', anteriores: ['¿Qué te gustaría lograr?'] }, {});
+    assert.equal(r.tarjeta.tipo, 'whatsapp');
+  }
   assert.match(ruta.notaDelTurno('Quiero que me guíen', [{ rol: 'equipo', texto: '¿Qué te gustaría lograr?' }], ruta.caminoPara(perfil, geoUY, {})), /es el atajo/);
 });
 
@@ -502,18 +459,75 @@ test('retomar: no se molesta a quien ya tuvo su paso, frenó, pidió ver algo o 
   sin([], SIN_HECHOS);
 });
 
-test('retomar: lo que lee al volver da el paso que faltó, según su camino', () => {
-  const alto = ruta.respuestaParaRetomar({ nombre: 'Maria' }, SESION);
-  assert.match(alto.mensaje, /^Hola de nuevo, Maria\. La última vez nos dijiste que querías empezar y nos faltó darte el siguiente paso\./);
-  assert.match(alto.mensaje, /¿Prefieres la sesión por videollamada o seguir por WhatsApp con un coach del equipo\?$/);
-  assert.deepEqual(alto.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
-  assert.equal(alto.tarjeta, null);
-  const latam = ruta.respuestaParaRetomar(perfil, SIN_SESION);
-  assert.equal(latam.tarjeta.tipo, 'whatsapp');
-  assert.deepEqual(latam.opciones, []);
-  assert.doesNotMatch(latam.mensaje, /videollamada|gratis|\$/i);
-  assert.match(latam.mensaje, /es pagado y de 3 meses como mínimo/);
+test('retomar: lo que lee al volver da el paso que faltó: WhatsApp con una persona', () => {
+  const r = ruta.respuestaParaRetomar({ nombre: 'Maria', atribucion: {} }, ruta.caminoPara(nuevo, geoUS, {}));
+  assert.match(r.mensaje, /^Hola de nuevo, Maria\. La última vez nos dijiste que querías empezar y nos faltó darte el siguiente paso\./);
+  assert.equal(r.tarjeta.tipo, 'whatsapp');
+  assert.deepEqual(r.opciones, []);
+  assert.doesNotMatch(r.mensaje, /videollamada|gratis|\$/i);
+  assert.match(r.mensaje, /te responde una persona del equipo/);
   assert.match(ruta.respuestaParaRetomar({}, SIN_SESION).mensaje, /^Hola de nuevo\. /);
-  // El turno de retomar, ya guardado, cuenta como paso dado.
   assert.equal(ruta.MARCA_RETOMAR, '[Volvió a su Ruta]');
+});
+
+
+// ── Chat más humano (17-nov-2026) ───────────────────────────
+// Análisis de 1.022 chats contra las ventas y de 83 expedientes de clientes de oct–nov.
+test('el eco del arranque se saca: no se repite ni se comenta lo que dijo la persona', () => {
+  const casos = [
+    ['Ese “sí” ya nos dice que quieres avanzar. El coach ordena tu entrenamiento contigo.', 'El coach ordena tu entrenamiento contigo.'],
+    ['Ese "ok" sigue sonando a que quieres que lo revisemos en serio. Con lo que cuentas, el plan cambia.', 'Con lo que cuentas, el plan cambia.'],
+    ['Lo de ganar músculo es justo lo que el coach revisa contigo. Entrenas en casa o en gimnasio?', 'Entrenas en casa o en gimnasio?']
+  ];
+  for (const [entrada, salida] of casos) assert.equal(ruta.sinEco(entrada).mensaje, salida, entrada);
+  for (const igual of ['Ese entrenamiento en casa se puede armar bien.', 'Eso dice mucho.', 'Lo de la comida se ordena con porciones.']) assert.equal(ruta.sinEco(igual).mensaje, igual, igual);
+  const r = responder({ mensaje: 'Ese “sí” ya nos dice que quieres avanzar.\nLos antojos de la tarde suelen venir de llegar con hambre.\n¿Qué comes al mediodía?', accion: 'ninguna', calificacion: {} }, 'Sí');
+  assert.match(r.mensaje, /^Los antojos de la tarde/);
+  assert.match(r.ajuste, /no repitas ni comentes lo que dijo/);
+});
+
+test('a la tercera respuesta seguida sin un paso, se pregunta si quiere que la guíen (con sus dos botones)', () => {
+  const sinPaso = [
+    { rol: 'persona', texto: 'Bajar grasa' }, { rol: 'equipo', texto: 'Para bajar grasa hay que sostenerlo.\n¿Qué te cuesta más?' },
+    { rol: 'persona', texto: 'La comida' }, { rol: 'equipo', texto: 'La comida se ordena con porciones.\n¿Almuerzo o cena?' }
+  ];
+  assert.equal(ruta.estadoDeLaCharla(sinPaso).sinPaso, 2);
+  const cruda = { mensaje: 'Si llegas con hambre a la cena, te sirves de más.\n¿Cuántas horas pasas sin comer?', accion: 'ninguna', calificacion: {} };
+  const r = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'La cena', 'c1', { numero: 3, historial: sinPaso.concat([{ rol: 'persona', texto: 'La cena' }]) }, {});
+  assert.equal(r.mensaje, 'Si llegas con hambre a la cena, te sirves de más.\n' + ruta.PREGUNTA_COACH);
+  assert.deepEqual(r.opciones, ['Quiero que me guíen', 'Sigo por mi cuenta']);
+  assert.match(r.ajuste, /tercera respuesta seguida sin ofrecerle nada/);
+  assert.match(ruta.notaDelTurno('La cena', sinPaso, ruta.caminoPara(perfil, geoUY, {})), /no hagas otra pregunta de diagnóstico/);
+  // Con un paso en el medio (un video, el WhatsApp) la cuenta vuelve a cero.
+  const conVideo = sinPaso.slice(0, 2).concat([{ rol: 'persona', texto: 'x' }, { rol: 'equipo', texto: 'Mira este caso 👇 [Se le mostró el video «Ana Briones».]' }]);
+  assert.equal(ruta.estadoDeLaCharla(conVideo).sinPaso, 0);
+  const tras = ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'La cena', 'c1', { numero: 3, historial: conVideo }, {});
+  assert.equal(tras.mensaje, cruda.mensaje);
+});
+
+test('la pregunta de si quiere que la guíen va una sola vez, y nunca a quien eligió seguir por su cuenta', () => {
+  const ofrecida = [{ rol: 'equipo', texto: 'Hola.\n' + ruta.PREGUNTA_COACH }, { rol: 'persona', texto: 'mmm' }, { rol: 'equipo', texto: 'Cuéntame.\n¿Entrenas?' }, { rol: 'persona', texto: 'No' }, { rol: 'equipo', texto: 'Ok.\n¿Por qué?' }];
+  const cruda = { mensaje: 'Empezar es lo que más cuesta.\n¿Qué te frena?', accion: 'ninguna', calificacion: {} };
+  assert.equal(ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Tiempo', 'c1', { numero: 4, historial: ofrecida }, {}).mensaje, cruda.mensaje);
+  const suCuenta = [{ rol: 'equipo', texto: 'a\n¿b?' }, { rol: 'persona', texto: 'Sigo por mi cuenta' }, { rol: 'equipo', texto: 'c\n¿d?' }, { rol: 'persona', texto: 'e' }, { rol: 'equipo', texto: 'f\n¿g?' }];
+  assert.equal(ruta.estadoDeLaCharla(suCuenta).porSuCuenta, true);
+  assert.equal(ruta.resolverRespuesta(cruda, perfil, geoUY, [], 'Tiempo', 'c1', { numero: 4, historial: suCuenta }, {}).mensaje, cruda.mensaje);
+  const nota = ruta.notaDelTurno('Sigo por mi cuenta', [{ rol: 'equipo', texto: 'Hola.\n' + ruta.PREGUNTA_COACH }], ruta.caminoPara(perfil, geoUY, {}));
+  assert.match(nota, /Acaba de elegir seguir por su cuenta/);
+  assert.match(nota, /no le ofrezcas el acompañamiento salvo que ella lo pida/);
+});
+
+test('«Quiero que me guíen» (el botón) va directo a WhatsApp', () => {
+  const r = ruta.resolverRespuesta({ mensaje: 'Genial, te ayudamos.', accion: 'ninguna', calificacion: { objetivo: 'Bajar grasa' } }, nuevo, { pais: 'MX' }, [], 'Quiero que me guíen', 'c1',
+    { numero: 2, historial: [{ rol: 'equipo', texto: 'Para bajar grasa…\n' + ruta.PREGUNTA_COACH }] }, {});
+  assert.equal(r.tarjeta.tipo, 'whatsapp');
+  assert.equal(r.registro.accion, 'pasar_a_whatsapp');
+});
+
+test('el agente no recibe la sesión en sus instrucciones ni pide negritas', () => {
+  const prompt = require('../lib/ruta-chat-prompt.js');
+  assert.doesNotMatch(prompt, /proponer_horarios|agendar|pensando en inscribirte/);
+  assert.match(prompt, /sin negritas/);
+  assert.match(prompt, new RegExp(ruta.PREGUNTA_COACH.replace(/[?¿()]/g, '\\$&')));
+  assert.doesNotMatch(prompt, /\*\*/);
 });

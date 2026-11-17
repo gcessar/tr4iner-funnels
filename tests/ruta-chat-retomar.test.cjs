@@ -53,12 +53,12 @@ test('quien nunca usó el chat: una sola consulta al CRM y nada que retomar', as
   assert.equal(r.headers['Cache-Control'], 'private, no-store');
 });
 
-test('EE. UU.: le quedó el paso pendiente y al volver elige videollamada o WhatsApp; el GET no guarda nada', async () => {
+test('EE. UU.: le quedó el paso pendiente y al volver ve el WhatsApp de una persona (17-nov: sin sesión); el GET no guarda nada', async () => {
   const pedidos = simular(crmCon(TURNOS, HECHOS));
   const r = await llamar('GET', 'US');
   assert.match(r.json.retomar.mensaje, /^Hola de nuevo, Ana\. La última vez nos dijiste que querías empezar/);
-  assert.deepEqual(r.json.retomar.opciones, ['Sesión por videollamada', 'Por WhatsApp']);
-  assert.equal(r.json.retomar.tarjeta, null);
+  assert.deepEqual(r.json.retomar.opciones, []);
+  assert.equal(r.json.retomar.tarjeta.tipo, 'whatsapp');
   assert.ok(!pedidos.some((p) => p.method === 'POST'));
 });
 

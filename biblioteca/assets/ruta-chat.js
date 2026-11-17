@@ -120,7 +120,9 @@
     '.rc-text p{margin:0}',
     '.rc-turn--equipo{align-self:flex-start;max-width:90%}',
     '.rc-turn--equipo .rc-text{padding:12px 15px 13px;border-radius:4px 16px 16px 16px;background:rgba(22,19,14,.055);color:var(--ink,#111)}',
-    '.rc-text .rc-q{font-weight:650}',
+    // 17-nov (pedido del usuario: «más humano, sin texto en negrita»): la pregunta del final va
+    // con el mismo peso que el resto; la separa el aire entre párrafos, como en un chat real.
+    '.rc-text .rc-q{font-weight:inherit}',
     '.rc-turn--yo{align-self:flex-end;max-width:84%}',
     '.rc-turn--yo .rc-text{padding:10px 14px;border-radius:16px 16px 4px 16px;background:var(--ink,#111);color:#fff;font-size:15px}',
     '.rc-turn.is-new{animation:rc-msg .22s ease-out}',
@@ -250,8 +252,11 @@
       rol: 'equipo',
       // El saludo ya es la primera pregunta, con el tono de los asesores de
       // WhatsApp (20-oct). El prompt cita este texto: cambiarlo en los dos lados.
-      texto: (opts.nombre ? 'Hola, ' + opts.nombre + ' 🙌' : 'Hola 🙌') + ' ¿Qué te gustaría lograr? Cuéntanos y te mostramos cómo te podemos ayudar.',
-      opciones: ['Bajar grasa', 'Ganar músculo', 'Tengo una duda']
+      // 17-nov: además de los objetivos, dos botones por situación. Los clientes de oct–nov
+      // compraron por lo que les pasaba (entrenar sin ver cambios, un dato de salud), casi
+      // nunca por «bajar grasa» a secas.
+      texto: (opts.nombre ? 'Hola, ' + opts.nombre + ' 🙌' : 'Hola 🙌') + ' ¿Qué te gustaría cambiar? Cuéntanos y vemos cómo te podemos ayudar.',
+      opciones: ['Bajar grasa', 'Ganar músculo', 'Entreno y no veo cambios', 'Lo necesito por salud', 'Tengo una duda']
     };
   }
 

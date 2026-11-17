@@ -191,7 +191,9 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido, anteriores: anteriores };
+  // `historial` va entero: el tope de preguntas sin un paso y si ya se le ofreció que la guíen
+  // se leen de toda la conversación, no sólo de los últimos mensajes.
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido, anteriores: anteriores, historial: historial };
   let respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno, body.eco);
   let reserva = null;
   if (respuesta.pendiente && respuesta.pendiente.tipo === 'horarios') {
