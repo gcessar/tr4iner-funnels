@@ -10,6 +10,7 @@
 - **Verificación:** `node --test tests/*.test.cjs` 113/113 y sintaxis de la página. Probado en local con el contenido real (`scripts/ruta-local.ts` del CRM, `/__estado?eval=…`).
 - **Segunda vuelta (mismo día):** burbuja «Tr4iner te recomienda»; el paso de grasa de la evaluación usa las fotos de referencia del test (`biblioteca/plan/assets/grasa-*.webp`); banner sutil «Calcula tus macros» a quien vio algo y no tiene plan; línea sutil arriba del chat con «Calcular» (`opts.aviso` en `biblioteca/assets/ruta-chat.js`, fuera de la conversación del agente).
 - **Tercera vuelta (mismo día):** el paso de grasa recuerda de dónde partió la persona: fotos «Al empezar» y «Hoy» lado a lado, marca «Inicio» en la barra, diferencia en puntos y atajo «Me veo igual» (se envía como «sin cambio»). Sin punto de partida, una sola foto y se guarda el valor que se ve aunque no mueva la barra.
+- **Cuarta vuelta (mismo día):** la evaluación se cuenta desde el test de macros. Quien no tiene test (`falta_test`, lo decide el CRM) ve un banner y una línea en el chat que lo invitan al test, y `?video=evaluacion` lo lleva al test en vez de abrir la evaluación.
 - **Pendiente:** publicar después del CRM.
 
 ## 2026-11-18 — Países que sólo gastan WhatsApp de ManyChat: a Fit4, también desde el chat de la Ruta (publicado)
