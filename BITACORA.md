@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-18 — Países que sólo gastan WhatsApp de ManyChat: a Fit4 (sin publicar)
+
+- **Pedido del usuario:** limitar a los leads con IP de Venezuela, Cuba, Nicaragua, Honduras, África e India, «para reducir costos en el uso de whatsapp de manychat». `/empezar` y `/empezar-va` no se les muestran: van a Fit4 (AN → `/fit4`, VA → `/fit4-va`). En los casos con planes, «que aparezca el video y abajo un botón que mande a la página de Fit4… sólo y únicamente para esos países». África entera («ninguno de allá nos compra»). El botón flotante de WhatsApp y el pase de referidos quedan como estaban.
+- **Lista única:** `lib/paises-fit4.js` (`VE CU NI HN IN` + los 54 países de África + EH, SH, RE, YT). La IP la informa Vercel (`x-vercel-ip-country`); quien use VPN no cae.
+- **`/empezar` y `/empezar-va`:** `middleware.ts` responde 307 a Fit4 con todos los parámetros de la URL, sin caché. `/empezar` elige `/fit4-va` con el marcador VA de AGENTS.md (desde la Ruta gana `funnel=AN|VA`); `/empezar-va` siempre a `/fit4-va`. El botón de la Ruta a `/empezar` cae en el mismo desvío.
+- **Los 7 casos con planes** (Flor, Dashiel, Andrea, Christian, Flor VA, Rosita VA, Andrea VA): el middleware deja la cookie `tr4_fit4_geo=1` (1 día; se borra si la IP deja de ser de la lista) y `assets/planes/planes.js` cambia la sesión de diagnóstico por «Empieza con FIT4CHALLENGE» y el botón «Ver FIT4CHALLENGE», al mismo lado (AN/VA) que habría elegido el WhatsApp y con toda la atribución. En las tres de Veronika, los textos de la página que hablan del WhatsApp llevan `data-fit4-geo` y se cambian u ocultan. Eventos `planes_fit4_geo` (visto) y `planes_fit4_geo_click`. Sin la cookie la página queda igual.
+- **Prueba en Preview:** `?geo_pais=VE` fuerza el país sólo con `VERCEL_ENV=preview`; en producción no hace nada.
+- **Verificación:** 6 tests nuevos (`tests/paises-fit4.test.cjs`, 112 en verde). Middleware transpilado y probado con países simulados: VE/NG/IN → 307 al Fit4 correcto con las UTMs; PE/US siguen de largo; HN en un caso deja la cookie y PE la borra. En local, Flor y Rosita VA con la cookie muestran el botón (`/fit4?...` y `/fit4-va?...` con UTMs y fbc/fbp) y sin la cookie, el WhatsApp como siempre. Falta probarlo en el Preview de Vercel con `?geo_pais=`.
+- **Pendiente:** el chat de la Ruta todavía manda a WhatsApp a Cuba y Venezuela (`PAISES_SOLO_WHATSAPP`), y al resto de esta lista lo atiende como a cualquiera; decidir si también los lleva a Fit4.
+
 ## 2026-11-17 (4) — Chat de la Ruta más humano: entrega a una persona, sin sesión (publicado)
 
 - **Pedido del usuario:** «arma el chat sin la prueba AB, aplica las recomendaciones que me das. y trata de que sea más humano, sin texto en negrita». Las recomendaciones salen del análisis del 17-nov en el CRM (`docs/analisis-chat-ruta-2026-11-17.md`): 1.022 chats contra las ventas desde el lanzamiento y 83 expedientes de clientes de oct–nov (llamadas de Martin y chats de WhatsApp).
