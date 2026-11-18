@@ -185,3 +185,7 @@ dialog.push-help h2 { margin: 4px 0 8px; font-size: 24px; font-weight: 750; lett
 @keyframes rt-bubble-check-svg { 0%, 35% { opacity: 0; } 50%, 85% { opacity: 1; } }
 .rt-bubble-btn .rt-check svg { animation: rt-bubble-check-svg 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .rt-bubble, .rt-bubble-btn .rt-check, .rt-bubble-btn .rt-check svg { animation: none; } }
+
+/* El botón del chat vive dentro de la rutina abierta (18-nov-2026): con el descanso corriendo,
+   sube por encima de la barra del temporizador para no taparla. */
+dialog.routine-sheet:has(#rest-timer:not([hidden])) .rc-fab { bottom: calc(200px + env(safe-area-inset-bottom)); }
