@@ -7,6 +7,7 @@
 - **Cambio:** el botón se muda adentro de la ventana abierta de arriba (rutina, video, perfil, avisos) y vuelve al body al cerrarla; se oculta sólo en las que llevan `data-sin-chat`: la evaluación y el reproductor de las lecciones (segundo pedido: «que se oculte cuando abra un video»). Los videos de los ejercicios de la rutina no lo ocultan: corren en bucle mientras se entrena. La página del test de macros (`/biblioteca/plan/`) nunca tuvo chat. El perfil y el reproductor del celular pasan de centrarse con `transform` a `margin:auto` (con transform, el botón quedaba pegado a la esquina de la ventana). Con el descanso de la rutina corriendo, el botón sube sobre la barra del temporizador.
 - **Sólo la Ruta (`/biblioteca/videos/`):** el chat necesita la sesión del miembro, así que registro, acceso y verificación no lo tienen.
 - **Verificación:** sintaxis y `node --test tests/*.test.cjs` 113/113. **No verificado en navegador.** En local el chat nunca se montaba: el simulador del CRM (`scripts/ruta-local.ts`) respondía `disponible: false` salvo al simular «retomar»; corregido.
+- **Publicado (18-nov-2026):** PR #12 y #13 (versión nueva de `rutina.css` y `ruta-chat.js`), deployment de producción `tr4iner-funnels-gj0d98vhd` Ready. Verificado en metodo.tr4iner.com: `ruta-chat.js` nuevo y `data-sin-chat` en el reproductor y la evaluación.
 
 ## 2026-11-18 — Ruta: evaluación del primer mes, rutina con «Ejercicio completado» y siguiente paso (publicado)
 
