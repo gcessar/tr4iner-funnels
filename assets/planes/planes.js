@@ -47,6 +47,10 @@
   var FILTRO_INICIAL = raiz.getAttribute("data-testimonios") || "todos";
   var CON_CABECERA = raiz.getAttribute("data-cabecera") !== "no";
   var MODO_WA = raiz.getAttribute("data-modo") === "whatsapp";
+  // Visitas de los países que sólo gastan WhatsApp de ManyChat (18-nov-2026, lib/paises-fit4.js):
+  // el middleware deja la cookie `tr4_fit4_geo` y acá el WhatsApp se cambia por un botón a
+  // Fit4. Sin la cookie, la página queda como siempre.
+  var FIT4_GEO = MODO_WA && /(?:^|;\s*)tr4_fit4_geo=1(?:;|$)/.test(document.cookie || "");
   var FUNNEL = (raiz.getAttribute("data-funnel") || (TEMA === "neu" ? "AN" : "VA")).toUpperCase() === "VA" ? "VA" : "AN";
   if (!/^[a-z0-9]{2,20}$/.test(SLUG)) return;
 
@@ -143,11 +147,23 @@
       '</form>' +
     '</article>';
 
+  var HTML_FIT4 =
+    '<article class="plan diag fit4-geo" aria-label="FIT4CHALLENGE">' +
+      '<p class="fit4-geo-texto">Tu plan de entrenamiento y alimentación para empezar hoy, paso a paso y a tu ritmo.</p>' +
+      '<a class="btn btn-principal" id="fit4-continuar" href="/fit4">Ver FIT4CHALLENGE ' + FLECHA + '</a>' +
+    '</article>';
+
   raiz.setAttribute("aria-labelledby", "planes-title");
   if (!CON_CABECERA) raiz.removeAttribute("aria-labelledby");
   if (MODO_WA) raiz.classList.add("tr4p-wa");
   raiz.innerHTML =
-    (CON_CABECERA && MODO_WA
+    (CON_CABECERA && FIT4_GEO
+      ? '<header class="planes-head">' +
+          '<p class="kicker">Siguiente paso</p>' +
+          '<h2 class="planes-titulo" id="planes-title">Empieza con <em>FIT4CHALLENGE.</em></h2>' +
+        '</header>'
+      : "") +
+    (CON_CABECERA && MODO_WA && !FIT4_GEO
       ? '<header class="planes-head">' +
           '<p class="kicker">Siguiente paso</p>' +
           '<h2 class="planes-titulo" id="planes-title">Tu sesión de diagnóstico <em>por WhatsApp.</em></h2>' +
@@ -161,7 +177,7 @@
           '<p class="dek">Los dos planes arman tu entrenamiento y tu alimentación para tu caso, con el seguimiento del equipo por WhatsApp. La diferencia es si además quieres videollamadas en vivo con tus entrenadores y nutricionistas.</p>' +
         '</header>'
       : "") +
-    (MODO_WA ? HTML_DIAGNOSTICO : '<div class="plan-grid">' +
+    (FIT4_GEO ? HTML_FIT4 : MODO_WA ? HTML_DIAGNOSTICO : '<div class="plan-grid">' +
       '<article class="plan plan-esencial" aria-labelledby="esencial-nombre">' +
         '<div class="plan-top"><h3 class="plan-name" id="esencial-nombre">Plan Esencial</h3></div>' +
         '<p class="plan-price"><span class="price-pre">Suscripción mensual</span><span class="price-main"><span class="cur">US$</span>77<span class="per">/ mes</span></span></p>' +
@@ -565,7 +581,27 @@
       visto.observe(raiz.querySelector(".diag"));
     }
   }
-  if (MODO_WA) montarDiagnostico();
+  // El botón a Fit4: el mismo lado (AN|VA) que habría elegido el WhatsApp, con toda la
+  // atribución de la visita.
+  function montarFit4() {
+    var va = DESDE_RUTA
+      ? String(ATRIB.funnel || "").toUpperCase() !== "AN" && esTraficoVA(ATRIB)
+      : FUNNEL === "VA" || esTraficoVA(ATRIB);
+    var url = new URL(va ? "/fit4-va" : "/fit4", window.location.origin);
+    Object.keys(ATRIB).forEach(function (clave) { url.searchParams.set(clave, ATRIB[clave]); });
+    var boton = document.getElementById("fit4-continuar");
+    boton.href = url.pathname + url.search;
+    boton.addEventListener("click", function () { medir("planes_fit4_geo_click", { destino: url.pathname }); });
+    medir("planes_fit4_geo", { destino: url.pathname, non_interaction: true });
+  }
+  // Las páginas con cabecera propia (las de Veronika) marcan con `data-fit4-geo` los textos
+  // que hablan del WhatsApp: con valor, se cambian por ese texto; vacío, se ocultan.
+  if (FIT4_GEO) document.querySelectorAll("[data-fit4-geo]").forEach(function (nodo) {
+    var texto = nodo.getAttribute("data-fit4-geo");
+    if (texto) nodo.innerHTML = texto; else nodo.style.display = "none";
+  });
+  if (FIT4_GEO) montarFit4();
+  else if (MODO_WA) montarDiagnostico();
 
   // ── Plan Esencial ─────────────────────────────────────────────
   function azar(largo) {

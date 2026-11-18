@@ -379,8 +379,11 @@
     if (t && t.tipo === 'agenda') return tarjetaAgenda(t);
     if (!t || !t.url) return null;
     var esWhatsApp = t.tipo === 'whatsapp';
+    // FIT4CHALLENGE (18-nov): lo que ven los países de lib/paises-fit4.js en vez del WhatsApp.
+    var esFit4 = t.tipo === 'fit4';
     var hijos = [];
-    if (!esWhatsApp) {
+    if (esFit4) hijos.push(el('p', { className: 'rc-card-code', text: t.titulo }));
+    if (!esWhatsApp && !esFit4) {
       hijos.push(el('p', { className: 'rc-card-code', text: t.titulo + ' · ' + t.duracion }));
       var linea = el('p', { className: 'rc-card-price' });
       if (t.precio_antes) linea.appendChild(el('s', { text: precio(t.precio_antes), 'aria-label': 'Antes ' + precio(t.precio_antes) }));
@@ -394,17 +397,19 @@
       if (t.cuotas) hijos.push(el('p', { className: 'rc-card-note', text: t.cuotas }));
     }
     // WhatsApp con un coach (3-nov): antes de abrirlo, qué va a pasar del otro lado.
-    if (esWhatsApp && t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
-    var cta = el('a', { className: 'rc-card-cta', href: t.url, target: '_blank', rel: 'noopener' }, [
+    if ((esWhatsApp || esFit4) && t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
+    // Fit4 es de este mismo sitio: se abre en la misma pestaña.
+    var cta = el('a', esFit4 ? { className: 'rc-card-cta', href: t.url } : { className: 'rc-card-cta', href: t.url, target: '_blank', rel: 'noopener' }, [
       el('span', { text: t.boton }), el('i', { 'aria-hidden': 'true', text: '→' })
     ]);
     cta.addEventListener('click', function () {
-      if (t.destino === 'calendly') track('chat_calendario_click', {});
+      if (esFit4) track('chat_fit4_click', {});
+      else if (t.destino === 'calendly') track('chat_calendario_click', {});
       else if (esWhatsApp) track('chat_whatsapp_click', {});
       else track('chat_pago_click', { escalon: t.escalon, destino: t.destino, precio: t.precio });
     });
     hijos.push(cta);
-    if (!esWhatsApp) {
+    if (!esWhatsApp && !esFit4) {
       var pie = { hotmart: 'Pago seguro con Hotmart', stripe: 'Pago seguro con Stripe' }[t.destino] || 'Te confirmamos el pago por WhatsApp';
       hijos.push(el('p', { className: 'rc-card-foot', text: pie }));
     }
@@ -554,6 +559,7 @@
       if (d.tarjeta && d.tarjeta.tipo === 'plan') track('chat_oferta', { escalon: d.tarjeta.escalon, precio: d.tarjeta.precio });
       else if (d.tarjeta && d.tarjeta.tipo === 'video') track('chat_video', { video: d.tarjeta.id });
       else if (d.tarjeta && d.tarjeta.tipo === 'agenda') track('chat_agendo', { prueba: Boolean(d.tarjeta.prueba) });
+      else if (d.tarjeta && d.tarjeta.tipo === 'fit4') track('chat_fit4', {});
       if (d.opciones && d.opciones.length && d.eco && d.eco.horarios && d.eco.horarios.length) track('chat_horarios', { cantidad: d.eco.horarios.length });
       agregar({ rol: 'equipo', texto: d.mensaje, opciones: d.opciones || [], tarjeta: d.tarjeta || null });
     }).catch(function () {
