@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-18 (2) — Ruta: el botón del chat siempre a la vista, menos en la evaluación y en los videos (publicado)
+
+- **Pedido del usuario:** «que la burbuja aparezca en todas las páginas en todo momento, menos en los test de macros». No la veía dentro de la rutina.
+- **Antes:** `ruta-chat.js` escondía el botón con cualquier ventana abierta (`body.modal-open`, video en el celular, recorrido guiado). Y aunque se mostrara, un `<dialog>` modal vuelve inerte todo lo de afuera: no se podía tocar.
+- **Cambio:** el botón se muda adentro de la ventana abierta de arriba (rutina, video, perfil, avisos) y vuelve al body al cerrarla; se oculta sólo en las que llevan `data-sin-chat`: la evaluación y el reproductor de las lecciones (segundo pedido: «que se oculte cuando abra un video»). Los videos de los ejercicios de la rutina no lo ocultan: corren en bucle mientras se entrena. La página del test de macros (`/biblioteca/plan/`) nunca tuvo chat. El perfil y el reproductor del celular pasan de centrarse con `transform` a `margin:auto` (con transform, el botón quedaba pegado a la esquina de la ventana). Con el descanso de la rutina corriendo, el botón sube sobre la barra del temporizador.
+- **Sólo la Ruta (`/biblioteca/videos/`):** el chat necesita la sesión del miembro, así que registro, acceso y verificación no lo tienen.
+- **Verificación:** sintaxis y `node --test tests/*.test.cjs` 113/113. **No verificado en navegador.** En local el chat nunca se montaba: el simulador del CRM (`scripts/ruta-local.ts`) respondía `disponible: false` salvo al simular «retomar»; corregido.
+
 ## 2026-11-18 — Ruta: evaluación del primer mes, rutina con «Ejercicio completado» y siguiente paso (publicado)
 
 - **Pedido del usuario:** evaluación al cumplir el primer mes (test de macros corto, antes y después, Método Tr4iner según el resultado, WhatsApp de ManyChat si pide ayuda), aviso dentro de la Ruta desde el día 25, «Ejercicio completado» en la rutina con motivos y burbuja de ayuda, chequeo con el rótulo «Queremos saber cómo vas» y «N de 6 pasos» sin «clave».

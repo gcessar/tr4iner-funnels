@@ -905,15 +905,18 @@
     .mobile-profile-trigger { display: none; }
     .mobile-focus[hidden],
     .mobile-profile-trigger[hidden] { display: none !important; }
+    /* Centrado con margin:auto y no con transform: un transform vuelve a la ventana el marco de
+       los position:fixed de adentro, y el botón del chat (que se muda a la ventana abierta) quedaba
+       pegado a su esquina en vez de a la de la pantalla. */
     dialog.profile-dialog {
       position: fixed;
-      inset: 50% auto auto 50%;
+      inset: 0;
       width: min(calc(100% - 24px), 440px);
+      height: fit-content;
       max-height: min(760px, calc(100dvh - 24px));
-      margin: 0;
+      margin: auto;
       padding: 0;
       overflow: auto;
-      transform: translate(-50%, -50%);
       border: 1px solid var(--rule-strong);
       border-radius: 12px;
       background: var(--card);
@@ -1900,12 +1903,12 @@
       .vdone:active { transform: translateY(-50%) scale(.94); }
       dialog.player {
         position: fixed;
-        inset: 50% auto auto 50%;
+        inset: 0;
         width: min(calc(100% - 24px), 520px);
+        height: fit-content;
         max-width: none;
         max-height: 88vh;
-        margin: 0;
-        transform: translate(-50%, -50%);
+        margin: auto;
         border-radius: 12px;
       }
       .player-sheet { padding: 14px 14px 16px; }
@@ -2540,7 +2543,7 @@
     </footer>
   </main>
 
-  <dialog class="player" id="player" aria-labelledby="player-title">
+  <dialog class="player" id="player" data-sin-chat aria-labelledby="player-title">
     <div class="player-frame" id="player-frame"></div>
     <div class="player-bar">
       <div class="player-meta">
@@ -2631,7 +2634,7 @@
     </div>
   </dialog>
 
-  <dialog class="profile-dialog" id="eval-dialog" aria-labelledby="eval-title">
+  <dialog class="profile-dialog" id="eval-dialog" data-sin-chat aria-labelledby="eval-title">
     <div class="profile-dialog-head">
       <span>Tu primer mes en la Ruta</span>
       <button type="button" class="profile-dialog-close" id="eval-close" aria-label="Cerrar">

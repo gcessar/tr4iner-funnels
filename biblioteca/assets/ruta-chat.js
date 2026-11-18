@@ -40,8 +40,7 @@
     // día. El texto dice «Equipo de Anthoni»: responde el equipo, no él.
     '.rc-fab{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));pointer-events:none}',
     '.rc-fab>*{pointer-events:auto}',
-    '.rc-fab[hidden]{display:none}',
-    'body.modal-open .rc-fab,body.mobile-video-playing .rc-fab,#tour:not([hidden]) ~ .rc-fab{display:none}',
+    '.rc-fab[hidden],.rc-fab.rc-fuera{display:none}',
     '.rc-launch{position:relative;display:block;width:64px;height:64px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}',
     '.rc-launch:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:6px}',
     '.rc-face-in{position:absolute;inset:0;opacity:0;transform:translateY(26px) scale(.55)}',
@@ -649,6 +648,7 @@
 
     document.body.appendChild(ui.fab);
     document.body.appendChild(ui.dialog);
+    seguirVentanas();
 
     ui.launch.addEventListener('click', function () { abrir('boton'); });
     saludoAbre.addEventListener('click', function () { abrir('saludo'); });
@@ -684,6 +684,36 @@
     // primera lectura de la Ruta; el saludo, unos segundos después.
     setTimeout(function () { ui.fab.classList.add('is-in'); }, 900);
     programarSaludo();
+  }
+
+  // ── El botón, siempre a mano (pedido del usuario, 18-nov-2026) ──
+  // Antes se escondía con cualquier ventana abierta (rutina, video, perfil). Ahora se queda, salvo
+  // en las que llevan `data-sin-chat`: la evaluación (es un test de macros) y el reproductor de las
+  // lecciones (pedido del usuario: que no tape el video). No alcanza con
+  // mostrarlo: con un <dialog> modal abierto el navegador vuelve inerte todo lo de afuera, así que
+  // el botón se muda adentro de la ventana de arriba y vuelve al body cuando se cierra.
+  var ventanas = [];
+  function ubicarBoton() {
+    var arriba = ventanas[ventanas.length - 1] || null;
+    var destino = arriba || document.body;
+    if (ui.fab.parentNode !== destino) destino.appendChild(ui.fab);
+    ui.fab.classList.toggle('rc-fuera', !!(arriba && arriba.hasAttribute('data-sin-chat')));
+  }
+  function seguirVentanas() {
+    if (typeof MutationObserver === 'undefined') return;
+    Array.prototype.forEach.call(document.querySelectorAll('dialog[open]'), function (d) {
+      if (d !== ui.dialog) ventanas.push(d);
+    });
+    new MutationObserver(function (cambios) {
+      cambios.forEach(function (c) {
+        var d = c.target;
+        if (d === ui.dialog || d.tagName !== 'DIALOG') return;
+        ventanas = ventanas.filter(function (v) { return v !== d; });
+        if (d.open) ventanas.push(d);
+      });
+      ubicarBoton();
+    }).observe(document.body, { attributes: true, attributeFilter: ['open'], subtree: true });
+    ubicarBoton();
   }
 
   // ── Saludo ───────────────────────────────────────────────
