@@ -4241,7 +4241,7 @@
       }
 
       // ── Evaluación del primer mes (18-nov-2026) ──
-      // A los 30 días de entrar, una versión corta del test de macros: cómo empezó contra cómo
+      // A los 30 días de su test de macros, una versión corta del test: cómo empezó contra cómo
       // está hoy. Lo decide y lo guarda el CRM (`memberSession.evaluacion`); acá sólo se pregunta
       // y se muestra. Si pide ayuda: interés comercial + WhatsApp de ManyChat de su lado. En los
       // países de Fit4 (lib/paises-fit4.js) el botón lleva a Fit4, como el chat.
@@ -4254,6 +4254,8 @@
       function abrirEvaluacion() {
         var ev = evaluacion();
         if (!ev || !evalDialog) return;
+        // Un enlace a la evaluación (`?video=evaluacion`) para quien no tiene test lleva al test.
+        if (ev.estado === 'falta_test') { ACCESOS.macros.abrir(); return; }
         evalEstado = { paso: 0, r: { peso: '', grasa: null, cintura: '', dias: null, macros: null, energia: null, ropa: null }, enviando: false, error: '' };
         if (ev.estado === 'hecha' && ev.resultado) { pintarResultadoEval(ev.resultado); }
         else if (ev.estado === 'proxima') { pintarProxima(ev); }
@@ -4489,6 +4491,14 @@
       function avisoEvaluacion() {
         var ev = evaluacion();
         if (!ev) return null;
+        // Sin test no hay evaluación (decisión del usuario, 18-nov-2026): se lo invita al test, que
+        // es su punto de partida y pone en marcha su propio mes. Lo decide el CRM (`falta_test`).
+        if (ev.estado === 'falta_test') {
+          return { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
+            titulo: ev.dia >= 30 ? 'Ya cumpliste tu primer mes en la Ruta' : 'Tu primer mes en la Ruta está por cumplirse',
+            texto: 'Haz tu test de macros: es tu punto de partida y en 30 días ves cuánto avanzaste.',
+            abrir: function () { ACCESOS.macros.abrir(); } };
+        }
         if (ev.estado === 'pendiente') {
           return { clave: 'evaluacion', icono: 'calculadora', accion: 'Empezar',
             titulo: 'Ya cumpliste tu primer mes en la Ruta',
@@ -5114,9 +5124,12 @@
           // Recordatorio sutil del test de macros (18-nov-2026, pedido del usuario): una línea arriba
           // del chat, sin popup y sin meterse en la conversación del agente.
           aviso: function () {
+            var ev = evaluacion();
             return plan || !memberSession ? null : {
               id: 'macros', boton: 'Calcular',
-              texto: 'Aún no calculas tus macros: son 3 minutos y tu punto de partida para ver cuánto avanzas.',
+              texto: ev && ev.estado === 'falta_test'
+                ? 'Para hacer tu evaluación necesitas tu punto de partida: haz tu test de macros (3 minutos).'
+                : 'Aún no calculas tus macros: son 3 minutos y tu punto de partida para ver cuánto avanzas.',
               accion: function () { ACCESOS.macros.abrir(); }
             };
           },
