@@ -167,3 +167,21 @@ dialog.push-help h2 { margin: 4px 0 8px; font-size: 24px; font-weight: 750; lett
 @media (prefers-reduced-motion: reduce) {
   .rt-progress i, .rest-track i { transition: none; }
 }
+
+/* Por qué marcar (18-nov-2026) */
+.rt-why { margin: 8px 0 0; color: var(--muted); font: 500 12px/1.4 var(--sans); text-align: right; }
+/* Burbuja del coach (18-nov-2026) */
+.rt-bubble { position: relative; display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 6px; padding: 12px 36px 12px 12px; border: 1px solid var(--ink); border-radius: 14px 14px 14px 4px; background: var(--card, #fff); box-shadow: 3px 3px 0 var(--mark); animation: rt-bubble-in .35s ease-out both; }
+.rt-bubble.is-ok { box-shadow: 3px 3px 0 var(--ink); }
+.rt-bubble-foto { flex: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--mark); border: 1.5px solid var(--ink); }
+.rt-bubble p { margin: 0; color: var(--ink); font: 400 13px/1.45 var(--sans); }
+.rt-bubble p strong { display: block; margin-bottom: 2px; font-weight: 700; }
+.rt-bubble-x { position: absolute; top: 4px; right: 4px; width: 32px; height: 32px; border: 0; background: none; color: var(--muted); font-size: 18px; cursor: pointer; }
+.rt-bubble-demo { display: block; margin-top: 8px; }
+.rt-bubble-btn { display: inline-flex; align-items: center; gap: 8px; font: 600 12.5px var(--sans); }
+.rt-bubble-btn .rt-check { width: 24px; height: 24px; animation: rt-bubble-check 2.4s ease-in-out infinite; }
+@keyframes rt-bubble-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes rt-bubble-check { 0%, 35% { background: transparent; } 50%, 85% { background: var(--mark); } 100% { background: transparent; } }
+@keyframes rt-bubble-check-svg { 0%, 35% { opacity: 0; } 50%, 85% { opacity: 1; } }
+.rt-bubble-btn .rt-check svg { animation: rt-bubble-check-svg 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .rt-bubble, .rt-bubble-btn .rt-check, .rt-bubble-btn .rt-check svg { animation: none; } }
