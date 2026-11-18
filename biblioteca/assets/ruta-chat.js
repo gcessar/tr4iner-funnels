@@ -110,6 +110,13 @@
     '.rc-reset:focus-visible,.rc-close:focus-visible,.rc-chip:focus-visible,.rc-send:focus-visible,.rc-card-cta:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
 
     '.rc-log{position:relative;flex:1;min-height:0;overflow-y:auto;padding:24px 20px 8px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}',
+    // Aviso sutil arriba de la conversación (18-nov-2026): una línea con un botón, fuera del
+    // historial y del agente. Hoy lo usa la Ruta para recordar el test de macros.
+    '.rc-aviso{display:flex;align-items:center;gap:10px;margin:0;padding:9px 12px 9px 16px;border-bottom:1px solid rgba(17,17,17,.12);background:#FFF7D6;font-size:12.5px;font-weight:500;line-height:1.35}',
+    '.rc-aviso[hidden]{display:none}',
+    '.rc-aviso span{flex:1;min-width:0}',
+    '.rc-aviso-btn{flex:none;padding:6px 10px;border:1px solid #111;border-radius:999px;background:#111;color:#fff;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}',
+    '.rc-aviso-x{flex:none;width:28px;height:28px;border:0;background:none;color:rgba(17,17,17,.55);font-size:16px;cursor:pointer}',
 
 
     '.rc-turn{display:flex;flex-direction:column;gap:6px;max-width:100%}',
@@ -615,6 +622,7 @@
     reiniciar.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a6 6 0 1 0 1.8-4.3M4 3.5v3h3"/></svg>';
 
     ui.log = el('div', { className: 'rc-log', role: 'log', 'aria-live': 'polite', 'aria-label': 'Conversación con el equipo' });
+    ui.aviso = el('p', { className: 'rc-aviso', role: 'note', hidden: 'hidden' });
     ui.chips = el('div', { className: 'rc-chips', 'aria-label': 'Respuestas sugeridas' });
     ui.input = el('textarea', { id: 'rc-input', className: 'rc-input', rows: '1', maxlength: '800', placeholder: 'Escribe tu mensaje…', autocomplete: 'off' });
     ui.send = el('button', { type: 'submit', className: 'rc-send', 'aria-label': 'Enviar mensaje', disabled: 'disabled' });
@@ -633,6 +641,7 @@
         reiniciar,
         cerrar
       ]),
+      ui.aviso,
       ui.log,
       ui.chips,
       form
@@ -781,6 +790,28 @@
     abrir('retomar');
   }
 
+  // `opts.aviso()` devuelve { texto, boton, accion } o null. Se mira cada vez que se abre el chat
+  // (la persona puede haber hecho lo que se le pedía) y la × lo oculta hasta la próxima visita.
+  var avisoCerrado = false;
+  function pintarAviso() {
+    var datos = null;
+    try { datos = !avisoCerrado && opts.aviso ? opts.aviso() : null; } catch (e) { datos = null; }
+    if (!datos) { ui.aviso.hidden = true; return; }
+    ui.aviso.textContent = '';
+    var boton = el('button', { type: 'button', className: 'rc-aviso-btn', text: datos.boton });
+    boton.addEventListener('click', function () {
+      track('chat_aviso_click', { aviso: datos.id || null });
+      if (ui.dialog.open) ui.dialog.close();
+      if (typeof datos.accion === 'function') datos.accion();
+    });
+    var x = el('button', { type: 'button', className: 'rc-aviso-x', 'aria-label': 'Ocultar aviso', text: '×' });
+    x.addEventListener('click', function () { avisoCerrado = true; ui.aviso.hidden = true; });
+    ui.aviso.appendChild(el('span', { text: datos.texto }));
+    ui.aviso.appendChild(boton);
+    ui.aviso.appendChild(x);
+    ui.aviso.hidden = false;
+  }
+
   function abrir(origen) {
     if (!ui.dialog || ui.dialog.open) return;
     retirarSaludo();
@@ -788,6 +819,7 @@
     ui.fab.hidden = true;
     document.documentElement.style.overflow = 'hidden';
     ui.dialog.showModal();
+    pintarAviso();
     pintarTodo();
     if (window.matchMedia('(pointer: fine)').matches) ui.input.focus();
     if (!abiertoUnaVez) {
