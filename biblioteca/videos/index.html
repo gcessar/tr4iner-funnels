@@ -2610,7 +2610,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/videos/rutina.js?v=20261109-invitacion"></script>
-  <script src="/biblioteca/assets/ruta-chat.js?v=20261117-humano"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261118-fit4"></script>
   <script>
     (async function () {
       'use strict';
@@ -4571,27 +4571,30 @@
       // ── Chat del equipo ─────────────────────────────────────
       // Sólo para miembros con sesión: el servidor la necesita para saber con
       // quién habla y hasta dónde puede ofrecer.
-      // En Cuba y Venezuela el chat no se muestra (6-nov): lo decide el servidor por la IP. La
-      // bisagra queda con su enlace de WhatsApp de siempre. Si la consulta falla, el chat sale.
+      // Lo decide el servidor por la IP. Desde el 18-nov, en los países de lib/paises-fit4.js
+      // (Cuba, Venezuela, Nicaragua, Honduras, India y África) el chat se monta igual pero no
+      // habla con el agente ni muestra WhatsApp: contesta con FIT4CHALLENGE (`fit4`). Si la
+      // consulta falla, el chat sale como siempre.
       function chatDisponible() {
         return fetch('/api/genesis/chat/disponible', { cache: 'no-store', credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : { disponible: true }; })
-          .then(function (d) { return !d || d.disponible !== false; })
-          .catch(function () { return true; });
+          .then(function (d) { return { agente: !d || d.disponible !== false, fit4: Boolean(d && d.fit4) }; })
+          .catch(function () { return { agente: true, fit4: false }; });
       }
 
       function setupRutaChat() {
         if (!memberSession || !window.TR4RutaChat) return;
-        chatDisponible().then(function (si) { if (si) montarRutaChat(); });
+        chatDisponible().then(function (d) { if (d.agente || d.fit4) montarRutaChat(d.fit4); });
       }
 
-      function montarRutaChat() {
+      function montarRutaChat(fit4) {
         var advisory = document.getElementById('bridge-advisory');
         var listo = window.TR4RutaChat.init({
           nombre: String(lead.nombre || '').split(' ')[0],
           email: lead.email || '',
           estado: estadoBisagra(),
-          whatsapp: advisory ? advisory.href : null,
+          // Sin WhatsApp de respaldo para los países de Fit4.
+          whatsapp: advisory && !fit4 ? advisory.href : null,
           leccionActual: function () { return ultimaLeccion; },
           // Los miembros de Veronika ven su foto y su equipo en el chat (3-nov).
           lado: registroEsVA((memberSession && memberSession.attribution) || {}) ? 'VA' : 'AN',

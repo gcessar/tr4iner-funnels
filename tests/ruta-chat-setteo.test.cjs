@@ -274,6 +274,7 @@ test('el camino sale del país y de lo que ya hizo en su Ruta; desde el 17-nov n
 test('el botón del chat se oculta sólo por la IP de Cuba o Venezuela', () => {
   assert.equal(ruta.chatDisponiblePara({ pais: 'CU' }), false);
   assert.equal(ruta.chatDisponiblePara({ pais: 've' }), false);
+  for (const pais of ['NI', 'HN', 'IN', 'NG', 'ZA']) assert.equal(ruta.chatDisponiblePara({ pais }), false, pais);
   for (const pais of ['PE', 'US', 'MX', '']) assert.equal(ruta.chatDisponiblePara({ pais }), true, pais);
 });
 

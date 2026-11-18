@@ -313,22 +313,39 @@ test('la segunda vez que pregunta si es gratis, el agente recibe la nota y no se
  assert.notEqual(res.body.mensaje,anterior);
 });
 
-// 6-nov: Cuba y Venezuela, por la IP, no ven el chat; si igual escriben, va a WhatsApp sin agente.
-test('desde una IP de Cuba el chat no llama al agente y ofrece WhatsApp',async()=>{
- const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
- const {req,res}=pedir('hola',{headers:{'x-vercel-ip-country':'CU'}});
- await chat(req,res);
- assert.equal(res.code,200);
- assert.equal(llamadas.agente,null);
- assert.equal(res.body.tarjeta.tipo,'whatsapp');
+// 18-nov: los países de lib/paises-fit4.js no pasan por el agente ni van a WhatsApp: Fit4.
+test('desde una IP de Cuba, Nigeria o India el chat no llama al agente y lleva a Fit4',async()=>{
+ for(const pais of ['CU','NG','IN']){
+  const llamadas=simular({agente:{mensaje:'Hola.',accion:'ninguna'}});
+  const {req,res}=pedir('hola',{headers:{'x-vercel-ip-country':pais}});
+  await chat(req,res);
+  assert.equal(res.code,200);
+  assert.equal(llamadas.agente,null,pais);
+  assert.equal(res.body.tarjeta.tipo,'fit4');
+  assert.match(res.body.tarjeta.url,/^\/fit4(-va)?\?.*utm_medium=RUTA-TR4INER/);
+  assert.doesNotMatch(JSON.stringify([res.body.mensaje,res.body.tarjeta]),/wa\.me|WhatsApp/i);
+ }
 });
 
-test('el botón sólo se oculta con IP de Cuba o Venezuela',()=>{
+test('Fit4 del lado del registro: VA a /fit4-va, el resto a /fit4, con su atribución',()=>{
+ const ruta=require('../lib/ruta-chat');
+ const va=ruta.enlaceFit4({nombre:'Ana',email:'a@b.com',atribucion:{utm_source:'IG',utm_campaign:'TR4INER-VA',fbclid:'x'}});
+ assert.match(va,/^\/fit4-va\?/);
+ assert.match(va,/utm_campaign=TR4INER-VA/);
+ assert.match(va,/fbclid=x/);
+ assert.match(va,/email=a@b\.com/);
+ assert.match(va,/funnel=VA/);
+ assert.match(ruta.enlaceFit4({atribucion:{utm_source:'MetaAds'}}),/^\/fit4\?.*funnel=AN/);
+ assert.match(ruta.enlaceFit4(null),/^\/fit4\?/);
+});
+
+test('el agente no habla con los países de Fit4; la página monta el chat de Fit4',()=>{
  const disponible=require('../api/genesis/chat/disponible');
- for(const [pais,esperado] of [['CU',false],['VE',false],['PE',true],['US',true],[undefined,true]]){
+ for(const [pais,esperado] of [['CU',false],['VE',false],['NI',false],['HN',false],['IN',false],['ZA',false],['PE',true],['US',true],['MX',true],[undefined,true]]){
   const res={code:0,body:null,headers:{},status(c){this.code=c;return this;},json(b){this.body=b;return this;},setHeader(k,v){this.headers[k]=v;}};
   disponible({method:'GET',headers:pais?{'x-vercel-ip-country':pais}:{}},res);
   assert.equal(res.body.disponible,esperado,String(pais));
+  assert.equal(res.body.fit4,!esperado,String(pais));
   assert.equal(res.headers['Cache-Control'],'private, no-store');
  }
 });
