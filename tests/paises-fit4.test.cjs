@@ -2,10 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert');
 const { PAISES_FIT4, vaAFit4, destinoFit4 } = require('../lib/paises-fit4');
 
-test('la lista trae los 4 de Latinoamérica, India y los 54 países de África', () => {
-  ['VE', 'CU', 'NI', 'HN', 'IN', 'NG', 'ZA', 'EG', 'MA', 'KE'].forEach((p) => assert.ok(vaAFit4(p), p));
+test('la lista trae los 5 de Latinoamérica, India y los 54 países de África', () => {
+  ['VE', 'CU', 'NI', 'HN', 'BO', 'IN', 'NG', 'ZA', 'EG', 'MA', 'KE'].forEach((p) => assert.ok(vaAFit4(p), p));
   assert.strictEqual(new Set(PAISES_FIT4).size, PAISES_FIT4.length);
-  assert.strictEqual(PAISES_FIT4.length, 5 + 54 + 4);
+  assert.strictEqual(PAISES_FIT4.length, 6 + 54 + 4);
 });
 
 test('el resto sigue de largo', () => {
