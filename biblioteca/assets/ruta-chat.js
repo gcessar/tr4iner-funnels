@@ -688,7 +688,8 @@
 
   // ── El botón, siempre a mano (pedido del usuario, 18-nov-2026) ──
   // Antes se escondía con cualquier ventana abierta (rutina, video, perfil). Ahora se queda, salvo
-  // en las que llevan `data-sin-chat` (la evaluación, que es un test de macros). No alcanza con
+  // en las que llevan `data-sin-chat`: la evaluación (es un test de macros) y el reproductor de las
+  // lecciones (pedido del usuario: que no tape el video). No alcanza con
   // mostrarlo: con un <dialog> modal abierto el navegador vuelve inerte todo lo de afuera, así que
   // el botón se muda adentro de la ventana de arriba y vuelve al body cuando se cierra.
   var ventanas = [];
