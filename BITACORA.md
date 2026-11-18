@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-18 — Ruta: evaluación del primer mes, rutina con «Ejercicio completado» y siguiente paso (sin publicar)
+## 2026-11-18 — Ruta: evaluación del primer mes, rutina con «Ejercicio completado» y siguiente paso (publicado)
 
 - **Pedido del usuario:** evaluación al cumplir el primer mes (test de macros corto, antes y después, Método Tr4iner según el resultado, WhatsApp de ManyChat si pide ayuda), aviso dentro de la Ruta desde el día 25, «Ejercicio completado» en la rutina con motivos y burbuja de ayuda, chequeo con el rótulo «Queremos saber cómo vas» y «N de 6 pasos» sin «clave».
 - **Cambio (`biblioteca/videos/index.html`):** diálogo `#eval-dialog` de 5 pasos y resultado (`memberSession.evaluacion`, `/api/genesis/evaluacion`), banner en la cadena de avisos, `?video=evaluacion`; en países de Fit4 el botón lleva a Fit4. Trae lo del 11-nov que no se había publicado: tarjeta con el siguiente paso del CRM, contador, chequeo semanal, `?video=calcular-macros|siguiente|checkin|casos`.
@@ -11,7 +11,7 @@
 - **Segunda vuelta (mismo día):** burbuja «Tr4iner te recomienda»; el paso de grasa de la evaluación usa las fotos de referencia del test (`biblioteca/plan/assets/grasa-*.webp`); banner sutil «Calcula tus macros» a quien vio algo y no tiene plan; línea sutil arriba del chat con «Calcular» (`opts.aviso` en `biblioteca/assets/ruta-chat.js`, fuera de la conversación del agente).
 - **Tercera vuelta (mismo día):** el paso de grasa recuerda de dónde partió la persona: fotos «Al empezar» y «Hoy» lado a lado, marca «Inicio» en la barra, diferencia en puntos y atajo «Me veo igual» (se envía como «sin cambio»). Sin punto de partida, una sola foto y se guarda el valor que se ve aunque no mueva la barra.
 - **Cuarta vuelta (mismo día):** la evaluación se cuenta desde el test de macros. Quien no tiene test (`falta_test`, lo decide el CRM) ve un banner y una línea en el chat que lo invitan al test, y `?video=evaluacion` lo lleva al test en vez de abrir la evaluación.
-- **Pendiente:** publicar después del CRM.
+- **Publicado (18-nov-2026):** PR #10 → `main` 19faf26, deployment de producción `tr4iner-funnels-536scto6w` Ready, después del CRM (PR #67, `crm-ventas-hu1fyo1vk`). Verificado: la página publicada trae la evaluación y `/api/genesis/evaluacion` responde 401 sin sesión.
 
 ## 2026-11-18 — Países que sólo gastan WhatsApp de ManyChat: a Fit4, también desde el chat de la Ruta (publicado)
 
