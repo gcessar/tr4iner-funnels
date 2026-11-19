@@ -1,5 +1,15 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-19 — `/empezar-va`: correcciones del exporte «PAG TR4INER VA» (rama, sin publicar)
+
+- **Pedido del usuario:** pasar a la página las correcciones de copy del exporte nuevo de Claude Design.
+- **Qué cambió en el exporte:** el bloque del plan se rehízo: siete ítems con íconos nuevos (evaluación inicial, plan de entrenamiento con ajustes cada 4 semanas, plan de alimentación con macros, app, acompañamiento diario por WhatsApp, videollamadas con entrenadores y con nutricionistas, seguimiento en sesiones privadas) y un recuadro «Cupos limitados» con «sesión gratuita de 30 minutos» y el botón «Agendar sesión gratuita». Los íconos del bloque «Tu aplicación» pasan del trazo grueso al normal. El resto del texto, igual; las clases CSS se renumeraron.
+- **Cómo se pasó:** se reemplazaron sólo el `<style>` del diseño y el `<main>`; head, pie, scripts y todo lo agregado después (VSL de R2, Calendly en modo embed, testimonios de R2, GTM diferido, preloads) quedan igual. Se reaplicaron sobre el `<main>` nuevo: el botón a Calendly, las 20 tarjetas de testimonios y la baja de «¿Puedo cancelar mi suscripción…?» (el exporte todavía la trae).
+- **Archivos:** las imágenes son idénticas (se reusan); las dos fuentes de íconos cambiaron y van con nombre nuevo (`fonts/ph-a7f9b2ba.woff2`, `fonts/ph-bold-bedb2580.woff2`) porque `/assets/empezar-va/` tiene caché `immutable`.
+- **Verificación local (375 y 1280 px):** íconos nuevos visibles, sin desborde, 4 preguntas por versión, «Agendar sesión gratuita» abre Calendly con `funnel_variant=empezar-va`, sin 404 ni fuentes fallidas.
+- **Ojo:** el texto dice «sesión gratuita»; en la sesión de diagnóstico por WhatsApp y en el chat de la Ruta el usuario había pedido no decir «gratis». Se dejó como viene del exporte.
+- **Pendiente:** OK del usuario y publicación.
+
 ## 2026-11-17 (3) — `/empezar-va`: Calendly sin el aviso de cookies (publicado)
 
 - **Pedido del usuario:** quitar el banner de cookies de Calendly (captura de su iPhone: el aviso «Usamos cookies…» con Rechazar/Entiendo tapaba el calendario aunque la URL ya llevaba `hide_gdpr_banner=1`; Calendly lo ignora fuera del modo embed).
