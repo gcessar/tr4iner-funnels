@@ -40,8 +40,7 @@
     // día. El texto dice «Equipo de Anthoni»: responde el equipo, no él.
     '.rc-fab{position:fixed;z-index:150;right:max(18px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));pointer-events:none}',
     '.rc-fab>*{pointer-events:auto}',
-    '.rc-fab[hidden]{display:none}',
-    'body.modal-open .rc-fab,body.mobile-video-playing .rc-fab,#tour:not([hidden]) ~ .rc-fab{display:none}',
+    '.rc-fab[hidden],.rc-fab.rc-fuera{display:none}',
     '.rc-launch{position:relative;display:block;width:64px;height:64px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}',
     '.rc-launch:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:6px}',
     '.rc-face-in{position:absolute;inset:0;opacity:0;transform:translateY(26px) scale(.55)}',
@@ -110,6 +109,13 @@
     '.rc-reset:focus-visible,.rc-close:focus-visible,.rc-chip:focus-visible,.rc-send:focus-visible,.rc-card-cta:focus-visible{outline:3px solid var(--mark,#FFD43B);outline-offset:2px}',
 
     '.rc-log{position:relative;flex:1;min-height:0;overflow-y:auto;padding:24px 20px 8px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}',
+    // Aviso sutil arriba de la conversación (18-nov-2026): una línea con un botón, fuera del
+    // historial y del agente. Hoy lo usa la Ruta para recordar el test de macros.
+    '.rc-aviso{display:flex;align-items:center;gap:10px;margin:0;padding:9px 12px 9px 16px;border-bottom:1px solid rgba(17,17,17,.12);background:#FFF7D6;font-size:12.5px;font-weight:500;line-height:1.35}',
+    '.rc-aviso[hidden]{display:none}',
+    '.rc-aviso span{flex:1;min-width:0}',
+    '.rc-aviso-btn{flex:none;padding:6px 10px;border:1px solid #111;border-radius:999px;background:#111;color:#fff;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}',
+    '.rc-aviso-x{flex:none;width:28px;height:28px;border:0;background:none;color:rgba(17,17,17,.55);font-size:16px;cursor:pointer}',
 
 
     '.rc-turn{display:flex;flex-direction:column;gap:6px;max-width:100%}',
@@ -120,7 +126,9 @@
     '.rc-text p{margin:0}',
     '.rc-turn--equipo{align-self:flex-start;max-width:90%}',
     '.rc-turn--equipo .rc-text{padding:12px 15px 13px;border-radius:4px 16px 16px 16px;background:rgba(22,19,14,.055);color:var(--ink,#111)}',
-    '.rc-text .rc-q{font-weight:650}',
+    // 17-nov (pedido del usuario: «más humano, sin texto en negrita»): la pregunta del final va
+    // con el mismo peso que el resto; la separa el aire entre párrafos, como en un chat real.
+    '.rc-text .rc-q{font-weight:inherit}',
     '.rc-turn--yo{align-self:flex-end;max-width:84%}',
     '.rc-turn--yo .rc-text{padding:10px 14px;border-radius:16px 16px 4px 16px;background:var(--ink,#111);color:#fff;font-size:15px}',
     '.rc-turn.is-new{animation:rc-msg .22s ease-out}',
@@ -250,8 +258,11 @@
       rol: 'equipo',
       // El saludo ya es la primera pregunta, con el tono de los asesores de
       // WhatsApp (20-oct). El prompt cita este texto: cambiarlo en los dos lados.
-      texto: (opts.nombre ? 'Hola, ' + opts.nombre + ' 🙌' : 'Hola 🙌') + ' ¿Qué te gustaría lograr? Cuéntanos y te mostramos cómo te podemos ayudar.',
-      opciones: ['Bajar grasa', 'Ganar músculo', 'Tengo una duda']
+      // 17-nov: además de los objetivos, dos botones por situación. Los clientes de oct–nov
+      // compraron por lo que les pasaba (entrenar sin ver cambios, un dato de salud), casi
+      // nunca por «bajar grasa» a secas.
+      texto: (opts.nombre ? 'Hola, ' + opts.nombre + ' 🙌' : 'Hola 🙌') + ' ¿Qué te gustaría cambiar? Cuéntanos y vemos cómo te podemos ayudar.',
+      opciones: ['Bajar grasa', 'Ganar músculo', 'Entreno y no veo cambios', 'Lo necesito por salud', 'Tengo una duda']
     };
   }
 
@@ -374,8 +385,11 @@
     if (t && t.tipo === 'agenda') return tarjetaAgenda(t);
     if (!t || !t.url) return null;
     var esWhatsApp = t.tipo === 'whatsapp';
+    // FIT4CHALLENGE (18-nov): lo que ven los países de lib/paises-fit4.js en vez del WhatsApp.
+    var esFit4 = t.tipo === 'fit4';
     var hijos = [];
-    if (!esWhatsApp) {
+    if (esFit4) hijos.push(el('p', { className: 'rc-card-code', text: t.titulo }));
+    if (!esWhatsApp && !esFit4) {
       hijos.push(el('p', { className: 'rc-card-code', text: t.titulo + ' · ' + t.duracion }));
       var linea = el('p', { className: 'rc-card-price' });
       if (t.precio_antes) linea.appendChild(el('s', { text: precio(t.precio_antes), 'aria-label': 'Antes ' + precio(t.precio_antes) }));
@@ -389,17 +403,19 @@
       if (t.cuotas) hijos.push(el('p', { className: 'rc-card-note', text: t.cuotas }));
     }
     // WhatsApp con un coach (3-nov): antes de abrirlo, qué va a pasar del otro lado.
-    if (esWhatsApp && t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
-    var cta = el('a', { className: 'rc-card-cta', href: t.url, target: '_blank', rel: 'noopener' }, [
+    if ((esWhatsApp || esFit4) && t.resumen) hijos.push(el('p', { className: 'rc-card-note', text: t.resumen }));
+    // Fit4 es de este mismo sitio: se abre en la misma pestaña.
+    var cta = el('a', esFit4 ? { className: 'rc-card-cta', href: t.url } : { className: 'rc-card-cta', href: t.url, target: '_blank', rel: 'noopener' }, [
       el('span', { text: t.boton }), el('i', { 'aria-hidden': 'true', text: '→' })
     ]);
     cta.addEventListener('click', function () {
-      if (t.destino === 'calendly') track('chat_calendario_click', {});
+      if (esFit4) track('chat_fit4_click', {});
+      else if (t.destino === 'calendly') track('chat_calendario_click', {});
       else if (esWhatsApp) track('chat_whatsapp_click', {});
       else track('chat_pago_click', { escalon: t.escalon, destino: t.destino, precio: t.precio });
     });
     hijos.push(cta);
-    if (!esWhatsApp) {
+    if (!esWhatsApp && !esFit4) {
       var pie = { hotmart: 'Pago seguro con Hotmart', stripe: 'Pago seguro con Stripe' }[t.destino] || 'Te confirmamos el pago por WhatsApp';
       hijos.push(el('p', { className: 'rc-card-foot', text: pie }));
     }
@@ -549,6 +565,7 @@
       if (d.tarjeta && d.tarjeta.tipo === 'plan') track('chat_oferta', { escalon: d.tarjeta.escalon, precio: d.tarjeta.precio });
       else if (d.tarjeta && d.tarjeta.tipo === 'video') track('chat_video', { video: d.tarjeta.id });
       else if (d.tarjeta && d.tarjeta.tipo === 'agenda') track('chat_agendo', { prueba: Boolean(d.tarjeta.prueba) });
+      else if (d.tarjeta && d.tarjeta.tipo === 'fit4') track('chat_fit4', {});
       if (d.opciones && d.opciones.length && d.eco && d.eco.horarios && d.eco.horarios.length) track('chat_horarios', { cantidad: d.eco.horarios.length });
       agregar({ rol: 'equipo', texto: d.mensaje, opciones: d.opciones || [], tarjeta: d.tarjeta || null });
     }).catch(function () {
@@ -604,6 +621,7 @@
     reiniciar.innerHTML = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a6 6 0 1 0 1.8-4.3M4 3.5v3h3"/></svg>';
 
     ui.log = el('div', { className: 'rc-log', role: 'log', 'aria-live': 'polite', 'aria-label': 'Conversación con el equipo' });
+    ui.aviso = el('p', { className: 'rc-aviso', role: 'note', hidden: 'hidden' });
     ui.chips = el('div', { className: 'rc-chips', 'aria-label': 'Respuestas sugeridas' });
     ui.input = el('textarea', { id: 'rc-input', className: 'rc-input', rows: '1', maxlength: '800', placeholder: 'Escribe tu mensaje…', autocomplete: 'off' });
     ui.send = el('button', { type: 'submit', className: 'rc-send', 'aria-label': 'Enviar mensaje', disabled: 'disabled' });
@@ -622,6 +640,7 @@
         reiniciar,
         cerrar
       ]),
+      ui.aviso,
       ui.log,
       ui.chips,
       form
@@ -629,6 +648,7 @@
 
     document.body.appendChild(ui.fab);
     document.body.appendChild(ui.dialog);
+    seguirVentanas();
 
     ui.launch.addEventListener('click', function () { abrir('boton'); });
     saludoAbre.addEventListener('click', function () { abrir('saludo'); });
@@ -664,6 +684,36 @@
     // primera lectura de la Ruta; el saludo, unos segundos después.
     setTimeout(function () { ui.fab.classList.add('is-in'); }, 900);
     programarSaludo();
+  }
+
+  // ── El botón, siempre a mano (pedido del usuario, 18-nov-2026) ──
+  // Antes se escondía con cualquier ventana abierta (rutina, video, perfil). Ahora se queda, salvo
+  // en las que llevan `data-sin-chat`: la evaluación (es un test de macros) y el reproductor de las
+  // lecciones (pedido del usuario: que no tape el video). No alcanza con
+  // mostrarlo: con un <dialog> modal abierto el navegador vuelve inerte todo lo de afuera, así que
+  // el botón se muda adentro de la ventana de arriba y vuelve al body cuando se cierra.
+  var ventanas = [];
+  function ubicarBoton() {
+    var arriba = ventanas[ventanas.length - 1] || null;
+    var destino = arriba || document.body;
+    if (ui.fab.parentNode !== destino) destino.appendChild(ui.fab);
+    ui.fab.classList.toggle('rc-fuera', !!(arriba && arriba.hasAttribute('data-sin-chat')));
+  }
+  function seguirVentanas() {
+    if (typeof MutationObserver === 'undefined') return;
+    Array.prototype.forEach.call(document.querySelectorAll('dialog[open]'), function (d) {
+      if (d !== ui.dialog) ventanas.push(d);
+    });
+    new MutationObserver(function (cambios) {
+      cambios.forEach(function (c) {
+        var d = c.target;
+        if (d === ui.dialog || d.tagName !== 'DIALOG') return;
+        ventanas = ventanas.filter(function (v) { return v !== d; });
+        if (d.open) ventanas.push(d);
+      });
+      ubicarBoton();
+    }).observe(document.body, { attributes: true, attributeFilter: ['open'], subtree: true });
+    ubicarBoton();
   }
 
   // ── Saludo ───────────────────────────────────────────────
@@ -770,6 +820,28 @@
     abrir('retomar');
   }
 
+  // `opts.aviso()` devuelve { texto, boton, accion } o null. Se mira cada vez que se abre el chat
+  // (la persona puede haber hecho lo que se le pedía) y la × lo oculta hasta la próxima visita.
+  var avisoCerrado = false;
+  function pintarAviso() {
+    var datos = null;
+    try { datos = !avisoCerrado && opts.aviso ? opts.aviso() : null; } catch (e) { datos = null; }
+    if (!datos) { ui.aviso.hidden = true; return; }
+    ui.aviso.textContent = '';
+    var boton = el('button', { type: 'button', className: 'rc-aviso-btn', text: datos.boton });
+    boton.addEventListener('click', function () {
+      track('chat_aviso_click', { aviso: datos.id || null });
+      if (ui.dialog.open) ui.dialog.close();
+      if (typeof datos.accion === 'function') datos.accion();
+    });
+    var x = el('button', { type: 'button', className: 'rc-aviso-x', 'aria-label': 'Ocultar aviso', text: '×' });
+    x.addEventListener('click', function () { avisoCerrado = true; ui.aviso.hidden = true; });
+    ui.aviso.appendChild(el('span', { text: datos.texto }));
+    ui.aviso.appendChild(boton);
+    ui.aviso.appendChild(x);
+    ui.aviso.hidden = false;
+  }
+
   function abrir(origen) {
     if (!ui.dialog || ui.dialog.open) return;
     retirarSaludo();
@@ -777,6 +849,7 @@
     ui.fab.hidden = true;
     document.documentElement.style.overflow = 'hidden';
     ui.dialog.showModal();
+    pintarAviso();
     pintarTodo();
     if (window.matchMedia('(pointer: fine)').matches) ui.input.focus();
     if (!abiertoUnaVez) {

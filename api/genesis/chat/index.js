@@ -146,10 +146,10 @@ module.exports = async function chat(request, response) {
   const mercado = ruta.mercadoPara(geo, eco);
   const zona = ruta.zonaValida(body.zona);
 
-  // Cuba y Venezuela, por la IP: el botón del chat no se muestra (`disponible.js`). Si igual llega
-  // un mensaje (una página vieja en caché), va directo a WhatsApp sin pasar por el agente.
+  // Los países de lib/paises-fit4.js, por la IP (18-nov; antes Cuba y Venezuela a WhatsApp): no
+  // pasan por el agente ni van a WhatsApp, cualquier mensaje se contesta con FIT4CHALLENGE.
   if (!ruta.chatDisponiblePara(geo)) {
-    const solo = ruta.respuestaSoloWhatsApp(perfil);
+    const solo = ruta.respuestaFit4(perfil);
     return response.status(200).json({ mensaje: solo.mensaje, opciones: [], tarjeta: solo.tarjeta, eco: eco, ajuste: null });
   }
 
@@ -191,7 +191,9 @@ module.exports = async function chat(request, response) {
   }
   const latenciaMs = Date.now() - inicio;
 
-  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido, anteriores: anteriores };
+  // `historial` va entero: el tope de preguntas sin un paso y si ya se le ofreció que la guíen
+  // se leen de toda la conversación, no sólo de los últimos mensajes.
+  const turno = { numero: Math.floor(historial.length / 2) + 1, ultima: String(body.ultima || '').slice(0, 40) || null, mercado: mercado, aviso: avisoLeido, anteriores: anteriores, historial: historial };
   let respuesta = ruta.resolverRespuesta(cruda, perfil, geo, mostrados, mensaje, conversacion, turno, body.eco);
   let reserva = null;
   if (respuesta.pendiente && respuesta.pendiente.tipo === 'horarios') {

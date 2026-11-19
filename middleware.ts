@@ -1,5 +1,6 @@
 import { next, rewrite } from "@vercel/edge";
 import { isPreview, teamPreviewEnabled, previewConfigured, verifyTeamCookie } from "./lib/genesis-team";
+import { vaAFit4, destinoFit4 } from "./lib/paises-fit4";
 
 // Hoy corre un solo test: el de formulario en /medicos. El de hero de
 // /casos-de-estudio (`ce_hero_202609`) cerró el 29-sep en empate y su ruta salió
@@ -10,7 +11,24 @@ import { isPreview, teamPreviewEnabled, previewConfigured, verifyTeamCookie } fr
 // La Ruta suma /biblioteca, /api/genesis y /r: en los Preview los cierra con la
 // clave del equipo (`bibliotecaPreview`); en producción `isPreview()` es falso y
 // siguen de largo sin tocar nada.
-export const config = { matcher: ["/medicos", "/medicos/", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*"] };
+//
+// Desde el 18-nov-2026 también /empezar, /empezar-va y los 7 casos con planes: a los países de
+// `lib/paises-fit4.js` (los que sólo gastan WhatsApp de ManyChat) los manda a Fit4.
+const PAGINAS_EMPEZAR = ["/empezar", "/empezar-va"];
+const CASOS_CON_PLANES = [
+  "/testimonio-flor", "/testimonio-flor-va", "/testimonio-dashiel", "/testimonio-andrea",
+  "/testimonio-christian", "/testimonio-rosita-va/video", "/testimonio-andrea-va/video"
+];
+export const config = {
+  matcher: [
+    "/medicos", "/medicos/", "/biblioteca/:path*", "/api/genesis/:path*", "/r/:path*",
+    "/empezar", "/empezar/", "/empezar-va", "/empezar-va/",
+    "/testimonio-flor", "/testimonio-flor-va", "/testimonio-dashiel",
+    "/testimonio-andrea", "/testimonio-andrea/", "/testimonio-christian", "/testimonio-christian/",
+    "/testimonio-rosita-va/video", "/testimonio-rosita-va/video/",
+    "/testimonio-andrea-va/video", "/testimonio-andrea-va/video/"
+  ]
+};
 
 function privatePreview(response: Response) {
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
@@ -123,9 +141,49 @@ function esTraficoDeAds(url: URL): boolean {
   return source.includes("ads");
 }
 
+// El país de la IP según Vercel. En los Preview se puede forzar con `?geo_pais=VE` para
+// probar el recorrido; en producción ese parámetro no hace nada.
+function paisDe(req: Request, url: URL): string {
+  const forzado = url.searchParams.get("geo_pais");
+  if (forzado && isPreview()) return forzado.toUpperCase();
+  return (req.headers.get("x-vercel-ip-country") || "").toUpperCase();
+}
+
+function sinCache(res: Response) {
+  res.headers.set("Cache-Control", "private, no-store, max-age=0");
+  res.headers.set("Vercel-CDN-Cache-Control", "no-store");
+  res.headers.set("CDN-Cache-Control", "no-store");
+  return res;
+}
+
+// /empezar y /empezar-va: desvío temporal (307) a Fit4 con todos los parámetros. Temporal
+// porque depende de quién pregunta, nunca se guarda en caché.
+function desvioEmpezar(req: Request, url: URL) {
+  if (!vaAFit4(paisDe(req, url))) return next();
+  return sinCache(new Response(null, { status: 307, headers: { Location: destinoFit4(url.toString()) } }));
+}
+
+// Los casos son páginas estáticas: no saben el país. La marca va en una cookie que
+// assets/planes/planes.js lee al montar la sección, y que cambia el WhatsApp por el botón a
+// Fit4. Sin marca (o sin cookies) la página queda como siempre. Se borra si deja de aplicar.
+const COOKIE_FIT4 = "tr4_fit4_geo";
+function marcaEnCasos(req: Request, url: URL, cookie: string) {
+  const res = next();
+  if (vaAFit4(paisDe(req, url))) {
+    res.headers.append("set-cookie", `${COOKIE_FIT4}=1; Path=/; Max-Age=86400; SameSite=Lax; Secure`);
+  } else if (new RegExp(`(?:^|;\\s*)${COOKIE_FIT4}=`).test(cookie)) {
+    res.headers.append("set-cookie", `${COOKIE_FIT4}=; Path=/; Max-Age=0; SameSite=Lax; Secure`);
+  }
+  return res;
+}
+
 export default async function middleware(req: Request) {
   const url = new URL(req.url);
   const cookie = req.headers.get("cookie") ?? "";
+  const pagina = url.pathname.replace(/\/+$/, "") || "/";
+
+  if (PAGINAS_EMPEZAR.includes(pagina)) return desvioEmpezar(req, url);
+  if (CASOS_CON_PLANES.includes(pagina)) return marcaEnCasos(req, url, cookie);
 
   if (url.pathname === "/medicos" || url.pathname === "/medicos/") {
     return testMedicos(url, cookie);

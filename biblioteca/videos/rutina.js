@@ -290,9 +290,59 @@
       '<button type="button" class="rt-rest" data-rest="' + ex.rest + '">Iniciar descanso · ' + ex.rest + ' s <i aria-hidden="true">→</i></button>' +
       '<div class="rt-actions">' +
         (ex.alternatives && ex.alternatives.length ? '<button type="button" class="rt-link" data-replace="' + esc(ex.slot) + '">Buscar un reemplazo</button>' : '<span></span>') +
-        '<button type="button" class="rt-done" data-done="' + esc(ex.slot) + '" aria-pressed="' + !!ex.completed + '">' + (ex.completed ? 'Hecho' : 'Marcar hecho') + ' <span class="rt-check">' + ICON.check + '</span></button>' +
-      '</div></div>';
+        '<button type="button" class="rt-done" data-done="' + esc(ex.slot) + '" aria-pressed="' + !!ex.completed + '">' + (ex.completed ? 'Completado' : 'Ejercicio completado') + ' <span class="rt-check">' + ICON.check + '</span></button>' +
+      '</div>' +
+      // El motivo para marcarlo (18-nov-2026, pedido del usuario): sólo mientras la persona
+      // todavía no tomó el hábito (menos de 3 marcados en toda la rutina) y en lo que falta.
+      (!ex.completed && totalHechos() < 3 ? '<p class="rt-why">' + MOTIVOS[motivoIdx(ex.slot)] + '</p>' : '') +
+      '</div>';
   }
+  // ── Por qué marcar cada ejercicio (18-nov-2026) ──
+  // Marcar no es un trámite: es lo que le permite a la persona pausar y saber exactamente dónde
+  // seguir. Tres textos que rotan por ejercicio para no repetir siempre la misma línea.
+  var MOTIVOS = [
+    'Márcalo y la próxima vez abres justo aquí.',
+    'Si tienes que parar, sabrás exactamente dónde seguir.',
+    'Cada ejercicio marcado guarda tu avance del día.'
+  ];
+  function motivoIdx(slot) {
+    var n = 0; String(slot).split('').forEach(function (c) { n += c.charCodeAt(0); });
+    return n % MOTIVOS.length;
+  }
+  function totalHechos() {
+    var n = 0;
+    Object.keys(st.weeks).forEach(function (w) {
+      (st.weeks[w] || []).forEach(function (d) { (d.exercises || []).forEach(function (ex) { if (ex.completed) n++; }); });
+    });
+    return n;
+  }
+
+  // ── Burbuja del coach (18-nov-2026) ──
+  // La primera vez que abre la rutina sin nada marcado, el coach le muestra dónde se marca y
+  // para qué sirve; cuando marca el primero, le confirma que el avance quedó guardado. Después
+  // no aparece más. Se recuerda por navegador; si la cierra, no insiste.
+  var BURBUJA_KEY = 'tr4_rt_burbuja';
+  function burbujaEstado() { try { return localStorage.getItem(BURBUJA_KEY) || ''; } catch (e) { return 'cerrada'; } }
+  function burbujaGuardar(v) { try { localStorage.setItem(BURBUJA_KEY, v); } catch (e) { /* sin almacenamiento */ } }
+  var burbujaAhora = null; // 'guia' | 'listo' | null
+  function burbujaHtml() {
+    if (!burbujaAhora) return '';
+    var foto = st.lado === 'VA' ? '/assets/va/vero-chat-192.webp' : '/assets/team/anthoni-montalvan.png';
+    var quien = st.lado === 'VA' ? 'Veronika' : 'Anthoni';
+    var texto = burbujaAhora === 'guia'
+      ? '<strong>Tr4iner te recomienda</strong>Cuando termines cada ejercicio, toca <b>«Ejercicio completado»</b>. Importante para mantener un registro de tu progreso.' +
+        '<span class="rt-bubble-demo" aria-hidden="true"><span class="rt-bubble-btn">Ejercicio completado <span class="rt-check">' + ICON.check + '</span></span></span>'
+      : '<strong>Listo, quedó guardado</strong>La próxima vez que abras tu rutina vas a seguir en el ejercicio que te toca.';
+    return '<div class="rt-bubble' + (burbujaAhora === 'listo' ? ' is-ok' : '') + '" role="status">' +
+      '<img class="rt-bubble-foto" src="' + foto + '" alt="' + quien + '" width="40" height="40" />' +
+      '<p>' + texto + '</p>' +
+      '<button type="button" class="rt-bubble-x" data-bubble-close aria-label="Cerrar">×</button></div>';
+  }
+  function decidirBurbuja() {
+    var visto = burbujaEstado();
+    if (!visto && totalHechos() === 0) { burbujaAhora = 'guia'; burbujaGuardar('guia'); }
+  }
+
   function render() {
     var list = days(); if (!list.length) return;
     st.day = Math.max(0, Math.min(st.day, list.length - 1));
@@ -310,7 +360,8 @@
     html += '<div class="rt-days" role="tablist" aria-label="Días de entrenamiento">' + list.map(function (d, i) {
       return '<button type="button" role="tab" class="rt-day' + (i === st.day ? ' is-today' : '') + '" aria-selected="' + (i === st.day) + '" data-day="' + i + '"><span>Día ' + (i + 1) + '</span><b>' + esc(cap(d.name)) + '</b></button>';
     }).join('') + '</div>';
-    html += '<div class="rt-progress"><div><i style="width:' + (hechos / total * 100) + '%"></i></div><p>' + hechos + ' de ' + total + ' ejercicios hechos</p></div>';
+    html += '<div class="rt-progress"><div><i style="width:' + (hechos / total * 100) + '%"></i></div><p>' + hechos + ' de ' + total + ' ejercicios completados</p></div>';
+    html += burbujaHtml();
     html += '<div class="rt-list">' + day.exercises.map(function (ex, i) {
       var open = ex.slot === st.openSlot;
       return '<div class="rt-ex' + (ex.completed ? ' is-done' : '') + (open ? ' is-open' : '') + '">' +
@@ -329,17 +380,32 @@
     wirePlayers();
   }
 
+  // «Abrió su rutina» no quedaba en ningún lado: la rutina se guarda recién al marcar un
+  // ejercicio. El CRM lo necesita para decidir el siguiente paso (11-nov-2026). Se avisa una vez
+  // por navegador; el CRM igual guarda sólo la primera.
+  function avisarApertura() {
+    window.__tr4RutinaAbierta = true;
+    document.dispatchEvent(new CustomEvent('ruta:rutina-abierta'));
+    try { if (localStorage.getItem('tr4_rutina_abierta')) return; } catch (e) { /* sin almacenamiento: se avisa igual */ }
+    fetch('/api/genesis/paso', { method: 'POST', credentials: 'same-origin', keepalive: true,
+      headers: { 'content-type': 'application/json' }, body: JSON.stringify({ accion: 'rutina_abierta' }) })
+      .then(function (r) { if (r.ok) { try { localStorage.setItem('tr4_rutina_abierta', '1'); } catch (e) { /* idem */ } } })
+      .catch(function () { /* sin red: se reintenta la próxima vez que la abra */ });
+  }
+
   function open(options) {
     if (!st.loaded) return;
     var sheet = $('routine-sheet');
     st.lastFocus = document.activeElement;
     var next = nextSession();
     if (next && !(options && options.keepDay)) { st.week = next.week; st.day = next.day; }
+    decidirBurbuja();
     st.openSlot = firstPendingSlot();
     render();
     if (!sheet.open) sheet.showModal();
     document.body.classList.add('modal-open');
     setUrl(true);
+    avisarApertura();
     var title = $('routine-title'); if (title) title.focus({ preventScroll: true });
     $('routine-scroll').scrollTop = 0;
   }
@@ -417,7 +483,13 @@
         change({ action: 'complete', slot: slot, completed: !ex.completed }, function () {
           // Al terminar un ejercicio se abre el siguiente pendiente: una mano libre en el gimnasio.
           if (!ex.completed) st.openSlot = firstPendingSlot();
+          if (!ex.completed && burbujaEstado() !== 'hecha') { burbujaAhora = 'listo'; burbujaGuardar('hecha'); }
+          else if (burbujaAhora === 'listo') burbujaAhora = null;
         });
+      } else if (target.hasAttribute('data-bubble-close')) {
+        burbujaAhora = null;
+        if (burbujaEstado() !== 'hecha') burbujaGuardar('cerrada');
+        render();
       } else if (target.dataset.replace) {
         openReplace(target.dataset.replace, target);
       } else if (target.hasAttribute('data-alternative') || target.hasAttribute('data-restore')) {
@@ -514,6 +586,8 @@
       paintTrigger();
     },
     init: async function (ctx) {
+      // Lado del registro (AN/VA): la burbuja del coach usa la foto de Anthoni o la de Veronika, como el chat.
+      st.lado = ctx && ctx.lado === 'VA' ? 'VA' : 'AN';
       try {
         accept(await api('workout?week=0'));
         if (rotating()) (await Promise.all([1, 2].map(function (w) { return api('workout?week=' + w); }))).forEach(accept);

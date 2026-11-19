@@ -1304,3 +1304,8 @@ html.pais-abierta, html.pais-abierta body { overflow: hidden; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Botón a Fit4 para los países de lib/paises-fit4.js (18-nov-2026): reemplaza el WhatsApp. */
+.tr4p .fit4-geo { display: grid; justify-items: center; gap: 18px; text-align: center; }
+.tr4p .fit4-geo-texto { margin: 0; max-width: 34em; color: var(--p-ink-soft); font-size: 15px; line-height: 1.5; }
+.tr4p .fit4-geo .btn { width: 100%; max-width: 360px; }

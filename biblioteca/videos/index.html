@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://i.ytimg.com" />
   <link rel="preconnect" href="https://video.mediatr4iner.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261015-sin-boton-reproductor" />
+  <link rel="stylesheet" href="/biblioteca/videos/rutina.css?v=20261118-chat" />
 
   <style>
     :root {
@@ -409,6 +409,26 @@
     .aviso-x { flex: none; width: 36px; height: 44px; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 19px; line-height: 1; }
     .aviso-x:hover { color: var(--ink); }
     .aviso-banner--desk { max-width: 560px; margin: 0 0 22px; }
+    /* Progreso simple (11-nov): hecho o no hecho, sin puntos ni rachas. */
+    .ruta-avance { display: flex; align-items: center; gap: 9px; margin-top: 12px; color: var(--muted); font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .01em; }
+    .ruta-avance[hidden] { display: none !important; }
+    .ruta-avance-barra { display: flex; gap: 3px; }
+    .ruta-avance-barra i { width: 16px; height: 5px; border-radius: 3px; background: var(--rule); }
+    .ruta-avance-barra i.on { background: var(--mark); }
+    /* Chequeo de la semana (11-nov): una pregunta por vez, de un toque. */
+    .checkin { width: 100%; min-width: 0; margin: 10px 0 0; padding: 14px 14px 16px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card); color: var(--ink); font-family: var(--sans); text-align: left; animation: aviso-in .4s ease-out both; }
+    .checkin[hidden] { display: none !important; }
+    .checkin-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .checkin-x { flex: none; width: 32px; height: 28px; margin: -4px -8px -4px 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 19px; line-height: 1; }
+    .checkin-x:hover { color: var(--ink); }
+    .checkin strong { display: block; margin: 8px 0 12px; font-size: 16px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
+    .checkin p { margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .checkin-ops { display: flex; flex-wrap: wrap; gap: 8px; }
+    .checkin-ops button { min-height: 40px; padding: 8px 14px; border: 1px solid var(--ink); border-radius: 999px; background: transparent; color: var(--ink); cursor: pointer; font-family: var(--sans); font-size: 13.5px; font-weight: 600; }
+    .checkin-ops button:hover, .checkin-ops button:focus-visible { background: var(--ink); color: var(--card); }
+    .checkin-ops button:disabled { opacity: .5; cursor: default; }
+    .checkin--desk { max-width: 560px; margin: 0 0 22px; }
+    body.mobile-video-experience .checkin--desk, body:not(.mobile-video-experience) .checkin--mob { display: none !important; }
     body.mobile-video-experience .aviso-banner--desk, body:not(.mobile-video-experience) .aviso-banner--mob { display: none !important; }
     @keyframes aviso-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
     .aviso-resalta { animation: aviso-resalta 2.4s ease-out 1; }
@@ -885,15 +905,18 @@
     .mobile-profile-trigger { display: none; }
     .mobile-focus[hidden],
     .mobile-profile-trigger[hidden] { display: none !important; }
+    /* Centrado con margin:auto y no con transform: un transform vuelve a la ventana el marco de
+       los position:fixed de adentro, y el botón del chat (que se muda a la ventana abierta) quedaba
+       pegado a su esquina en vez de a la de la pantalla. */
     dialog.profile-dialog {
       position: fixed;
-      inset: 50% auto auto 50%;
+      inset: 0;
       width: min(calc(100% - 24px), 440px);
+      height: fit-content;
       max-height: min(760px, calc(100dvh - 24px));
-      margin: 0;
+      margin: auto;
       padding: 0;
       overflow: auto;
-      transform: translate(-50%, -50%);
       border: 1px solid var(--rule-strong);
       border-radius: 12px;
       background: var(--card);
@@ -902,6 +925,54 @@
       box-shadow: 0 32px 90px -24px rgba(0, 0, 0, 0.48);
     }
     dialog.profile-dialog::backdrop { background: rgba(17, 17, 17, 0.72); }
+    /* Evaluación del primer mes (18-nov-2026) */
+    .eval-paso { color: var(--muted); font-family: var(--mono); font-size: 8.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .eval-body h2 { margin: 6px 0 8px; font-size: 26px; font-weight: 750; letter-spacing: -.035em; line-height: 1.1; }
+    .eval-dek { margin: 0 0 18px; color: var(--ink-soft); font-size: 14.5px; line-height: 1.5; }
+    .eval-campo { display: flex; align-items: center; gap: 10px; }
+    .eval-campo input[type="number"] { width: 140px; min-height: 52px; padding: 0 14px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--card); color: var(--ink); font: 650 22px var(--sans); }
+    .eval-campo span { color: var(--muted); font-size: 15px; font-weight: 600; }
+    .eval-rango { width: 100%; height: 44px; margin: 6px 0 0; accent-color: var(--mark); }
+    .eval-fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 14px; }
+    .eval-fotos--sola { grid-template-columns: minmax(0, 200px); justify-content: center; }
+    .eval-foto { margin: 0; }
+    .eval-foto-img { width: 100%; aspect-ratio: 3 / 4; overflow: hidden; border: 1px solid var(--rule-strong); border-radius: 10px; background-color: #F5F5F5; background-repeat: no-repeat; background-size: 400% 200%; }
+    .eval-foto:not(.is-hoy) .eval-foto-img { opacity: .78; filter: grayscale(.35); }
+    .eval-foto.is-hoy .eval-foto-img { border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--mark); }
+    .eval-foto figcaption { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; margin-top: 6px; }
+    .eval-foto figcaption span { color: var(--muted); font-family: var(--mono); font-size: 8.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .eval-foto figcaption b { font-size: 18px; font-weight: 750; letter-spacing: -.02em; }
+    .eval-foto:not(.is-hoy) figcaption b { color: var(--muted); }
+    .eval-barra { position: relative; padding-bottom: 18px; }
+    .eval-barra .eval-rango { display: block; margin: 0; }
+    .eval-marca { position: absolute; top: 34px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--muted); font: 600 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+    .eval-marca i { width: 2px; height: 8px; margin-bottom: 1px; border-radius: 1px; background: var(--ink); }
+    .eval-escala { display: flex; justify-content: space-between; color: var(--muted); font: 600 11px var(--mono); }
+    .eval-delta-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; margin-top: 10px; }
+    .eval-delta { font-size: 14px; font-weight: 700; }
+    .eval-delta.is-baja { color: #1F7A3E; }
+    .eval-delta.is-sube { color: #8A5A00; }
+    .eval-igual { padding: 7px 12px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--card); color: var(--ink); font: 600 12.5px var(--sans); cursor: pointer; }
+    .eval-igual[hidden] { display: none; }
+    /* La navegación queda siempre a la vista: en el teléfono el paso de las fotos es más alto que la pantalla. */
+    #eval-dialog .eval-nav { position: sticky; bottom: -24px; margin: 20px -22px -24px; padding: 12px 22px 16px; border-top: 1px solid var(--rule); background: var(--card); }
+    .eval-valor { font-size: 30px; font-weight: 750; letter-spacing: -.03em; }
+    .eval-ref { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .eval-ops { display: grid; gap: 10px; margin-top: 4px; }
+    .eval-ops + .eval-paso { display: block; margin-top: 22px; }
+    .eval-ops .route-access.is-sel { border-color: var(--ink); background: var(--paper-deep); }
+    .eval-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
+    .eval-nav .eval-atras { padding: 10px 0; border: 0; background: none; color: var(--muted); font: 600 13.5px var(--sans); cursor: pointer; }
+    .eval-sig { min-height: 52px; padding: 0 22px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--card); font: 750 14px var(--sans); cursor: pointer; }
+    .eval-sig:disabled { opacity: .45; cursor: default; }
+    .eval-error { margin: 12px 0 0; color: #A83A22; font-size: 13px; font-weight: 500; }
+    .eval-tabla { width: 100%; margin: 6px 0 18px; border-collapse: collapse; font-size: 14px; }
+    .eval-tabla th { padding: 6px 0; color: var(--muted); font-family: var(--mono); font-size: 8.5px; font-weight: 600; letter-spacing: .12em; text-align: left; text-transform: uppercase; }
+    .eval-tabla td { padding: 10px 0; border-top: 1px solid var(--rule); }
+    .eval-tabla td:nth-child(n+2), .eval-tabla th:nth-child(n+2) { text-align: right; }
+    .eval-tabla .is-mejor { color: #1F7A3E; font-weight: 700; }
+    .eval-cta { width: 100%; min-height: 56px; margin-top: 6px; border: 1px solid var(--ink); border-radius: 6px; background: var(--mark); color: var(--ink); font: 750 15px var(--sans); cursor: pointer; }
+    .eval-luego { width: 100%; margin-top: 8px; padding: 12px; border: 0; background: none; color: var(--muted); font: 600 13.5px var(--sans); cursor: pointer; }
     .profile-dialog-head {
       position: sticky;
       z-index: 1;
@@ -1832,12 +1903,12 @@
       .vdone:active { transform: translateY(-50%) scale(.94); }
       dialog.player {
         position: fixed;
-        inset: 50% auto auto 50%;
+        inset: 0;
         width: min(calc(100% - 24px), 520px);
+        height: fit-content;
         max-width: none;
         max-height: 88vh;
-        margin: 0;
-        transform: translate(-50%, -50%);
+        margin: auto;
         border-radius: 12px;
       }
       .player-sheet { padding: 14px 14px 16px; }
@@ -2216,6 +2287,11 @@
     .mobile-focus-description,
     .mobile-focus-cta { display: none !important; }
     .mobile-focus-card .mobile-focus-thumb { margin-bottom: 0 !important; }
+    /* Paso que no es un video (rutina, macros, casos; 11-nov): la portada sola parecería un video
+       más. Vuelven el título y el botón, y se va el ▶. */
+    .mobile-focus-card.es-accion strong { display: block !important; margin-top: 14px; }
+    .mobile-focus-card.es-accion .mobile-focus-cta { display: flex !important; margin-top: 12px !important; }
+    .es-accion .mobile-focus-play, .es-accion .guide-play { display: none !important; }
     /* La caja negra de las dos ofertas («Míralo aquí» / «Aplica a mi asesoría») se
        oculta (7-oct): la salida hacia el equipo es el botón fijo del chat. Queda en el
        DOM porque `setupRutaChat` toma de ahí el WhatsApp de respaldo y `updateBridge`
@@ -2317,6 +2393,7 @@
             <span>APLICACIÓN INMEDIATA</span>
           </span>
           <span class="mobile-focus-cta"><span id="mobile-focus-cta-text">Ver Paso 1</span> <i aria-hidden="true">→</i></span>
+          <span class="ruta-avance" id="mobile-focus-avance" hidden></span>
         </button>
         <button type="button" class="mobile-show-library" id="mobile-show-library">
           <span class="deck" id="mobile-deck" aria-hidden="true"></span>
@@ -2326,6 +2403,7 @@
           </span>
           <i aria-hidden="true">→</i>
         </button>
+        <div class="checkin checkin--mob" id="checkin-m" role="region" aria-label="Chequeo de la semana" hidden></div>
         <div class="aviso-banner aviso-banner--mob" id="aviso-banner-m" role="region" aria-label="Aviso" hidden>
           <button type="button" class="aviso-main"></button>
           <button type="button" class="aviso-x" aria-label="Ocultar aviso">×</button>
@@ -2346,6 +2424,7 @@
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
       </button>
 
+      <div class="checkin checkin--desk" id="checkin-d" role="region" aria-label="Chequeo de la semana" hidden></div>
       <div class="aviso-banner aviso-banner--desk" id="aviso-banner-d" role="region" aria-label="Aviso" hidden>
           <button type="button" class="aviso-main"></button>
           <button type="button" class="aviso-x" aria-label="Ocultar aviso">×</button>
@@ -2408,6 +2487,7 @@
                 <span>APLICACIÓN INMEDIATA</span>
               </span>
               <span class="primary-button"><span id="nx-cta-text">Ver Paso 1</span> <i>→</i></span>
+              <span class="ruta-avance" id="nx-avance" hidden></span>
             </span>
           </button>
 
@@ -2463,7 +2543,7 @@
     </footer>
   </main>
 
-  <dialog class="player" id="player" aria-labelledby="player-title">
+  <dialog class="player" id="player" data-sin-chat aria-labelledby="player-title">
     <div class="player-frame" id="player-frame"></div>
     <div class="player-bar">
       <div class="player-meta">
@@ -2554,6 +2634,16 @@
     </div>
   </dialog>
 
+  <dialog class="profile-dialog" id="eval-dialog" data-sin-chat aria-labelledby="eval-title">
+    <div class="profile-dialog-head">
+      <span>Tu primer mes en la Ruta</span>
+      <button type="button" class="profile-dialog-close" id="eval-close" aria-label="Cerrar">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="profile-dialog-body eval-body" id="eval-body"></div>
+  </dialog>
+
   <dialog class="routine-sheet" id="routine-sheet" aria-labelledby="routine-title">
     <div class="routine-head">
       <span id="routine-head-label">Tu rutina</span>
@@ -2609,8 +2699,8 @@
   </div>
 
   <script src="/attribution.js"></script>
-  <script src="/biblioteca/videos/rutina.js?v=20261109-invitacion"></script>
-  <script src="/biblioteca/assets/ruta-chat.js?v=20261111-retomar"></script>
+  <script src="/biblioteca/videos/rutina.js?v=20261118-evaluacion"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261118-boton-ventanas"></script>
   <script>
     (async function () {
       'use strict';
@@ -2835,7 +2925,7 @@
       }
       // Cambiar de persona = expediente nuevo: se borra plan y progreso locales.
       function clearIdentity() {
-        ['tr4_lead', 'tr4_plan', 'tr4_progreso', 'tr4_activada', 'tr4_last_visit'].forEach(function (k) {
+        ['tr4_lead', 'tr4_plan', 'tr4_progreso', 'tr4_activada', 'tr4_last_visit', 'tr4_rutina_abierta'].forEach(function (k) {
           try { window.localStorage.removeItem(k); } catch (e) { /* incógnito */ }
         });
         lead = {};
@@ -4057,6 +4147,16 @@
           });
           return true;
         }
+        var deEvaluacion = avisoEvaluacion();
+        if (deEvaluacion) { pintarBanner(deEvaluacion); return true; }
+        // Recordatorio sutil del test de macros (18-nov-2026): una línea, nunca un popup. Sale a quien
+        // ya vio algo de la Ruta y no tiene plan; una vez por visita, y la × lo oculta.
+        if (!plan && progreso.length > 0) {
+          pintarBanner({ clave: 'macros-recordatorio', icono: 'calculadora', accion: 'Calcular',
+            titulo: 'Calcula tus macros', texto: 'Son 3 minutos y tu punto de partida para ver cuánto avanzas en tu primer mes.',
+            abrir: function () { ACCESOS.macros.abrir(); } });
+          return true;
+        }
         if (!activeAnnouncement) return false;
         var anunciado = VIDEOS.find(function (item) { return item.id === activeAnnouncement.videoId; });
         var bloqueAnunciado = anunciado && BLOQUES.find(function (item) { return item.id === anunciado.bloque; });
@@ -4078,6 +4178,351 @@
         });
         el.querySelector('.aviso-x').addEventListener('click', function () { cerrarBanner(false); });
       });
+
+      // ── Chequeo de la semana (11-nov-2026) ──
+      // Desde el día 7, una vez por semana: tres preguntas de un toque. La respuesta va al CRM,
+      // que devuelve el siguiente paso ya ajustado; la tarjeta de arriba cambia sin recargar.
+      var checkinEls = ['checkin-m', 'checkin-d'].map(function (id) { return document.getElementById(id); }).filter(Boolean);
+      var CHECKIN_PREGUNTAS = [
+        { clave: 'entreno', texto: '¿Pudiste entrenar esta semana?', opciones: [['si', 'Sí'], ['algo', 'Menos de lo planeado'], ['no', 'No pude']] },
+        { clave: 'macros', texto: '¿Pudiste comer según tus macros?', conPlan: true, opciones: [['si', 'Sí'], ['algo', 'A medias'], ['no', 'No']] },
+        { clave: 'costo', texto: '¿Qué fue lo que más te costó?', opciones: [['tiempo', 'El tiempo'], ['no_supe', 'No supe qué hacer en el gimnasio'], ['comida', 'La comida'], ['constancia', 'La constancia'], ['dolor', 'Un dolor o molestia'], ['nada', 'Nada en especial']] }
+      ];
+      var checkin = null;
+      function pintarCheckin(html) {
+        checkinEls.forEach(function (el) { el.innerHTML = html; el.hidden = false; });
+      }
+      function cerrarCheckin() {
+        checkin = null;
+        checkinEls.forEach(function (el) { el.hidden = true; });
+      }
+      function cabeceraCheckin(rotulo) {
+        return '<div class="checkin-head"><span>' + escapeHtml(rotulo) + '</span><button type="button" class="checkin-x" data-checkin="cerrar" aria-label="Ahora no">×</button></div>';
+      }
+      function preguntarCheckin() {
+        var pregunta = checkin.preguntas[checkin.i];
+        pintarCheckin(cabeceraCheckin('Queremos saber cómo vas') +
+          '<strong>' + escapeHtml(pregunta.texto) + '</strong><div class="checkin-ops">' +
+          pregunta.opciones.map(function (op) { return '<button type="button" data-checkin="' + op[0] + '">' + escapeHtml(op[1]) + '</button>'; }).join('') + '</div>');
+      }
+      function enviarCheckin() {
+        pintarCheckin(cabeceraCheckin('Queremos saber cómo vas') + '<strong>Guardando tu respuesta…</strong>');
+        fetch('/api/genesis/paso', {
+          method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ accion: 'checkin', respuesta: checkin.respuesta })
+        }).then(function (r) { if (!r.ok) throw new Error('checkin'); return r.json(); }).then(function (data) {
+          checkin = null;
+          memberSession.checkin = { pendiente: false, semana: null };
+          if (data.siguientePaso) memberSession.siguientePaso = data.siguientePaso;
+          if (data.progreso) memberSession.progreso = data.progreso;
+          renderNextCard();
+          var paso = data.siguientePaso;
+          pintarCheckin(cabeceraCheckin('Queremos saber cómo vas') + '<strong>Gracias por contarme.</strong><p>' +
+            escapeHtml(paso && paso.porCheckin ? 'Con lo que respondiste cambié tu siguiente paso: ' + paso.titulo + '.' : 'Tu siguiente paso sigue siendo el de arriba.') + '</p>');
+        }).catch(function () {
+          pintarCheckin(cabeceraCheckin('Queremos saber cómo vas') + '<strong>No pudimos guardarlo.</strong><div class="checkin-ops"><button type="button" data-checkin="reintentar">Intentar de nuevo</button></div>');
+        });
+      }
+      checkinEls.forEach(function (el) {
+        el.addEventListener('click', function (event) {
+          var boton = event.target.closest('[data-checkin]');
+          if (!boton) return;
+          var valor = boton.getAttribute('data-checkin');
+          if (valor === 'cerrar') { cerrarCheckin(); return; }
+          if (!checkin) return;
+          if (valor === 'reintentar') { enviarCheckin(); return; }
+          checkin.respuesta[checkin.preguntas[checkin.i].clave] = valor;
+          checkin.i += 1;
+          if (checkin.i < checkin.preguntas.length) preguntarCheckin(); else enviarCheckin();
+        });
+      });
+      function iniciarCheckin() {
+        if (checkin || gateActivo || !checkinEls.length) return;
+        if (!memberSession || !memberSession.checkin || !memberSession.checkin.pendiente) return;
+        checkin = { i: 0, respuesta: {}, preguntas: CHECKIN_PREGUNTAS.filter(function (p) { return !p.conPlan || plan; }) };
+        preguntarCheckin();
+      }
+
+      // ── Evaluación del primer mes (18-nov-2026) ──
+      // A los 30 días de su test de macros, una versión corta del test: cómo empezó contra cómo
+      // está hoy. Lo decide y lo guarda el CRM (`memberSession.evaluacion`); acá sólo se pregunta
+      // y se muestra. Si pide ayuda: interés comercial + WhatsApp de ManyChat de su lado. En los
+      // países de Fit4 (lib/paises-fit4.js) el botón lleva a Fit4, como el chat.
+      var evalDialog = document.getElementById('eval-dialog');
+      var evalBody = document.getElementById('eval-body');
+      var WHATSAPP_LADO = { AN: '17439014239', VA: '15677024560' };
+      var evalEstado = null;
+      function evaluacion() { return memberSession && memberSession.evaluacion; }
+      function numeroEs(n) { return String(n).replace('.', ','); }
+      function abrirEvaluacion() {
+        var ev = evaluacion();
+        if (!ev || !evalDialog) return;
+        // Un enlace a la evaluación (`?video=evaluacion`) para quien no tiene test lleva al test.
+        if (ev.estado === 'falta_test') { ACCESOS.macros.abrir(); return; }
+        evalEstado = { paso: 0, r: { peso: '', grasa: null, cintura: '', dias: null, macros: null, energia: null, ropa: null }, enviando: false, error: '' };
+        if (ev.estado === 'hecha' && ev.resultado) { pintarResultadoEval(ev.resultado); }
+        else if (ev.estado === 'proxima') { pintarProxima(ev); }
+        else { pintarPasoEval(); }
+        if (!evalDialog.open) evalDialog.showModal();
+        document.body.classList.add('modal-open');
+        // showModal enfoca el primer botón (cerrar): el foco va al campo del peso para escribir directo.
+        var campo = document.getElementById('eval-peso');
+        if (campo) campo.focus();
+      }
+      function cerrarEvaluacion() {
+        if (evalDialog && evalDialog.open) evalDialog.close();
+        document.body.classList.remove('modal-open');
+      }
+      if (evalDialog) {
+        document.getElementById('eval-close').addEventListener('click', cerrarEvaluacion);
+        evalDialog.addEventListener('close', function () { document.body.classList.remove('modal-open'); });
+      }
+      function pintarProxima(ev) {
+        var falta = ev.faltan === 1 ? 'mañana' : 'en ' + ev.faltan + ' días';
+        evalBody.innerHTML = '<span class="eval-paso">Se viene</span><h2 id="eval-title">Tu evaluación del primer mes es ' + falta + '</h2>' +
+          '<p class="eval-dek">Son 2 minutos: anotas tu peso de ese día y cómo te fue, y la Ruta te muestra cómo empezaste contra cómo estás.</p>' +
+          (plan ? '<p class="eval-dek">Pésate ese día en ayunas, después de ir al baño. Así la comparación es justa.</p>'
+            : '<p class="eval-dek"><strong>Para ver cuánto avanzaste necesitas tu punto de partida.</strong> Calcula tus macros antes de la evaluación: toma 3 minutos.</p>') +
+          (plan ? '<button type="button" class="eval-cta" data-eval="cerrar">Entendido</button>'
+            : '<button type="button" class="eval-cta" data-eval="macros">Calcular mis macros</button><button type="button" class="eval-luego" data-eval="cerrar">Más tarde</button>');
+      }
+      var GRASA_REF = {
+        Hombre: { min: 5, max: 50, start: 25, anchors: [10, 15, 20, 25, 30, 35, 40], image: '/biblioteca/plan/assets/grasa-hombre.webp' },
+        Mujer: { min: 12, max: 55, start: 32, anchors: [17, 22, 27, 32, 37, 42, 47], image: '/biblioteca/plan/assets/grasa-mujer.webp' }
+      };
+      var GRASA_SPRITE = [['0%', '0%'], ['33.333%', '0%'], ['66.667%', '0%'], ['100%', '0%'], ['0%', '100%'], ['33.333%', '100%'], ['66.667%', '100%']];
+      function estiloRefGrasa(cfg, v) {
+        var mejor = 0;
+        cfg.anchors.forEach(function (a, i) { if (Math.abs(a - v) < Math.abs(cfg.anchors[mejor] - v)) mejor = i; });
+        var pos = GRASA_SPRITE[mejor];
+        return 'background-image:url(&quot;' + cfg.image + '&quot;);background-position:' + pos[0] + ' ' + pos[1];
+      }
+      function posMarca(cfg, valor) {
+        // El centro del pulgar recorre el ancho menos su propio tamaño (22 px): se compensa para que
+        // la marca quede justo debajo de donde estaría el control con ese valor.
+        var t = (valor - cfg.min) / (cfg.max - cfg.min);
+        return 'calc(' + (t * 100).toFixed(2) + '% + ' + (11 - 22 * t).toFixed(1) + 'px)';
+      }
+      function textoDelta(d) {
+        if (d === 0) return 'Igual que al empezar';
+        return (d < 0 ? '−' : '+') + Math.abs(d) + (Math.abs(d) === 1 ? ' punto' : ' puntos') + ' desde que empezaste';
+      }
+      function pintarGrasa(v) {
+        var cfg = GRASA_REF[state.sexo === 'Mujer' ? 'Mujer' : 'Hombre'];
+        var ev = evaluacion();
+        var inicio = ev && ev.inicio ? Math.round(ev.inicio.grasa) : null;
+        document.getElementById('eval-grasa-v').textContent = v + '%';
+        document.getElementById('eval-grasa-ref').setAttribute('style', estiloRefGrasa(cfg, v).replace(/&quot;/g, '"'));
+        var rango = document.getElementById('eval-grasa');
+        if (rango) { rango.value = v; rango.setAttribute('aria-valuetext', v + ' por ciento'); }
+        var delta = document.getElementById('eval-grasa-delta');
+        if (delta && inicio !== null) {
+          delta.textContent = textoDelta(v - inicio);
+          delta.className = 'eval-delta' + (v < inicio ? ' is-baja' : v > inicio ? ' is-sube' : '');
+        }
+        var igual = evalBody.querySelector('[data-eval="grasa-igual"]');
+        if (igual) igual.hidden = inicio === null || v === inicio;
+      }
+      var PASOS_EVAL = [
+        function (r, ev) {
+          var antes = ev.inicio ? '<p class="eval-ref">Al empezar pesabas ' + numeroEs(ev.inicio.peso) + ' kg.</p>' : '';
+          return { titulo: '¿Cuánto pesas hoy?', dek: 'Lo ideal es pesarte en ayunas, después de ir al baño.', listo: Number(String(r.peso).replace(',', '.')) >= 30,
+            html: '<label class="eval-campo"><input type="number" inputmode="decimal" step="0.1" min="30" max="300" id="eval-peso" value="' + escapeHtml(String(r.peso)) + '" aria-label="Peso en kilos" /><span>kg</span></label>' + antes };
+        },
+        function (r, ev) {
+          // Las mismas fotos de referencia del test de macros (biblioteca/plan/assets). Con plan de
+          // inicio se muestran lado a lado «Al empezar» y «Hoy», la barra marca dónde empezó y la
+          // diferencia se lee en puntos: la persona decide comparando contra sí misma, no contra un
+          // número suelto (pedido del usuario, 18-nov-2026). Arranca en el valor del inicio.
+          var cfg = GRASA_REF[state.sexo === 'Mujer' ? 'Mujer' : 'Hombre'];
+          var inicio = ev.inicio ? Math.round(ev.inicio.grasa) : null;
+          var v = r.grasa === null ? (inicio !== null ? inicio : cfg.start) : r.grasa;
+          var rango = '<div class="eval-barra">' +
+            '<input class="eval-rango" type="range" min="' + cfg.min + '" max="' + cfg.max + '" step="1" id="eval-grasa" value="' + v + '" aria-label="Porcentaje de grasa de hoy" aria-valuetext="' + v + ' por ciento" />' +
+            (inicio !== null ? '<span class="eval-marca" style="left:' + posMarca(cfg, inicio) + '" aria-hidden="true"><i></i>Inicio</span>' : '') +
+            '</div><div class="eval-escala"><span>' + cfg.min + '%</span><span>' + cfg.max + '%</span></div>';
+          if (inicio === null) {
+            // Sin punto de partida no hay «sin cambio»: lo que se ve en pantalla es su respuesta.
+            if (r.grasa === null) r.grasa = v;
+            return { titulo: '¿Cuál se parece más a ti hoy?', dek: 'Mueve el control y compárate con la referencia.', listo: true,
+              html: '<div class="eval-fotos eval-fotos--sola"><figure class="eval-foto is-hoy"><div class="eval-foto-img" id="eval-grasa-ref" style="' + estiloRefGrasa(cfg, v) + '"></div>' +
+                '<figcaption><span>Hoy</span><b id="eval-grasa-v">' + v + '%</b></figcaption></figure></div>' + rango +
+                '<p class="eval-ref">Es una estimación visual, no una medición clínica.</p>' };
+          }
+          return { titulo: '¿Cuál se parece más a ti hoy?', dek: 'A la izquierda, cómo te viste al empezar. Mueve el control solo si notas un cambio.', listo: true,
+            html: '<div class="eval-fotos">' +
+                '<figure class="eval-foto"><div class="eval-foto-img" style="' + estiloRefGrasa(cfg, inicio) + '"></div><figcaption><span>Al empezar</span><b>' + inicio + '%</b></figcaption></figure>' +
+                '<figure class="eval-foto is-hoy"><div class="eval-foto-img" id="eval-grasa-ref" style="' + estiloRefGrasa(cfg, v) + '"></div><figcaption><span>Hoy</span><b id="eval-grasa-v">' + v + '%</b></figcaption></figure>' +
+              '</div>' + rango +
+              '<div class="eval-delta-fila"><span class="eval-delta" id="eval-grasa-delta">' + textoDelta(v - inicio) + '</span>' +
+              '<button type="button" class="eval-igual" data-eval="grasa-igual"' + (v === inicio ? ' hidden' : '') + '>Me veo igual</button></div>' +
+              '<p class="eval-ref">Es una estimación visual, no una medición clínica.</p>' };
+        },
+        function (r) {
+          return { titulo: '¿Cuánto mide tu cintura?', dek: 'Mídela a la altura del ombligo, sin apretar. Es opcional, pero muchas veces la cintura baja aunque el peso no se mueva.', listo: true, omitir: true,
+            html: '<label class="eval-campo"><input type="number" inputmode="decimal" step="0.5" min="40" max="200" id="eval-cintura" value="' + escapeHtml(String(r.cintura)) + '" aria-label="Cintura en centímetros" /><span>cm</span></label>' };
+        },
+        function (r) {
+          var ops = function (campo, lista) {
+            return '<div class="eval-ops">' + lista.map(function (o) {
+              return '<button type="button" class="route-access' + (r[campo] === o[0] ? ' is-sel' : '') + '" data-eval-op="' + campo + ':' + o[0] + '"><span><strong>' + o[1] + '</strong></span><i aria-hidden="true">' + (r[campo] === o[0] ? '✓' : '→') + '</i></button>';
+            }).join('') + '</div>';
+          };
+          var macros = plan ? [['si', 'Sí, casi siempre'], ['algo', 'A medias'], ['no', 'No pude']] : [['sin_macros', 'Todavía no tengo mis macros'], ['no', 'No cuidé lo que comí']];
+          return { titulo: '¿Cómo fue tu mes?', dek: 'Sé honesto: no hay respuesta mala, y con esto la Ruta te dice qué ajustar.', listo: !!(r.dias && r.macros),
+            html: '<span class="eval-paso">Días que entrenaste por semana</span>' + ops('dias', [['3+', '3 o más'], ['1-2', '1 o 2'], ['0', 'No pude entrenar']]) +
+              '<span class="eval-paso">¿Comiste según tus macros?</span>' + ops('macros', macros) };
+        },
+        function (r) {
+          var ops = function (campo, lista) {
+            return '<div class="eval-ops">' + lista.map(function (o) {
+              return '<button type="button" class="route-access' + (r[campo] === o[0] ? ' is-sel' : '') + '" data-eval-op="' + campo + ':' + o[0] + '"><span><strong>' + o[1] + '</strong></span><i aria-hidden="true">' + (r[campo] === o[0] ? '✓' : '→') + '</i></button>';
+            }).join('') + '</div>';
+          };
+          return { titulo: '¿Y cómo te sientes?', dek: 'El peso no lo es todo: esto también es avance.', listo: !!(r.energia && r.ropa), ultimo: true,
+            html: '<span class="eval-paso">Tu energía en el día</span>' + ops('energia', [['mejor', 'Mejor que al empezar'], ['igual', 'Igual'], ['peor', 'Peor']]) +
+              '<span class="eval-paso">Cómo te queda la ropa</span>' + ops('ropa', [['holgada', 'Más holgada'], ['igual', 'Igual'], ['ajustada', 'Más ajustada']]) };
+        }
+      ];
+      function pintarPasoEval() {
+        var ev = evaluacion();
+        var paso = PASOS_EVAL[evalEstado.paso](evalEstado.r, ev);
+        evalBody.innerHTML = '<span class="eval-paso">Paso ' + (evalEstado.paso + 1) + ' de ' + PASOS_EVAL.length + '</span>' +
+          '<h2 id="eval-title">' + paso.titulo + '</h2><p class="eval-dek">' + paso.dek + '</p>' + paso.html +
+          (evalEstado.error ? '<p class="eval-error" role="alert">' + escapeHtml(evalEstado.error) + '</p>' : '') +
+          '<div class="eval-nav">' + (evalEstado.paso > 0 ? '<button type="button" class="eval-atras" data-eval="atras">← Atrás</button>' : '<span></span>') +
+          '<span>' + (paso.omitir ? '<button type="button" class="eval-atras" data-eval="omitir">Omitir</button> ' : '') +
+          '<button type="button" class="eval-sig" data-eval="sig"' + (paso.listo && !evalEstado.enviando ? '' : ' disabled') + '>' + (evalEstado.enviando ? 'Calculando…' : paso.ultimo ? 'Ver mi resultado' : 'Siguiente') + '</button></span></div>';
+        var peso = document.getElementById('eval-peso');
+        if (peso) { peso.focus(); peso.addEventListener('input', function () { evalEstado.r.peso = peso.value; refrescarSig(); }); }
+        var grasa = document.getElementById('eval-grasa');
+        if (grasa) grasa.addEventListener('input', function () {
+          evalEstado.r.grasa = Number(grasa.value);
+          pintarGrasa(evalEstado.r.grasa);
+        });
+        var cintura = document.getElementById('eval-cintura');
+        if (cintura) cintura.addEventListener('input', function () { evalEstado.r.cintura = cintura.value; });
+      }
+      function refrescarSig() {
+        var sig = evalBody.querySelector('[data-eval="sig"]');
+        var paso = PASOS_EVAL[evalEstado.paso](evalEstado.r, evaluacion());
+        if (sig) sig.disabled = !paso.listo || evalEstado.enviando;
+      }
+      function enviarEvaluacion() {
+        var r = evalEstado.r;
+        var ev = evaluacion();
+        // Si no movió el control de grasa, se manda la del inicio como «no sé» (null): el CRM usa la de antes.
+        var respuesta = { peso: String(r.peso).replace(',', '.'), grasa: r.grasa, cintura: r.cintura === '' ? null : String(r.cintura).replace(',', '.'),
+          dias: r.dias, macros: r.macros, energia: r.energia, ropa: r.ropa };
+        evalEstado.enviando = true; evalEstado.error = ''; pintarPasoEval();
+        fetch('/api/genesis/evaluacion', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ accion: 'guardar', respuesta: respuesta }) })
+          .then(function (res) { return res.json().then(function (d) { if (!res.ok) throw new Error(d && d.error || 'No pudimos guardarla'); return d; }); })
+          .then(function (d) {
+            ev.estado = 'hecha';
+            ev.resultado = { comparacion: d.comparacion, mensaje: d.mensaje };
+            // Los macros nuevos pasan a ser los de la Ruta en esta misma visita.
+            if (plan && d.comparacion && d.comparacion.plan) { Object.keys(d.comparacion.plan).forEach(function (k) { plan[k] = d.comparacion.plan[k]; }); plan.peso = Number(respuesta.peso); }
+            track('evaluacion_mes_completada', { resultado: d.comparacion && d.comparacion.resultado });
+            pintarResultadoEval(ev.resultado);
+            ocultarAvisoEvaluacion();
+          })
+          .catch(function (e) { evalEstado.enviando = false; evalEstado.error = e.message || 'No pudimos guardarla. Inténtalo de nuevo.'; pintarPasoEval(); });
+      }
+      var evalFit4 = null;
+      function pintarResultadoEval(res) {
+        var c = res.comparacion, m = res.mensaje;
+        var fmt = function (v, u) { return v === null || v === undefined ? '—' : numeroEs(v) + ' ' + u; };
+        var tabla = '<table class="eval-tabla"><thead><tr><th></th><th>' + (c.resultado === 'sin_base' ? '' : 'Al empezar') + '</th><th>Hoy</th></tr></thead><tbody>' +
+          c.filas.map(function (f) {
+            return '<tr><td>' + escapeHtml(f.dato) + '</td><td>' + (c.resultado === 'sin_base' ? '' : fmt(f.antes, f.unidad)) + '</td><td' + (f.mejoro ? ' class="is-mejor"' : '') + '>' + fmt(f.ahora, f.unidad) + '</td></tr>';
+          }).join('') + '</tbody></table>';
+        evalBody.innerHTML = '<span class="eval-paso">Tu resultado</span><h2 id="eval-title">' + escapeHtml(m.titulo.charAt(0).toUpperCase() + m.titulo.slice(1)) + '</h2>' + tabla +
+          m.parrafos.map(function (p) { return '<p class="eval-dek">' + escapeHtml(p) + '</p>'; }).join('') +
+          (c.plan ? '<p class="eval-ref">Tus macros ya quedaron actualizados con tu peso de hoy: ' + c.plan.kcal.toLocaleString('es') + ' kcal por día.</p>' : '') +
+          '<button type="button" class="eval-cta" data-eval="interes">' + escapeHtml(m.cta) + '</button>' +
+          '<button type="button" class="eval-luego" data-eval="cerrar">Ahora no</button>';
+        // En los países de Fit4 el botón no va a WhatsApp (mismo criterio que el chat).
+        if (evalFit4 === null) chatDisponible().then(function (d) { evalFit4 = d.fit4; });
+      }
+      function irAlEquipo() {
+        var ev = evaluacion();
+        var lado = ev && ev.lado === 'VA' ? 'VA' : 'AN';
+        var res = ev && ev.resultado && ev.resultado.comparacion;
+        if (evalFit4) {
+          track('evaluacion_fit4_click', {});
+          window.location.href = (lado === 'VA' ? '/fit4-va' : '/fit4') + '?utm_medium=RUTA-TR4INER&funnel=' + lado;
+          return;
+        }
+        var texto = 'Hola, acabo de hacer la evaluación de mi primer mes en la Ruta Tr4iner ' +
+          (res && res.resultado === 'avanzo' ? 'y quiero potenciar mis resultados.' : 'y quiero que el equipo revise mi caso.');
+        // Primero el aviso (keepalive: sobrevive a que se abra WhatsApp), después el chat.
+        try {
+          fetch('/api/genesis/evaluacion', { method: 'POST', credentials: 'same-origin', keepalive: true,
+            headers: { 'content-type': 'application/json' }, body: JSON.stringify({ accion: 'interes' }) }).catch(function () {});
+        } catch (e) { /* sin red: igual abre WhatsApp */ }
+        track('evaluacion_whatsapp_click', { resultado: res && res.resultado });
+        window.open('https://api.whatsapp.com/send?phone=' + WHATSAPP_LADO[lado] + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
+      }
+      if (evalBody) evalBody.addEventListener('click', function (event) {
+        var boton = event.target.closest('[data-eval], [data-eval-op]');
+        if (!boton) return;
+        var op = boton.getAttribute('data-eval-op');
+        if (op) {
+          var partes = op.split(':'); evalEstado.r[partes[0]] = partes[1];
+          pintarPasoEval(); return;
+        }
+        var accion = boton.getAttribute('data-eval');
+        if (accion === 'cerrar') { cerrarEvaluacion(); return; }
+        if (accion === 'grasa-igual') {
+          // «Me veo igual»: vuelve al valor del inicio (se manda como «sin cambio», o sea null).
+          var ini = evaluacion() && evaluacion().inicio;
+          evalEstado.r.grasa = null;
+          if (ini) pintarGrasa(Math.round(ini.grasa));
+          return;
+        }
+        if (accion === 'macros') { cerrarEvaluacion(); ACCESOS.macros.abrir(); return; }
+        if (accion === 'interes') { irAlEquipo(); return; }
+        if (accion === 'atras') { evalEstado.paso = Math.max(0, evalEstado.paso - 1); evalEstado.error = ''; pintarPasoEval(); return; }
+        if (accion === 'omitir') { evalEstado.r.cintura = ''; }
+        if (accion === 'sig' || accion === 'omitir') {
+          if (evalEstado.paso < PASOS_EVAL.length - 1) { evalEstado.paso += 1; pintarPasoEval(); }
+          else enviarEvaluacion();
+        }
+      });
+      // Aviso dentro de la Ruta: desde el día 25 «es en N días»; desde el 30 «hazla ahora».
+      function avisoEvaluacion() {
+        var ev = evaluacion();
+        if (!ev) return null;
+        // Sin test no hay evaluación (decisión del usuario, 18-nov-2026): se lo invita al test, que
+        // es su punto de partida y pone en marcha su propio mes. Lo decide el CRM (`falta_test`).
+        if (ev.estado === 'falta_test') {
+          return { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
+            titulo: ev.dia >= 30 ? 'Ya cumpliste tu primer mes en la Ruta' : 'Tu primer mes en la Ruta está por cumplirse',
+            texto: 'Haz tu test de macros: es tu punto de partida y en 30 días ves cuánto avanzaste.',
+            abrir: function () { ACCESOS.macros.abrir(); } };
+        }
+        if (ev.estado === 'pendiente') {
+          return { clave: 'evaluacion', icono: 'calculadora', accion: 'Empezar',
+            titulo: 'Ya cumpliste tu primer mes en la Ruta',
+            texto: 'Haz tu evaluación: 2 minutos para ver cómo empezaste contra cómo estás hoy.',
+            abrir: abrirEvaluacion };
+        }
+        if (ev.estado === 'proxima') {
+          var falta = ev.faltan === 1 ? 'mañana' : 'en ' + ev.faltan + ' días';
+          return plan
+            ? { clave: 'evaluacion', icono: 'calculadora', titulo: 'Tu evaluación del primer mes es ' + falta,
+                texto: 'Vas a ver cómo empezaste contra cómo estás hoy.', abrir: abrirEvaluacion }
+            : { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
+                titulo: 'Tu evaluación del primer mes es ' + falta,
+                texto: 'Calcula tus macros antes: sin tu punto de partida no podrás ver cuánto avanzaste.',
+                abrir: function () { ACCESOS.macros.abrir(); } };
+        }
+        return null;
+      }
+      function ocultarAvisoEvaluacion() {
+        if (avisoActual && avisoActual.clave === 'evaluacion') cerrarBanner(false);
+      }
 
       // ── Invitación a activar las notificaciones (9-nov-2026) ──
       // El permiso sólo se pedía dentro del temporizador de descanso: 23 de 18.863 miembros lo
@@ -4338,16 +4783,88 @@
         return !(guardado && guardado.lastPositionSeconds > 5);
       }
 
+      // ── Siguiente paso decidido por el CRM (11-nov-2026) ──
+      // Antes «lo que sigue» era sólo la próxima lección sin ver: alguien podía terminar los videos
+      // sin abrir nunca su rutina ni calcular sus macros. El CRM manda UNA acción con todo lo que
+      // sabe (`siguientePaso` en la sesión). Si no viene, o ya quedó vieja en esta visita, la
+      // tarjeta sigue con la lógica de siempre.
+      var pasoAccion = null;
+      function pasoDelServidor() {
+        var sp = memberSession && memberSession.siguientePaso;
+        if (!sp || gateActivo) return null;
+        if (sp.videoId) return isDone(sp.videoId) ? null : sp;
+        if (sp.tipo === 'VER_RUTINA') return window.__tr4RutinaAbierta ? null : sp;
+        if (sp.tipo === 'CALCULAR_MACROS') return plan ? null : sp;
+        return sp;
+      }
+      function esPasoDeRutina(sp) { return !!sp && (sp.tipo === 'VER_RUTINA' || sp.tipo === 'ENTRENAR'); }
+      function pasoDeLaRuta(selector) {
+        ensureLibraryRendered();
+        return libraryEl.querySelector(selector);
+      }
+      // Lo que abre un paso que no es un video, y la portada que lo acompaña en la tarjeta.
+      function accionDePaso(sp) {
+        if (!sp || sp.videoId) return null;
+        var primeroDe = function (modulo) {
+          return VIDEOS.find(function (v) { return v.bloque === modulo && videoVisible(v); }) || VIDEOS.find(videoVisible) || null;
+        };
+        var moduloDe = function (id) {
+          var meta = pasoDeLaRuta('summary [data-meta="' + id + '"]');
+          return meta ? meta.closest('details') : null;
+        };
+        if (esPasoDeRutina(sp)) {
+          if (!rutaPorDias || !window.RutinaUI) return null;
+          return {
+            portada: primeroDe('ruta-pesas'),
+            // La rutina tarda un instante en cargar: si todavía no está, se abre su paso en el índice.
+            abrir: function () { if (ACCESOS.rutina.existe()) ACCESOS.rutina.abrir(); else irAlPaso(moduloDe('ruta-pesas')); }
+          };
+        }
+        if (sp.tipo === 'CALCULAR_MACROS') return { portada: primeroDe('ruta-alimentacion'), abrir: function () { ACCESOS.macros.abrir(); } };
+        if (sp.tipo === 'VER_CASOS') {
+          return { portada: primeroDe('ruta-vida-real'), abrir: function () { irAlPaso(pasoDeLaRuta('details.route-casos')); } };
+        }
+        return null;
+      }
+      function ejecutarPaso() {
+        if (pasoAccion) { pasoAccion(); return; }
+        if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
+      }
+      function pintarAvance() {
+        var p = memberSession && memberSession.progreso;
+        ['nx-avance', 'mobile-focus-avance'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (!p || !p.total || gateActivo) { el.hidden = true; return; }
+          var barra = '';
+          for (var i = 0; i < p.total; i++) barra += '<i' + (i < p.hechos ? ' class="on"' : '') + '></i>';
+          el.innerHTML = '<span class="ruta-avance-barra" aria-hidden="true">' + barra + '</span><span>' + p.hechos + ' de ' + p.total + ' pasos</span>';
+          el.hidden = false;
+        });
+      }
+
       function renderNextCard() {
         nextVideo = null;
         nextBloque = null;
+        pasoAccion = null;
         bloquesOrdenados().some(function (b) {
           return videosDe(b.id).some(function (v) {
             if (!isDone(v.id)) { nextVideo = v; nextBloque = b; return true; }
             return false;
           });
         });
-        if (!nextVideo) {
+        var sp = pasoDelServidor();
+        if (sp && sp.videoId) {
+          // Un video elegido por el CRM (el que dejó a medias, o el que adelantó su chequeo).
+          var elegido = VIDEOS.find(function (v) { return v.id === sp.videoId && videoVisible(v); });
+          var bloqueElegido = elegido && BLOQUES.find(function (b) { return b.id === elegido.bloque && !b.locked; });
+          if (elegido && bloqueElegido) { nextVideo = elegido; nextBloque = bloqueElegido; }
+        }
+        var accion = accionDePaso(sp);
+        var portada = (accion && accion.portada) || nextVideo;
+        if (accion && portada) pasoAccion = accion.abrir; else accion = null;
+        pintarAvance();
+        if (!nextVideo && !accion) {
           nextCardEl.hidden = true;
           mobileFocusOpen.disabled = true;
           if (mobileFocusActive) showMobileLibrary(false);
@@ -4360,11 +4877,11 @@
         var first = primerNombre(lead.nombre || nombre);
         var pasoUno = esPasoUno();
         var rotulo = pasoUno ? 'Este es el Paso 1' : 'Continuar viendo donde te quedaste';
-        var accion = pasoUno ? 'Ver Paso 1' : 'Continuar viendo';
+        var accionTexto = pasoUno ? 'Ver Paso 1' : 'Continuar viendo';
         document.getElementById('guide-kicker').textContent = rotulo;
         document.getElementById('mobile-focus-badge').textContent = rotulo;
-        document.getElementById('nx-cta-text').textContent = accion;
-        document.getElementById('mobile-focus-cta-text').textContent = accion;
+        document.getElementById('nx-cta-text').textContent = accionTexto;
+        document.getElementById('mobile-focus-cta-text').textContent = accionTexto;
         document.getElementById('nx-meta').textContent = 'TU SIGUIENTE ENFOQUE';
         document.getElementById('nx-title').textContent = signal.title;
         document.getElementById('nx-description').textContent = signal.description;
@@ -4380,13 +4897,22 @@
         document.getElementById('mobile-focus-recommendation').textContent = signal.title;
         document.getElementById('mobile-focus-description').textContent = signal.description;
         document.getElementById('mobile-focus-category').textContent = signal.category;
-        pintarMiniatura(document.getElementById('guide-img'), nextVideo);
-        pintarMiniatura(document.getElementById('mobile-focus-img'), nextVideo);
+        pintarMiniatura(document.getElementById('guide-img'), portada);
+        pintarMiniatura(document.getElementById('mobile-focus-img'), portada);
         pintarBaraja();
-        mobileFocusOpen.setAttribute('aria-label', accion + ': ' + nextVideo.title);
+        mobileFocusOpen.setAttribute('aria-label', accionTexto + ': ' + (accion ? sp.titulo : nextVideo.title));
+        [nextCardEl, mobileFocusOpen].forEach(function (el) { el.classList.toggle('es-accion', !!accion); });
+        if (!accion) return;
+        // Paso que no es un video (rutina, macros, casos): la tarjeta lo dice con sus palabras.
+        var poner = function (ids, texto) { ids.forEach(function (id) { document.getElementById(id).textContent = texto; }); };
+        poner(['guide-kicker', 'mobile-focus-badge'], sp.rotulo);
+        poner(['nx-cta-text', 'mobile-focus-cta-text'], sp.cta);
+        poner(['nx-title', 'mobile-focus-recommendation'], sp.titulo);
+        poner(['nx-description', 'mobile-focus-description', 'mobile-focus-lead'], sp.bajada);
+        document.getElementById('mobile-focus-title-text').textContent = first ? 'sigue por aquí.' : 'Sigue por aquí.';
       }
       nextCardEl.addEventListener('click', function () {
-        if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
+        ejecutarPaso();
       });
 
       function setupMobileExperience() {
@@ -4440,7 +4966,7 @@
       }
 
       mobileFocusOpen.addEventListener('click', function () {
-        if (nextVideo && nextBloque) openPlayer(nextVideo, nextBloque);
+        ejecutarPaso();
       });
       document.getElementById('mobile-show-library').addEventListener('click', function () {
         showMobileLibrary(true);
@@ -4571,30 +5097,45 @@
       // ── Chat del equipo ─────────────────────────────────────
       // Sólo para miembros con sesión: el servidor la necesita para saber con
       // quién habla y hasta dónde puede ofrecer.
-      // En Cuba y Venezuela el chat no se muestra (6-nov): lo decide el servidor por la IP. La
-      // bisagra queda con su enlace de WhatsApp de siempre. Si la consulta falla, el chat sale.
+      // Lo decide el servidor por la IP. Desde el 18-nov, en los países de lib/paises-fit4.js
+      // (Cuba, Venezuela, Nicaragua, Honduras, India y África) el chat se monta igual pero no
+      // habla con el agente ni muestra WhatsApp: contesta con FIT4CHALLENGE (`fit4`). Si la
+      // consulta falla, el chat sale como siempre.
       function chatDisponible() {
         return fetch('/api/genesis/chat/disponible', { cache: 'no-store', credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : { disponible: true }; })
-          .then(function (d) { return !d || d.disponible !== false; })
-          .catch(function () { return true; });
+          .then(function (d) { return { agente: !d || d.disponible !== false, fit4: Boolean(d && d.fit4) }; })
+          .catch(function () { return { agente: true, fit4: false }; });
       }
 
       function setupRutaChat() {
         if (!memberSession || !window.TR4RutaChat) return;
-        chatDisponible().then(function (si) { if (si) montarRutaChat(); });
+        chatDisponible().then(function (d) { if (d.agente || d.fit4) montarRutaChat(d.fit4); });
       }
 
-      function montarRutaChat() {
+      function montarRutaChat(fit4) {
         var advisory = document.getElementById('bridge-advisory');
         var listo = window.TR4RutaChat.init({
           nombre: String(lead.nombre || '').split(' ')[0],
           email: lead.email || '',
           estado: estadoBisagra(),
-          whatsapp: advisory ? advisory.href : null,
+          // Sin WhatsApp de respaldo para los países de Fit4.
+          whatsapp: advisory && !fit4 ? advisory.href : null,
           leccionActual: function () { return ultimaLeccion; },
           // Los miembros de Veronika ven su foto y su equipo en el chat (3-nov).
           lado: registroEsVA((memberSession && memberSession.attribution) || {}) ? 'VA' : 'AN',
+          // Recordatorio sutil del test de macros (18-nov-2026, pedido del usuario): una línea arriba
+          // del chat, sin popup y sin meterse en la conversación del agente.
+          aviso: function () {
+            var ev = evaluacion();
+            return plan || !memberSession ? null : {
+              id: 'macros', boton: 'Calcular',
+              texto: ev && ev.estado === 'falta_test'
+                ? 'Para hacer tu evaluación necesitas tu punto de partida: haz tu test de macros (3 minutos).'
+                : 'Aún no calculas tus macros: son 3 minutos y tu punto de partida para ver cuánto avanzas.',
+              accion: function () { ACCESOS.macros.abrir(); }
+            };
+          },
           track: track
         });
         if (!listo || !advisory) return;
@@ -4783,10 +5324,18 @@
       if (!pedirDias()) maybeStartTour();
       else document.getElementById('dias-dialog').addEventListener('close', mostrarAvisoDeEntrada);
       mostrarAvisoDeEntrada();
+      iniciarCheckin();
+      // Enlaces que abren el destino exacto (11-nov): los correos de reactivación no mandan a la
+      // portada. `?video=rutina` abre la rutina, `calcular-macros` el test, `siguiente` lo que le
+      // toque según el CRM, `checkin` el chequeo y `casos` los casos. La clave de una lección
+      // sigue mostrando su banner, como siempre.
+      var destinoDirecto = String(params.get('video') || '').trim().toLowerCase();
+      var abrirRutinaAlCargar = destinoDirecto === 'rutina' || (destinoDirecto === 'siguiente' && esPasoDeRutina(pasoDelServidor()));
       // La rutina solo existe en la Ruta por días; si el CRM no tiene una asignada, no aparece nada.
       if (memberSession && rutaPorDias && !gateActivo && window.RutinaUI) {
         window.RutinaUI.init({
-          abrir: params.get('rutina') === '1',
+          abrir: params.get('rutina') === '1' || abrirRutinaAlCargar,
+          lado: registroEsVA((memberSession && memberSession.attribution) || {}) ? 'VA' : 'AN',
           // Con la rutina cargada entra al índice como paso propio y toma su frecuencia.
           alCargar: function () {
             if (libraryRendered) renderLibrary();
@@ -4794,6 +5343,18 @@
           }
         });
       }
+      if (memberSession && !gateActivo && !abrirRutinaAlCargar) {
+        if (destinoDirecto === 'calcular-macros') ACCESOS.macros.abrir();
+        else if (destinoDirecto === 'siguiente') ejecutarPaso();
+        else if (destinoDirecto === 'casos') irAlPaso(pasoDeLaRuta('details.route-casos'));
+        else if (destinoDirecto === 'evaluacion' && evaluacion()) abrirEvaluacion();
+        else if (destinoDirecto === 'checkin' && checkin) {
+          var tarjeta = checkinEls.find(function (el) { return el.offsetParent !== null; });
+          if (tarjeta) tarjeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      // Abrió su rutina en esta visita: «Abre tu rutina» ya no es el paso que sigue.
+      document.addEventListener('ruta:rutina-abierta', renderNextCard);
       requestAnimationFrame(checkReveals);
       setTimeout(checkReveals, 250);
     })();
