@@ -1,5 +1,13 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-19 — Banner Black Friday: test A/B por rondas (texto, color, diseño, botón)
+
+- **Pedido del usuario:** probar textos, colores, diseños y botones del banner hasta el 30-nov, con una ganadora cada pocos días y las métricas en el CRM.
+- **Qué cambió:** `biblioteca/black-banner.js` ya no decide nada: dibuja el estilo que manda el CRM en `member.black` (texto, color negro/amarillo/rojo, diseño barra/cuenta regresiva/tarjeta flotante abajo, botón, ronda y versión) y registra una vista y un clic por persona, ronda y día en `POST /api/genesis/black` (proxy nuevo). Espera la sesión antes de dibujarse. Tarjeta flotante abajo a la izquierda (a la derecha está el chat), con × que la cierra en esa visita. Sin `black` en la sesión muestra el texto de respaldo sin medir.
+- **Rondas, ganadores y panel:** en el CRM (`src/lib/black-banner.ts`, GENESIS → Banners). Detalle en la bitácora del CRM del 19-nov.
+- **Verificación:** maqueta local con los 12 estilos sacados del motor del CRM: entran completos en celular; flujo de vista y clic con su ronda; oculto a quien compró y después del 30/11.
+- **Para retirarlo:** después del 30-nov, borrar las dos etiquetas `<script>` (el banner ya se apaga solo el 1-dic).
+
 ## 2026-11-18 (2) — Ruta: el botón del chat siempre a la vista, menos en la evaluación y en los videos (publicado)
 
 - **Pedido del usuario:** «que la burbuja aparezca en todas las páginas en todo momento, menos en los test de macros». No la veía dentro de la rutina.
