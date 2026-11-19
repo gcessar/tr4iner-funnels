@@ -1,6 +1,6 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-19 — `/empezar-va`: correcciones del exporte «PAG TR4INER VA» (rama, sin publicar)
+## 2026-11-19 — `/empezar-va`: correcciones del exporte «PAG TR4INER VA» (publicado)
 
 - **Pedido del usuario:** pasar a la página las correcciones de copy del exporte nuevo de Claude Design.
 - **Qué cambió en el exporte:** el bloque del plan se rehízo: siete ítems con íconos nuevos (evaluación inicial, plan de entrenamiento con ajustes cada 4 semanas, plan de alimentación con macros, app, acompañamiento diario por WhatsApp, videollamadas con entrenadores y con nutricionistas, seguimiento en sesiones privadas) y un recuadro «Cupos limitados» con «sesión gratuita de 30 minutos» y el botón «Agendar sesión gratuita». Los íconos del bloque «Tu aplicación» pasan del trazo grueso al normal. El resto del texto, igual; las clases CSS se renumeraron.
