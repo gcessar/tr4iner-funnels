@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-20 — Ruta: textos unisex en «¿Cómo fue tu mes?» de la evaluación (publicado)
+
+- **Pedido del usuario:** «Sé honesto» → «Con honestidad, no hay respuesta mala: con esto la Ruta te dice qué ajustar.»; días: «Cumplí con los días que elegí» / «Entrené menos días de lo planeado» / «No pude entrenar» (rótulo «Tus días de entrenamiento»); macros: «Sí» / «A medias» / «No pude».
+- **Cambio (`biblioteca/videos/index.html`):** sólo textos; las claves que guarda el CRM no cambian. El CRM actualizó su descripción interna el mismo día.
+- **Verificación:** `node --test tests/*.test.cjs` y sintaxis de la página.
+
 ## 2026-11-19 — `/empezar-va`: correcciones del exporte «PAG TR4INER VA» (publicado)
 
 - **Pedido del usuario:** pasar a la página las correcciones de copy del exporte nuevo de Claude Design.

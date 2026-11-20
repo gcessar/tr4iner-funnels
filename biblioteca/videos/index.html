@@ -4368,9 +4368,11 @@
               return '<button type="button" class="route-access' + (r[campo] === o[0] ? ' is-sel' : '') + '" data-eval-op="' + campo + ':' + o[0] + '"><span><strong>' + o[1] + '</strong></span><i aria-hidden="true">' + (r[campo] === o[0] ? '✓' : '→') + '</i></button>';
             }).join('') + '</div>';
           };
-          var macros = plan ? [['si', 'Sí, casi siempre'], ['algo', 'A medias'], ['no', 'No pude']] : [['sin_macros', 'Todavía no tengo mis macros'], ['no', 'No cuidé lo que comí']];
-          return { titulo: '¿Cómo fue tu mes?', dek: 'Sé honesto: no hay respuesta mala, y con esto la Ruta te dice qué ajustar.', listo: !!(r.dias && r.macros),
-            html: '<span class="eval-paso">Días que entrenaste por semana</span>' + ops('dias', [['3+', '3 o más'], ['1-2', '1 o 2'], ['0', 'No pude entrenar']]) +
+          var macros = plan ? [['si', 'Sí'], ['algo', 'A medias'], ['no', 'No pude']] : [['sin_macros', 'Todavía no tengo mis macros'], ['no', 'No cuidé lo que comí']];
+          return { titulo: '¿Cómo fue tu mes?', dek: 'Con honestidad, no hay respuesta mala: con esto la Ruta te dice qué ajustar.', listo: !!(r.dias && r.macros),
+            // Opciones del 20-nov-2026 (pedido del usuario): las claves no cambian, el CRM sigue
+            // leyendo «3+» como «cumplió con sus días», que es lo que decide el mensaje del resultado.
+            html: '<span class="eval-paso">Tus días de entrenamiento</span>' + ops('dias', [['3+', 'Cumplí con los días que elegí'], ['1-2', 'Entrené menos días de lo planeado'], ['0', 'No pude entrenar']]) +
               '<span class="eval-paso">¿Comiste según tus macros?</span>' + ops('macros', macros) };
         },
         function (r) {
