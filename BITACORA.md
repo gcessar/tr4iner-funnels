@@ -1,5 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
+## 2026-11-20 (2) — Test de macros: «Lo que sigue» para quien ya avanzó en la Ruta
+
+- **Pedido del usuario:** quien hace el test después de un mes en la Ruta (sin test no hay evaluación) veía «Ahora te toca el paso 1 de tu ruta. Empieza por la primera orientación.» aunque ya hubiera visto lecciones.
+- **Cambio (`biblioteca/plan/index.html`):** si la sesión de antes de guardar el plan dice que vio el Paso 1 (`progreso.pasos` `paso1`, o alguna lección completa en `progress`) o que su evaluación está en `falta_test`, el cierre dice «Tu primer mes empieza hoy.» / «Tu punto de partida quedó guardado. En 30 días haces tu evaluación y ves cuánto cambiaste. Mientras tanto, sigue con tu ruta donde la dejaste.» y el botón «Seguir con mi ruta». A un cliente (`evaluacion.estado = cliente` o sin evaluación) no se le promete la evaluación: «Sigue con tu ruta.». Quien recién empieza sigue viendo el paso 1. Sólo texto: el destino del botón no cambia (la Ruta abre en su siguiente paso).
+- **Verificación:** `node --test tests/*.cjs` (113) y servidor local con los dos casos (31 días sin test → texto nuevo; nuevo sin lecciones → paso 1).
+
 ## 2026-11-20 — Ruta: textos unisex en «¿Cómo fue tu mes?» de la evaluación (publicado)
 
 - **Pedido del usuario:** «Sé honesto» → «Con honestidad, no hay respuesta mala: con esto la Ruta te dice qué ajustar.»; días: «Cumplí con los días que elegí» / «Entrené menos días de lo planeado» / «No pude entrenar» (rótulo «Tus días de entrenamiento»); macros: «Sí» / «A medias» / «No pude».

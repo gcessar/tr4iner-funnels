@@ -1230,12 +1230,12 @@
 
         <div class="route-next">
           <p class="section-code">Lo que sigue</p>
-          <h2>Ahora te toca el paso 1 de tu ruta.</h2>
-          <p>Tu punto de partida quedó guardado. Empieza por la primera orientación.</p>
+          <h2 id="next-title">Ahora te toca el paso 1 de tu ruta.</h2>
+          <p id="next-text">Tu punto de partida quedó guardado. Empieza por la primera orientación.</p>
         </div>
 
         <a class="res-cta" id="res-cta" href="/biblioteca/videos/">
-          Ver el paso 1 de mi ruta
+          <span id="res-cta-label">Ver el paso 1 de mi ruta</span>
           <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h11M9.5 4.5L13 8l-3.5 3.5"/></svg>
         </a>
         <p class="res-note">
@@ -1816,6 +1816,25 @@
         Object.keys(attr).forEach(function (k) { p.set(k, attr[k]); });
         base.search = p.toString().replace(/%40/g, '@');
         document.getElementById('res-cta').href = base.toString();
+
+        // «Lo que sigue» según dónde está (20-nov-2026, pedido del usuario): quien hace el test
+        // después de haber visto el Paso 1 —por ejemplo, al cumplir un mes en la Ruta sin test— no
+        // vuelve al paso 1: su primer mes empieza hoy y la evaluación llega a los 30 días del test.
+        // Se lee la sesión de ANTES de guardar este plan, que es la que dice cómo llegó.
+        var pasosRuta = (sessionData.progreso && sessionData.progreso.pasos) || [];
+        var vioPaso1 = pasosRuta.some(function (paso) { return paso.clave === 'paso1' && paso.hecho; }) ||
+          (sessionData.progress || []).some(function (item) { return item.completed; });
+        var evRuta = sessionData.evaluacion;
+        var yaAvanzo = vioPaso1 || (evRuta && evRuta.estado === 'falta_test');
+        if (yaAvanzo) {
+          // A un cliente no le toca la evaluación del mes (el CRM la apaga): no se la prometemos.
+          var conEvaluacion = !!evRuta && evRuta.estado !== 'cliente';
+          document.getElementById('next-title').textContent = conEvaluacion ? 'Tu primer mes empieza hoy.' : 'Sigue con tu ruta.';
+          document.getElementById('next-text').textContent = conEvaluacion
+            ? 'Tu punto de partida quedó guardado. En 30 días haces tu evaluación y ves cuánto cambiaste. Mientras tanto, sigue con tu ruta donde la dejaste.'
+            : 'Tu punto de partida quedó guardado. Sigue con tu ruta donde la dejaste.';
+          document.getElementById('res-cta-label').textContent = 'Seguir con mi ruta';
+        }
 
         Object.keys(steps).forEach(function (k) { steps[k].classList.remove('active'); });
         steps.resultado.classList.add('active');
