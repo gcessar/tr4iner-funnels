@@ -5,6 +5,7 @@
 - **Pedido del usuario:** «Sé honesto» → «Con honestidad, no hay respuesta mala: con esto la Ruta te dice qué ajustar.»; días: «Cumplí con los días que elegí» / «Entrené menos días de lo planeado» / «No pude entrenar» (rótulo «Tus días de entrenamiento»); macros: «Sí» / «A medias» / «No pude».
 - **Cambio (`biblioteca/videos/index.html`):** sólo textos; las claves que guarda el CRM no cambian. El CRM actualizó su descripción interna el mismo día.
 - **Verificación:** `node --test tests/*.test.cjs` y sintaxis de la página.
+- **Ajuste el mismo día (pedido del usuario: «no se ve la 3ra opción de la 2da pregunta»):** en el celular «No pude» quedaba debajo de «Siguiente». Las opciones de los pasos 4 y 5 son más bajas y, si las tres son cortas (≤ 12 letras: Sí / A medias / No pude, Más holgada / Igual / Más ajustada), van en una fila; la elegida de la fila se rellena en negro (la palomita se montaba sobre «A medias»). Función compartida `opsEval`. Verificado en local: 375×812 sin scroll; 360×640 con las seis opciones y «Siguiente» a la vista.
 
 ## 2026-11-19 — `/empezar-va`: correcciones del exporte «PAG TR4INER VA» (publicado)
 
