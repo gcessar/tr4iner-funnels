@@ -404,6 +404,31 @@
     }
     .field.has-error .control { border-color: #A1261C; }
     .field.has-error .err { display: block; }
+    /* «¿Quisiste decir…?» del correo (correo-check.js, 23-nov-2026). */
+    .email-sugerencia {
+      margin: 10px 0 0;
+      padding: 12px 14px;
+      border: 1px solid var(--mark-strong);
+      border-radius: 4px;
+      background: #FFF8DB;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .email-sugerencia[hidden] { display: none; }
+    .email-sugerencia p { margin: 0; }
+    .email-sugerencia strong { word-break: break-all; }
+    .email-sugerencia-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .email-sugerencia-acciones button {
+      border: 1px solid var(--ink);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font: 600 13px/1.2 var(--body);
+      cursor: pointer;
+      background: transparent;
+      color: var(--ink);
+    }
+    .email-sugerencia-acciones .si { background: var(--ink); color: #FFFFFF; }
     /* Código de país del WhatsApp: botón + hoja con buscador (prefijo-pais.js). */
     .prefix-btn {
       display: flex;
@@ -817,6 +842,13 @@
                     <label for="email">Tu correo</label>
                     <input class="control" type="email" id="email" name="email" placeholder="El correo que sí revisas…" autocomplete="email" spellcheck="false" maxlength="254" />
                     <p class="err" aria-live="polite">Ingresa un correo válido</p>
+                    <div class="email-sugerencia" id="email-sugerencia" role="status" hidden>
+                      <p><span id="email-sugerencia-pregunta">¿Quisiste decir</span> <strong id="email-sugerido"></strong>?</p>
+                      <div class="email-sugerencia-acciones">
+                        <button type="button" class="si" id="email-sugerencia-si">Sí, corregir</button>
+                        <button type="button" id="email-sugerencia-no">No, está bien así</button>
+                      </div>
+                    </div>
                   </div>
                   <button class="primary-cta answer-cta" type="button" id="continue-email">Continuar <span class="cta-arrow" aria-hidden="true">→</span></button>
                 </div>
@@ -868,6 +900,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/assets/prefijo-pais.js?v=20261016"></script>
+  <script src="/biblioteca/assets/correo-check.js?v=20261123"></script>
   <script>
     (function () {
       'use strict';
@@ -1028,8 +1061,11 @@
         'spam4.me','tempr.email','dispostable.com','spamgourmet.com'
       ];
 
-      function validateEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      // correo-check.js revisa formato y errores de tipeo (gamil.com, gmail.con, gmail..com).
+      // Sin él (no cargó) queda el chequeo de siempre.
+      function revisarCorreo(email) {
+        if (window.TR4Correo) return TR4Correo.revisar(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? { estado: 'ok', correo: email } : { estado: 'invalido', correo: email };
       }
 
       function isDomainSuspect(email) {
@@ -1048,17 +1084,74 @@
         catch (e) { /* modo incógnito */ }
       }
 
+      // Lo que la persona confirmó «está bien así» pese a la sugerencia: no se le vuelve a preguntar.
+      var correoConfirmado = null;
+      var sugerenciaActual = null;
+
+      function ocultarSugerencia() {
+        sugerenciaActual = null;
+        document.getElementById('email-sugerencia').hidden = true;
+      }
+
+      function mostrarSugerencia(revision) {
+        sugerenciaActual = revision;
+        document.getElementById('email-sugerido').textContent = revision.sugerencia;
+        // Si lo escrito ni siquiera tiene formato válido (gmail..com) no hay «está bien así».
+        document.getElementById('email-sugerencia-pregunta').textContent = revision.obligatoria ? 'Revisa tu correo: ¿es' : '¿Quisiste decir';
+        document.getElementById('email-sugerencia-no').hidden = !!revision.obligatoria;
+        document.getElementById('email-sugerencia').hidden = false;
+      }
+
+      // true = se puede seguir. Muestra el error o la sugerencia que corresponda.
+      function chequearCorreo(email) {
+        var revision = revisarCorreo(email);
+        if (revision.estado === 'invalido') {
+          ocultarSugerencia();
+          setFieldError('f-email', true, 'Ingresa un correo válido');
+          return false;
+        }
+        if (isDomainSuspect(revision.estado === 'sugerencia' ? revision.sugerencia : email)) {
+          ocultarSugerencia();
+          setFieldError('f-email', true, 'Usa un correo real: ahí llega tu ruta');
+          return false;
+        }
+        setFieldError('f-email', false);
+        if (revision.estado === 'sugerencia' && (revision.obligatoria || correoConfirmado !== email)) {
+          mostrarSugerencia(revision);
+          return false;
+        }
+        ocultarSugerencia();
+        return true;
+      }
+
       function continueEmail() {
         var email = document.getElementById('email').value.trim();
-        var malo = !validateEmail(email) || isDomainSuspect(email);
-        setFieldError('f-email', malo, !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega tu ruta');
-        if (malo) {
-          document.getElementById('email').focus();
+        if (!chequearCorreo(email)) {
+          // Con la sugerencia a la vista no se abre el teclado: taparía los botones en el celular.
+          if (!sugerenciaActual) document.getElementById('email').focus();
           return;
         }
         showStep('whatsapp');
         if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_email_complete');
       }
+
+      document.getElementById('email-sugerencia-si').addEventListener('click', function () {
+        if (!sugerenciaActual) return;
+        var obligatoria = !!sugerenciaActual.obligatoria;
+        document.getElementById('email').value = sugerenciaActual.sugerencia;
+        if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_email_sugerencia', { aceptada: true, obligatoria: obligatoria });
+        ocultarSugerencia();
+        continueEmail();
+      });
+
+      document.getElementById('email-sugerencia-no').addEventListener('click', function () {
+        correoConfirmado = document.getElementById('email').value.trim();
+        if (window.TR4Track && TR4Track.track) TR4Track.track('biblioteca_email_sugerencia', { aceptada: false, obligatoria: false });
+        ocultarSugerencia();
+        continueEmail();
+      });
+
+      document.getElementById('email').addEventListener('input', ocultarSugerencia);
 
       document.getElementById('continue-email').addEventListener('click', continueEmail);
       document.getElementById('email').addEventListener('keydown', function (event) {
@@ -1071,9 +1164,7 @@
       document.getElementById('email').addEventListener('blur', function () {
         var email = this.value.trim();
         if (!email) return;
-        if (!validateEmail(email)) setFieldError('f-email', true, 'Ingresa un correo válido');
-        else if (isDomainSuspect(email)) setFieldError('f-email', true, 'Usa un correo real: ahí llega tu ruta');
-        else setFieldError('f-email', false);
+        chequearCorreo(email);
       });
 
       document.getElementById('lead-form').addEventListener('submit', function (event) {
@@ -1100,11 +1191,9 @@
 
         if (![3, 4, 5].includes(state.trainingDays)) { showStep('frecuencia'); return; }
 
-        var emailBad = !validateEmail(email) || isDomainSuspect(email);
-        setFieldError('f-email', emailBad, !validateEmail(email) ? 'Ingresa un correo válido' : 'Usa un correo real: ahí llega tu ruta');
-        if (emailBad) {
+        if (!chequearCorreo(email)) {
           showStep('email');
-          document.getElementById('email').focus();
+          if (!sugerenciaActual) document.getElementById('email').focus();
           return;
         }
 
