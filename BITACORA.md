@@ -1,11 +1,11 @@
 # Bitácora de Cambios — TR4INER Funnels
 
-## 2026-11-23 — Ruta: pruebas A/B de la evaluación y resultado con un solo botón (sin publicar)
+## 2026-11-23 — Ruta: pruebas A/B de la evaluación y resultado con un solo botón (publicado)
 
 - **Qué:** los avisos de la evaluación y el recordatorio del test usan el texto que manda el CRM para cada persona (`memberSession.pruebasRuta`, con los de antes de respaldo); la franja del chat también, y ahora admite un aviso sin botón (días 25–29 con test). Cada vista y clic va a `/api/genesis/prueba` (una vez por persona y prueba). Resultado: negritas del CRM, un solo botón (sin «Ahora no»), «Tus macros ya están actualizados» bajo las calorías de hoy. WhatsApp: «Hola, acabo de ver mi resultado y quiero aplicar al Método Tr4iner 1 a 1. ¿Cómo funciona?».
 - **Archivos:** `biblioteca/videos/index.html`, `biblioteca/assets/ruta-chat.js` (`?v=20261123-pruebas`), `api/genesis/prueba/index.js`.
 - **Verificación:** `node --test tests/*.cjs` 117/117; Ruta local con contenido de producción (capturas en la sesión).
-- **Orden:** publicar este repo ANTES que el CRM (el CRM manda los párrafos con `**negrita**`).
+- **Orden:** publicar este repo ANTES que el CRM (el CRM manda los párrafos con `**negrita**`). Publicado el 23-nov con OK (`ac2fe1c`), el CRM después (`9133716`).
 
 ## 2026-11-20 (2) — Test de macros: «Lo que sigue» para quien ya avanzó en la Ruta
 
