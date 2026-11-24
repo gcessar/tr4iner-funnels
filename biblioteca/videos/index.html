@@ -980,6 +980,8 @@
     .eval-tabla td { padding: 10px 0; border-top: 1px solid var(--rule); }
     .eval-tabla td:nth-child(n+2), .eval-tabla th:nth-child(n+2) { text-align: right; }
     .eval-tabla .is-mejor { color: #1F7A3E; font-weight: 700; }
+    .eval-nota { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 500; line-height: 1.3; }
+    .eval-dek strong { color: var(--ink); font-weight: 700; }
     .eval-cta { width: 100%; min-height: 56px; margin-top: 6px; border: 1px solid var(--ink); border-radius: 6px; background: var(--mark); color: var(--ink); font: 750 15px var(--sans); cursor: pointer; }
     .eval-luego { width: 100%; margin-top: 8px; padding: 12px; border: 0; background: none; color: var(--muted); font: 600 13.5px var(--sans); cursor: pointer; }
     .profile-dialog-head {
@@ -2709,7 +2711,7 @@
 
   <script src="/attribution.js"></script>
   <script src="/biblioteca/videos/rutina.js?v=20261118-evaluacion"></script>
-  <script src="/biblioteca/assets/ruta-chat.js?v=20261118-boton-ventanas"></script>
+  <script src="/biblioteca/assets/ruta-chat.js?v=20261123-pruebas"></script>
   <script>
     (async function () {
       'use strict';
@@ -4099,6 +4101,7 @@
       function pintarBanner(datos) {
         avisoActual = datos;
         avisoMostrado = true;
+        if (datos.prueba) registrarPrueba(datos.prueba, 'vista');
         bannerEls.forEach(function (el) {
           var visual = datos.thumb
             ? '<span class="aviso-mini"><img src="' + escapeHtml(datos.thumb) + '" alt="" width="152" height="86" decoding="async" /></span>'
@@ -4161,9 +4164,13 @@
         // Recordatorio sutil del test de macros (18-nov-2026): una línea, nunca un popup. Sale a quien
         // ya vio algo de la Ruta y no tiene plan; una vez por visita, y la × lo oculta.
         if (!plan && progreso.length > 0) {
-          pintarBanner({ clave: 'macros-recordatorio', icono: 'calculadora', accion: 'Calcular',
-            titulo: 'Calcula tus macros', texto: 'Son 3 minutos y tu punto de partida para ver cuánto avanzas en tu primer mes.',
-            abrir: function () { ACCESOS.macros.abrir(); } });
+          var sinTest = textoDePrueba('avisos', 'sin_test');
+          pintarBanner(sinTest
+            ? { clave: 'macros-recordatorio', icono: 'calculadora', accion: sinTest.boton, titulo: sinTest.titulo, texto: sinTest.texto,
+                prueba: sinTest.prueba, abrir: function () { ACCESOS.macros.abrir(); } }
+            : { clave: 'macros-recordatorio', icono: 'calculadora', accion: 'Calcular',
+                titulo: 'Calcula tus macros', texto: 'Son 3 minutos y tu punto de partida para ver cuánto avanzas en tu primer mes.',
+                abrir: function () { ACCESOS.macros.abrir(); } });
           return true;
         }
         if (!activeAnnouncement) return false;
@@ -4182,6 +4189,7 @@
         el.querySelector('.aviso-main').addEventListener('click', function () {
           var datos = avisoActual;
           if (!datos) return;
+          if (datos.prueba) registrarPrueba(datos.prueba, 'clic');
           cerrarBanner(true);
           datos.abrir();
         });
@@ -4448,15 +4456,19 @@
       function pintarResultadoEval(res) {
         var c = res.comparacion, m = res.mensaje;
         var fmt = function (v, u) { return v === null || v === undefined ? '—' : numeroEs(v) + ' ' + u; };
+        // Debajo de las calorías de hoy, una línea chica (23-nov-2026): antes era un párrafo que
+        // repetía el número de la tabla.
         var tabla = '<table class="eval-tabla"><thead><tr><th></th><th>' + (c.resultado === 'sin_base' ? '' : 'Al empezar') + '</th><th>Hoy</th></tr></thead><tbody>' +
           c.filas.map(function (f) {
-            return '<tr><td>' + escapeHtml(f.dato) + '</td><td>' + (c.resultado === 'sin_base' ? '' : fmt(f.antes, f.unidad)) + '</td><td' + (f.mejoro ? ' class="is-mejor"' : '') + '>' + fmt(f.ahora, f.unidad) + '</td></tr>';
+            var nota = f.clave === 'kcal' && c.plan ? '<small class="eval-nota">Tus macros ya están actualizados</small>' : '';
+            return '<tr><td>' + escapeHtml(f.dato) + '</td><td>' + (c.resultado === 'sin_base' ? '' : fmt(f.antes, f.unidad)) + '</td><td' + (f.mejoro ? ' class="is-mejor"' : '') + '>' + fmt(f.ahora, f.unidad) + nota + '</td></tr>';
           }).join('') + '</tbody></table>';
+        // `**texto**` del CRM va en negrita (se escapa antes: el texto nunca trae HTML).
+        var negritas = function (p) { return escapeHtml(p).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); };
+        // Un solo botón, sin «Ahora no» (pedido del usuario, 23-nov): para salir está la ×.
         evalBody.innerHTML = '<span class="eval-paso">Tu resultado</span><h2 id="eval-title">' + escapeHtml(m.titulo.charAt(0).toUpperCase() + m.titulo.slice(1)) + '</h2>' + tabla +
-          m.parrafos.map(function (p) { return '<p class="eval-dek">' + escapeHtml(p) + '</p>'; }).join('') +
-          (c.plan ? '<p class="eval-ref">Tus macros ya quedaron actualizados con tu peso de hoy: ' + c.plan.kcal.toLocaleString('es') + ' kcal por día.</p>' : '') +
-          '<button type="button" class="eval-cta" data-eval="interes">' + escapeHtml(m.cta) + '</button>' +
-          '<button type="button" class="eval-luego" data-eval="cerrar">Ahora no</button>';
+          m.parrafos.map(function (p) { return '<p class="eval-dek">' + negritas(p) + '</p>'; }).join('') +
+          '<button type="button" class="eval-cta" data-eval="interes">' + escapeHtml(m.cta) + '</button>';
         // En los países de Fit4 el botón no va a WhatsApp (mismo criterio que el chat).
         if (evalFit4 === null) chatDisponible().then(function (d) { evalFit4 = d.fit4; });
       }
@@ -4469,8 +4481,9 @@
           window.location.href = (lado === 'VA' ? '/fit4-va' : '/fit4') + '?utm_medium=RUTA-TR4INER&funnel=' + lado;
           return;
         }
-        var texto = 'Hola, acabo de hacer la evaluación de mi primer mes en la Ruta Tr4iner ' +
-          (res && res.resultado === 'avanzo' ? 'y quiero potenciar mis resultados.' : 'y quiero que el equipo revise mi caso.');
+        // Un solo mensaje para todos los resultados (doc del 23-nov-2026): el antes y después le
+        // llega al equipo en el aviso por correo.
+        var texto = 'Hola, acabo de ver mi resultado y quiero aplicar al Método Tr4iner 1 a 1. ¿Cómo funciona?';
         // Primero el aviso (keepalive: sobrevive a que se abra WhatsApp), después el chat.
         try {
           fetch('/api/genesis/evaluacion', { method: 'POST', credentials: 'same-origin', keepalive: true,
@@ -4506,34 +4519,63 @@
         }
       });
       // Aviso dentro de la Ruta: desde el día 25 «es en N días»; desde el 30 «hazla ahora».
+      // Textos en prueba A/B (23-nov-2026): el CRM manda el que le toca a cada persona en cada caso
+      // (`memberSession.pruebasRuta`); los de antes quedan de respaldo si no llegan.
       function avisoEvaluacion() {
         var ev = evaluacion();
         if (!ev) return null;
+        var macros = function () { ACCESOS.macros.abrir(); };
         // Sin test no hay evaluación (decisión del usuario, 18-nov-2026): se lo invita al test, que
         // es su punto de partida y pone en marcha su propio mes. Lo decide el CRM (`falta_test`).
         if (ev.estado === 'falta_test') {
-          return { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
-            titulo: ev.dia >= 30 ? 'Ya cumpliste tu primer mes en la Ruta' : 'Tu primer mes en la Ruta está por cumplirse',
-            texto: 'Haz tu test de macros: es tu punto de partida y en 30 días ves cuánto avanzaste.',
-            abrir: function () { ACCESOS.macros.abrir(); } };
+          var t = textoDePrueba('avisos', ev.dia >= 30 ? 'falta_test_mes' : 'falta_test_antes');
+          return t
+            ? { clave: 'evaluacion', icono: 'calculadora', accion: t.boton, titulo: t.titulo, texto: t.texto, prueba: t.prueba, abrir: macros }
+            : { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
+                titulo: ev.dia >= 30 ? 'Ya cumpliste tu primer mes en la Ruta' : 'Tu primer mes en la Ruta está por cumplirse',
+                texto: 'Haz tu test de macros: es tu punto de partida y en 30 días ves cuánto avanzaste.', abrir: macros };
         }
         if (ev.estado === 'pendiente') {
-          return { clave: 'evaluacion', icono: 'calculadora', accion: 'Empezar',
-            titulo: 'Ya cumpliste tu primer mes en la Ruta',
-            texto: 'Haz tu evaluación: 2 minutos para ver cómo empezaste contra cómo estás hoy.',
-            abrir: abrirEvaluacion };
+          var tp = textoDePrueba('avisos', 'pendiente');
+          return tp
+            ? { clave: 'evaluacion', icono: 'calculadora', accion: tp.boton, titulo: tp.titulo, texto: tp.texto, prueba: tp.prueba, abrir: abrirEvaluacion }
+            : { clave: 'evaluacion', icono: 'calculadora', accion: 'Empezar', titulo: 'Ya cumpliste tu primer mes en la Ruta',
+                texto: 'Haz tu evaluación: 2 minutos para ver cómo empezaste contra cómo estás hoy.', abrir: abrirEvaluacion };
         }
         if (ev.estado === 'proxima') {
           var falta = ev.faltan === 1 ? 'mañana' : 'en ' + ev.faltan + ' días';
-          return plan
-            ? { clave: 'evaluacion', icono: 'calculadora', titulo: 'Tu evaluación del primer mes es ' + falta,
-                texto: 'Vas a ver cómo empezaste contra cómo estás hoy.', abrir: abrirEvaluacion }
-            : { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular',
-                titulo: 'Tu evaluación del primer mes es ' + falta,
-                texto: 'Calcula tus macros antes: sin tu punto de partida no podrás ver cuánto avanzaste.',
-                abrir: function () { ACCESOS.macros.abrir(); } };
+          if (!plan) {
+            return { clave: 'evaluacion', icono: 'calculadora', accion: 'Calcular', titulo: 'Tu evaluación del primer mes es ' + falta,
+              texto: 'Calcula tus macros antes: sin tu punto de partida no podrás ver cuánto avanzaste.', abrir: macros };
+          }
+          var tx = textoDePrueba('avisos', 'proxima');
+          return tx
+            ? { clave: 'evaluacion', icono: 'calculadora', titulo: tx.titulo, texto: tx.texto, prueba: tx.prueba, abrir: abrirEvaluacion }
+            : { clave: 'evaluacion', icono: 'calculadora', titulo: 'Tu evaluación del primer mes es ' + falta,
+                texto: 'Vas a ver cómo empezaste contra cómo estás hoy.', abrir: abrirEvaluacion };
         }
         return null;
+      }
+      // El texto en prueba de un caso, con {N} (días que faltan) ya completo. null = el CRM no lo mandó.
+      function textoDePrueba(zona, caso) {
+        var grupo = memberSession && memberSession.pruebasRuta && memberSession.pruebasRuta[zona];
+        var t = grupo && grupo[caso];
+        if (!t) return null;
+        var ev = evaluacion();
+        var faltan = ev && ev.faltan ? ev.faltan : 0;
+        var dias = function (texto) { return texto ? String(texto).replace(/\{N\} días/g, faltan === 1 ? '1 día' : faltan + ' días').replace(/\{N\}/g, String(faltan)) : texto; };
+        return { titulo: dias(t.titulo), texto: dias(t.texto), boton: t.boton || null, prueba: t.prueba };
+      }
+      // Vistas y clics de avisos y franja en prueba: una por persona y prueba (el CRM no repite).
+      var pruebasRegistradas = {};
+      function registrarPrueba(prueba, accion) {
+        var clave = prueba + ':' + accion;
+        if (pruebasRegistradas[clave] || !memberSession) return;
+        pruebasRegistradas[clave] = true;
+        try {
+          fetch('/api/genesis/prueba', { method: 'POST', credentials: 'same-origin', keepalive: true,
+            headers: { 'content-type': 'application/json' }, body: JSON.stringify({ prueba: prueba, accion: accion, page: location.pathname }) }).catch(function () {});
+        } catch (e) { /* sin red: no se cuenta */ }
       }
       function ocultarAvisoEvaluacion() {
         if (avisoActual && avisoActual.clave === 'evaluacion') cerrarBanner(false);
@@ -5141,14 +5183,29 @@
           lado: registroEsVA((memberSession && memberSession.attribution) || {}) ? 'VA' : 'AN',
           // Recordatorio sutil del test de macros (18-nov-2026, pedido del usuario): una línea arriba
           // del chat, sin popup y sin meterse en la conversación del agente.
+          // Textos en prueba A/B (23-nov-2026): sin test, uno para quien ya cumplió el mes y otro
+          // para quien todavía no; días 25 a 29 con test, el aviso de que se viene (sin botón).
           aviso: function () {
             var ev = evaluacion();
-            return plan || !memberSession ? null : {
+            if (!memberSession) return null;
+            var macros = function () { ACCESOS.macros.abrir(); };
+            if (plan) {
+              var tp = ev && ev.estado === 'proxima' ? textoDePrueba('franja', 'proxima') : null;
+              return tp ? { id: 'evaluacion-proxima', texto: tp.texto, boton: null,
+                alVer: function () { registrarPrueba(tp.prueba, 'vista'); } } : null;
+            }
+            var t = textoDePrueba('franja', ev && ev.estado === 'falta_test' && ev.dia >= 30 ? 'falta_test_mes' : 'sin_test');
+            if (t) {
+              return { id: 'macros', boton: t.boton || 'Calcular', texto: t.texto,
+                alVer: function () { registrarPrueba(t.prueba, 'vista'); },
+                accion: function () { registrarPrueba(t.prueba, 'clic'); macros(); } };
+            }
+            return {
               id: 'macros', boton: 'Calcular',
               texto: ev && ev.estado === 'falta_test'
                 ? 'Para hacer tu evaluación necesitas tu punto de partida: haz tu test de macros (3 minutos).'
                 : 'Aún no calculas tus macros: son 3 minutos y tu punto de partida para ver cuánto avanzas.',
-              accion: function () { ACCESOS.macros.abrir(); }
+              accion: macros
             };
           },
           track: track

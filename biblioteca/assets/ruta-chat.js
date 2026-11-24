@@ -820,26 +820,31 @@
     abrir('retomar');
   }
 
-  // `opts.aviso()` devuelve { texto, boton, accion } o null. Se mira cada vez que se abre el chat
-  // (la persona puede haber hecho lo que se le pedía) y la × lo oculta hasta la próxima visita.
+  // `opts.aviso()` devuelve { texto, boton, accion, alVer } o null. Se mira cada vez que se abre el
+  // chat (la persona puede haber hecho lo que se le pedía) y la × lo oculta hasta la próxima visita.
+  // Sin `boton` es sólo un aviso (23-nov-2026: «en N días vemos cómo vas»). `alVer` avisa que se
+  // mostró, para medir la prueba A/B de la franja.
   var avisoCerrado = false;
   function pintarAviso() {
     var datos = null;
     try { datos = !avisoCerrado && opts.aviso ? opts.aviso() : null; } catch (e) { datos = null; }
     if (!datos) { ui.aviso.hidden = true; return; }
     ui.aviso.textContent = '';
-    var boton = el('button', { type: 'button', className: 'rc-aviso-btn', text: datos.boton });
-    boton.addEventListener('click', function () {
-      track('chat_aviso_click', { aviso: datos.id || null });
-      if (ui.dialog.open) ui.dialog.close();
-      if (typeof datos.accion === 'function') datos.accion();
-    });
+    ui.aviso.appendChild(el('span', { text: datos.texto }));
+    if (datos.boton) {
+      var boton = el('button', { type: 'button', className: 'rc-aviso-btn', text: datos.boton });
+      boton.addEventListener('click', function () {
+        track('chat_aviso_click', { aviso: datos.id || null });
+        if (ui.dialog.open) ui.dialog.close();
+        if (typeof datos.accion === 'function') datos.accion();
+      });
+      ui.aviso.appendChild(boton);
+    }
     var x = el('button', { type: 'button', className: 'rc-aviso-x', 'aria-label': 'Ocultar aviso', text: '×' });
     x.addEventListener('click', function () { avisoCerrado = true; ui.aviso.hidden = true; });
-    ui.aviso.appendChild(el('span', { text: datos.texto }));
-    ui.aviso.appendChild(boton);
     ui.aviso.appendChild(x);
     ui.aviso.hidden = false;
+    if (typeof datos.alVer === 'function') { try { datos.alVer(); } catch (e) { /* medir nunca rompe el chat */ } }
   }
 
   function abrir(origen) {
